@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true">
+
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        style="@style/configureActivityMainItem"
+        android:text="@string/instructions"
+        android:id="@+id/configure_activity_intro_text"
+        />
+
+    <TextView
+        style="configureActivityMainItem"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/widgetTitle" />
+
+    <EditText
+        android:id="@+id/appwidget_text"
+        style="@style/configureActivityMainItem"
+        android:inputType="text" />
+
+    <TextView
+        style="@style/configureActivityMainItem"
+        android:text="@string/interval" />
+
+    <LinearLayout
+        android:id="@+id/days"
+        style="@style/configureActivityMainItem"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/minus"
+            style="@style/button"
+            android:text="-" />
+
+        <TextView
+            android:id="@+id/goal_interval"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:text="2" />
+
+        <Button
+            android:id="@+id/plus"
+            style="@style/button"
+            android:text="+" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/day"
+            android:layout_marginStart="8dp"/>
+        <TextView
+            android:id="@+id/plural"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/plural" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="." />
+
+    </LinearLayout>
+
+    <TextView
+        style="@style/configureActivityMainItem"
+        android:text="Do you want to show when you reached your goal the last time?" />
+
+    <CheckBox
+        android:id="@+id/showDateCheckbox"
+        style="@style/configureActivityMainItem"
+        android:text="Show date in the widget"
+        />
+    <CheckBox
+        android:id="@+id/showTimeCheckbox"
+        style="@style/configureActivityMainItem"
+        android:text="Show time in the widget"
+        />
+
+    <TextView
+        style="@style/configureActivityMainItem"
+        android:text="Preview"
+        />
+
+    <TextView
+        android:id="@+id/widget_preview"
+        android:background="#7b1fa2"
+        style="@style/WorkoutPixelPreview"
+        />
+
+    <View
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <Button
+        android:id="@+id/add_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        style="@style/button"
+        android:text="@string/add_widget" />
+
+
+</LinearLayout>
+</ScrollView>

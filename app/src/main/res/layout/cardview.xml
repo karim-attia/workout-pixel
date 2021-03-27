@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/app"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:layout_height="wrap_content"
+    android:layout_width="match_parent"
+    >
+    <!-- A CardView that contains a TextView -->
+    <androidx.cardview.widget.CardView
+    android:id="@+id/card_view"
+    android:layout_gravity="center"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+        style="@style/Card"
+
+        card_view:cardCornerRadius="2dp"
+        >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/widget_title"
+            android:layout_alignParentTop="true"
+            android:textSize="30sp"
+            android:text="Title"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/widget_last_workout"
+            android:layout_below="@+id/widget_title"
+            android:text="Last Workout"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="12dp"
+            android:id="@+id/widget_interval"
+            android:layout_below="@+id/widget_title"
+            android:text="Every 2 days"
+            android:layout_toRightOf="@+id/widget_last_workout"
+            />
+
+        <TextView
+            android:id="@+id/widget_preview"
+            android:layout_alignParentRight="true"
+            android:background="#7b1fa2"
+            style="@style/WorkoutPixelPreview"
+            />
+        <ImageView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:paddingHorizontal="8dp"
+            android:id="@+id/widget_edit"
+            android:layout_toRightOf="@+id/widget_title"
+            android:textSize="30sp"
+            android:src="@android:drawable/ic_menu_edit"
+            />
+    </RelativeLayout>
+    </androidx.cardview.widget.CardView>
+</LinearLayout>
