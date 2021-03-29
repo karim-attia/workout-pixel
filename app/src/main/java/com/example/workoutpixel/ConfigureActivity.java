@@ -21,11 +21,11 @@ import java.text.DateFormat;
 import static com.example.workoutpixel.CommonFunctions.*;
 
 /**
- * The configuration screen for the {@link WorkoutPixel WorkoutPixel} AppWidget.
+ * The configuration screen for the {@link WidgetFunctions WorkoutPixel} AppWidget.
  */
-public class WorkoutPixelConfigureActivity extends AppCompatActivity {
+public class ConfigureActivity extends AppCompatActivity {
     private static final String TAG = "WORKOUT_PIXEL CONFIGURE ACTIVITY";
-    final Context context = WorkoutPixelConfigureActivity.this;
+    final Context context = ConfigureActivity.this;
 
     boolean isReconfigure;
 
@@ -40,7 +40,7 @@ public class WorkoutPixelConfigureActivity extends AppCompatActivity {
     CheckBox showDateCheckbox;
     CheckBox showTimeCheckbox;
 
-    public WorkoutPixelConfigureActivity() {super();}
+    public ConfigureActivity() {super();}
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -70,6 +70,12 @@ public class WorkoutPixelConfigureActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         }
 
+        // If this activity was started with an intent without an app widget ID, finish with an error.
+        if (appWidgetId == AppWidgetManager.INVALID_APPWIDGET_ID) {
+            finishAndRemoveTask();
+            return;
+        }
+
         // Bind views
         TextView introText = findViewById(R.id.configure_activity_intro_text);
         mAppWidgetText = findViewById(R.id.appwidget_text);
@@ -81,12 +87,6 @@ public class WorkoutPixelConfigureActivity extends AppCompatActivity {
         goalIntervalPluralTextView = findViewById(R.id.plural);
         final TextView preview = findViewById(R.id.widget_preview);
         Button addAndUpdateButton = findViewById(R.id.add_button);
-
-        // If this activity was started with an intent without an app widget ID, finish with an error.
-        if (appWidgetId == AppWidgetManager.INVALID_APPWIDGET_ID) {
-            finishAndRemoveTask();
-            return;
-        }
 
         // Load and pre-fill existing configurations.
         if (isReconfigure){
@@ -165,7 +165,7 @@ public class WorkoutPixelConfigureActivity extends AppCompatActivity {
 
             // It is the responsibility of the configuration activity to update the app widget
             Log.v(TAG, "UPDATE_THROUGH_CONFIGURE_ACTIVITY");
-            WorkoutPixel.updateAppWidget(context, appWidgetId, !isReconfigure);
+            WidgetFunctions.updateAppWidget(context, appWidgetId, !isReconfigure);
 
             // WorkoutPixelReConfigureActivity does not need this:
             // Make sure we pass back the original appWidgetId

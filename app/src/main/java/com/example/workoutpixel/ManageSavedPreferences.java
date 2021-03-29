@@ -72,9 +72,8 @@ public class ManageSavedPreferences {
             // Log.v(TAG, "loadTitle " + appWidgetId + " " + titleValue);
             return titleValue;
         } else {
-            String title = context.getString(R.string.appwidget_text);
             // Log.v(TAG, "loadTitle " + appWidgetId + " " + title);
-            return title;
+            return context.getString(R.string.appwidget_text);
         }
     }
 
@@ -95,9 +94,8 @@ public class ManageSavedPreferences {
 
     static Integer loadIntervalBlue(Context context, int appWidgetId) {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, 0);
-        Integer Interval = prefs.getInt(PREF_PREFIX_KEY_INTERVAL_BLUE + appWidgetId, 24*60*60*1000);
         // Log.v(TAG, "loadIntervalBlue Success: " + appWidgetId + " " + Interval);
-        return Interval;
+        return prefs.getInt(PREF_PREFIX_KEY_INTERVAL_BLUE + appWidgetId, 24*60*60*1000);
     }
 
     static void deleteIntervalBlue(Context context, int appWidgetId) {
@@ -117,9 +115,8 @@ public class ManageSavedPreferences {
 
     static Integer loadIntervalRed(Context context, int appWidgetId) {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, 0);
-        Integer Interval = prefs.getInt(PREF_PREFIX_KEY_INTERVAL_RED + appWidgetId, 2*24*60*60*1000);
         // Log.v(TAG, "loadIntervalRed Success: " + appWidgetId + " " + Interval);
-        return Interval;
+        return prefs.getInt(PREF_PREFIX_KEY_INTERVAL_RED + appWidgetId, 2*24*60*60*1000);
     }
 
     static void deleteIntervalRed(Context context, int appWidgetId) {
@@ -142,7 +139,7 @@ public class ManageSavedPreferences {
     static Long loadLastWorkout(Context context, int appWidgetId) {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, 0);
         Long timeLastWorkout = prefs.getLong(PREF_PREFIX_KEY_LAST_WORKOUT + appWidgetId, 0L);
-        String timeLastWorkoutBeautiful = DateFormat.getDateTimeInstance().format(timeLastWorkout);
+        // String timeLastWorkoutBeautiful = DateFormat.getDateTimeInstance().format(timeLastWorkout);
         // Log.v(TAG, "loadLastWorkout Success: " + appWidgetId + " " + timeLastWorkoutBeautiful +" ");
         return timeLastWorkout;
     }
@@ -164,9 +161,8 @@ public class ManageSavedPreferences {
 
     static String loadCurrentStatus(Context context, int appWidgetId) {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, 0);
-        String currentStatus = prefs.getString(PREF_PREFIX_KEY_CURRENT_STATUS + appWidgetId, "NO STATUS");
         // Log.v(TAG, "loadCurrentStatus Success: " + appWidgetId + " " + currentStatus);
-        return currentStatus;
+        return prefs.getString(PREF_PREFIX_KEY_CURRENT_STATUS + appWidgetId, "NO STATUS");
     }
 
     static void deleteCurrentStatus(Context context, int appWidgetId) {
@@ -196,17 +192,15 @@ public class ManageSavedPreferences {
     static boolean loadShowDate(Context context, int appWidgetId) {
         // Log.v(TAG, "loadShowTimeAndDate Start " + appWidgetId);
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, 0);
-        boolean showDate = prefs.getBoolean(PREF_PREFIX_KEY_SHOW_DATE + appWidgetId, false);
         // Log.v(TAG, "LOAD_CURRENT_STATUS Success: " + appWidgetId + " " + showTimeAndDate);
-        return showDate;
+        return prefs.getBoolean(PREF_PREFIX_KEY_SHOW_DATE + appWidgetId, false);
     }
 
     static boolean loadShowTime(Context context, int appWidgetId) {
         // Log.v(TAG, "loadShowTimeAndDate Start " + appWidgetId);
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, 0);
-        boolean showTime = prefs.getBoolean(PREF_PREFIX_KEY_SHOW_TIME + appWidgetId, false);
         // Log.v(TAG, "LOAD_CURRENT_STATUS Success: " + appWidgetId + " " + showTimeAndDate);
-        return showTime;
+        return prefs.getBoolean(PREF_PREFIX_KEY_SHOW_TIME + appWidgetId, false);
     }
 
     static void deleteShowDate(Context context, int appWidgetId) {
@@ -221,5 +215,30 @@ public class ManageSavedPreferences {
         SharedPreferences.Editor prefs = context.getSharedPreferences(PREFS_NAME, 0).edit();
         prefs.remove(PREF_PREFIX_KEY_SHOW_TIME + appWidgetId);
         prefs.apply();
+    }
+
+    // Number of past workouts
+    static void saveNumberOfPastWorkouts(Context context, int appWidgetId, Integer newNumber) {
+        SharedPreferences.Editor prefs = context.getSharedPreferences(PREFS_NAME, 0).edit();
+        prefs.putInt(PREF_PREFIX_KEY_INTERVAL_RED + appWidgetId, newNumber);
+        Log.v(TAG, "saveIntervalRed Success: " + appWidgetId + " " + newNumber);
+        prefs.apply();
+    }
+
+    static Integer loadNumberOfPastWorkouts(Context context, int appWidgetId) {
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, 0);
+        // Log.v(TAG, "loadIntervalRed Success: " + appWidgetId + " " + Interval);
+        return prefs.getInt(PREF_PREFIX_KEY_INTERVAL_RED + appWidgetId, 0);
+    }
+
+    static void deletNumberOfPastWorkouts(Context context, int appWidgetId) {
+        Log.v(TAG, "deleteIntervalRed " + appWidgetId);
+        SharedPreferences.Editor prefs = context.getSharedPreferences(PREFS_NAME, 0).edit();
+        prefs.remove(PREF_PREFIX_KEY_INTERVAL_RED + appWidgetId);
+        prefs.apply();
+    }
+
+    static void increaseNumberOfPastWorkouts(Context context, int appWidgetId) {
+        saveNumberOfPastWorkouts(context, appWidgetId, loadNumberOfPastWorkouts(context, appWidgetId)+1);
     }
 }

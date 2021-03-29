@@ -10,16 +10,14 @@ import android.util.Log;
 import android.widget.RemoteViews;
 import android.widget.Toast;
 
-import java.text.DateFormat;
-
 import static com.example.workoutpixel.ManageSavedPreferences.*;
 import static com.example.workoutpixel.CommonFunctions.*;
 
 /**
  * Implementation of App Widget functionality.
- * App Widget Configuration implemented in {@link WorkoutPixelConfigureActivity WorkoutPixelConfigureActivity}
+ * App Widget Configuration implemented in {@link ConfigureActivity WorkoutPixelConfigureActivity}
  */
-public class WorkoutPixel extends AppWidgetProvider {
+public class WidgetFunctions extends AppWidgetProvider {
 
     // TODO: Replace strings with enums?
     private static final String ACTION_DONE_EXERCISE = "DONE_EXERCISE";
@@ -38,7 +36,7 @@ public class WorkoutPixel extends AppWidgetProvider {
 
     // Create an Intent to set the action DONE_EXERCISE. This will be received in onReceive.
     private static PendingIntent widgetPendingIntent(Context context, int intentAppWidgetId) {
-        Intent intent = new Intent(context, WorkoutPixel.class);
+        Intent intent = new Intent(context, WidgetFunctions.class);
         intent.setAction(ACTION_DONE_EXERCISE);
         // put the appWidgetId as an extra to the update intent
         intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, intentAppWidgetId);
@@ -65,7 +63,7 @@ public class WorkoutPixel extends AppWidgetProvider {
                 initiateBasedOnStatus(context, appWidgetId);
             }
         }
-    };
+    }
 
     public static void updateAfterClick(Context context, int appWidgetId) {
         RemoteViews widgetView = new RemoteViews(context.getPackageName(), R.layout.workout_pixel);
@@ -75,6 +73,11 @@ public class WorkoutPixel extends AppWidgetProvider {
         long thisWorkoutTime = System.currentTimeMillis();
 
         Log.v(TAG, "ACTION_DONE_EXERCISE " + appWidgetId + " start");
+        Log.v(TAG, "11");
+        increaseNumberOfPastWorkouts(context, appWidgetId);
+        Log.v(TAG, "12");
+        InteractWithClickedWorkouts.addNewWorkoutToDataBase(context, appWidgetId, thisWorkoutTime);
+        Log.v(TAG, "13");
 
         Widget widget = loadWidget(context, appWidgetId);
         widget.setStatus(STATUS_GREEN);
@@ -85,7 +88,7 @@ public class WorkoutPixel extends AppWidgetProvider {
 
         setWidgetText(widgetView, widget);
         widgetView.setInt(R.id.appwidget_text, "setBackgroundResource", R.drawable.rounded_corner_green);
-        Toast.makeText(context, "Oh yeah!", Toast.LENGTH_LONG).show();
+        Toast.makeText(context, "Oh yeah! Already done this " + loadNumberOfPastWorkouts(context, appWidgetId) + " times. :)", Toast.LENGTH_LONG).show();
 
         // Instruct the widget manager to update the widget
         runUpdate (context, appWidgetId, widgetView);
@@ -171,7 +174,7 @@ public class WorkoutPixel extends AppWidgetProvider {
 
 
     private static int[] appWidgetIds(Context context) {
-        ComponentName thisAppWidget = new ComponentName(context.getPackageName(), WorkoutPixel.class.getName());
+        ComponentName thisAppWidget = new ComponentName(context.getPackageName(), WidgetFunctions.class.getName());
         return AppWidgetManager.getInstance(context).getAppWidgetIds(thisAppWidget);
     }
 

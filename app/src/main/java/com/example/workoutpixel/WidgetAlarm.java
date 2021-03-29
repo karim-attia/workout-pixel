@@ -56,8 +56,8 @@ public class WidgetAlarm {
     }
 
     private PendingIntent pendingIntent() {
-        Intent alarmIntent=new Intent(mContext, WorkoutPixel.class);
-        alarmIntent.setAction(WorkoutPixel.ACTION_ALARM_UPDATE);
+        Intent alarmIntent=new Intent(mContext, WidgetFunctions.class);
+        alarmIntent.setAction(WidgetFunctions.ACTION_ALARM_UPDATE);
         return PendingIntent.getBroadcast(mContext, 0, alarmIntent, PendingIntent.FLAG_CANCEL_CURRENT);
     }
 }

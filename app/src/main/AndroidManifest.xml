@@ -11,7 +11,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:theme="@style/AppTheme">
 
-        <receiver android:name=".WorkoutPixel">
+        <receiver android:name=".WidgetFunctions">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
@@ -32,7 +32,7 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".WorkoutPixelConfigureActivity"
+        <activity android:name=".ConfigureActivity"
             android:label="Add a Workout Pixel widget"
             android:parentActivityName=".MainActivity">
             <intent-filter>

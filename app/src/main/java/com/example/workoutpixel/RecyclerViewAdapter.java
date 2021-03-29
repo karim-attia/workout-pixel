@@ -13,15 +13,8 @@ import android.widget.TextView;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.text.DateFormat;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
-import java.time.format.FormatStyle;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 import static com.example.workoutpixel.CommonFunctions.*;
 
@@ -34,7 +27,8 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     List<Widget> widgets = new ArrayList<>();
 
     private static int[] appWidgetIds(Context context) {
-        ComponentName thisAppWidget = new ComponentName(context.getPackageName(), WorkoutPixel.class.getName());
+        ComponentName thisAppWidget = new ComponentName(context.getPackageName(), WidgetFunctions.class.getName());
+        AppWidgetManager.getInstance(context).notifyAppWidgetViewDataChanged(55,0);
         return AppWidgetManager.getInstance(context).getAppWidgetIds(thisAppWidget);
     }
 
@@ -43,7 +37,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         for (int appWidgetId : appWidgetIds(context)) {
             widgets.add(ManageSavedPreferences.loadWidget(context, appWidgetId));
             // Sometimes the onClickListener in the widgets stop working. This is a super stupid way to regularly reset the onClickListener when you open the main app.
-            WorkoutPixel.initiateBasedOnStatus(context, appWidgetId);
+            WidgetFunctions.initiateBasedOnStatus(context, appWidgetId);
         }
     }
 
@@ -57,12 +51,12 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
         WidgetViewHolder(View itemView) {
             super(itemView);
-            cardView = (CardView)itemView.findViewById(R.id.card_view);
-            widgetTitle = (TextView)itemView.findViewById(R.id.widget_title);
-            widgetLastWorkout = (TextView)itemView.findViewById(R.id.widget_last_workout);
-            widgetIntervalBlue = (TextView)itemView.findViewById(R.id.widget_interval);
-            widgetPreview = (TextView)itemView.findViewById(R.id.widget_preview);
-            widgetEdit = (ImageView) itemView.findViewById(R.id.widget_edit);
+            cardView = itemView.findViewById(R.id.card_view);
+            widgetTitle = itemView.findViewById(R.id.widget_title);
+            widgetLastWorkout = itemView.findViewById(R.id.widget_last_workout);
+            widgetIntervalBlue = itemView.findViewById(R.id.widget_interval);
+            widgetPreview = itemView.findViewById(R.id.widget_preview);
+            widgetEdit = itemView.findViewById(R.id.widget_edit);
         }
     }
     @Override
@@ -91,7 +85,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             @Override
             public void onClick(View v) {
                 // Update the widget the same way as a click on the widget would.
-                WorkoutPixel.updateAfterClick(context, widgets.get(i).getAppWidgetId());
+                WidgetFunctions.updateAfterClick(context, widgets.get(i).getAppWidgetId());
                 // This also updates the preferences for the widget. This is used to update the according element in the widget array in this class so that the main view also gets updated immediately.
                 widgets.set(i, ManageSavedPreferences.loadWidget(context, widgets.get(i).getAppWidgetId()));
                 notifyItemChanged(i);
@@ -101,7 +95,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             @Override
             public void onClick(View v) {
                 int appWidgetId = widgets.get(i).getAppWidgetId();
-                Intent intent = new Intent(context, WorkoutPixelConfigureActivity.class);
+                Intent intent = new Intent(context, ConfigureActivity.class);
                 intent.setAction("APPWIDGET_RECONFIGURE");
                 intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
                 context.startActivity(intent);

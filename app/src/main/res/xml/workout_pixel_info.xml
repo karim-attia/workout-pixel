@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
-    android:configure="com.example.workoutpixel.WorkoutPixelConfigureActivity"
+    android:configure="com.example.workoutpixel.ConfigureActivity"
     android:initialKeyguardLayout="@layout/workout_pixel"
     android:initialLayout="@layout/workout_pixel"
     android:minWidth="40dp"

@@ -59,11 +59,22 @@
         <ImageView
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:paddingHorizontal="8dp"
+            android:padding="4dp"
+            android:paddingHorizontal="16dp"
             android:id="@+id/widget_edit"
             android:layout_toRightOf="@+id/widget_title"
             android:textSize="30sp"
-            android:src="@android:drawable/ic_menu_edit"
+            android:src="@drawable/icon_edit"
+            />
+        <ImageView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:padding="0dp"
+            android:paddingHorizontal="16dp"
+            android:id="@+id/widget_past_workouuts"
+            android:layout_toRightOf="@+id/widget_edit"
+            android:textSize="30sp"
+            android:src="@drawable/icon_list"
             />
     </RelativeLayout>
     </androidx.cardview.widget.CardView>
