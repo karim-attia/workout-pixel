@@ -12,38 +12,26 @@ public class InteractWithClickedWorkouts {
     private static final String TAG = "WORKOUT_PIXEL InteractWithClickedWorkouts";
 
     public static void addNewWorkoutToDataBase(Context context, int appWidgetId, long workoutTime){
-
-        final int NUMBER_OF_THREADS = 4;
-        final ExecutorService databaseWriteExecutor =
-                Executors.newFixedThreadPool(NUMBER_OF_THREADS);
-
-        Log.v(TAG, "1");
         ClickedWorkout clickedWorkout = new ClickedWorkout(appWidgetId, workoutTime);
-        Log.v(TAG, "2");
+        AppDatabase db = Room.databaseBuilder(context, AppDatabase.class, "clickedWorkout").allowMainThreadQueries().fallbackToDestructiveMigrationFrom(1).build();
 
-        AppDatabase db = Room.databaseBuilder(context, AppDatabase.class, "clickedWorkout").allowMainThreadQueries().build();
-
-        Log.v(TAG, "3");
         WorkoutDao workoutDao = db.workoutDao();
-        Log.v(TAG, "4");
-
-/*
-
-        AppDatabase.databaseWriteExecutor.execute(() -> {
-            workoutDao.insertClickedWorkout(clickedWorkout);
-        });
-
-*/
 
         workoutDao.insertClickedWorkout(clickedWorkout);
 
         long testTime = workoutDao.loadAllByAppWidgetId(appWidgetId).get(0).getWorkoutTime();
         int testId = workoutDao.loadAllByAppWidgetId(appWidgetId).get(0).getAppWidgetId();
 
-        Log.v(TAG, "5 " + testTime + " " + testId + "");
-
         // Close the DB to test the DB file
         // db.getOpenHelper().close();
     }
+
+/*
+    public static ClickedWorkout getClickedWorkoutFromDb (Context context, int appWidgetId){
+        AppDatabase db = Room.databaseBuilder(context, AppDatabase.class, "clickedWorkout").allowMainThreadQueries().build();
+        WorkoutDao workoutDao = db.workoutDao();
+        return workoutDao.loadAllByAppWidgetId(appWidgetId).get(0);
+    }
+*/
 
 }

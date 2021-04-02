@@ -21,7 +21,7 @@ import java.text.DateFormat;
 import static com.example.workoutpixel.CommonFunctions.*;
 
 /**
- * The configuration screen for the {@link WidgetFunctions WorkoutPixel} AppWidget.
+ * The configuration screen for the {@link WidgetFunctions WidgetFunctions} AppWidget.
  */
 public class ConfigureActivity extends AppCompatActivity {
     private static final String TAG = "WORKOUT_PIXEL CONFIGURE ACTIVITY";

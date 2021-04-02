@@ -40,6 +40,13 @@
             </intent-filter>
         </activity>
 
-    </application>
+        <activity android:name=".ViewWorkoutsActivity"
+            android:label="Past Workouts"
+            android:parentActivityName=".MainActivity">
+            <intent-filter>
+                <action android:name="android.appwidget.action.CLICKED_WORKOUT_VIEW" />
+            </intent-filter>
+        </activity>
 
+    </application>
 </manifest>

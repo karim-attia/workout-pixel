@@ -71,7 +71,7 @@
             android:layout_height="40dp"
             android:padding="0dp"
             android:paddingHorizontal="16dp"
-            android:id="@+id/widget_past_workouuts"
+            android:id="@+id/widget_past_workouts"
             android:layout_toRightOf="@+id/widget_edit"
             android:textSize="30sp"
             android:src="@drawable/icon_list"
