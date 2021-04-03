@@ -44,7 +44,6 @@
     <style name="WorkoutPixel">
         <item name="android:layout_centerHorizontal">true</item>
         <item name="android:layout_centerVertical">true</item>
-        <item name="android:layout_margin">0dp</item>
         <item name="android:textColor">#ffffff</item>
         <item name="android:textSize">12sp</item>
         <item name="android:gravity">center</item>
@@ -55,4 +54,40 @@
         <item name="android:layout_height">44dp</item>
         <item name="android:background">#7b1fa2</item>
     </style>
+
+    <style name="Icon">
+        <item name="android:paddingLeft">0dp</item>
+        <item name="android:paddingRight">0dp</item>
+        <item name="android:paddingTop">0dp</item>
+        <item name="android:paddingBottom">0dp</item>
+        <item name="android:layout_gravity">center</item>
+    </style>
+
+    <style name="Icon.Narrow">
+        <item name="android:layout_width">32dp</item>
+        <item name="android:layout_height">32dp</item>
+    </style>
+
+    <style name="Icon.Wide">
+        <item name="android:layout_width">36dp</item>
+        <item name="android:layout_height">36dp</item>
+    </style>
+
+    <style name="GridText">
+        <item name="android:paddingLeft">6dp</item>
+        <item name="android:paddingRight">6dp</item>
+        <item name="android:paddingTop">8dp</item>
+        <item name="android:paddingBottom">8dp</item>
+        <item name="android:layout_width">105dp</item>
+        <item name="android:layout_columnWeight">1</item>
+        <item name="android:layout_gravity">fill</item>
+    </style>
+
+    <style name="Title">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textAllCaps">true</item>
+    </style>
+
+
 </resources>

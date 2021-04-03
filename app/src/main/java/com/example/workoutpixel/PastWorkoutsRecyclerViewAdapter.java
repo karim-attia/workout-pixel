@@ -3,6 +3,8 @@ package com.example.workoutpixel;
 import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
 import android.content.Context;
+import android.graphics.Paint;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,29 +17,22 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.example.workoutpixel.CommonFunctions.getDrawableIntFromStatus;
 import static com.example.workoutpixel.CommonFunctions.lastWorkoutDateBeautiful;
-import static com.example.workoutpixel.CommonFunctions.widgetText;
+import static com.example.workoutpixel.CommonFunctions.lastWorkoutTimeBeautiful;
 
 // RecyclerViewAdapter fills the card view in the MainActivity.
 public class PastWorkoutsRecyclerViewAdapter extends RecyclerView.Adapter<PastWorkoutsRecyclerViewAdapter.WidgetViewHolder>{
     private static final String TAG = "WORKOUT_PIXEL Past Workouts RVAdapter";
+    int appWidgetId;
 
-    private final int MILLISECONDS_IN_A_DAY = 24*60*60*1000;
     Context context;
-    List<Widget> widgets = new ArrayList<>();
+    List<ClickedWorkout> clickedWorkouts = new ArrayList<>();
 
-    private static int[] appWidgetIds(Context context) {
-        ComponentName thisAppWidget = new ComponentName(context.getPackageName(), WidgetFunctions.class.getName());
-        AppWidgetManager.getInstance(context).notifyAppWidgetViewDataChanged(55,0);
-        return AppWidgetManager.getInstance(context).getAppWidgetIds(thisAppWidget);
-    }
-
-    PastWorkoutsRecyclerViewAdapter(Context context){
+    PastWorkoutsRecyclerViewAdapter(Context context, int appWidgetId){
         this.context = context;
-        for (int appWidgetId : appWidgetIds(context)) {
-            widgets.add(ManageSavedPreferences.loadWidget(context, appWidgetId));
-        }
+        // clickedWorkouts is 1-n and not by uid
+        clickedWorkouts = InteractWithClickedWorkouts.getClickedWorkoutsFromDbByAppWidgetId(context, appWidgetId);
+        this.appWidgetId = appWidgetId;
     }
 
     public static class WidgetViewHolder extends RecyclerView.ViewHolder {
@@ -45,6 +40,7 @@ public class PastWorkoutsRecyclerViewAdapter extends RecyclerView.Adapter<PastWo
         TextView date;
         TextView time;
         ImageView delete;
+        int appWidgetId;
 
         WidgetViewHolder(View itemView) {
             super(itemView);
@@ -56,7 +52,7 @@ public class PastWorkoutsRecyclerViewAdapter extends RecyclerView.Adapter<PastWo
     }
     @Override
     public int getItemCount() {
-        return widgets.size();
+        return clickedWorkouts.size();
     }
 
     @Override
@@ -68,17 +64,44 @@ public class PastWorkoutsRecyclerViewAdapter extends RecyclerView.Adapter<PastWo
     // onBindViewHolder sets all the parameters for an individual card view.
     @Override
     public void onBindViewHolder(final WidgetViewHolder widgetViewHolder, final int i) {
-        widgetViewHolder.date.setText(widgets.get(i).getTitle());
-        widgetViewHolder.time.setText("Last click: " + lastWorkoutDateBeautiful(widgets.get(i).getLastWorkout()));
-        int intervalInDays = widgets.get(i).getIntervalBlue() / MILLISECONDS_IN_A_DAY;
-        String text = "Every " + intervalInDays + " day";
-        if (intervalInDays>1) {text += "s";}
+        widgetViewHolder.time.setText(lastWorkoutTimeBeautiful(clickedWorkouts.get(i).getWorkoutTime()));
+        widgetViewHolder.date.setText(lastWorkoutDateBeautiful(clickedWorkouts.get(i).getWorkoutTime()));
+
+        boolean isActive = clickedWorkouts.get(i).isActive();
+
+        if(!isActive) {
+            widgetViewHolder.date.setPaintFlags(widgetViewHolder.date.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+            widgetViewHolder.time.setPaintFlags(widgetViewHolder.date.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+            widgetViewHolder.delete.setImageResource(R.drawable.icon_undo);
+        }
+        else if(isActive) {
+            widgetViewHolder.date.setPaintFlags(0);
+            widgetViewHolder.time.setPaintFlags(0);
+            widgetViewHolder.delete.setImageResource(R.drawable.icon_delete);
+        }
+
         widgetViewHolder.delete.setOnClickListener (v -> {
-            // Update the widget the same way as a click on the widget would.
-            WidgetFunctions.updateAfterClick(context, widgets.get(i).getAppWidgetId());
-            // This also updates the preferences for the widget. This is used to update the according element in the widget array in this class so that the main view also gets updated immediately.
-            widgets.set(i, ManageSavedPreferences.loadWidget(context, widgets.get(i).getAppWidgetId()));
+            // TODO: Set the LastWorkout based on the latest not-deleted workout
+
+            // isActive is true if the workout has been active before the click of the delete button.
+            clickedWorkouts.get(i).setActive(!isActive);
+            InteractWithClickedWorkouts.updateClickedWorkout(context, clickedWorkouts.get(i));
             notifyItemChanged(i);
+            long lastActiveWorkout;
+
+            List<ClickedWorkout> activeWorkoutsOrderedByWorkoutTime = InteractWithClickedWorkouts.workoutDao(context).loadAllActiveByAppWidgetId(appWidgetId);
+
+            if(activeWorkoutsOrderedByWorkoutTime.size() > 0) {
+                lastActiveWorkout = activeWorkoutsOrderedByWorkoutTime.get(0).getWorkoutTime();
+                Log.v(TAG, "Size: " + InteractWithClickedWorkouts.workoutDao(context).loadAllActiveByAppWidgetId(appWidgetId).size());
+            }
+            else {
+                lastActiveWorkout = 0L;
+                Log.v(TAG, "No remaining workout");
+            }
+            ManageSavedPreferences.saveLastWorkout(context, appWidgetId, lastActiveWorkout);
+            WidgetFunctions.updateBasedOnNewStatus(context, appWidgetId);
+
         });
     }
 

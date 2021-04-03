@@ -18,6 +18,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import org.w3c.dom.Text;
+
 import java.text.DateFormat;
 
 import static com.example.workoutpixel.CommonFunctions.STATUS_NONE;
@@ -50,12 +52,14 @@ public class ViewWorkoutsActivity extends AppCompatActivity {
         }
 
         setContentView(R.layout.view_workouts);
+        TextView title = findViewById(R.id.widget_title);
+        title.setText(ManageSavedPreferences.loadTitle(context, appWidgetId));
 
         RecyclerView recyclerView = findViewById(R.id.recycler_view);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
         recyclerView.setLayoutManager(linearLayoutManager);
 
-        PastWorkoutsRecyclerViewAdapter pastWorkoutsRecyclerViewAdapter = new PastWorkoutsRecyclerViewAdapter(context);
+        PastWorkoutsRecyclerViewAdapter pastWorkoutsRecyclerViewAdapter = new PastWorkoutsRecyclerViewAdapter(context, appWidgetId);
         recyclerView.setAdapter(pastWorkoutsRecyclerViewAdapter);
 
         // Bind views

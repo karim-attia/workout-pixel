@@ -31,9 +31,7 @@ public class ClickedWorkout {
     public int getAppWidgetId() {
         return appWidgetId;
     }
-    public long getWorkoutTime() {
-        return workoutTime;
-    }
+    public long getWorkoutTime() { return workoutTime;    }
     public boolean isActive() { return active;    }
 
     public void setUid(int uid) {

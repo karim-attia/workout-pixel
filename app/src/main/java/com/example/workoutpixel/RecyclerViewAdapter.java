@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.cardview.widget.CardView;
@@ -49,7 +50,9 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         TextView widgetIntervalBlue;
         TextView widgetPreview;
         ImageView widgetEdit;
+        TextView widgetEditText;
         ImageView widgetPastWorkouts;
+        TextView widgetPastWorkoutsText;
 
         WidgetViewHolder(View itemView) {
             super(itemView);
@@ -59,7 +62,9 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             widgetIntervalBlue = itemView.findViewById(R.id.widget_interval);
             widgetPreview = itemView.findViewById(R.id.widget_preview);
             widgetEdit = itemView.findViewById(R.id.widget_edit);
+            widgetEditText = itemView.findViewById(R.id.widget_edit_text);
             widgetPastWorkouts = itemView.findViewById(R.id.widget_past_workouts);
+            widgetPastWorkoutsText = itemView.findViewById(R.id.widget_past_workout_text);
         }
     }
     @Override
@@ -77,7 +82,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     @Override
     public void onBindViewHolder(final WidgetViewHolder widgetViewHolder, final int i) {
         widgetViewHolder.widgetTitle.setText(widgets.get(i).getTitle());
-        widgetViewHolder.widgetLastWorkout.setText("Last click: " + lastWorkoutDateBeautiful(widgets.get(i).getLastWorkout()));
+        widgetViewHolder.widgetLastWorkout.setText(lastWorkoutDateBeautiful(widgets.get(i).getLastWorkout()));
         int intervalInDays = widgets.get(i).getIntervalBlue() / MILLISECONDS_IN_A_DAY;
         String text = "Every " + intervalInDays + " day";
         if (intervalInDays>1) {text += "s";}
@@ -91,19 +96,30 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             widgets.set(i, ManageSavedPreferences.loadWidget(context, widgets.get(i).getAppWidgetId()));
             notifyItemChanged(i);
         });
-        widgetViewHolder.widgetEdit.setOnClickListener (v -> {
-            int appWidgetId = widgets.get(i).getAppWidgetId();
-            Intent intent = new Intent(context, ConfigureActivity.class);
-            intent.setAction("APPWIDGET_RECONFIGURE");
-            intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
-            context.startActivity(intent);
-        });
-        widgetViewHolder.widgetPastWorkouts.setOnClickListener (v -> {
-            int appWidgetId = widgets.get(i).getAppWidgetId();
-            Intent intent = new Intent(context, ViewWorkoutsActivity.class);
-            intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
-            context.startActivity(intent);
-        });
+
+        View.OnClickListener editWidgetOnClickListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int appWidgetId = widgets.get(i).getAppWidgetId();
+                Intent intent = new Intent(context, ViewWorkoutsActivity.class);
+                intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
+                context.startActivity(intent);
+            }
+        };
+        View.OnClickListener viewWorkoutsOnClickListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int appWidgetId = widgets.get(i).getAppWidgetId();
+                Intent intent = new Intent(context, ViewWorkoutsActivity.class);
+                intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
+                context.startActivity(intent);
+            }
+        };
+
+        widgetViewHolder.widgetEdit.setOnClickListener (editWidgetOnClickListener);
+        widgetViewHolder.widgetEditText.setOnClickListener (editWidgetOnClickListener);
+        widgetViewHolder.widgetPastWorkouts.setOnClickListener (viewWorkoutsOnClickListener);
+        widgetViewHolder.widgetPastWorkoutsText.setOnClickListener (viewWorkoutsOnClickListener);
     }
 
     @Override

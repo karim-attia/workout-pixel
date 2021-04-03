@@ -183,12 +183,12 @@ public class ConfigureActivity extends AppCompatActivity {
         String widgetTitle = mAppWidgetText.getText().toString();
 
         if (showDateCheckbox.isChecked()) {
-            String lastWorkoutDateBeautiful = DateFormat.getDateInstance(DateFormat.SHORT).format(ManageSavedPreferences.loadLastWorkout(this, appWidgetId));
+            String lastWorkoutDateBeautiful = CommonFunctions.lastWorkoutDateBeautiful(ManageSavedPreferences.loadLastWorkout(this, appWidgetId));
             widgetTitle += "\n" + lastWorkoutDateBeautiful;
         }
 
         if (showTimeCheckbox.isChecked()) {
-            String lastWorkoutTimeBeautiful = DateFormat.getTimeInstance(DateFormat.SHORT).format(ManageSavedPreferences.loadLastWorkout(this, appWidgetId));
+            String lastWorkoutTimeBeautiful = CommonFunctions.lastWorkoutTimeBeautiful(ManageSavedPreferences.loadLastWorkout(this, appWidgetId));
             widgetTitle += "\n" + lastWorkoutTimeBeautiful;
         }
 

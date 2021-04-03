@@ -100,39 +100,40 @@ public class WidgetFunctions extends AppWidgetProvider {
         RemoteViews widgetView = new RemoteViews(context.getPackageName(), R.layout.workout_pixel);
 
         Widget widget = loadWidget(context, appWidgetId);
-        String oldStatus = widget.getStatus();
-        String newStatus = getNewStatus(widget.getLastWorkout(), widget.getIntervalBlue(), oldStatus);
+        String newStatus = getNewStatus(widget.getLastWorkout(), widget.getIntervalBlue());
         widget.setStatus(newStatus);
 
         setWidgetText(widgetView, widget);
 
-        if (!newStatus.equals(oldStatus)) {
-            switch (newStatus) {
-                case STATUS_BLUE:
-                    widgetView.setInt(R.id.appwidget_text, "setBackgroundResource", R.drawable.rounded_corner_blue);
-                    saveCurrentStatus(context, appWidgetId, newStatus);
-                    // runUpdate inside if statement, because if the status is green, it may update to a random last used color.
-                    runUpdate(context, appWidgetId, widgetView);
-                    Log.v(TAG, "set to blue");
-                    break;
-                case STATUS_RED:
-                    widgetView.setInt(R.id.appwidget_text, "setBackgroundResource", R.drawable.rounded_corner_red);
-                    saveCurrentStatus(context, appWidgetId, newStatus);
-                    // runUpdate inside if statement, because if the status is green, it may update to a random last used color.
-                    runUpdate(context, appWidgetId, widgetView);
-                    Log.v(TAG, "set to red");
-                    break;
-                case STATUS_GREEN:
-                    widgetView.setInt(R.id.appwidget_text, "setBackgroundResource", R.drawable.rounded_corner_green);
-                    saveCurrentStatus(context, appWidgetId, newStatus);
-                    // runUpdate inside if statement, because if the status is green, it may update to a random last used color.
-                    runUpdate(context, appWidgetId, widgetView);
-                    Log.v(TAG, "set to red");
-                    break;
-            }
-        }
-        else {
-            Log.v(TAG, "newStatus = oldStatus");
+        switch (newStatus) {
+            case STATUS_BLUE:
+                widgetView.setInt(R.id.appwidget_text, "setBackgroundResource", R.drawable.rounded_corner_blue);
+                saveCurrentStatus(context, appWidgetId, newStatus);
+                // runUpdate inside if statement, because if the status is green, it may update to a random last used color.
+                runUpdate(context, appWidgetId, widgetView);
+                Log.v(TAG, "set to blue");
+                break;
+            case STATUS_RED:
+                widgetView.setInt(R.id.appwidget_text, "setBackgroundResource", R.drawable.rounded_corner_red);
+                saveCurrentStatus(context, appWidgetId, newStatus);
+                // runUpdate inside if statement, because if the status is green, it may update to a random last used color.
+                runUpdate(context, appWidgetId, widgetView);
+                Log.v(TAG, "set to red");
+                break;
+            case STATUS_GREEN:
+                widgetView.setInt(R.id.appwidget_text, "setBackgroundResource", R.drawable.rounded_corner_green);
+                saveCurrentStatus(context, appWidgetId, newStatus);
+                // runUpdate inside if statement, because if the status is green, it may update to a random last used color.
+                runUpdate(context, appWidgetId, widgetView);
+                Log.v(TAG, "set to red");
+                break;
+            case STATUS_NONE:
+                widgetView.setInt(R.id.appwidget_text, "setBackgroundResource", R.drawable.rounded_corner_purple);
+                saveCurrentStatus(context, appWidgetId, newStatus);
+                // runUpdate inside if statement, because if the status is green, it may update to a random last used color.
+                runUpdate(context, appWidgetId, widgetView);
+                Log.v(TAG, "set to purple");
+                break;
         }
     }
 
@@ -161,7 +162,7 @@ public class WidgetFunctions extends AppWidgetProvider {
                 Log.v(TAG, "initiated red");
                 break;
             case STATUS_NONE:
-                widgetView.setInt(R.id.appwidget_text, "setBackgroundResource", R.drawable.rounded_corner_start);
+                widgetView.setInt(R.id.appwidget_text, "setBackgroundResource", R.drawable.rounded_corner_purple);
                 Log.v(TAG, "initiated purple");
                 break;
         }

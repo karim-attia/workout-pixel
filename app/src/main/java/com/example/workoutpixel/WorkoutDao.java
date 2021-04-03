@@ -5,6 +5,7 @@ import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
+import androidx.room.Update;
 
 import java.util.List;
 
@@ -14,8 +15,12 @@ public interface WorkoutDao {
     List<ClickedWorkout> getAll();
 
     // Return all workouts by appWidgetId
-    @Query("SELECT * FROM clickedWorkout WHERE appWidgetId=:appWidgetId")
+    @Query("SELECT * FROM clickedWorkout WHERE appWidgetId=:appWidgetId ORDER BY workoutTime DESC")
     List<ClickedWorkout> loadAllByAppWidgetId(int appWidgetId);
+
+    // Return all workouts by appWidgetId that are active
+    @Query("SELECT * FROM clickedWorkout WHERE appWidgetId=:appWidgetId AND active='1' ORDER BY workoutTime DESC")
+    List<ClickedWorkout> loadAllActiveByAppWidgetId(int appWidgetId);
 
 /*
     // Return only workoutTime from all workouts by appWidgetId
@@ -30,4 +35,12 @@ public interface WorkoutDao {
 
     @Delete
     void delete(ClickedWorkout clickedWorkout);
+
+    // Update active by Uid
+    // TODO: Query
+    // @Query("SELECT * FROM clickedWorkout WHERE uid=:uid")
+    // void updateActiveByUid(int uid, boolean active);
+
+    @Update
+    public void updateClickedWorkout(ClickedWorkout clickedWorkout);
 }
