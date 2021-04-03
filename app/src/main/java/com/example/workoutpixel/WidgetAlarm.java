@@ -28,14 +28,12 @@ public class WidgetAlarm {
         calendar.set(Calendar.MINUTE, 0);
         //calendar.set(Calendar.SECOND, 0);
         //calendar.set(Calendar.MILLISECOND, 0);
-        Log.v(TAG, "Alarm: " + dateTimeString(calendar.getTimeInMillis()));
         if (hourOfDay >= 3) {
             // Can be commented to test alarm -> it will come up more or less instantly after restart.
             calendar.setTimeInMillis(calendar.getTimeInMillis() + MILLISECONDS_IN_A_DAY);
-            Log.v(TAG, "Alarm: " + dateTimeString(calendar.getTimeInMillis()));
         }
 
-        Log.v(TAG, "STARTING_ALARM");
+        Log.d(TAG, "STARTING_ALARM " + dateTimeString(calendar.getTimeInMillis()));
 
         // RTC does not wake the device up
         alarmManager().setInexactRepeating(AlarmManager.RTC, calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pendingIntent());

@@ -101,7 +101,8 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             @Override
             public void onClick(View v) {
                 int appWidgetId = widgets.get(i).getAppWidgetId();
-                Intent intent = new Intent(context, ViewWorkoutsActivity.class);
+                Intent intent = new Intent(context, ConfigureActivity.class);
+                intent.setAction("APPWIDGET_RECONFIGURE");
                 intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
                 context.startActivity(intent);
             }

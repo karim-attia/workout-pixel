@@ -3,6 +3,7 @@ package com.example.workoutpixel;
 import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -12,6 +13,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -54,6 +56,12 @@ public class ViewWorkoutsActivity extends AppCompatActivity {
         setContentView(R.layout.view_workouts);
         TextView title = findViewById(R.id.widget_title);
         title.setText(ManageSavedPreferences.loadTitle(context, appWidgetId));
+        TextView date = findViewById(R.id.workout_date);
+        date.setTypeface(null, Typeface.BOLD);
+        TextView time = findViewById(R.id.workout_time);
+        time.setTypeface(null, Typeface.BOLD);
+        ImageView delete = findViewById(R.id.workout_delete);
+        delete.setImageResource(0);
 
         RecyclerView recyclerView = findViewById(R.id.recycler_view);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
