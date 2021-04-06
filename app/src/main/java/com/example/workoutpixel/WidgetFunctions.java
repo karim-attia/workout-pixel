@@ -46,7 +46,7 @@ public class WidgetFunctions extends AppWidgetProvider {
     @Override
     public void onReceive(Context context, Intent intent) {
         super.onReceive(context, intent);
-        Log.v(TAG, "ON_RECEIVE " + intent.getAction() + "\n------------------------------------------------------------------------");
+        Log.d(TAG, "ON_RECEIVE " + intent.getAction() + "\n------------------------------------------------------------------------");
 
         // Do this if the widget has been clicked
         if (ACTION_DONE_EXERCISE.equals(intent.getAction())){
@@ -57,7 +57,7 @@ public class WidgetFunctions extends AppWidgetProvider {
         // Do this when the alarm hits
         if (ACTION_ALARM_UPDATE.equals(intent.getAction())){
             for (int appWidgetId : appWidgetIds(context)) {
-                Log.v(TAG, "ACTION_AUTO_UPDATE for appWidgetId: " + appWidgetId);
+                Log.d(TAG, "ACTION_AUTO_UPDATE for appWidgetId: " + appWidgetId);
                 updateBasedOnNewStatus(context, appWidgetId);
                 // Sometimes the onClickListener in the widgets stop working. This resets the onClickListener every night with the alarm.
                 initiateBasedOnStatus(context, appWidgetId);
@@ -72,12 +72,9 @@ public class WidgetFunctions extends AppWidgetProvider {
         // This receives the appWidgetId
         long thisWorkoutTime = System.currentTimeMillis();
 
-        Log.v(TAG, "ACTION_DONE_EXERCISE " + appWidgetId + " start");
-        Log.v(TAG, "11");
+        Log.d(TAG, "ACTION_DONE_EXERCISE " + appWidgetId + " start");
         increaseNumberOfPastWorkouts(context, appWidgetId);
-        Log.v(TAG, "12");
         InteractWithClickedWorkouts.addNewWorkoutToDataBase(context, appWidgetId, thisWorkoutTime);
-        Log.v(TAG, "13");
 
         Widget widget = loadWidget(context, appWidgetId);
         widget.setStatus(STATUS_GREEN);

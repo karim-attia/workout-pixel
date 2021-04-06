@@ -32,7 +32,7 @@ public class CommonFunctions {
         long timeBlue = lastWorkout + interval - MILLISECONDS_IN_A_DAY;
         long timeRed = timeBlue + 2*MILLISECONDS_IN_A_DAY;
 
-        // Don't change the widget status if this is the first time the alarm runs and thus oldStatus == STATUS_NONE.
+        // Don't change the widget status if this is the first time the alarm runs and thus lastWorkout == 0L.
         if (lastWorkout == 0L) {
             Log.v(TAG, "GetNewStatus: " + STATUS_NONE);
             return STATUS_NONE;
