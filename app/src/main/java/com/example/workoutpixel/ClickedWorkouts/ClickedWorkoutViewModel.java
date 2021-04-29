@@ -1,4 +1,4 @@
-package com.example.workoutpixel;
+package com.example.workoutpixel.ClickedWorkouts;
 
 import android.app.Application;
 import android.content.Context;
@@ -7,6 +7,9 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
+
+import com.example.workoutpixel.Database.AppDatabase;
+import com.example.workoutpixel.Database.WorkoutDao;
 
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -32,16 +35,12 @@ public class ClickedWorkoutViewModel extends AndroidViewModel {
     }
 
     public static void updateClickedWorkout(Context context, ClickedWorkout clickedWorkout){
-        executorService.execute(() -> {
-            workoutDao(context).updateClickedWorkout(clickedWorkout);
-        });
+        executorService.execute(() -> workoutDao(context).updateClickedWorkout(clickedWorkout));
     }
 
     public static void insertClickedWorkout(Context context, int appWidgetId, long thisWorkoutTime){
         ClickedWorkout clickedWorkout = new ClickedWorkout(appWidgetId, thisWorkoutTime);
-        executorService.execute(() -> {
-            workoutDao(context).insertClickedWorkout(clickedWorkout);
-        });
+        executorService.execute(() -> workoutDao(context).insertClickedWorkout(clickedWorkout));
     }
 
     public static WorkoutDao workoutDao(Context context) {

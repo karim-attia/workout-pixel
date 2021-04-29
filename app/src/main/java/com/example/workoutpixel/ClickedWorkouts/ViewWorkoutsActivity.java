@@ -1,4 +1,4 @@
-package com.example.workoutpixel;
+package com.example.workoutpixel.ClickedWorkouts;
 
 import android.appwidget.AppWidgetManager;
 import android.content.Context;
@@ -12,6 +12,9 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.workoutpixel.ManageSavedPreferences;
+import com.example.workoutpixel.R;
 
 public class ViewWorkoutsActivity extends AppCompatActivity {
     private static final String TAG = "WORKOUT_PIXEL ViewWorkoutsActivity";
@@ -63,7 +66,7 @@ public class ViewWorkoutsActivity extends AppCompatActivity {
         ClickedWorkoutViewModel clickedWorkoutViewModel = new ClickedWorkoutViewModel(getApplication());
         // Create the observer which updates the UI.
         // Observe the LiveData, passing in this activity as the LifecycleOwner and the observer.
-        ClickedWorkoutViewModel.getClickedWorkoutsFromDbByAppWidgetId(context, appWidgetId).observe(this, posts -> pastWorkoutsRecyclerViewAdapter.setData(posts));
+        ClickedWorkoutViewModel.getClickedWorkoutsFromDbByAppWidgetId(context, appWidgetId).observe(this, pastWorkoutsRecyclerViewAdapter::setData);
     }
 
 

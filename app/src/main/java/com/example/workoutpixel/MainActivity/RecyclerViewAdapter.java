@@ -1,4 +1,4 @@
-package com.example.workoutpixel;
+package com.example.workoutpixel.MainActivity;
 
 import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
@@ -10,8 +10,16 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.workoutpixel.ClickedWorkouts.ViewWorkoutsActivity;
+import com.example.workoutpixel.ConfigureActivity;
+import com.example.workoutpixel.ManageSavedPreferences;
+import com.example.workoutpixel.R;
+import com.example.workoutpixel.Widget;
+import com.example.workoutpixel.WidgetFunctions;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -72,6 +80,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         return widgets.size();
     }
 
+    @NonNull
     @Override
     public WidgetViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
         View widgetView = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.cardview, viewGroup, false);
@@ -97,24 +106,18 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             notifyItemChanged(i);
         });
 
-        View.OnClickListener editWidgetOnClickListener = new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                int appWidgetId = widgets.get(i).getAppWidgetId();
-                Intent intent = new Intent(context, ConfigureActivity.class);
-                intent.setAction("APPWIDGET_RECONFIGURE");
-                intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
-                context.startActivity(intent);
-            }
+        View.OnClickListener editWidgetOnClickListener = v -> {
+            int appWidgetId = widgets.get(i).getAppWidgetId();
+            Intent intent = new Intent(context, ConfigureActivity.class);
+            intent.setAction("APPWIDGET_RECONFIGURE");
+            intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
+            context.startActivity(intent);
         };
-        View.OnClickListener viewWorkoutsOnClickListener = new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                int appWidgetId = widgets.get(i).getAppWidgetId();
-                Intent intent = new Intent(context, ViewWorkoutsActivity.class);
-                intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
-                context.startActivity(intent);
-            }
+        View.OnClickListener viewWorkoutsOnClickListener = v -> {
+            int appWidgetId = widgets.get(i).getAppWidgetId();
+            Intent intent = new Intent(context, ViewWorkoutsActivity.class);
+            intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
+            context.startActivity(intent);
         };
 
         widgetViewHolder.widgetEdit.setOnClickListener (editWidgetOnClickListener);
@@ -124,7 +127,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     }
 
     @Override
-    public void onAttachedToRecyclerView(RecyclerView recyclerView) {
+    public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
     }
 }

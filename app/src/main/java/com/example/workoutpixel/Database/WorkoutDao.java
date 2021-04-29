@@ -1,4 +1,4 @@
-package com.example.workoutpixel;
+package com.example.workoutpixel.Database;
 
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
@@ -7,6 +7,8 @@ import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 import androidx.room.Update;
+
+import com.example.workoutpixel.ClickedWorkouts.ClickedWorkout;
 
 import java.util.List;
 
@@ -43,7 +45,7 @@ public interface WorkoutDao {
     // void updateActiveByUid(int uid, boolean active);
 
     @Update
-    public void updateClickedWorkout(ClickedWorkout clickedWorkout);
+    void updateClickedWorkout(ClickedWorkout clickedWorkout);
 
     @Query("SELECT COUNT(appWidgetId) FROM clickedWorkout WHERE appWidgetId=:appWidgetId")
     LiveData<Integer> getCount(int appWidgetId);

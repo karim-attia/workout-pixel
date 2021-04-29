@@ -48,7 +48,7 @@ public class ManageSavedPreferences {
         deleteShowTime(context, appWidgetId);
     }
 
-    static Widget loadWidget(Context context, int appWidgetId) {
+    public static Widget loadWidget(Context context, int appWidgetId) {
         return new Widget(appWidgetId, loadTitle(context, appWidgetId), loadLastWorkout(context, appWidgetId), loadIntervalBlue(context, appWidgetId), loadIntervalRed(context, appWidgetId), loadShowDate(context, appWidgetId), loadShowTime(context, appWidgetId), loadCurrentStatus(context, appWidgetId));
     }
 
@@ -63,7 +63,7 @@ public class ManageSavedPreferences {
 
     // Read the prefix from the SharedPreferences object for this widget.
     // If there is no preference saved, get the default from a resource
-    static String loadTitle(Context context, int appWidgetId) {
+    public static String loadTitle(Context context, int appWidgetId) {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, 0);
         String titleValue = prefs.getString(PREF_PREFIX_KEY_TITLE + appWidgetId, null);
         if (titleValue != null) {
@@ -126,7 +126,7 @@ public class ManageSavedPreferences {
 
 
     // LAST WORKOUT
-    static void saveLastWorkout(Context context, int appWidgetId, Long timeLastWorkout) {
+    public static void saveLastWorkout(Context context, int appWidgetId, Long timeLastWorkout) {
         String timeLastWorkoutBeautiful = DateFormat.getDateTimeInstance().format(timeLastWorkout);
         SharedPreferences.Editor prefs = context.getSharedPreferences(PREFS_NAME, 0).edit();
         prefs.putLong(PREF_PREFIX_KEY_LAST_WORKOUT + appWidgetId, timeLastWorkout);

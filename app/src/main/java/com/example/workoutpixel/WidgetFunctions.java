@@ -10,6 +10,8 @@ import android.util.Log;
 import android.widget.RemoteViews;
 import android.widget.Toast;
 
+import com.example.workoutpixel.ClickedWorkouts.ClickedWorkoutViewModel;
+
 import static com.example.workoutpixel.CommonFunctions.STATUS_BLUE;
 import static com.example.workoutpixel.CommonFunctions.STATUS_GREEN;
 import static com.example.workoutpixel.CommonFunctions.STATUS_NONE;
@@ -41,7 +43,7 @@ public class WidgetFunctions extends AppWidgetProvider {
         // Also executed after phone restart
         initiateBasedOnStatus(context, appWidgetId);
         if(isNew) {Toast.makeText(context, "Widget created. Click on it to register a workout.", Toast.LENGTH_LONG).show();}
-        else if(!isNew) {Toast.makeText(context, "Widget updated.", Toast.LENGTH_LONG).show();}
+        else {Toast.makeText(context, "Widget updated.", Toast.LENGTH_LONG).show();}
     }
 
     // Create an Intent to set the action DONE_EXERCISE. This will be received in onReceive.
@@ -148,7 +150,7 @@ public class WidgetFunctions extends AppWidgetProvider {
     }
 
     // TODO: Combine again with updateBasedOnNewStatus so that it also updates the widgets based on the status
-    static void initiateBasedOnStatus(Context context, int appWidgetId) {
+    public static void initiateBasedOnStatus(Context context, int appWidgetId) {
         RemoteViews widgetView = new RemoteViews(context.getPackageName(), R.layout.workout_pixel);
 
         Widget widget = loadWidget(context, appWidgetId);

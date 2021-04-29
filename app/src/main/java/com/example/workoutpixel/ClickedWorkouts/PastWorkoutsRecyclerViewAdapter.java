@@ -1,4 +1,4 @@
-package com.example.workoutpixel;
+package com.example.workoutpixel.ClickedWorkouts;
 
 import android.content.Context;
 import android.graphics.Paint;
@@ -9,8 +9,13 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.workoutpixel.ManageSavedPreferences;
+import com.example.workoutpixel.R;
+import com.example.workoutpixel.WidgetFunctions;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -59,6 +64,7 @@ public class PastWorkoutsRecyclerViewAdapter extends RecyclerView.Adapter<PastWo
         return clickedWorkouts.size();
     }
 
+    @NonNull
     @Override
     public PastWorkoutsViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
         View PastWorkoutsView = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.workout_card, viewGroup, false);
@@ -79,7 +85,7 @@ public class PastWorkoutsRecyclerViewAdapter extends RecyclerView.Adapter<PastWo
             pastWorkoutsViewHolder.time.setPaintFlags(pastWorkoutsViewHolder.date.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
             pastWorkoutsViewHolder.delete.setImageResource(R.drawable.icon_undo);
         }
-        else if(isActive) {
+        else {
             pastWorkoutsViewHolder.date.setPaintFlags(0);
             pastWorkoutsViewHolder.time.setPaintFlags(0);
             pastWorkoutsViewHolder.delete.setImageResource(R.drawable.icon_delete);
@@ -115,7 +121,7 @@ public class PastWorkoutsRecyclerViewAdapter extends RecyclerView.Adapter<PastWo
     }
 
     @Override
-    public void onAttachedToRecyclerView(RecyclerView recyclerView) {
+    public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
     }
 }

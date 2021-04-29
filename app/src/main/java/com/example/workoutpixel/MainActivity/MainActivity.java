@@ -1,4 +1,4 @@
-package com.example.workoutpixel;
+package com.example.workoutpixel.MainActivity;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -6,6 +6,8 @@ import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.workoutpixel.R;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "WORKOUT_PIXEL_APP";

@@ -1,4 +1,4 @@
-package com.example.workoutpixel;
+package com.example.workoutpixel.ClickedWorkouts;
 
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
