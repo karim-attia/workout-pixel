@@ -10,8 +10,18 @@ import android.util.Log;
 import android.widget.RemoteViews;
 import android.widget.Toast;
 
-import static com.example.workoutpixel.ManageSavedPreferences.*;
-import static com.example.workoutpixel.CommonFunctions.*;
+import static com.example.workoutpixel.CommonFunctions.STATUS_BLUE;
+import static com.example.workoutpixel.CommonFunctions.STATUS_GREEN;
+import static com.example.workoutpixel.CommonFunctions.STATUS_NONE;
+import static com.example.workoutpixel.CommonFunctions.STATUS_RED;
+import static com.example.workoutpixel.CommonFunctions.getNewStatus;
+import static com.example.workoutpixel.CommonFunctions.widgetText;
+import static com.example.workoutpixel.ManageSavedPreferences.deleteAll;
+import static com.example.workoutpixel.ManageSavedPreferences.increaseNumberOfPastWorkouts;
+import static com.example.workoutpixel.ManageSavedPreferences.loadNumberOfPastWorkouts;
+import static com.example.workoutpixel.ManageSavedPreferences.loadWidget;
+import static com.example.workoutpixel.ManageSavedPreferences.saveCurrentStatus;
+import static com.example.workoutpixel.ManageSavedPreferences.saveLastWorkout;
 
 /**
  * Implementation of App Widget functionality.
@@ -73,8 +83,11 @@ public class WidgetFunctions extends AppWidgetProvider {
         long thisWorkoutTime = System.currentTimeMillis();
 
         Log.d(TAG, "ACTION_DONE_EXERCISE " + appWidgetId + " start");
+        // TODO: reflect deletion (=inactivation) of a workout in the count. Or just use count of active in DB.
         increaseNumberOfPastWorkouts(context, appWidgetId);
-        InteractWithClickedWorkouts.addNewWorkoutToDataBase(context, appWidgetId, thisWorkoutTime);
+
+        // Add the clicked workout to the database. Technicalities are taken care of in InteractWithClickedWorkouts.
+        ClickedWorkoutViewModel.insertClickedWorkout(context, appWidgetId, thisWorkoutTime);
 
         Widget widget = loadWidget(context, appWidgetId);
         widget.setStatus(STATUS_GREEN);

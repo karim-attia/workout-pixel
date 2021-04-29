@@ -5,27 +5,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
-import android.view.View;
-import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import org.w3c.dom.Text;
-
-import java.text.DateFormat;
-
-import static com.example.workoutpixel.CommonFunctions.STATUS_NONE;
-import static com.example.workoutpixel.CommonFunctions.getDrawableIntFromStatus;
 
 public class ViewWorkoutsActivity extends AppCompatActivity {
     private static final String TAG = "WORKOUT_PIXEL ViewWorkoutsActivity";
@@ -37,7 +23,7 @@ public class ViewWorkoutsActivity extends AppCompatActivity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        Log.v(TAG, "ON_CREATE");
+        Log.d(TAG, "ON_CREATE");
         super.onCreate(savedInstanceState);
 
         // Find the widget id  from the intent.
@@ -50,10 +36,12 @@ public class ViewWorkoutsActivity extends AppCompatActivity {
         // If this activity was started with an intent without an app widget ID, finish with an error.
         if (appWidgetId == AppWidgetManager.INVALID_APPWIDGET_ID) {
             finishAndRemoveTask();
+            Log.d(TAG, "AppWidgetId invalid.");
             return;
         }
 
         setContentView(R.layout.view_workouts);
+        // Bind views and set them
         TextView title = findViewById(R.id.widget_title);
         title.setText(ManageSavedPreferences.loadTitle(context, appWidgetId));
         TextView date = findViewById(R.id.workout_date);
@@ -68,10 +56,16 @@ public class ViewWorkoutsActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(linearLayoutManager);
 
         PastWorkoutsRecyclerViewAdapter pastWorkoutsRecyclerViewAdapter = new PastWorkoutsRecyclerViewAdapter(context, appWidgetId);
+        recyclerView.setHasFixedSize(true);
         recyclerView.setAdapter(pastWorkoutsRecyclerViewAdapter);
 
-        // Bind views
-
+        // Get Viewmodel
+        ClickedWorkoutViewModel clickedWorkoutViewModel = new ClickedWorkoutViewModel(getApplication());
+        // Create the observer which updates the UI.
+        // Observe the LiveData, passing in this activity as the LifecycleOwner and the observer.
+        ClickedWorkoutViewModel.getClickedWorkoutsFromDbByAppWidgetId(context, appWidgetId).observe(this, posts -> pastWorkoutsRecyclerViewAdapter.setData(posts));
     }
+
+
 }
 

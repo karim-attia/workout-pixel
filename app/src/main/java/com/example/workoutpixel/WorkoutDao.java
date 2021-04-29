@@ -1,5 +1,6 @@
 package com.example.workoutpixel;
 
+import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
@@ -16,11 +17,11 @@ public interface WorkoutDao {
 
     // Return all workouts by appWidgetId
     @Query("SELECT * FROM clickedWorkout WHERE appWidgetId=:appWidgetId ORDER BY workoutTime DESC")
-    List<ClickedWorkout> loadAllByAppWidgetId(int appWidgetId);
+    LiveData<List<ClickedWorkout>> loadAllByAppWidgetId(int appWidgetId);
 
     // Return all workouts by appWidgetId that are active
     @Query("SELECT * FROM clickedWorkout WHERE appWidgetId=:appWidgetId AND active='1' ORDER BY workoutTime DESC")
-    List<ClickedWorkout> loadAllActiveByAppWidgetId(int appWidgetId);
+    LiveData<List<ClickedWorkout>> loadAllActiveByAppWidgetId(int appWidgetId);
 
 /*
     // Return only workoutTime from all workouts by appWidgetId
@@ -43,4 +44,10 @@ public interface WorkoutDao {
 
     @Update
     public void updateClickedWorkout(ClickedWorkout clickedWorkout);
+
+    @Query("SELECT COUNT(appWidgetId) FROM clickedWorkout WHERE appWidgetId=:appWidgetId")
+    LiveData<Integer> getCount(int appWidgetId);
+
+    @Query("SELECT COUNT(appWidgetId) FROM clickedWorkout WHERE appWidgetId=:appWidgetId AND active='1'")
+    LiveData<Integer> getCountActive(int appWidgetId);
 }

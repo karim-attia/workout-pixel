@@ -16,9 +16,8 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import java.text.DateFormat;
-
-import static com.example.workoutpixel.CommonFunctions.*;
+import static com.example.workoutpixel.CommonFunctions.STATUS_NONE;
+import static com.example.workoutpixel.CommonFunctions.getDrawableIntFromStatus;
 
 /**
  * The configuration screen for the {@link WidgetFunctions WidgetFunctions} AppWidget.

@@ -1,7 +1,5 @@
 package com.example.workoutpixel;
 
-import android.appwidget.AppWidgetManager;
-import android.content.ComponentName;
 import android.content.Context;
 import android.graphics.Paint;
 import android.util.Log;
@@ -16,33 +14,32 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.example.workoutpixel.CommonFunctions.lastWorkoutDateBeautiful;
 import static com.example.workoutpixel.CommonFunctions.lastWorkoutTimeBeautiful;
 
 // RecyclerViewAdapter fills the card view in the MainActivity.
-public class PastWorkoutsRecyclerViewAdapter extends RecyclerView.Adapter<PastWorkoutsRecyclerViewAdapter.WidgetViewHolder>{
+public class PastWorkoutsRecyclerViewAdapter extends RecyclerView.Adapter<PastWorkoutsRecyclerViewAdapter.PastWorkoutsViewHolder>{
     private static final String TAG = "WORKOUT_PIXEL Past Workouts RVAdapter";
     int appWidgetId;
 
     Context context;
     List<ClickedWorkout> clickedWorkouts = new ArrayList<>();
+    List<ClickedWorkout> activeWorkoutsOrderedByWorkoutTime = new ArrayList<>();
 
     PastWorkoutsRecyclerViewAdapter(Context context, int appWidgetId){
         this.context = context;
-        // clickedWorkouts is 1-n and not by uid
-        clickedWorkouts = InteractWithClickedWorkouts.getClickedWorkoutsFromDbByAppWidgetId(context, appWidgetId);
         this.appWidgetId = appWidgetId;
     }
 
-    public static class WidgetViewHolder extends RecyclerView.ViewHolder {
+    public static class PastWorkoutsViewHolder extends RecyclerView.ViewHolder {
         CardView cardView;
         TextView date;
         TextView time;
         ImageView delete;
-        int appWidgetId;
 
-        WidgetViewHolder(View itemView) {
+        PastWorkoutsViewHolder(View itemView) {
             super(itemView);
             cardView = itemView.findViewById(R.id.card_view);
             date = itemView.findViewById(R.id.workout_date);
@@ -50,59 +47,71 @@ public class PastWorkoutsRecyclerViewAdapter extends RecyclerView.Adapter<PastWo
             delete = itemView.findViewById(R.id.workout_delete);
         }
     }
+
+    public void setData(List<ClickedWorkout> clickedWorkouts) {
+        this.clickedWorkouts = clickedWorkouts;
+        //this.activeWorkoutsOrderedByWorkoutTime = activeWorkoutsOrderedByWorkoutTime;
+        notifyDataSetChanged();
+    }
+
     @Override
     public int getItemCount() {
         return clickedWorkouts.size();
     }
 
     @Override
-    public WidgetViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
-        View widgetView = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.workout_card, viewGroup, false);
-        return new WidgetViewHolder(widgetView);
+    public PastWorkoutsViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
+        View PastWorkoutsView = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.workout_card, viewGroup, false);
+        return new PastWorkoutsViewHolder(PastWorkoutsView);
     }
 
     // onBindViewHolder sets all the parameters for an individual card view.
     @Override
-    public void onBindViewHolder(final WidgetViewHolder widgetViewHolder, final int i) {
-        widgetViewHolder.time.setText(lastWorkoutTimeBeautiful(clickedWorkouts.get(i).getWorkoutTime()));
-        widgetViewHolder.date.setText(lastWorkoutDateBeautiful(clickedWorkouts.get(i).getWorkoutTime()));
+    public void onBindViewHolder(final PastWorkoutsViewHolder pastWorkoutsViewHolder, final int i) {
+
+        pastWorkoutsViewHolder.time.setText(lastWorkoutTimeBeautiful(clickedWorkouts.get(i).getWorkoutTime()));
+        pastWorkoutsViewHolder.date.setText(lastWorkoutDateBeautiful(clickedWorkouts.get(i).getWorkoutTime()));
 
         boolean isActive = clickedWorkouts.get(i).isActive();
 
         if(!isActive) {
-            widgetViewHolder.date.setPaintFlags(widgetViewHolder.date.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-            widgetViewHolder.time.setPaintFlags(widgetViewHolder.date.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-            widgetViewHolder.delete.setImageResource(R.drawable.icon_undo);
+            pastWorkoutsViewHolder.date.setPaintFlags(pastWorkoutsViewHolder.date.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+            pastWorkoutsViewHolder.time.setPaintFlags(pastWorkoutsViewHolder.date.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+            pastWorkoutsViewHolder.delete.setImageResource(R.drawable.icon_undo);
         }
         else if(isActive) {
-            widgetViewHolder.date.setPaintFlags(0);
-            widgetViewHolder.time.setPaintFlags(0);
-            widgetViewHolder.delete.setImageResource(R.drawable.icon_delete);
+            pastWorkoutsViewHolder.date.setPaintFlags(0);
+            pastWorkoutsViewHolder.time.setPaintFlags(0);
+            pastWorkoutsViewHolder.delete.setImageResource(R.drawable.icon_delete);
         }
 
-        widgetViewHolder.delete.setOnClickListener (v -> {
-            // TODO: Set the LastWorkout based on the latest not-deleted workout
-
+        pastWorkoutsViewHolder.delete.setOnClickListener (v -> {
             // isActive is true if the workout has been active before the click of the delete button.
             clickedWorkouts.get(i).setActive(!isActive);
-            InteractWithClickedWorkouts.updateClickedWorkout(context, clickedWorkouts.get(i));
-            notifyItemChanged(i);
+            ClickedWorkoutViewModel.updateClickedWorkout(context, clickedWorkouts.get(i));
+            // notifyItemChanged(i);
+
+/*
+            activeWorkoutsOrderedByWorkoutTime.clear();
+            for (ClickedWorkout clickedWorkout  : clickedWorkouts) {
+                    if(clickedWorkout.active) activeWorkoutsOrderedByWorkoutTime.add(clickedWorkout);
+            }
+*/
+            activeWorkoutsOrderedByWorkoutTime = clickedWorkouts.stream().filter(clickedWorkout -> clickedWorkout.active).collect(Collectors.toList());
+
             long lastActiveWorkout;
-
-            List<ClickedWorkout> activeWorkoutsOrderedByWorkoutTime = InteractWithClickedWorkouts.workoutDao(context).loadAllActiveByAppWidgetId(appWidgetId);
-
             if(activeWorkoutsOrderedByWorkoutTime.size() > 0) {
                 lastActiveWorkout = activeWorkoutsOrderedByWorkoutTime.get(0).getWorkoutTime();
-                Log.v(TAG, "Size: " + InteractWithClickedWorkouts.workoutDao(context).loadAllActiveByAppWidgetId(appWidgetId).size());
+                Log.v(TAG, "Size: " + activeWorkoutsOrderedByWorkoutTime.size());
             }
             else {
                 lastActiveWorkout = 0L;
-                Log.v(TAG, "No remaining workout");
+                Log.v(TAG, "Size: " + activeWorkoutsOrderedByWorkoutTime.size() + ", no remaining workout");
             }
             ManageSavedPreferences.saveLastWorkout(context, appWidgetId, lastActiveWorkout);
             WidgetFunctions.updateBasedOnNewStatus(context, appWidgetId);
-
         });
+
     }
 
     @Override

@@ -4,12 +4,10 @@ import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.cardview.widget.CardView;
@@ -18,7 +16,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.example.workoutpixel.CommonFunctions.*;
+import static com.example.workoutpixel.CommonFunctions.getDrawableIntFromStatus;
+import static com.example.workoutpixel.CommonFunctions.lastWorkoutDateBeautiful;
+import static com.example.workoutpixel.CommonFunctions.widgetText;
 
 // RecyclerViewAdapter fills the card view in the MainActivity.
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.WidgetViewHolder>{

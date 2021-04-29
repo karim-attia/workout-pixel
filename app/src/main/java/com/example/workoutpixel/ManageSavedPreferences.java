@@ -6,8 +6,6 @@ import android.util.Log;
 
 import java.text.DateFormat;
 
-import static com.example.workoutpixel.CommonFunctions.STATUS_NONE;
-
 // ManageSavedPreferences manages the preferences for every widget. This is either done through the appWidgetId of the widget or through a Widget object.
 public class ManageSavedPreferences {
     private static final String PREFS_NAME = "com.example.WorkoutPixel";
