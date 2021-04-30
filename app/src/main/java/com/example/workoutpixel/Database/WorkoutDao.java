@@ -22,8 +22,8 @@ public interface WorkoutDao {
     LiveData<List<ClickedWorkout>> loadAllByAppWidgetId(int appWidgetId);
 
     // Return all workouts by appWidgetId that are active
-    @Query("SELECT * FROM clickedWorkout WHERE appWidgetId=:appWidgetId AND active='1' ORDER BY workoutTime DESC")
-    LiveData<List<ClickedWorkout>> loadAllActiveByAppWidgetId(int appWidgetId);
+    @Query("SELECT COUNT() FROM clickedWorkout WHERE appWidgetId=:appWidgetId AND active='1'")
+    int getCountOfActiveClickedWorkouts(int appWidgetId);
 
 /*
     // Return only workoutTime from all workouts by appWidgetId

@@ -18,7 +18,7 @@ import java.util.concurrent.Executors;
 public class ClickedWorkoutViewModel extends AndroidViewModel {
     private static final String TAG = "WORKOUT_PIXEL InteractWithClickedWorkouts";
 
-    private static final ExecutorService executorService = Executors.newSingleThreadExecutor();
+    public static final ExecutorService executorService = Executors.newSingleThreadExecutor();
 
     public ClickedWorkoutViewModel(@NonNull Application application) {
         super(application);
@@ -29,9 +29,9 @@ public class ClickedWorkoutViewModel extends AndroidViewModel {
         return workoutDao(context).loadAllByAppWidgetId(appWidgetId);
     }
 
-    public static LiveData<List<ClickedWorkout>> getAllActiveClickedWorkoutsFromDbByAppWidgetId (Context context, int appWidgetId){
-        Log.v(TAG, "getClickedWorkoutsFromDbByAppWidgetId ");
-        return workoutDao(context).loadAllActiveByAppWidgetId(appWidgetId);
+    public static int getCountOfActiveClickedWorkouts (Context context, int appWidgetId){
+        Log.v(TAG, "getCountOfActiveClickedWorkouts ");
+        return workoutDao(context).getCountOfActiveClickedWorkouts(appWidgetId);
     }
 
     public static void updateClickedWorkout(Context context, ClickedWorkout clickedWorkout){

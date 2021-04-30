@@ -6,6 +6,8 @@ import android.appwidget.AppWidgetProvider;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.widget.RemoteViews;
 import android.widget.Toast;
@@ -20,7 +22,6 @@ import static com.example.workoutpixel.CommonFunctions.getNewStatus;
 import static com.example.workoutpixel.CommonFunctions.widgetText;
 import static com.example.workoutpixel.ManageSavedPreferences.deleteAll;
 import static com.example.workoutpixel.ManageSavedPreferences.increaseNumberOfPastWorkouts;
-import static com.example.workoutpixel.ManageSavedPreferences.loadNumberOfPastWorkouts;
 import static com.example.workoutpixel.ManageSavedPreferences.loadWidget;
 import static com.example.workoutpixel.ManageSavedPreferences.saveCurrentStatus;
 import static com.example.workoutpixel.ManageSavedPreferences.saveLastWorkout;
@@ -31,10 +32,9 @@ import static com.example.workoutpixel.ManageSavedPreferences.saveLastWorkout;
  */
 public class WidgetFunctions extends AppWidgetProvider {
 
+    public static final String ACTION_ALARM_UPDATE = "ALARM_UPDATE";
     // TODO: Replace strings with enums?
     private static final String ACTION_DONE_EXERCISE = "DONE_EXERCISE";
-    public static final String ACTION_ALARM_UPDATE = "ALARM_UPDATE";
-
     private static final String TAG = "WORKOUT_PIXEL_MAIN";
 
     // Updates the widget from the configuration activity.
@@ -42,8 +42,11 @@ public class WidgetFunctions extends AppWidgetProvider {
         Log.v(TAG, "UPDATE_APP_WIDGET. appWidgetId: " + appWidgetId);
         // Also executed after phone restart
         initiateBasedOnStatus(context, appWidgetId);
-        if(isNew) {Toast.makeText(context, "Widget created. Click on it to register a workout.", Toast.LENGTH_LONG).show();}
-        else {Toast.makeText(context, "Widget updated.", Toast.LENGTH_LONG).show();}
+        if (isNew) {
+            Toast.makeText(context, "Widget created. Click on it to register a workout.", Toast.LENGTH_LONG).show();
+        } else if (!isNew) {
+            Toast.makeText(context, "Widget updated.", Toast.LENGTH_LONG).show();
+        }
     }
 
     // Create an Intent to set the action DONE_EXERCISE. This will be received in onReceive.
@@ -53,28 +56,6 @@ public class WidgetFunctions extends AppWidgetProvider {
         // put the appWidgetId as an extra to the update intent
         intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, intentAppWidgetId);
         return PendingIntent.getBroadcast(context, intentAppWidgetId, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-    }
-
-    @Override
-    public void onReceive(Context context, Intent intent) {
-        super.onReceive(context, intent);
-        Log.d(TAG, "ON_RECEIVE " + intent.getAction() + "\n------------------------------------------------------------------------");
-
-        // Do this if the widget has been clicked
-        if (ACTION_DONE_EXERCISE.equals(intent.getAction())){
-            int appWidgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, 0);
-            updateAfterClick(context, appWidgetId);
-        }
-
-        // Do this when the alarm hits
-        if (ACTION_ALARM_UPDATE.equals(intent.getAction())){
-            for (int appWidgetId : appWidgetIds(context)) {
-                Log.d(TAG, "ACTION_AUTO_UPDATE for appWidgetId: " + appWidgetId);
-                updateBasedOnNewStatus(context, appWidgetId);
-                // Sometimes the onClickListener in the widgets stop working. This resets the onClickListener every night with the alarm.
-                initiateBasedOnStatus(context, appWidgetId);
-            }
-        }
     }
 
     public static void updateAfterClick(Context context, int appWidgetId) {
@@ -100,11 +81,19 @@ public class WidgetFunctions extends AppWidgetProvider {
 
         setWidgetText(widgetView, widget);
         widgetView.setInt(R.id.appwidget_text, "setBackgroundResource", R.drawable.rounded_corner_green);
-        Toast.makeText(context, "Oh yeah! Already done this " + loadNumberOfPastWorkouts(context, appWidgetId) + " times. :)", Toast.LENGTH_LONG).show();
+
+        ClickedWorkoutViewModel.executorService.execute(() -> {
+            int numberOfPastWorkouts = ClickedWorkoutViewModel.getCountOfActiveClickedWorkouts(context, appWidgetId);
+            Handler handler = new Handler(Looper.getMainLooper());
+            handler.post(() -> {
+                // toast(context, numberOfPastWorkouts);
+                Toast.makeText(context, "Oh yeah! Already done this " + numberOfPastWorkouts + " times. :)", Toast.LENGTH_LONG).show();
+            });
+        });
 
         // Instruct the widget manager to update the widget
-        runUpdate (context, appWidgetId, widgetView);
-        Log.v(TAG, "ACTION_DONE_EXERCISE "+appWidgetId +" complete\n------------------------------------------------------------------------");
+        runUpdate(context, appWidgetId, widgetView);
+        Log.v(TAG, "ACTION_DONE_EXERCISE " + appWidgetId + " complete\n------------------------------------------------------------------------");
     }
 
     public static void updateBasedOnNewStatus(Context context, int appWidgetId) {
@@ -178,13 +167,12 @@ public class WidgetFunctions extends AppWidgetProvider {
                 Log.v(TAG, "initiated purple");
                 break;
         }
-        runUpdate (context, appWidgetId, widgetView);
+        runUpdate(context, appWidgetId, widgetView);
     }
 
     private static void setWidgetText(RemoteViews widgetView, Widget widget) {
         widgetView.setTextViewText(R.id.appwidget_text, widgetText(widget));
     }
-
 
     private static int[] appWidgetIds(Context context) {
         ComponentName thisAppWidget = new ComponentName(context.getPackageName(), WidgetFunctions.class.getName());
@@ -192,9 +180,31 @@ public class WidgetFunctions extends AppWidgetProvider {
     }
 
     // Make sure to always set both the text and the background of the widget because otherwise it gets updated to some random old version.
-    private static void runUpdate (Context context, int appWidgetId, RemoteViews widgetView) {
+    private static void runUpdate(Context context, int appWidgetId, RemoteViews widgetView) {
         // final Context context1 = WorkoutPixelConfigureActivity.this;
         AppWidgetManager.getInstance(context).updateAppWidget(appWidgetId, widgetView);
+    }
+
+    @Override
+    public void onReceive(Context context, Intent intent) {
+        super.onReceive(context, intent);
+        Log.d(TAG, "ON_RECEIVE " + intent.getAction() + "\n------------------------------------------------------------------------");
+
+        // Do this if the widget has been clicked
+        if (ACTION_DONE_EXERCISE.equals(intent.getAction())) {
+            int appWidgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, 0);
+            updateAfterClick(context, appWidgetId);
+        }
+
+        // Do this when the alarm hits
+        if (ACTION_ALARM_UPDATE.equals(intent.getAction())) {
+            for (int appWidgetId : appWidgetIds(context)) {
+                Log.d(TAG, "ACTION_AUTO_UPDATE for appWidgetId: " + appWidgetId);
+                updateBasedOnNewStatus(context, appWidgetId);
+                // Sometimes the onClickListener in the widgets stop working. This resets the onClickListener every night with the alarm.
+                initiateBasedOnStatus(context, appWidgetId);
+            }
+        }
     }
 
     @Override

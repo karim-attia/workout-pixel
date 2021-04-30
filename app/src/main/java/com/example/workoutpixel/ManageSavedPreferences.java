@@ -7,6 +7,7 @@ import android.util.Log;
 import java.text.DateFormat;
 
 // ManageSavedPreferences manages the preferences for every widget. This is either done through the appWidgetId of the widget or through a Widget object.
+// Could move them all to the database into a new table at some point
 public class ManageSavedPreferences {
     private static final String PREFS_NAME = "com.example.WorkoutPixel";
     private static final String PREF_PREFIX_KEY_TITLE = "appwidget_title_";
