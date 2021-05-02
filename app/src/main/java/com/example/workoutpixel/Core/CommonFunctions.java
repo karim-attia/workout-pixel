@@ -55,13 +55,19 @@ public class CommonFunctions {
     public static int getDrawableIntFromStatus(String status) {
         switch (status) {
             case STATUS_GREEN:
+                Log.v(TAG, "set to green");
                 return R.drawable.rounded_corner_green;
             case STATUS_BLUE:
+                Log.v(TAG, "set to blue");
                 return R.drawable.rounded_corner_blue;
             case STATUS_RED:
+                Log.v(TAG, "set to red");
                 return R.drawable.rounded_corner_red;
             case STATUS_NONE:
+                Log.v(TAG, "set to purple");
                 return R.drawable.rounded_corner_purple;
+            default:
+                Log.d(TAG, "newStatus not correctly assigned.");
         }
         return 0;
     }

@@ -17,10 +17,7 @@ import com.example.workoutpixel.R;
 
 import java.util.List;
 
-import static com.example.workoutpixel.Core.CommonFunctions.STATUS_BLUE;
 import static com.example.workoutpixel.Core.CommonFunctions.STATUS_GREEN;
-import static com.example.workoutpixel.Core.CommonFunctions.STATUS_NONE;
-import static com.example.workoutpixel.Core.CommonFunctions.STATUS_RED;
 import static com.example.workoutpixel.Core.CommonFunctions.getNewStatus;
 import static com.example.workoutpixel.Core.CommonFunctions.widgetText;
 
@@ -29,7 +26,6 @@ import static com.example.workoutpixel.Core.CommonFunctions.widgetText;
  * App Widget Configuration implemented in {@link ConfigureActivity WorkoutPixelConfigureActivity}
  */
 
-// TODO pass Widget object instead of appWidgetId and minimize DB interaction
 public class WidgetFunctions extends AppWidgetProvider {
 
     public static final String ACTION_ALARM_UPDATE = "ALARM_UPDATE";
@@ -47,18 +43,17 @@ public class WidgetFunctions extends AppWidgetProvider {
     }
 
     public static void updateAfterClick(Context context, Widget widget) {
+        Log.d(TAG, "ACTION_DONE_EXERCISE " + widget.getAppWidgetId() + " " + widget.getTitle() + " start");
         RemoteViews widgetView = new RemoteViews(context.getPackageName(), R.layout.workout_pixel);
 
         long thisWorkoutTime = System.currentTimeMillis();
 
-        Log.d(TAG, "ACTION_DONE_EXERCISE " + widget.getAppWidgetId() + " " + widget.getTitle() + " start");
 
         // Add the workout to the database. Technicalities are taken care of in PastWorkoutsViewModel.
         PastWorkoutsViewModel.insertClickedWorkout(context, widget.getAppWidgetId(), thisWorkoutTime);
 
         widget.setStatus(STATUS_GREEN);
         widget.setLastWorkout(thisWorkoutTime);
-        // saveAll(context, widget);
         ManageSavedPreferences.updateWidget(context, widget);
 
         setWidgetText(widgetView, widget);
@@ -73,70 +68,20 @@ public class WidgetFunctions extends AppWidgetProvider {
         Log.d(TAG, "ACTION_DONE_EXERCISE " + widget.getAppWidgetId() + " " + widget.getTitle() + " complete\n------------------------------------------------------------------------");
     }
 
-    public static void updateBasedOnNewStatus(Context context, Widget widget) {
+    public static void updateWidgetBasedOnNewStatus(Context context, Widget widget) {
         Log.d(TAG, "updateBasedOnStatus: " + widget.getAppWidgetId() + " " + widget.getTitle() + "\n------------------------------------------------------------------------");
         RemoteViews widgetView = new RemoteViews(context.getPackageName(), R.layout.workout_pixel);
 
-        String newStatus = getNewStatus(widget.getLastWorkout(), widget.getIntervalBlue());
-        widget.setStatus(newStatus);
+        widget.setStatus(getNewStatus(widget.getLastWorkout(), widget.getIntervalBlue()));
 
+        // Set an onClickListener for every widget: https://stackoverflow.com/questions/30174386/multiple-instances-of-widget-with-separated-working-clickable-imageview
+        // Sometimes the onClickListener in the widgets stop working. This also resets the onClickListener every night with the alarm.
+        widgetView.setOnClickPendingIntent(R.id.appwidget_text, widgetPendingIntent(context, widget.getAppWidgetId()));
         setWidgetText(widgetView, widget);
 
-        switch (newStatus) {
-            case STATUS_BLUE:
-                widgetView.setInt(R.id.appwidget_text, "setBackgroundResource", R.drawable.rounded_corner_blue);
-                Log.v(TAG, "set to blue");
-                break;
-            case STATUS_RED:
-                widgetView.setInt(R.id.appwidget_text, "setBackgroundResource", R.drawable.rounded_corner_red);
-                Log.v(TAG, "set to red");
-                break;
-            case STATUS_GREEN:
-                widgetView.setInt(R.id.appwidget_text, "setBackgroundResource", R.drawable.rounded_corner_green);
-                Log.v(TAG, "set to green");
-                break;
-            case STATUS_NONE:
-                widgetView.setInt(R.id.appwidget_text, "setBackgroundResource", R.drawable.rounded_corner_purple);
-                Log.v(TAG, "set to purple");
-                break;
-            default:
-                Log.d(TAG, "newStatus not correctly assigned.");
-        }
+        widgetView.setInt(R.id.appwidget_text, "setBackgroundResource", CommonFunctions.getDrawableIntFromStatus(widget.getStatus()));
         ManageSavedPreferences.updateWidget(context, widget);
         runUpdate(context, widget.getAppWidgetId(), widgetView);
-    }
-
-    // TODO: Combine again with updateBasedOnNewStatus so that it also updates the widgets based on the status
-    public static void initiateBasedOnStatus(Context context, Widget widget) {
-        Log.d(TAG, "initiateBasedOnStatus");
-        RemoteViews widgetView = new RemoteViews(context.getPackageName(), R.layout.workout_pixel);
-
-        if (widget != null) {
-
-            // Set an onClickListener for every widget: https://stackoverflow.com/questions/30174386/multiple-instances-of-widget-with-separated-working-clickable-imageview
-            widgetView.setOnClickPendingIntent(R.id.appwidget_text, widgetPendingIntent(context, widget.getAppWidgetId()));
-            setWidgetText(widgetView, widget);
-
-            switch (widget.getStatus()) {
-                case STATUS_GREEN:
-                    widgetView.setInt(R.id.appwidget_text, "setBackgroundResource", R.drawable.rounded_corner_green);
-                    Log.v(TAG, "initiated green");
-                    break;
-                case STATUS_BLUE:
-                    widgetView.setInt(R.id.appwidget_text, "setBackgroundResource", R.drawable.rounded_corner_blue);
-                    Log.v(TAG, "initiated blue");
-                    break;
-                case STATUS_RED:
-                    widgetView.setInt(R.id.appwidget_text, "setBackgroundResource", R.drawable.rounded_corner_red);
-                    Log.v(TAG, "initiated red");
-                    break;
-                case STATUS_NONE:
-                    widgetView.setInt(R.id.appwidget_text, "setBackgroundResource", R.drawable.rounded_corner_purple);
-                    Log.v(TAG, "initiated purple");
-                    break;
-            }
-            runUpdate(context, widget.getAppWidgetId(), widgetView);
-        }
     }
 
     private static void setWidgetText(RemoteViews widgetView, Widget widget) {
@@ -166,9 +111,7 @@ public class WidgetFunctions extends AppWidgetProvider {
             List<Widget> widgetList = ManageSavedPreferences.loadAllWidgets(context);
             for (Widget widget : widgetList) {
                 Log.d(TAG, "ACTION_AUTO_UPDATE for appWidgetId: " + widget.getAppWidgetId());
-                updateBasedOnNewStatus(context, widget);
-                // Sometimes the onClickListener in the widgets stop working. This resets the onClickListener every night with the alarm.
-                initiateBasedOnStatus(context, widget);
+                updateWidgetBasedOnNewStatus(context, widget);
             }
         }
     }
@@ -189,7 +132,7 @@ public class WidgetFunctions extends AppWidgetProvider {
         for (Widget widget : widgetList) {
             // Tell the AppWidgetManager to perform an update on the current app widget
             Log.v(TAG, "ON_UPDATE: " + widget.getAppWidgetId());
-            initiateBasedOnStatus(context, widget);
+            updateWidgetBasedOnNewStatus(context, widget);
         }
     }
 

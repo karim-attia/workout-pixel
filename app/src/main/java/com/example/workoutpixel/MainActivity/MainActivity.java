@@ -23,22 +23,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
-        boolean isRequestPinAppWidgetSupported = AppWidgetManager.getInstance(context).isRequestPinAppWidgetSupported();
-
-
-        ComponentName myProvider =
-                new ComponentName(context, WidgetFunctions.class);
-
-
-        Button addWidget = findViewById(R.id.add_button);
-        addWidget.setOnClickListener(v -> {
-            Toast.makeText(context, " " + isRequestPinAppWidgetSupported, Toast.LENGTH_SHORT).show();
-            appWidgetManager.requestPinAppWidget(myProvider, null, null);
-        });
-
-
         setContent();
     }
 
