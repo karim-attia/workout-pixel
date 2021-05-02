@@ -22,6 +22,7 @@ import com.example.workoutpixel.R;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.example.workoutpixel.Core.CommonFunctions.STATUS_GREEN;
 import static com.example.workoutpixel.Core.CommonFunctions.getDrawableIntFromStatus;
 import static com.example.workoutpixel.Core.CommonFunctions.lastWorkoutDateBeautiful;
 import static com.example.workoutpixel.Core.CommonFunctions.widgetText;
@@ -32,7 +33,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
     private final int MILLISECONDS_IN_A_DAY = 24 * 60 * 60 * 1000;
     Context context;
-    List<Widget> widgets = new ArrayList<>();
+    List<Widget> widgets;
 
 /*
     private static int[] appWidgetIds(Context context) {
@@ -44,6 +45,8 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
     RecyclerViewAdapter(Context context) {
         this.context = context;
+        widgets = ManageSavedPreferences.loadAllWidgets(context);
+
 /*
         for (int appWidgetId : appWidgetIds(context)) {
             widgets.add(ManageSavedPreferences.loadWidget(context, appWidgetId));
@@ -86,11 +89,10 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         widgetViewHolder.widgetPreview.setOnClickListener(v -> {
             // Update the widget the same way as a click on the widget would.
             WidgetFunctions.updateAfterClick(context, widgets.get(i));
-            // This also updates the preferences for the widget. This is used to update the according element in the widget array in this class so that the main view also gets updated immediately.
-            // Not needed after there is an observer on all items anyway
-            // widgets.set(i, ManageSavedPreferences.loadWidget(context, widgets.get(i).getAppWidgetId()));
-            // Not needed after there is an observer on all items anyway
-            // notifyItemChanged(i);
+            widgets.get(i).setLastWorkout(System.currentTimeMillis());
+            widgets.get(i).setStatus(STATUS_GREEN);
+            // Not needed if there is an observer on all items in the MainActivity
+            notifyItemChanged(i);
         });
 
         View.OnClickListener editWidgetOnClickListener = v -> {

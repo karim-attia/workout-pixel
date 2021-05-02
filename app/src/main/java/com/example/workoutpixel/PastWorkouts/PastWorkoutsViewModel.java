@@ -36,6 +36,7 @@ public class PastWorkoutsViewModel extends AndroidViewModel {
         CommonFunctions.executorService.execute(() -> workoutDao(context).updatePastWorkout(clickedWorkout));
     }
 
+    // Better to do by uid?
     public static void insertClickedWorkout(Context context, int appWidgetId, long thisWorkoutTime) {
         PastWorkout clickedWorkout = new PastWorkout(appWidgetId, thisWorkoutTime);
         CommonFunctions.executorService.execute(() -> workoutDao(context).insertPastWorkout(clickedWorkout));

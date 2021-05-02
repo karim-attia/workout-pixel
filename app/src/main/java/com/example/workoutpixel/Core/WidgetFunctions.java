@@ -49,10 +49,9 @@ public class WidgetFunctions extends AppWidgetProvider {
     public static void updateAfterClick(Context context, Widget widget) {
         RemoteViews widgetView = new RemoteViews(context.getPackageName(), R.layout.workout_pixel);
 
-        // This receives the appWidgetId
         long thisWorkoutTime = System.currentTimeMillis();
 
-        Log.d(TAG, "ACTION_DONE_EXERCISE " + widget.getAppWidgetId() + " start");
+        Log.d(TAG, "ACTION_DONE_EXERCISE " + widget.getAppWidgetId() + " " + widget.getTitle() + " start");
 
         // Add the workout to the database. Technicalities are taken care of in PastWorkoutsViewModel.
         PastWorkoutsViewModel.insertClickedWorkout(context, widget.getAppWidgetId(), thisWorkoutTime);
@@ -71,11 +70,11 @@ public class WidgetFunctions extends AppWidgetProvider {
         // Instruct the widget manager to update the widget
         runUpdate(context, widget.getAppWidgetId(), widgetView);
 
-        Log.d(TAG, "ACTION_DONE_EXERCISE " + widget.getAppWidgetId() + " complete\n------------------------------------------------------------------------");
+        Log.d(TAG, "ACTION_DONE_EXERCISE " + widget.getAppWidgetId() + " " + widget.getTitle() + " complete\n------------------------------------------------------------------------");
     }
 
     public static void updateBasedOnNewStatus(Context context, Widget widget) {
-        Log.d(TAG, "updateBasedOnStatus: " + widget.getAppWidgetId() + "\n------------------------------------------------------------------------");
+        Log.d(TAG, "updateBasedOnStatus: " + widget.getAppWidgetId() + " " + widget.getTitle() + "\n------------------------------------------------------------------------");
         RemoteViews widgetView = new RemoteViews(context.getPackageName(), R.layout.workout_pixel);
 
         String newStatus = getNewStatus(widget.getLastWorkout(), widget.getIntervalBlue());
@@ -142,11 +141,6 @@ public class WidgetFunctions extends AppWidgetProvider {
 
     private static void setWidgetText(RemoteViews widgetView, Widget widget) {
         widgetView.setTextViewText(R.id.appwidget_text, widgetText(widget));
-    }
-
-    private static int[] appWidgetIds(Context context) {
-        ComponentName thisAppWidget = new ComponentName(context.getPackageName(), WidgetFunctions.class.getName());
-        return AppWidgetManager.getInstance(context).getAppWidgetIds(thisAppWidget);
     }
 
     // Make sure to always set both the text and the background of the widget because otherwise it gets updated to some random old version.
@@ -237,6 +231,12 @@ public class WidgetFunctions extends AppWidgetProvider {
             Log.v(TAG, "STOPPED_ALARM");
         }
     }
+
+    private static int[] appWidgetIds(Context context) {
+        ComponentName thisAppWidget = new ComponentName(context.getPackageName(), WidgetFunctions.class.getName());
+        return AppWidgetManager.getInstance(context).getAppWidgetIds(thisAppWidget);
+    }
+
 }
 
 

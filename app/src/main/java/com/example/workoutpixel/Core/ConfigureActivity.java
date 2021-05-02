@@ -121,9 +121,6 @@ public class ConfigureActivity extends AppCompatActivity {
             // Disable the back button in the app bar.
             getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         }
-        Log.d(TAG, "A");
-
-        Log.d(TAG, "B");
 
         // Bind views
         TextView introText = findViewById(R.id.configure_activity_intro_text);
@@ -141,9 +138,7 @@ public class ConfigureActivity extends AppCompatActivity {
         if (isReconfigure) {
             // Don't show the initial text if the user edits the widget.
             introText.setVisibility(View.GONE);
-            Log.d(TAG, "0");
             widget = ManageSavedPreferences.loadWidgetByAppWidgetId(context, widget.getAppWidgetId());
-            Log.d(TAG, "1");
             mAppWidgetText.setText(widget.getTitle());
             intervalInDays = widget.getIntervalBlue() / (24 * 60 * 60 * 1000);
             showDateCheckbox.setChecked(widget.getShowDate());
@@ -151,10 +146,8 @@ public class ConfigureActivity extends AppCompatActivity {
 
             addAndUpdateButton.setText(R.string.add_widget_reconfigure);
         }
-        Log.d(TAG, "3");
 
         goalIntervalTextView.setText(String.valueOf(intervalInDays));
-        Log.d(TAG, "4");
 
         // Make plus and minus button work
         minusButtonInterval.setOnClickListener(v -> {
@@ -177,7 +170,6 @@ public class ConfigureActivity extends AppCompatActivity {
             }
         });
 
-        Log.d(TAG, "ierfj");
         // Preview
         if (isReconfigure)
             preview.setBackgroundResource(getDrawableIntFromStatus(widget.getStatus()));
