@@ -1,14 +1,25 @@
-package com.example.workoutpixel;
+package com.example.workoutpixel.MainActivity;
 
+import android.app.Application;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.util.Log;
 
-import java.text.DateFormat;
+import androidx.annotation.NonNull;
+import androidx.lifecycle.AndroidViewModel;
+import androidx.lifecycle.LiveData;
+
+import com.example.workoutpixel.Database.AppDatabase;
+import com.example.workoutpixel.Database.Widget;
+import com.example.workoutpixel.Database.WorkoutDao;
+
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 // ManageSavedPreferences manages the preferences for every widget. This is either done through the appWidgetId of the widget or through a Widget object.
 // Could move them all to the database into a new table at some point
-public class ManageSavedPreferences {
+public class ManageSavedPreferences extends AndroidViewModel {
+    public static final ExecutorService executorService = Executors.newSingleThreadExecutor();
     private static final String PREFS_NAME = "com.example.WorkoutPixel";
     private static final String PREF_PREFIX_KEY_TITLE = "appwidget_title_";
     private static final String PREF_PREFIX_KEY_INTERVAL_BLUE = "appwidget_interval_blue";
@@ -19,39 +30,58 @@ public class ManageSavedPreferences {
     private static final String PREF_PREFIX_KEY_SHOW_TIME = "appwidget_show_time";
     private static final String TAG = "WORKOUT_PIXEL PREFERENCES";
 
-    static void saveAll(Context context, Widget widget) {
+    public ManageSavedPreferences(@NonNull Application application) {
+        super(application);
+    }
+
+    public static void updateWidget(Context context, Widget widget) {
+        executorService.execute(() -> workoutDao(context).updateWidget(widget));
+    }
+
+    public static void saveDuringInitialize(Context context, Widget widget) {
+/*
         int appWidgetId = widget.getAppWidgetId();
         saveTitle(context, appWidgetId, widget.getTitle());
-        saveLastWorkout(context, appWidgetId, widget.getLastWorkout());
         saveIntervalBlue(context, appWidgetId, widget.getIntervalBlue());
         saveIntervalRed(context, appWidgetId, widget.getIntervalRed());
         saveShowDate(context, appWidgetId, widget.getShowDate());
         saveShowTime(context, appWidgetId, widget.getShowTime());
-        saveCurrentStatus(context, appWidgetId, widget.getStatus());
+*/
+        executorService.execute(() -> workoutDao(context).insertWidget(widget));
     }
-
-    static void saveDuringInitialize(Context context, Widget widget) {
-        int appWidgetId = widget.getAppWidgetId();
-        saveTitle(context, appWidgetId, widget.getTitle());
-        saveIntervalBlue(context, appWidgetId, widget.getIntervalBlue());
-        saveIntervalRed(context, appWidgetId, widget.getIntervalRed());
-        saveShowDate(context, appWidgetId, widget.getShowDate());
-        saveShowTime(context, appWidgetId, widget.getShowTime());
-    }
-
-    static void deleteAll(Context context, int appWidgetId) {
+/*
+    public static void deleteAll(Context context, int appWidgetId) {
         deleteTitle(context, appWidgetId);
         deleteIntervalBlue(context, appWidgetId);
         deleteIntervalRed(context, appWidgetId);
         deleteLastWorkout(context, appWidgetId);
         deleteCurrentStatus(context, appWidgetId);
-        deleteShowDate(context, appWidgetId);
+        deleteShowDate(context, appWidgetId) ;
         deleteShowTime(context, appWidgetId);
-    }
+    }*/
 
+/*
     public static Widget loadWidget(Context context, int appWidgetId) {
         return new Widget(appWidgetId, loadTitle(context, appWidgetId), loadLastWorkout(context, appWidgetId), loadIntervalBlue(context, appWidgetId), loadIntervalRed(context, appWidgetId), loadShowDate(context, appWidgetId), loadShowTime(context, appWidgetId), loadCurrentStatus(context, appWidgetId));
     }
+*/
+
+    public static Widget loadWidgetByAppWidgetId(Context context, int appWidgetId) {
+        Log.v(TAG, "getPastWorkoutsFromDbByAppWidgetId");
+        return workoutDao(context).loadWidgetById(appWidgetId);
+    }
+
+    public static LiveData<List<Widget>> loadAllWidgetsLiveData(Context context) {
+        Log.v(TAG, "getWidgetFromDb");
+        return workoutDao(context).loadAllWidgetsLiveData();
+    }
+
+    public static List<Widget> loadAllWidgets(Context context) {
+        Log.v(TAG, "getWidgetFromDb");
+        return workoutDao(context).loadAllWidgets();
+    }
+
+    /*
 
     // TODO: One save/load/delete function with parameters. Second thought: Probably not a great idea because there are strings, ints etc.
     // Write the prefix to the SharedPreferences object for this widget
@@ -64,17 +94,6 @@ public class ManageSavedPreferences {
 
     // Read the prefix from the SharedPreferences object for this widget.
     // If there is no preference saved, get the default from a resource
-    public static String loadTitle(Context context, int appWidgetId) {
-        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, 0);
-        String titleValue = prefs.getString(PREF_PREFIX_KEY_TITLE + appWidgetId, null);
-        if (titleValue != null) {
-            // Log.v(TAG, "loadTitle " + appWidgetId + " " + titleValue);
-            return titleValue;
-        } else {
-            // Log.v(TAG, "loadTitle " + appWidgetId + " " + title);
-            return context.getString(R.string.appwidget_text);
-        }
-    }
 
     static void deleteTitle(Context context, int appWidgetId) {
         Log.v(TAG, "deleteTitle " + appWidgetId);
@@ -91,7 +110,7 @@ public class ManageSavedPreferences {
         prefs.apply();
     }
 
-    static Integer loadIntervalBlue(Context context, int appWidgetId) {
+    public static Integer loadIntervalBlue(Context context, int appWidgetId) {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, 0);
         // Log.v(TAG, "loadIntervalBlue Success: " + appWidgetId + " " + Interval);
         return prefs.getInt(PREF_PREFIX_KEY_INTERVAL_BLUE + appWidgetId, 24*60*60*1000);
@@ -135,7 +154,7 @@ public class ManageSavedPreferences {
         prefs.apply();
     }
 
-    static Long loadLastWorkout(Context context, int appWidgetId) {
+    public static Long loadLastWorkout(Context context, int appWidgetId) {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, 0);
         Long timeLastWorkout = prefs.getLong(PREF_PREFIX_KEY_LAST_WORKOUT + appWidgetId, 0L);
         // String timeLastWorkoutBeautiful = DateFormat.getDateTimeInstance().format(timeLastWorkout);
@@ -151,14 +170,14 @@ public class ManageSavedPreferences {
     }
 
     // CURRENT STATUS
-    static void saveCurrentStatus(Context context, int appWidgetId, String currentStatus) {
+    public static void saveCurrentStatus(Context context, int appWidgetId, String currentStatus) {
         SharedPreferences.Editor prefs = context.getSharedPreferences(PREFS_NAME, 0).edit();
         prefs.putString(PREF_PREFIX_KEY_CURRENT_STATUS + appWidgetId, currentStatus);
         Log.v(TAG, "saveCurrentStatus Success: " + appWidgetId + " " + currentStatus);
         prefs.apply();
     }
 
-    static String loadCurrentStatus(Context context, int appWidgetId) {
+    public static String loadCurrentStatus(Context context, int appWidgetId) {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, 0);
         // Log.v(TAG, "loadCurrentStatus Success: " + appWidgetId + " " + currentStatus);
         return prefs.getString(PREF_PREFIX_KEY_CURRENT_STATUS + appWidgetId, "NO STATUS");
@@ -188,14 +207,14 @@ public class ManageSavedPreferences {
         prefs.apply();
     }
 
-    static boolean loadShowDate(Context context, int appWidgetId) {
+    public static boolean loadShowDate(Context context, int appWidgetId) {
         // Log.v(TAG, "loadShowTimeAndDate Start " + appWidgetId);
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, 0);
         // Log.v(TAG, "LOAD_CURRENT_STATUS Success: " + appWidgetId + " " + showTimeAndDate);
         return prefs.getBoolean(PREF_PREFIX_KEY_SHOW_DATE + appWidgetId, false);
     }
 
-    static boolean loadShowTime(Context context, int appWidgetId) {
+    public static boolean loadShowTime(Context context, int appWidgetId) {
         // Log.v(TAG, "loadShowTimeAndDate Start " + appWidgetId);
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, 0);
         // Log.v(TAG, "LOAD_CURRENT_STATUS Success: " + appWidgetId + " " + showTimeAndDate);
@@ -230,14 +249,20 @@ public class ManageSavedPreferences {
         return prefs.getInt(PREF_PREFIX_KEY_INTERVAL_RED + appWidgetId, 0);
     }
 
-    static void deletNumberOfPastWorkouts(Context context, int appWidgetId) {
+    static void deleteNumberOfPastWorkouts(Context context, int appWidgetId) {
         Log.v(TAG, "deleteIntervalRed " + appWidgetId);
         SharedPreferences.Editor prefs = context.getSharedPreferences(PREFS_NAME, 0).edit();
         prefs.remove(PREF_PREFIX_KEY_INTERVAL_RED + appWidgetId);
         prefs.apply();
     }
 
-    static void increaseNumberOfPastWorkouts(Context context, int appWidgetId) {
+    public static void increaseNumberOfPastWorkouts(Context context, int appWidgetId) {
         saveNumberOfPastWorkouts(context, appWidgetId, loadNumberOfPastWorkouts(context, appWidgetId)+1);
+    }
+*/
+
+    public static WorkoutDao workoutDao(Context context) {
+        AppDatabase db = AppDatabase.getDatabase(context);
+        return db.workoutDao();
     }
 }

@@ -1,7 +1,10 @@
-package com.example.workoutpixel;
+package com.example.workoutpixel.Core;
 
 import android.graphics.Color;
 import android.util.Log;
+
+import com.example.workoutpixel.Database.Widget;
+import com.example.workoutpixel.R;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -10,18 +13,20 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.Calendar;
 import java.util.Locale;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class CommonFunctions {
-    private static final String TAG = "WORKOUT_PIXEL WORKOUT STATUS";
     public static final String STATUS_RED = "RED";
     public static final String STATUS_BLUE = "BLUE";
     public static final String STATUS_GREEN = "GREEN";
     public static final String STATUS_NONE = "NO STATUS";
-    public static final int MILLISECONDS_IN_A_DAY = 24*60*60*1000;
-
+    public static final int MILLISECONDS_IN_A_DAY = 24 * 60 * 60 * 1000;
+    public static final ExecutorService executorService = Executors.newSingleThreadExecutor();
+    private static final String TAG = "WORKOUT_PIXEL WORKOUT STATUS";
 
     // Controls which status to set. Will make it possible to implement a nicer day switch mechanism in the future.
-    public static String getNewStatus(long lastWorkout, int interval){
+    public static String getNewStatus(long lastWorkout, int interval) {
 
         Calendar today3Am = Calendar.getInstance();
         today3Am.setTimeInMillis(System.currentTimeMillis());
@@ -30,26 +35,24 @@ public class CommonFunctions {
 
         // Point in time when the widget should change to blue/red as soon as it's night time the next time.
         long timeBlue = lastWorkout + interval - MILLISECONDS_IN_A_DAY;
-        long timeRed = timeBlue + 2*MILLISECONDS_IN_A_DAY;
+        long timeRed = timeBlue + 2 * MILLISECONDS_IN_A_DAY;
 
         // Don't change the widget status if this is the first time the alarm runs and thus lastWorkout == 0L.
         if (lastWorkout == 0L) {
             Log.v(TAG, "GetNewStatus: " + STATUS_NONE);
             return STATUS_NONE;
-        }
-        else if (timeRed < today3Am.getTimeInMillis()) {
+        } else if (timeRed < today3Am.getTimeInMillis()) {
             Log.v(TAG, "GetNewStatus: " + STATUS_RED);
             return STATUS_RED;
-        }
-        else if (timeBlue < today3Am.getTimeInMillis()) {
+        } else if (timeBlue < today3Am.getTimeInMillis()) {
             Log.v(TAG, "GetNewStatus: " + STATUS_BLUE);
             return STATUS_BLUE;
-        };
+        }
         Log.v(TAG, "GetNewStatus: " + STATUS_GREEN);
         return STATUS_GREEN;
     }
 
-    public static int getDrawableIntFromStatus(String status){
+    public static int getDrawableIntFromStatus(String status) {
         switch (status) {
             case STATUS_GREEN:
                 return R.drawable.rounded_corner_green;
@@ -63,7 +66,7 @@ public class CommonFunctions {
         return 0;
     }
 
-    public static int getColorFromStatus(String status){
+    public static int getColorFromStatus(String status) {
         switch (status) {
             case STATUS_GREEN:
                 return Color.parseColor("#388e3c");
@@ -94,6 +97,7 @@ public class CommonFunctions {
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT).withLocale(new Locale("de", "CH"));
         return lastWorkout.format(dateFormatter);
     }
+
     public static String lastWorkoutTimeBeautiful(Long longLastWorkout) {
         LocalDateTime lastWorkout = Instant.ofEpochMilli(longLastWorkout).atZone(ZoneId.systemDefault()).toLocalDateTime();
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT).withLocale(new Locale("de", "CH"));
@@ -106,4 +110,7 @@ public class CommonFunctions {
         return lastWorkout.format(dateFormatter);
     }
 
+    static int intervalInMilliseconds(int intervalInDays) {
+        return intervalInDays * 24 * 60 * 60 * 1000;
+    }
 }

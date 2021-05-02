@@ -1,4 +1,4 @@
-package com.example.workoutpixel.ClickedWorkouts;
+package com.example.workoutpixel.PastWorkouts;
 
 import android.appwidget.AppWidgetManager;
 import android.content.Context;
@@ -13,16 +13,19 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.workoutpixel.ManageSavedPreferences;
+import com.example.workoutpixel.Database.Widget;
+import com.example.workoutpixel.MainActivity.ManageSavedPreferences;
 import com.example.workoutpixel.R;
 
 public class ViewWorkoutsActivity extends AppCompatActivity {
     private static final String TAG = "WORKOUT_PIXEL ViewWorkoutsActivity";
     final Context context = ViewWorkoutsActivity.this;
 
-    int appWidgetId ;
+    int appWidgetId;
 
-    public ViewWorkoutsActivity() {super();}
+    public ViewWorkoutsActivity() {
+        super();
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -43,10 +46,13 @@ public class ViewWorkoutsActivity extends AppCompatActivity {
             return;
         }
 
+        Widget widget = ManageSavedPreferences.loadWidgetByAppWidgetId(context, appWidgetId);
         setContentView(R.layout.view_workouts);
+
         // Bind views and set them
         TextView title = findViewById(R.id.widget_title);
-        title.setText(ManageSavedPreferences.loadTitle(context, appWidgetId));
+        title.setText(widget.getTitle());
+        // ManageSavedPreferences.loadTitleByAppWidgetId(context, appWidgetId).observe(this, title::setText);
         TextView date = findViewById(R.id.workout_date);
         date.setTypeface(null, Typeface.BOLD);
         TextView time = findViewById(R.id.workout_time);
@@ -63,12 +69,10 @@ public class ViewWorkoutsActivity extends AppCompatActivity {
         recyclerView.setAdapter(pastWorkoutsRecyclerViewAdapter);
 
         // Get Viewmodel
-        ClickedWorkoutViewModel clickedWorkoutViewModel = new ClickedWorkoutViewModel(getApplication());
+        PastWorkoutsViewModel pastWorkoutViewModel = new PastWorkoutsViewModel(getApplication());
         // Create the observer which updates the UI.
         // Observe the LiveData, passing in this activity as the LifecycleOwner and the observer.
-        ClickedWorkoutViewModel.getClickedWorkoutsFromDbByAppWidgetId(context, appWidgetId).observe(this, pastWorkoutsRecyclerViewAdapter::setData);
+        PastWorkoutsViewModel.getPastWorkoutsFromDbByAppWidgetId(context, appWidgetId).observe(this, pastWorkouts -> pastWorkoutsRecyclerViewAdapter.setData(pastWorkouts, widget));
     }
-
-
 }
 

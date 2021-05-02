@@ -1,4 +1,4 @@
-package com.example.workoutpixel;
+package com.example.workoutpixel.Core;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -13,12 +13,14 @@ import java.util.Calendar;
 // The alarm is started when the first widget is created (by WorkoutPixel.onCreate()) or the device restarts (by WorkoutPixel.onUpdate()).
 // WorkoutPixel.onUpdate() may not only be called upon device restarts but also in other cases. Check the documentation for that.
 public class WidgetAlarm {
-    private final int MILLISECONDS_IN_A_DAY = 24*60*60*1000;
     private static final String TAG = "WORKOUT_PIXEL ALARM";
-
+    private final int MILLISECONDS_IN_A_DAY = 24 * 60 * 60 * 1000;
     private final Context mContext;
 
-    public WidgetAlarm(Context context) {mContext = context;}
+    // Make singleton?
+    public WidgetAlarm(Context context) {
+        mContext = context;
+    }
 
     public void startAlarm() {
         Calendar calendar = Calendar.getInstance();
@@ -54,7 +56,7 @@ public class WidgetAlarm {
     }
 
     private PendingIntent pendingIntent() {
-        Intent alarmIntent=new Intent(mContext, WidgetFunctions.class);
+        Intent alarmIntent = new Intent(mContext, WidgetFunctions.class);
         alarmIntent.setAction(WidgetFunctions.ACTION_ALARM_UPDATE);
         return PendingIntent.getBroadcast(mContext, 0, alarmIntent, PendingIntent.FLAG_CANCEL_CURRENT);
     }
