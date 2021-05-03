@@ -72,7 +72,11 @@ public class WidgetFunctions extends AppWidgetProvider {
         Log.d(TAG, "updateBasedOnStatus: " + widget.getAppWidgetId() + " " + widget.getTitle() + "\n------------------------------------------------------------------------");
         RemoteViews widgetView = new RemoteViews(context.getPackageName(), R.layout.workout_pixel);
 
-        widget.setStatus(getNewStatus(widget.getLastWorkout(), widget.getIntervalBlue()));
+        // Update the widget in the db (only) when there is a new status.
+        if (!widget.getStatus().equals(getNewStatus(widget.getLastWorkout(), widget.getIntervalBlue()))) {
+            widget.setStatus(getNewStatus(widget.getLastWorkout(), widget.getIntervalBlue()));
+            ManageSavedPreferences.updateWidget(context, widget);
+        }
 
         // Set an onClickListener for every widget: https://stackoverflow.com/questions/30174386/multiple-instances-of-widget-with-separated-working-clickable-imageview
         // Sometimes the onClickListener in the widgets stop working. This also resets the onClickListener every night with the alarm.
@@ -80,7 +84,6 @@ public class WidgetFunctions extends AppWidgetProvider {
         setWidgetText(widgetView, widget);
 
         widgetView.setInt(R.id.appwidget_text, "setBackgroundResource", CommonFunctions.getDrawableIntFromStatus(widget.getStatus()));
-        ManageSavedPreferences.updateWidget(context, widget);
         runUpdate(context, widget.getAppWidgetId(), widgetView);
     }
 
@@ -119,19 +122,19 @@ public class WidgetFunctions extends AppWidgetProvider {
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
         // There may be multiple widgets active, so update all of them
-        Log.v(TAG, "ON_UPDATE\n------------------------------------------------------------------------");
+        Log.d(TAG, "ON_UPDATE\n------------------------------------------------------------------------");
         // Start alarm
-        Log.v(TAG, "START_ALARM");
+        Log.d(TAG, "START_ALARM");
         WidgetAlarm widgetAlarm = new WidgetAlarm(context.getApplicationContext());
         widgetAlarm.startAlarm();
-        Log.v(TAG, "ALARM_STARTED");
+        Log.d(TAG, "ALARM_STARTED");
 
         // TODO: Understand
         // TODO: Replaced iteration through appWidgetIds with data from DB. Insert check that this is the same and fix if not.
         List<Widget> widgetList = ManageSavedPreferences.loadAllWidgets(context);
         for (Widget widget : widgetList) {
             // Tell the AppWidgetManager to perform an update on the current app widget
-            Log.v(TAG, "ON_UPDATE: " + widget.getAppWidgetId());
+            Log.d(TAG, "ON_UPDATE: " + widget.getAppWidgetId());
             updateWidgetBasedOnNewStatus(context, widget);
         }
     }

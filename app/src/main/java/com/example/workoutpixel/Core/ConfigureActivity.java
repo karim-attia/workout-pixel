@@ -57,9 +57,8 @@ public class ConfigureActivity extends AppCompatActivity {
             widget.setIntervalBlue(CommonFunctions.intervalInMilliseconds(intervalInDays));
             widget.setShowDate(showDate);
             widget.setShowTime(showTime);
-            Log.d(TAG, "WidgetTitle " + widgetText);
-            Log.d(TAG, "WidgetTitle " + widget.getTitle());
-            // = new Widget(appWidgetId, widgetText, 0, CommonFunctions.intervalInMilliseconds(intervalInDays), 2, showDate, showTime, STATUS_NONE);
+            // If the status is updated based on the new interval, doing it here saves a DB interaction in updateWidgetBasedOnNewStatus.
+            widget.setStatus(CommonFunctions.getNewStatus(widget.getLastWorkout(), widget.getIntervalBlue()));
 
             // Save new prefs
             if (isReconfigure) ManageSavedPreferences.updateWidget(context, widget);

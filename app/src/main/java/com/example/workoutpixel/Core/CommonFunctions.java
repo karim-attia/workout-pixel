@@ -26,25 +26,36 @@ public class CommonFunctions {
     private static final String TAG = "WORKOUT_PIXEL WORKOUT STATUS";
 
     // Controls which status to set. Will make it possible to implement a nicer day switch mechanism in the future.
-    public static String getNewStatus(long lastWorkout, int interval) {
+    public static String getNewStatus(long lastWorkout, int intervalBlue) {
 
-        Calendar today3Am = Calendar.getInstance();
-        today3Am.setTimeInMillis(System.currentTimeMillis());
-        today3Am.set(Calendar.HOUR_OF_DAY, 3);
-        today3Am.set(Calendar.MINUTE, 0);
+        Calendar today3AmCalendar = Calendar.getInstance();
+        today3AmCalendar.setTimeInMillis(System.currentTimeMillis());
+        int hourOfDay = today3AmCalendar.get(Calendar.HOUR_OF_DAY);
+        today3AmCalendar.set(Calendar.HOUR_OF_DAY, 3);
+        today3AmCalendar.set(Calendar.MINUTE, 0);
+        long today3Am = today3AmCalendar.getTimeInMillis();
+        Log.d(TAG, "intervalBlue: " + intervalBlue);
+        Log.d(TAG, "today3Am: " + today3Am);
+        Log.d(TAG, "lastWorkout: " + lastWorkout);
+
+        // TODO make this nice somehow. last time 3am?
+        long after3Am = 0;
+        if (hourOfDay >= 3) {
+            after3Am = 1;
+        }
 
         // Point in time when the widget should change to blue/red as soon as it's night time the next time.
-        long timeBlue = lastWorkout + interval - MILLISECONDS_IN_A_DAY;
+        long timeBlue = lastWorkout + intervalBlue - after3Am * MILLISECONDS_IN_A_DAY;
         long timeRed = timeBlue + 2 * MILLISECONDS_IN_A_DAY;
 
         // Don't change the widget status if this is the first time the alarm runs and thus lastWorkout == 0L.
         if (lastWorkout == 0L) {
             Log.v(TAG, "GetNewStatus: " + STATUS_NONE);
             return STATUS_NONE;
-        } else if (timeRed < today3Am.getTimeInMillis()) {
+        } else if (timeRed < today3Am) {
             Log.v(TAG, "GetNewStatus: " + STATUS_RED);
             return STATUS_RED;
-        } else if (timeBlue < today3Am.getTimeInMillis()) {
+        } else if (timeBlue < today3Am) {
             Log.v(TAG, "GetNewStatus: " + STATUS_BLUE);
             return STATUS_BLUE;
         }
@@ -119,4 +130,9 @@ public class CommonFunctions {
     static int intervalInMilliseconds(int intervalInDays) {
         return intervalInDays * 24 * 60 * 60 * 1000;
     }
+
+    static int intervalInDays(int intervalInMilliseconds) {
+        return intervalInMilliseconds / 24 / 60 / 60 / 1000;
+    }
+
 }

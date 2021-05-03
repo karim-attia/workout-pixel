@@ -3,7 +3,9 @@ package com.example.workoutpixel.MainActivity;
 import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -23,6 +25,17 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        Button addWidget = findViewById(R.id.add_button);
+        addWidget.setVisibility(View.GONE);
+        addWidget.setOnClickListener(v -> {
+
+            Intent pickIntent = new Intent(AppWidgetManager.ACTION_APPWIDGET_PICK);
+            pickIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, 184);
+            startActivityForResult(pickIntent, 0);
+        });
+
+
         setContent();
     }
 

@@ -72,12 +72,12 @@ public class ManageSavedPreferences extends AndroidViewModel {
     }
 
     public static LiveData<List<Widget>> loadAllWidgetsLiveData(Context context) {
-        Log.v(TAG, "getWidgetFromDb");
+        Log.v(TAG, "getWidgetsFromDb");
         return workoutDao(context).loadAllWidgetsLiveData();
     }
 
     public static List<Widget> loadAllWidgets(Context context) {
-        Log.v(TAG, "getWidgetFromDb");
+        Log.v(TAG, "getWidgetsFromDb");
         return workoutDao(context).loadAllWidgets();
     }
 
