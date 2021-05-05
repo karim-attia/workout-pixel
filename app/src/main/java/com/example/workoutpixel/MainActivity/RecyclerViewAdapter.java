@@ -32,8 +32,6 @@ import static com.example.workoutpixel.Core.CommonFunctions.widgetText;
 // RecyclerViewAdapter fills the card view in the MainActivity.
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.WidgetViewHolder> {
     private static final String TAG = "WORKOUT_PIXEL RVAdapter";
-
-    private final int MILLISECONDS_IN_A_DAY = 24 * 60 * 60 * 1000;
     Context context;
     List<Widget> widgets;
 
@@ -77,7 +75,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     public void onBindViewHolder(final WidgetViewHolder widgetViewHolder, final int i) {
         widgetViewHolder.widgetTitle.setText(widgets.get(i).getTitle());
         widgetViewHolder.widgetLastWorkout.setText(lastWorkoutDateBeautiful(widgets.get(i).getLastWorkout()));
-        int intervalInDays = widgets.get(i).getIntervalBlue() / MILLISECONDS_IN_A_DAY;
+        int intervalInDays = widgets.get(i).getIntervalBlue();
         String text = "Every " + intervalInDays + " day";
         if (intervalInDays > 1) {
             text += "s";

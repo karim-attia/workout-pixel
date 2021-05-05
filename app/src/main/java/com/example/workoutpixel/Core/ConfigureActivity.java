@@ -31,7 +31,6 @@ import java.util.Objects;
 import static com.example.workoutpixel.Core.CommonFunctions.STATUS_NONE;
 import static com.example.workoutpixel.Core.CommonFunctions.getDrawableIntFromStatus;
 import static com.example.workoutpixel.Core.CommonFunctions.getNewStatus;
-import static com.example.workoutpixel.Core.CommonFunctions.intervalInMilliseconds;
 import static com.example.workoutpixel.Core.CommonFunctions.lastWorkoutDateBeautiful;
 import static com.example.workoutpixel.Core.CommonFunctions.lastWorkoutTimeBeautiful;
 import static com.example.workoutpixel.Core.CommonFunctions.widgetsWithoutValidAppWidgetId;
@@ -53,7 +52,7 @@ public class ConfigureActivity extends AppCompatActivity {
     CheckBox showDateCheckbox;
     CheckBox showTimeCheckbox;
 
-    Widget widget = new Widget(AppWidgetManager.INVALID_APPWIDGET_ID, "", 0, intervalInMilliseconds(intervalInDays), 2, false, false, STATUS_NONE);
+    Widget widget = new Widget(AppWidgetManager.INVALID_APPWIDGET_ID, "", 0, intervalInDays, 2, false, false, STATUS_NONE);
 
     // OnClickListener for button
     View.OnClickListener updateWidgetOnClickListener = new View.OnClickListener() {
@@ -66,7 +65,7 @@ public class ConfigureActivity extends AppCompatActivity {
 
             // Create widget object. Save it in the preferences.
             widget.setTitle(widgetText);
-            widget.setIntervalBlue(intervalInMilliseconds(intervalInDays));
+            widget.setIntervalBlue(intervalInDays);
             widget.setShowDate(showDate);
             widget.setShowTime(showTime);
             // If the status is updated based on the new interval, doing it here saves a DB interaction in updateWidgetBasedOnNewStatus.
@@ -155,7 +154,7 @@ public class ConfigureActivity extends AppCompatActivity {
             introText.setVisibility(View.GONE);
             widget = ManageSavedPreferences.loadWidgetByAppWidgetId(context, widget.getAppWidgetId());
             widgetTitle.setText(widget.getTitle());
-            intervalInDays = widget.getIntervalBlue() / (24 * 60 * 60 * 1000);
+            intervalInDays = widget.getIntervalBlue();
             showDateCheckbox.setChecked(widget.getShowDate());
             showTimeCheckbox.setChecked(widget.getShowTime());
 

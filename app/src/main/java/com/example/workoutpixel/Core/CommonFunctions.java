@@ -3,7 +3,6 @@ package com.example.workoutpixel.Core;
 import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
 import android.content.Context;
-import android.graphics.Color;
 import android.util.Log;
 
 import com.example.workoutpixel.Database.Widget;
@@ -41,31 +40,37 @@ public class CommonFunctions {
         today3AmCalendar.set(Calendar.MINUTE, 0);
         long today3Am = today3AmCalendar.getTimeInMillis();
         Log.d(TAG, "intervalBlue: " + intervalBlue);
-        Log.d(TAG, "today3Am: " + today3Am);
+        Log.d(TAG, "today3Am:    " + today3Am);
         Log.d(TAG, "lastWorkout: " + lastWorkout);
 
         // TODO make this nice somehow. last time 3am?
-        long after3Am = 0;
+        int after3Am = 0;
         if (hourOfDay >= 3) {
             after3Am = 1;
         }
 
         // Point in time when the widget should change to blue/red as soon as it's night time the next time.
-        long timeBlue = lastWorkout + intervalBlue - after3Am * MILLISECONDS_IN_A_DAY;
-        long timeRed = timeBlue + 2 * MILLISECONDS_IN_A_DAY;
+        long timeBlue = lastWorkout + intervalInMilliseconds(intervalBlue) - intervalInMilliseconds(after3Am);
+        long timeRed = timeBlue + intervalInMilliseconds(2);
+        Log.d(TAG, "intervalInMilliseconds(intervalBlue): " + intervalInMilliseconds(intervalBlue));
+        Log.d(TAG, "intervalInMilliseconds(after3Am):     " + intervalInMilliseconds(after3Am));
+
+        Log.d(TAG, "timeBlue:    " + timeBlue);
+        Log.d(TAG, "timeRed:     " + timeRed);
+
 
         // Don't change the widget status if this is the first time the alarm runs and thus lastWorkout == 0L.
         if (lastWorkout == 0L) {
-            Log.v(TAG, "GetNewStatus: " + STATUS_NONE);
+            Log.d(TAG, "GetNewStatus: " + STATUS_NONE);
             return STATUS_NONE;
         } else if (timeRed < today3Am) {
-            Log.v(TAG, "GetNewStatus: " + STATUS_RED);
+            Log.d(TAG, "GetNewStatus: " + STATUS_RED);
             return STATUS_RED;
         } else if (timeBlue < today3Am) {
-            Log.v(TAG, "GetNewStatus: " + STATUS_BLUE);
+            Log.d(TAG, "GetNewStatus: " + STATUS_BLUE);
             return STATUS_BLUE;
         }
-        Log.v(TAG, "GetNewStatus: " + STATUS_GREEN);
+        Log.d(TAG, "GetNewStatus: " + STATUS_GREEN);
         return STATUS_GREEN;
     }
 
@@ -102,9 +107,11 @@ public class CommonFunctions {
     }
 
     public static String lastWorkoutDateBeautiful(Long longLastWorkout) {
-        LocalDateTime lastWorkout = Instant.ofEpochMilli(longLastWorkout).atZone(ZoneId.systemDefault()).toLocalDateTime();
-        DateTimeFormatter dateFormatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT).withLocale(new Locale("de", "CH"));
-        return lastWorkout.format(dateFormatter);
+        if (longLastWorkout == 0L) {return "Never";} else {
+            LocalDateTime lastWorkout = Instant.ofEpochMilli(longLastWorkout).atZone(ZoneId.systemDefault()).toLocalDateTime();
+            DateTimeFormatter dateFormatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT).withLocale(new Locale("de", "CH"));
+            return lastWorkout.format(dateFormatter);
+        }
     }
 
     public static String lastWorkoutTimeBeautiful(Long longLastWorkout) {
@@ -119,12 +126,12 @@ public class CommonFunctions {
         return lastWorkout.format(dateFormatter);
     }
 
-    static int intervalInMilliseconds(int intervalInDays) {
-        return intervalInDays * MILLISECONDS_IN_A_DAY;
+    static long intervalInMilliseconds(int intervalInDays) {
+        return (long) MILLISECONDS_IN_A_DAY * intervalInDays;
     }
 
-    static int intervalInDays(int intervalInMilliseconds) {
-        return intervalInMilliseconds / MILLISECONDS_IN_A_DAY;
+    static int intervalInDays(long intervalInMilliseconds) {
+        return (int) (intervalInMilliseconds / MILLISECONDS_IN_A_DAY);
     }
 
     public static int[] appWidgetIds(Context context) {
