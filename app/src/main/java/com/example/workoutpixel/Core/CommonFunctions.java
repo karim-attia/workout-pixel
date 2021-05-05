@@ -4,7 +4,6 @@ import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.graphics.Color;
-import android.nfc.Tag;
 import android.util.Log;
 
 import com.example.workoutpixel.Database.Widget;
@@ -30,7 +29,7 @@ public class CommonFunctions {
     public static final String STATUS_NONE = "NO STATUS";
     public static final int MILLISECONDS_IN_A_DAY = 24 * 60 * 60 * 1000;
     public static final ExecutorService executorService = Executors.newSingleThreadExecutor();
-    private static final String TAG = "WORKOUT_PIXEL WORKOUT STATUS";
+    private static final String TAG = "WORKOUT_PIXEL COMMON FUNCTIONS";
 
     // Controls which status to set. Will make it possible to implement a nicer day switch mechanism in the future.
     public static String getNewStatus(long lastWorkout, int intervalBlue) {
@@ -90,20 +89,6 @@ public class CommonFunctions {
         return 0;
     }
 
-    public static int getColorFromStatus(String status) {
-        switch (status) {
-            case STATUS_GREEN:
-                return Color.parseColor("#388e3c");
-            case STATUS_BLUE:
-                return Color.parseColor("#1976d2");
-            case STATUS_RED:
-                return Color.parseColor("#d32f2f");
-            case STATUS_NONE:
-                return Color.parseColor("#7b1fa2");
-        }
-        return 0;
-    }
-
     // widgetText returns the text of the whole widget based on a Widget object.
     public static String widgetText(Widget widget) {
         String widgetText = widget.getTitle();
@@ -135,11 +120,11 @@ public class CommonFunctions {
     }
 
     static int intervalInMilliseconds(int intervalInDays) {
-        return intervalInDays * 24 * 60 * 60 * 1000;
+        return intervalInDays * MILLISECONDS_IN_A_DAY;
     }
 
     static int intervalInDays(int intervalInMilliseconds) {
-        return intervalInMilliseconds / 24 / 60 / 60 / 1000;
+        return intervalInMilliseconds / MILLISECONDS_IN_A_DAY;
     }
 
     public static int[] appWidgetIds(Context context) {
@@ -147,7 +132,7 @@ public class CommonFunctions {
         return AppWidgetManager.getInstance(context).getAppWidgetIds(thisAppWidget);
     }
 
-    public static List<Widget> widgetsWithoutValidAppwidgetId (Context context, List<Widget> widgets) {
+    public static List<Widget> widgetsWithoutValidAppWidgetId(Context context, List<Widget> widgets) {
         List<Widget> widgetsWithoutValidAppwidgetId = widgets.stream().filter(widget -> Arrays.stream(appWidgetIds(context)).noneMatch(i -> i == widget.getAppWidgetId())).collect(Collectors.toList());
         Log.d(TAG, "widgetsWithoutValidAppwidgetId");
         Log.d(TAG, "appWidgetIds(context): " + Arrays.toString(appWidgetIds(context)));
@@ -160,7 +145,7 @@ public class CommonFunctions {
         return widgetsWithoutValidAppwidgetId;
     }
 
-    public static List<Widget> widgetsWithValidAppwidgetId(Context context, List<Widget> widgets) {
+    public static List<Widget> widgetsWithValidAppWidgetId(Context context, List<Widget> widgets) {
 
         List<Widget> widgetsWithValidAppwidgetId = widgets.stream().filter(widget -> Arrays.stream(appWidgetIds(context)).anyMatch(i -> i == widget.getAppWidgetId())).collect(Collectors.toList());
         Log.d(TAG, "widgetsWithValidAppwidgetId");
@@ -172,5 +157,9 @@ public class CommonFunctions {
             Log.d(TAG, "widgetsWithValidAppwidgetId -> AppWidgetId: " + widget.getAppWidgetId() + " Title: " + widget.getTitle());
         }
         return widgetsWithValidAppwidgetId;
+    }
+
+    public static boolean doesWidgetHaveValidAppWidgetId(Context context, Widget widget) {
+        return Arrays.stream(appWidgetIds(context)).anyMatch(i -> i == widget.getAppWidgetId());
     }
 }

@@ -51,11 +51,11 @@ public class WidgetFunctions extends AppWidgetProvider {
         widget.setLastWorkout(thisWorkoutTime);
         ManageSavedPreferences.updateWidget(context, widget);
 
-        int numberOfPastWorkouts = PastWorkoutsViewModel.getCountOfActiveClickedWorkouts(context, widget.getAppWidgetId()) + 1;
+        int numberOfPastWorkouts = PastWorkoutsViewModel.getCountOfActiveClickedWorkouts(context, widget.uid) + 1;
         Toast.makeText(context, "Oh yeah! Already done this " + numberOfPastWorkouts + " times. :)", Toast.LENGTH_LONG).show();
 
         // Add the workout to the database. Technicalities are taken care of in PastWorkoutsViewModel.
-        PastWorkoutsViewModel.insertClickedWorkout(context, widget.getAppWidgetId(), thisWorkoutTime);
+        PastWorkoutsViewModel.insertClickedWorkout(context, widget.uid, thisWorkoutTime);
 
         setWidgetText(widgetView, widget);
         widgetView.setInt(R.id.appwidget_text, "setBackgroundResource", R.drawable.rounded_corner_green);
@@ -109,7 +109,7 @@ public class WidgetFunctions extends AppWidgetProvider {
 
         // Do this when the alarm hits
         if (ACTION_ALARM_UPDATE.equals(intent.getAction())) {
-            List<Widget> widgetList = CommonFunctions.widgetsWithValidAppwidgetId(context, ManageSavedPreferences.loadAllWidgets(context));
+            List<Widget> widgetList = CommonFunctions.widgetsWithValidAppWidgetId(context, ManageSavedPreferences.loadAllWidgets(context));
             for (Widget widget : widgetList) {
                 Log.d(TAG, "ACTION_AUTO_UPDATE for appWidgetId: " + widget.getAppWidgetId());
                 updateWidgetBasedOnNewStatus(context, widget);
@@ -128,8 +128,8 @@ public class WidgetFunctions extends AppWidgetProvider {
         Log.d(TAG, "ALARM_STARTED");
 
         // TODO: Understand
-        // TODO: Replaced iteration through appWidgetIds with data from DB. Insert check that this is the same and fix if not.
-        List<Widget> widgetList = CommonFunctions.widgetsWithValidAppwidgetId(context, ManageSavedPreferences.loadAllWidgets(context));
+        // TODO: Replaced iteration through appWidgetIds with data from DB. Insert check that this is the same and fix if not. Maybe before it only iterated through some widgets. But I don't think it matters.
+        List<Widget> widgetList = CommonFunctions.widgetsWithValidAppWidgetId(context, ManageSavedPreferences.loadAllWidgets(context));
         for (Widget widget : widgetList) {
             // Tell the AppWidgetManager to perform an update on the current app widget
             Log.d(TAG, "ON_UPDATE: " + widget.getAppWidgetId());

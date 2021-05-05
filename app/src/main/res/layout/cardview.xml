@@ -1,101 +1,129 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_height="wrap_content"
     android:layout_width="match_parent"
-    >
+    android:layout_height="wrap_content">
+
     <androidx.cardview.widget.CardView
         android:id="@+id/card_view"
-        android:layout_gravity="center"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
         style="@style/Card"
-        card_view:cardCornerRadius="2dp"
-        >
-
-    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingHorizontal="8dp"
-        android:paddingVertical="6dp"
-        >
+        android:layout_gravity="center"
+        card_view:cardCornerRadius="2dp">
 
-        <TextView
-            android:layout_width="wrap_content"
+        <RelativeLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/widget_title"
-            android:layout_alignParentTop="true"
-            tools:text="Title"
-            style="@style/Title"
-            tools:ignore="RelativeOverlap" />
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentTop="true"
-            >
-        <TextView
-            android:id="@+id/widget_preview"
-            android:layout_marginTop="4dp"
-            android:background="#7b1fa2"
-            style="@style/WorkoutPixelPreview"
-            />
-        </LinearLayout>
-        <GridLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:columnCount="4"
-            android:id="@+id/grid_layout"
-            android:layout_below="@+id/widget_title"
-            android:paddingTop="4dp"
-            >
-            <ImageView
-                style="@style/Icon.Narrow"
-                android:src="@drawable/icon_date"
-                tools:ignore="ContentDescription" />
-            <TextView
-                style="@style/GridText"
-                tools:text="Every 2 days"
-                android:id="@+id/widget_interval"
-                />
-
-            <ImageView
-                style="@style/Icon.Narrow"
-                android:src="@drawable/icon_edit"
-                android:id="@+id/widget_edit"
-                android:layout_width="30dp"
-                tools:ignore="ContentDescription" />
+            android:paddingHorizontal="8dp"
+            android:paddingVertical="6dp">
 
             <TextView
-                style="@style/GridText"
-                android:text="@string/edit_widget"
-                android:id="@+id/widget_edit_text"
-                />
+                android:id="@+id/widget_title"
+                style="@style/Title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                tools:ignore="RelativeOverlap"
+                tools:text="Title" />
 
-            <ImageView
-                style="@style/Icon.Wide"
-                android:src="@drawable/icon_done"
-                tools:ignore="ContentDescription" />
-            <TextView
-                style="@style/GridText"
-                tools:text="Last Workout"
-                android:id="@+id/widget_last_workout"
-                />
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentEnd="true">
 
-            <ImageView
-                style="@style/Icon.Wide"
-                android:src="@drawable/icon_list"
-                android:id="@+id/widget_past_workouts"
-                tools:ignore="ContentDescription" />
-            <TextView
-                style="@style/GridText"
-                android:text="@string/view_clicks"
-                android:id="@+id/widget_past_workout_text"
-                />
+                <TextView
+                    android:id="@+id/widget_preview"
+                    style="@style/WorkoutPixelPreview"
+                    android:layout_marginTop="4dp"
+                    android:background="#7b1fa2" />
+            </LinearLayout>
 
-        </GridLayout>
-    </RelativeLayout>
+            <GridLayout
+                android:id="@+id/grid_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/widget_title"
+                android:columnCount="4"
+                android:paddingTop="4dp">
+
+                <ImageView
+                    style="@style/Icon.Narrow"
+                    android:src="@drawable/icon_date"
+                    tools:ignore="ContentDescription" />
+
+                <TextView
+                    android:id="@+id/widget_interval"
+                    style="@style/GridText"
+                    tools:text="Every 2 days" />
+
+                <ImageView
+                    android:id="@+id/widget_edit"
+                    style="@style/Icon.Narrow"
+                    android:layout_width="30dp"
+                    android:src="@drawable/icon_edit"
+                    tools:ignore="ContentDescription" />
+
+                <TextView
+                    android:id="@+id/widget_edit_text"
+                    style="@style/GridText"
+                    android:text="@string/edit_widget" />
+
+                <ImageView
+                    style="@style/Icon.Wide"
+                    android:src="@drawable/icon_done"
+                    tools:ignore="ContentDescription" />
+
+                <TextView
+                    android:id="@+id/widget_last_workout"
+                    style="@style/GridText"
+                    tools:text="Last Workout" />
+
+                <ImageView
+                    android:id="@+id/widget_past_workouts"
+                    style="@style/Icon.Wide"
+                    android:src="@drawable/icon_list"
+                    tools:ignore="ContentDescription" />
+
+                <TextView
+                    android:id="@+id/widget_past_workout_text"
+                    style="@style/GridText"
+                    android:text="@string/view_clicks" />
+
+            </GridLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/connect_info"
+                android:layout_below="@id/grid_layout"
+                android:layout_marginTop="4dp"
+                android:background="@drawable/rounded_corner_info"
+                android:orientation="horizontal"
+                android:paddingVertical="2dp"
+                android:visibility="gone"
+                tools:visibility="visible">
+
+                <ImageView
+                    style="@style/Icon.Narrow"
+                    android:src="@drawable/icon_info"
+                    tools:ignore="ContentDescription" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingHorizontal="6dp"
+                    android:text="@string/connect_widget_main_activity"
+                    />
+                <Button
+                    style="@style/button"
+                    android:text="@string/connect_delete"
+                    android:visibility="gone"
+                    />
+
+            </LinearLayout>
+        </RelativeLayout>
     </androidx.cardview.widget.CardView>
 </LinearLayout>

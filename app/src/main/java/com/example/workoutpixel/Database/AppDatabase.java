@@ -5,11 +5,13 @@ import android.content.Context;
 import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
+import androidx.room.migration.Migration;
+import androidx.sqlite.db.SupportSQLiteDatabase;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-@Database(entities = {PastWorkout.class, Widget.class}, version = 1, exportSchema = false)
+@Database(entities = {PastWorkout.class, Widget.class}, version = 2, exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {
     private static final int NUMBER_OF_THREADS = 4;
     static final ExecutorService databaseWriteExecutor =
@@ -32,6 +34,8 @@ public abstract class AppDatabase extends RoomDatabase {
                 AppDatabase.class,
                 "WorkoutPixelDatabase")
                 .allowMainThreadQueries()
+                //.addMigrations(MIGRATION_1_2)
+                .fallbackToDestructiveMigration()
                 .build();
     }
 
@@ -40,5 +44,12 @@ public abstract class AppDatabase extends RoomDatabase {
     public void cleanUp() {
         pastWorkoutsDb = null;
     }
+
+    static final Migration MIGRATION_1_2 = new Migration(1, 2) {
+        @Override
+        public void migrate(SupportSQLiteDatabase database) {
+            database.execSQL("ALTER TABLE pastWorkouts ADD widgetUid int;");
+        }
+    };
 
 }

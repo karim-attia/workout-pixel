@@ -13,12 +13,12 @@ import java.util.List;
 public interface WorkoutDao {
     // Past Workouts
     // Return all workouts by appWidgetId
-    @Query("SELECT * FROM pastWorkouts WHERE appWidgetId=:appWidgetId ORDER BY workoutTime DESC")
-    LiveData<List<PastWorkout>> loadAllPastWorkouts(int appWidgetId);
+    @Query("SELECT * FROM pastWorkouts WHERE widgetUid=:widgetUid ORDER BY workoutTime DESC")
+    LiveData<List<PastWorkout>> loadAllPastWorkouts(int widgetUid);
 
     // Return all workouts by appWidgetId that are active
-    @Query("SELECT COUNT() FROM pastWorkouts WHERE appWidgetId=:appWidgetId AND active='1'")
-    int getCountOfActivePastWorkouts(int appWidgetId);
+    @Query("SELECT COUNT() FROM pastWorkouts WHERE widgetUid=:widgetUid AND active='1'")
+    int getCountOfActivePastWorkouts(int widgetUid);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertPastWorkout(PastWorkout pastWorkout);

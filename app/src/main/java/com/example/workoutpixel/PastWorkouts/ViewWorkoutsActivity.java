@@ -72,7 +72,7 @@ public class ViewWorkoutsActivity extends AppCompatActivity {
         PastWorkoutsViewModel pastWorkoutViewModel = new PastWorkoutsViewModel(getApplication());
         // Create the observer which updates the UI.
         // Observe the LiveData, passing in this activity as the LifecycleOwner and the observer.
-        PastWorkoutsViewModel.getPastWorkoutsFromDbByAppWidgetId(context, appWidgetId).observe(this, pastWorkouts -> pastWorkoutsRecyclerViewAdapter.setData(pastWorkouts, widget));
+        PastWorkoutsViewModel.getPastWorkouts(context, widget.uid).observe(this, pastWorkouts -> pastWorkoutsRecyclerViewAdapter.setData(pastWorkouts, widget));
     }
 }
 

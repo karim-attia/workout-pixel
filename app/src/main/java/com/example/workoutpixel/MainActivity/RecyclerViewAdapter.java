@@ -7,12 +7,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.workoutpixel.Core.CommonFunctions;
 import com.example.workoutpixel.Core.ConfigureActivity;
 import com.example.workoutpixel.Core.WidgetFunctions;
 import com.example.workoutpixel.Database.Widget;
@@ -93,6 +95,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         });
 
         View.OnClickListener editWidgetOnClickListener = v -> {
+            // TODO: Also replace with uid?
             int appWidgetId = widgets.get(i).getAppWidgetId();
             Intent intent = new Intent(context, ConfigureActivity.class);
             intent.setAction("APPWIDGET_RECONFIGURE");
@@ -110,6 +113,10 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         widgetViewHolder.widgetEditText.setOnClickListener(editWidgetOnClickListener);
         widgetViewHolder.widgetPastWorkouts.setOnClickListener(viewWorkoutsOnClickListener);
         widgetViewHolder.widgetPastWorkoutsText.setOnClickListener(viewWorkoutsOnClickListener);
+
+        if(!CommonFunctions.doesWidgetHaveValidAppWidgetId(context, widgets.get(i))) {
+            widgetViewHolder.connectInfo.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
@@ -127,6 +134,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         TextView widgetEditText;
         ImageView widgetPastWorkouts;
         TextView widgetPastWorkoutsText;
+        LinearLayout connectInfo;
 
         WidgetViewHolder(View itemView) {
             super(itemView);
@@ -139,6 +147,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             widgetEditText = itemView.findViewById(R.id.widget_edit_text);
             widgetPastWorkouts = itemView.findViewById(R.id.widget_past_workouts);
             widgetPastWorkoutsText = itemView.findViewById(R.id.widget_past_workout_text);
+            connectInfo = itemView.findViewById(R.id.connect_info);
         }
     }
 }

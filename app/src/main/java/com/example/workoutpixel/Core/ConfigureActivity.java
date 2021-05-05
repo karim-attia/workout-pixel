@@ -34,7 +34,7 @@ import static com.example.workoutpixel.Core.CommonFunctions.getNewStatus;
 import static com.example.workoutpixel.Core.CommonFunctions.intervalInMilliseconds;
 import static com.example.workoutpixel.Core.CommonFunctions.lastWorkoutDateBeautiful;
 import static com.example.workoutpixel.Core.CommonFunctions.lastWorkoutTimeBeautiful;
-import static com.example.workoutpixel.Core.CommonFunctions.widgetsWithoutValidAppwidgetId;
+import static com.example.workoutpixel.Core.CommonFunctions.widgetsWithoutValidAppWidgetId;
 
 /**
  * The configuration screen for the {@link WidgetFunctions WidgetFunctions} AppWidget.
@@ -213,7 +213,7 @@ public class ConfigureActivity extends AppCompatActivity {
 
         // Reconnect widget
         CommonFunctions.executorService.execute(() -> { // this run method's body will be executed by the service
-            List<Widget> widgetsWithoutValidAppwidgetId = widgetsWithoutValidAppwidgetId(context, ManageSavedPreferences.loadAllWidgets(context));
+            List<Widget> widgetsWithoutValidAppwidgetId = widgetsWithoutValidAppWidgetId(context, ManageSavedPreferences.loadAllWidgets(context));
             if (!isReconfigure & widgetsWithoutValidAppwidgetId.size() > 0) {
                 CardView connectWidgetView = findViewById(R.id.connect_widget);
                 connectWidgetView.setVisibility(View.VISIBLE);

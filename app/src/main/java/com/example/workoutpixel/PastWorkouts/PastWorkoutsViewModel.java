@@ -22,14 +22,14 @@ public class PastWorkoutsViewModel extends AndroidViewModel {
         super(application);
     }
 
-    public static LiveData<List<PastWorkout>> getPastWorkoutsFromDbByAppWidgetId(Context context, int appWidgetId) {
-        Log.v(TAG, "getClickedWorkoutsFromDbByAppWidgetId ");
-        return workoutDao(context).loadAllPastWorkouts(appWidgetId);
+    public static LiveData<List<PastWorkout>> getPastWorkouts(Context context, int widgetUid) {
+        Log.v(TAG, "getPastWorkoutsFromDb");
+        return workoutDao(context).loadAllPastWorkouts(widgetUid);
     }
 
-    public static int getCountOfActiveClickedWorkouts(Context context, int appWidgetId) {
-        Log.v(TAG, "getCountOfActiveClickedWorkouts ");
-        return workoutDao(context).getCountOfActivePastWorkouts(appWidgetId);
+    public static int getCountOfActiveClickedWorkouts(Context context, int widgetUid) {
+        Log.v(TAG, "getCountOfActivePastWorkouts ");
+        return workoutDao(context).getCountOfActivePastWorkouts(widgetUid);
     }
 
     public static void updatePastWorkout(Context context, PastWorkout clickedWorkout) {
@@ -37,8 +37,8 @@ public class PastWorkoutsViewModel extends AndroidViewModel {
     }
 
     // Better to do by uid?
-    public static void insertClickedWorkout(Context context, int appWidgetId, long thisWorkoutTime) {
-        PastWorkout clickedWorkout = new PastWorkout(appWidgetId, thisWorkoutTime);
+    public static void insertClickedWorkout(Context context, int widgetUid, long thisWorkoutTime) {
+        PastWorkout clickedWorkout = new PastWorkout(widgetUid, thisWorkoutTime);
         CommonFunctions.executorService.execute(() -> workoutDao(context).insertPastWorkout(clickedWorkout));
     }
 

@@ -9,8 +9,8 @@ public class PastWorkout {
     @PrimaryKey(autoGenerate = true)
     public int uid;
 
-    @ColumnInfo(name = "appWidgetId")
-    public int appWidgetId;
+    @ColumnInfo(name = "widgetUid")
+    public int widgetUid;
 
     @ColumnInfo(name = "workoutTime")
     public long workoutTime;
@@ -18,9 +18,9 @@ public class PastWorkout {
     @ColumnInfo(name = "active")
     public boolean active = true;
 
-    public PastWorkout(int appWidgetId, long workoutTime) {
+    public PastWorkout(int widgetUid, long workoutTime) {
         // this.uid = uid;
-        this.appWidgetId = appWidgetId;
+        this.widgetUid = widgetUid;
         this.workoutTime = workoutTime;
     }
 
@@ -33,12 +33,12 @@ public class PastWorkout {
         this.uid = uid;
     }
 
-    public int getAppWidgetId() {
-        return appWidgetId;
+    public int getWidgetUid() {
+        return widgetUid;
     }
 
-    public void setAppWidgetId(int appWidgetId) {
-        this.appWidgetId = appWidgetId;
+    public void setWidgetUid(int widgetUid) {
+        this.widgetUid = widgetUid;
     }
 
     public long getWorkoutTime() {
