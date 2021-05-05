@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/app"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_height="wrap_content"
     android:layout_width="match_parent"
     >
-    <!-- A CardView that contains a TextView -->
     <androidx.cardview.widget.CardView
         android:id="@+id/card_view"
         android:layout_gravity="center"
@@ -28,13 +27,13 @@
             android:layout_height="wrap_content"
             android:id="@+id/widget_title"
             android:layout_alignParentTop="true"
-            android:text="Title"
+            tools:text="Title"
             style="@style/Title"
-            />
+            tools:ignore="RelativeOverlap" />
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
             android:layout_alignParentTop="true"
             >
         <TextView
@@ -55,10 +54,10 @@
             <ImageView
                 style="@style/Icon.Narrow"
                 android:src="@drawable/icon_date"
-                />
+                tools:ignore="ContentDescription" />
             <TextView
                 style="@style/GridText"
-                android:text="Every 2 days"
+                tools:text="Every 2 days"
                 android:id="@+id/widget_interval"
                 />
 
@@ -67,38 +66,36 @@
                 android:src="@drawable/icon_edit"
                 android:id="@+id/widget_edit"
                 android:layout_width="30dp"
-                />
+                tools:ignore="ContentDescription" />
 
             <TextView
                 style="@style/GridText"
-                android:text="Edit widget"
+                android:text="@string/edit_widget"
                 android:id="@+id/widget_edit_text"
                 />
 
             <ImageView
                 style="@style/Icon.Wide"
                 android:src="@drawable/icon_done"
-                />
+                tools:ignore="ContentDescription" />
             <TextView
                 style="@style/GridText"
-                android:text="Last Workout"
+                tools:text="Last Workout"
                 android:id="@+id/widget_last_workout"
                 />
 
             <ImageView
                 style="@style/Icon.Wide"
                 android:src="@drawable/icon_list"
-                android:id="@+id/widget_past_workouts"/>
+                android:id="@+id/widget_past_workouts"
+                tools:ignore="ContentDescription" />
             <TextView
                 style="@style/GridText"
-                android:text="View clicks"
+                android:text="@string/view_clicks"
                 android:id="@+id/widget_past_workout_text"
                 />
 
         </GridLayout>
-
-
-
     </RelativeLayout>
     </androidx.cardview.widget.CardView>
 </LinearLayout>

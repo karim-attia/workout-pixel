@@ -47,13 +47,10 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         this.context = context;
         widgets = ManageSavedPreferences.loadAllWidgets(context);
 
-/*
-        for (int appWidgetId : appWidgetIds(context)) {
-            widgets.add(ManageSavedPreferences.loadWidget(context, appWidgetId));
+        for (Widget widget : widgets) {
             // Sometimes the onClickListener in the widgets stop working. This is a super stupid way to regularly reset the onClickListener when you open the main app.
-            WidgetFunctions.initiateBasedOnStatus(context, appWidgetId);
+            WidgetFunctions.updateWidgetBasedOnNewStatus(context, widget);
         }
-*/
     }
 
     public void setData(List<Widget> widgets) {

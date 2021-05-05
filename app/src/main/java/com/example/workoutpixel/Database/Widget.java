@@ -1,5 +1,6 @@
 package com.example.workoutpixel.Database;
 
+import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
@@ -117,5 +118,11 @@ public class Widget {
         this.showDate = showDate;
         this.showTime = showTime;
         this.status = status;
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        return this.title;
     }
 }

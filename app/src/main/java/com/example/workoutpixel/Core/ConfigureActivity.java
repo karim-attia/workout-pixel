@@ -3,26 +3,38 @@ package com.example.workoutpixel.Core;
 import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 
 import com.example.workoutpixel.Database.Widget;
 import com.example.workoutpixel.MainActivity.ManageSavedPreferences;
 import com.example.workoutpixel.R;
 
+import java.util.List;
+import java.util.Objects;
+
 import static com.example.workoutpixel.Core.CommonFunctions.STATUS_NONE;
 import static com.example.workoutpixel.Core.CommonFunctions.getDrawableIntFromStatus;
+import static com.example.workoutpixel.Core.CommonFunctions.getNewStatus;
+import static com.example.workoutpixel.Core.CommonFunctions.intervalInMilliseconds;
+import static com.example.workoutpixel.Core.CommonFunctions.lastWorkoutDateBeautiful;
+import static com.example.workoutpixel.Core.CommonFunctions.lastWorkoutTimeBeautiful;
+import static com.example.workoutpixel.Core.CommonFunctions.widgetsWithoutValidAppwidgetId;
 
 /**
  * The configuration screen for the {@link WidgetFunctions WidgetFunctions} AppWidget.
@@ -37,54 +49,58 @@ public class ConfigureActivity extends AppCompatActivity {
     TextView goalIntervalPluralTextView;
     int intervalInDays = 2;
 
-    EditText mAppWidgetText;
+    EditText widgetTitle;
     CheckBox showDateCheckbox;
     CheckBox showTimeCheckbox;
 
-    Widget widget = new Widget(AppWidgetManager.INVALID_APPWIDGET_ID, "", 0, CommonFunctions.intervalInMilliseconds(intervalInDays), 2, false, false, STATUS_NONE);
+    Widget widget = new Widget(AppWidgetManager.INVALID_APPWIDGET_ID, "", 0, intervalInMilliseconds(intervalInDays), 2, false, false, STATUS_NONE);
 
     // OnClickListener for button
     View.OnClickListener updateWidgetOnClickListener = new View.OnClickListener() {
         public void onClick(View v) {
 
             // When the button is clicked, store the string locally
-            String widgetText = mAppWidgetText.getText().toString();
+            String widgetText = widgetTitle.getText().toString();
             boolean showDate = showDateCheckbox.isChecked();
             boolean showTime = showTimeCheckbox.isChecked();
 
             // Create widget object. Save it in the preferences.
             widget.setTitle(widgetText);
-            widget.setIntervalBlue(CommonFunctions.intervalInMilliseconds(intervalInDays));
+            widget.setIntervalBlue(intervalInMilliseconds(intervalInDays));
             widget.setShowDate(showDate);
             widget.setShowTime(showTime);
             // If the status is updated based on the new interval, doing it here saves a DB interaction in updateWidgetBasedOnNewStatus.
-            widget.setStatus(CommonFunctions.getNewStatus(widget.getLastWorkout(), widget.getIntervalBlue()));
+            widget.setStatus(getNewStatus(widget.getLastWorkout(), widget.getIntervalBlue()));
 
             // Save new prefs
             if (isReconfigure) ManageSavedPreferences.updateWidget(context, widget);
             else ManageSavedPreferences.saveDuringInitialize(context, widget);
 
-            // It is the responsibility of the configuration activity to update the app widget
-            Log.v(TAG, "UPDATE_THROUGH_CONFIGURE_ACTIVITY");
-            WidgetFunctions.updateWidgetBasedOnNewStatus(context, widget);
-
-            // Make sure we pass back the original appWidgetId.
-            // WorkoutPixelReConfigureActivity does not need this.
-            if (!isReconfigure) {
-                Intent resultValue = new Intent();
-                resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widget.getAppWidgetId());
-                setResult(RESULT_OK, resultValue);
-                Toast.makeText(context, "Widget created. Click on it to register a workout.", Toast.LENGTH_LONG).show();
-            } else {
-                Toast.makeText(context, "Widget updated.", Toast.LENGTH_LONG).show();
-            }
-
-            finishAndRemoveTask();
+            setWidgetAndFinish();
         }
     };
 
     public ConfigureActivity() {
         super();
+    }
+
+    private void setWidgetAndFinish() {
+        // It is the responsibility of the configuration activity to update the app widget
+        Log.v(TAG, "UPDATE_THROUGH_CONFIGURE_ACTIVITY");
+        WidgetFunctions.updateWidgetBasedOnNewStatus(context, widget);
+
+        // Make sure we pass back the original appWidgetId.
+        // WorkoutPixelReConfigureActivity does not need this.
+        if (!isReconfigure) {
+            Intent resultValue = new Intent();
+            resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widget.getAppWidgetId());
+            setResult(RESULT_OK, resultValue);
+            Toast.makeText(context, "Widget created. Click on it to register a workout.", Toast.LENGTH_LONG).show();
+        } else {
+            Toast.makeText(context, "Widget updated.", Toast.LENGTH_LONG).show();
+        }
+
+        finishAndRemoveTask();
     }
 
     @Override
@@ -118,12 +134,12 @@ public class ConfigureActivity extends AppCompatActivity {
             // Set the result to CANCELED.  This will cause the widget host to cancel out of the widget placement if the user presses the back button.
             setResult(RESULT_CANCELED);
             // Disable the back button in the app bar.
-            getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+            Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(false);
         }
 
         // Bind views
         TextView introText = findViewById(R.id.configure_activity_intro_text);
-        mAppWidgetText = findViewById(R.id.appwidget_text);
+        widgetTitle = findViewById(R.id.appwidget_text);
         showDateCheckbox = findViewById(R.id.showDateCheckbox);
         showTimeCheckbox = findViewById(R.id.showTimeCheckbox);
         Button minusButtonInterval = findViewById(R.id.minus);
@@ -138,7 +154,7 @@ public class ConfigureActivity extends AppCompatActivity {
             // Don't show the initial text if the user edits the widget.
             introText.setVisibility(View.GONE);
             widget = ManageSavedPreferences.loadWidgetByAppWidgetId(context, widget.getAppWidgetId());
-            mAppWidgetText.setText(widget.getTitle());
+            widgetTitle.setText(widget.getTitle());
             intervalInDays = widget.getIntervalBlue() / (24 * 60 * 60 * 1000);
             showDateCheckbox.setChecked(widget.getShowDate());
             showTimeCheckbox.setChecked(widget.getShowTime());
@@ -179,7 +195,7 @@ public class ConfigureActivity extends AppCompatActivity {
         showDateCheckbox.setOnCheckedChangeListener(onCheckedChangeListener);
         showTimeCheckbox.setOnCheckedChangeListener(onCheckedChangeListener);
 
-        mAppWidgetText.addTextChangedListener(new TextWatcher() {
+        widgetTitle.addTextChangedListener(new TextWatcher() {
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
             }
 
@@ -194,18 +210,44 @@ public class ConfigureActivity extends AppCompatActivity {
 
         // Update widget button
         addAndUpdateButton.setOnClickListener(updateWidgetOnClickListener);
+
+        // Reconnect widget
+        CommonFunctions.executorService.execute(() -> { // this run method's body will be executed by the service
+            List<Widget> widgetsWithoutValidAppwidgetId = widgetsWithoutValidAppwidgetId(context, ManageSavedPreferences.loadAllWidgets(context));
+            if (!isReconfigure & widgetsWithoutValidAppwidgetId.size() > 0) {
+                CardView connectWidgetView = findViewById(R.id.connect_widget);
+                connectWidgetView.setVisibility(View.VISIBLE);
+                Spinner connectSpinner = (Spinner) findViewById(R.id.connect_spinner);
+                ArrayAdapter<Widget> adapter = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item, widgetsWithoutValidAppwidgetId);
+                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                connectSpinner.setAdapter(adapter);
+                Button connectButton = findViewById(R.id.connect_widget_button);
+                connectButton.setOnClickListener((View v) -> {
+                    int appWidgetId = widget.getAppWidgetId();
+                    widget = (Widget) ((Spinner) connectSpinner).getSelectedItem();
+                    if (widget != null) {
+                        widget.setAppWidgetId(appWidgetId);
+                        ManageSavedPreferences.updateWidget(context, widget);
+                        setWidgetAndFinish();
+                    } else {
+                        connectSpinner.setBackgroundColor(Color.RED);
+                    }
+                });
+            }
+        });
+
     }
 
     private void setPreview(TextView preview) {
-        String widgetText = mAppWidgetText.getText().toString();
+        String widgetText = widgetTitle.getText().toString();
 
         if (showDateCheckbox.isChecked()) {
             String lastWorkoutDateBeautiful;
             // For the initial screen, show now, otherwise load the last workout
             if (isReconfigure) {
-                lastWorkoutDateBeautiful = CommonFunctions.lastWorkoutDateBeautiful(widget.getLastWorkout());
+                lastWorkoutDateBeautiful = lastWorkoutDateBeautiful(widget.getLastWorkout());
             } else {
-                lastWorkoutDateBeautiful = CommonFunctions.lastWorkoutDateBeautiful(System.currentTimeMillis());
+                lastWorkoutDateBeautiful = lastWorkoutDateBeautiful(System.currentTimeMillis());
             }
             widgetText += "\n" + lastWorkoutDateBeautiful;
         }
@@ -213,15 +255,14 @@ public class ConfigureActivity extends AppCompatActivity {
         if (showTimeCheckbox.isChecked()) {
             String lastWorkoutTimeBeautiful;
             if (isReconfigure) {
-                lastWorkoutTimeBeautiful = CommonFunctions.lastWorkoutTimeBeautiful(widget.getLastWorkout());
+                lastWorkoutTimeBeautiful = lastWorkoutTimeBeautiful(widget.getLastWorkout());
             } else {
-                lastWorkoutTimeBeautiful = CommonFunctions.lastWorkoutTimeBeautiful(System.currentTimeMillis());
+                lastWorkoutTimeBeautiful = lastWorkoutTimeBeautiful(System.currentTimeMillis());
             }
             widgetText += "\n" + lastWorkoutTimeBeautiful;
         }
 
         preview.setText(widgetText);
     }
-
 }
 

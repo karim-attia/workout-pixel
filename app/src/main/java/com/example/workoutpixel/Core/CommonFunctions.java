@@ -1,6 +1,10 @@
 package com.example.workoutpixel.Core;
 
+import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
+import android.content.Context;
 import android.graphics.Color;
+import android.nfc.Tag;
 import android.util.Log;
 
 import com.example.workoutpixel.Database.Widget;
@@ -11,10 +15,13 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
 
 public class CommonFunctions {
     public static final String STATUS_RED = "RED";
@@ -135,4 +142,35 @@ public class CommonFunctions {
         return intervalInMilliseconds / 24 / 60 / 60 / 1000;
     }
 
+    public static int[] appWidgetIds(Context context) {
+        ComponentName thisAppWidget = new ComponentName(context.getPackageName(), WidgetFunctions.class.getName());
+        return AppWidgetManager.getInstance(context).getAppWidgetIds(thisAppWidget);
+    }
+
+    public static List<Widget> widgetsWithoutValidAppwidgetId (Context context, List<Widget> widgets) {
+        List<Widget> widgetsWithoutValidAppwidgetId = widgets.stream().filter(widget -> Arrays.stream(appWidgetIds(context)).noneMatch(i -> i == widget.getAppWidgetId())).collect(Collectors.toList());
+        Log.d(TAG, "widgetsWithoutValidAppwidgetId");
+        Log.d(TAG, "appWidgetIds(context): " + Arrays.toString(appWidgetIds(context)));
+        for (Widget widget: widgets) {
+            Log.d(TAG, "widgets -> AppWidgetId: " + widget.getAppWidgetId() + " Title: " + widget.getTitle() + "AppWidgetIds contain it: " + Arrays.stream(appWidgetIds(context)).anyMatch(i -> i == widget.getAppWidgetId()));
+        }
+        for (Widget widget: widgetsWithoutValidAppwidgetId) {
+            Log.d(TAG, "widgetsWithoutValidAppwidgetId -> AppWidgetId: " + widget.getAppWidgetId() + " Title: " + widget.getTitle());
+        }
+        return widgetsWithoutValidAppwidgetId;
+    }
+
+    public static List<Widget> widgetsWithValidAppwidgetId(Context context, List<Widget> widgets) {
+
+        List<Widget> widgetsWithValidAppwidgetId = widgets.stream().filter(widget -> Arrays.stream(appWidgetIds(context)).anyMatch(i -> i == widget.getAppWidgetId())).collect(Collectors.toList());
+        Log.d(TAG, "widgetsWithValidAppwidgetId");
+        Log.d(TAG, "appWidgetIds(context): " + Arrays.toString(appWidgetIds(context)));
+        for (Widget widget: widgets) {
+            Log.d(TAG, "widgets -> AppWidgetId: " + widget.getAppWidgetId() + " Title: " + widget.getTitle() + "AppWidgetIds contain it: " + Arrays.stream(appWidgetIds(context)).anyMatch(i -> i == widget.getAppWidgetId()));
+        }
+        for (Widget widget: widgetsWithValidAppwidgetId) {
+            Log.d(TAG, "widgetsWithValidAppwidgetId -> AppWidgetId: " + widget.getAppWidgetId() + " Title: " + widget.getTitle());
+        }
+        return widgetsWithValidAppwidgetId;
+    }
 }

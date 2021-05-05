@@ -3,7 +3,6 @@ package com.example.workoutpixel.Core;
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
@@ -48,19 +47,18 @@ public class WidgetFunctions extends AppWidgetProvider {
 
         long thisWorkoutTime = System.currentTimeMillis();
 
-
-        // Add the workout to the database. Technicalities are taken care of in PastWorkoutsViewModel.
-        PastWorkoutsViewModel.insertClickedWorkout(context, widget.getAppWidgetId(), thisWorkoutTime);
-
         widget.setStatus(STATUS_GREEN);
         widget.setLastWorkout(thisWorkoutTime);
         ManageSavedPreferences.updateWidget(context, widget);
 
+        int numberOfPastWorkouts = PastWorkoutsViewModel.getCountOfActiveClickedWorkouts(context, widget.getAppWidgetId()) + 1;
+        Toast.makeText(context, "Oh yeah! Already done this " + numberOfPastWorkouts + " times. :)", Toast.LENGTH_LONG).show();
+
+        // Add the workout to the database. Technicalities are taken care of in PastWorkoutsViewModel.
+        PastWorkoutsViewModel.insertClickedWorkout(context, widget.getAppWidgetId(), thisWorkoutTime);
+
         setWidgetText(widgetView, widget);
         widgetView.setInt(R.id.appwidget_text, "setBackgroundResource", R.drawable.rounded_corner_green);
-
-        int numberOfPastWorkouts = PastWorkoutsViewModel.getCountOfActiveClickedWorkouts(context, widget.getAppWidgetId());
-        Toast.makeText(context, "Oh yeah! Already done this " + numberOfPastWorkouts + " times. :)", Toast.LENGTH_LONG).show();
 
         // Instruct the widget manager to update the widget
         runUpdate(context, widget.getAppWidgetId(), widgetView);
@@ -111,7 +109,7 @@ public class WidgetFunctions extends AppWidgetProvider {
 
         // Do this when the alarm hits
         if (ACTION_ALARM_UPDATE.equals(intent.getAction())) {
-            List<Widget> widgetList = ManageSavedPreferences.loadAllWidgets(context);
+            List<Widget> widgetList = CommonFunctions.widgetsWithValidAppwidgetId(context, ManageSavedPreferences.loadAllWidgets(context));
             for (Widget widget : widgetList) {
                 Log.d(TAG, "ACTION_AUTO_UPDATE for appWidgetId: " + widget.getAppWidgetId());
                 updateWidgetBasedOnNewStatus(context, widget);
@@ -131,7 +129,7 @@ public class WidgetFunctions extends AppWidgetProvider {
 
         // TODO: Understand
         // TODO: Replaced iteration through appWidgetIds with data from DB. Insert check that this is the same and fix if not.
-        List<Widget> widgetList = ManageSavedPreferences.loadAllWidgets(context);
+        List<Widget> widgetList = CommonFunctions.widgetsWithValidAppwidgetId(context, ManageSavedPreferences.loadAllWidgets(context));
         for (Widget widget : widgetList) {
             // Tell the AppWidgetManager to perform an update on the current app widget
             Log.d(TAG, "ON_UPDATE: " + widget.getAppWidgetId());
@@ -169,7 +167,7 @@ public class WidgetFunctions extends AppWidgetProvider {
         // Enter relevant functionality for when the last widget is disabled
         // Stop alarm only if all widgets have been disabled
         Log.v(TAG, "ON_DISABLED");
-        if (appWidgetIds(context).length == 0) {
+        if (CommonFunctions.appWidgetIds(context).length == 0) {
             // stop alarm
             Log.v(TAG, "STOP_ALARM");
             WidgetAlarm widgetAlarm = new WidgetAlarm(context.getApplicationContext());
@@ -178,10 +176,6 @@ public class WidgetFunctions extends AppWidgetProvider {
         }
     }
 
-    private static int[] appWidgetIds(Context context) {
-        ComponentName thisAppWidget = new ComponentName(context.getPackageName(), WidgetFunctions.class.getName());
-        return AppWidgetManager.getInstance(context).getAppWidgetIds(thisAppWidget);
-    }
 
 }
 
