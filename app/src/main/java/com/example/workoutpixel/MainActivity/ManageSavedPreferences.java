@@ -16,8 +16,6 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-// ManageSavedPreferences manages the preferences for every widget. This is either done through the appWidgetId of the widget or through a Widget object.
-// Could move them all to the database into a new table at some point
 public class ManageSavedPreferences extends AndroidViewModel {
     public static final ExecutorService executorService = Executors.newSingleThreadExecutor();
     private static final String TAG = "WORKOUT_PIXEL PREFERENCES";

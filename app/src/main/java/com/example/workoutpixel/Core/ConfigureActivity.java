@@ -86,7 +86,7 @@ public class ConfigureActivity extends AppCompatActivity {
     private void setWidgetAndFinish() {
         // It is the responsibility of the configuration activity to update the app widget
         Log.v(TAG, "UPDATE_THROUGH_CONFIGURE_ACTIVITY");
-        WidgetFunctions.updateWidgetBasedOnNewStatus(context, widget);
+        widget.updateWidgetBasedOnNewStatus(context);
 
         // Make sure we pass back the original appWidgetId.
         // WorkoutPixelReConfigureActivity does not need this.

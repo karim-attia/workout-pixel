@@ -100,7 +100,7 @@ public class PastWorkoutsRecyclerViewAdapter extends RecyclerView.Adapter<PastWo
             }
             ManageSavedPreferences.updateWidget(context, widget);
 
-            WidgetFunctions.updateWidgetBasedOnNewStatus(context, widget);
+            widget.updateWidgetBasedOnNewStatus(context);
         });
 
     }

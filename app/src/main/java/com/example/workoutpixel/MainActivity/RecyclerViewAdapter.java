@@ -27,7 +27,6 @@ import java.util.List;
 import static com.example.workoutpixel.Core.CommonFunctions.STATUS_GREEN;
 import static com.example.workoutpixel.Core.CommonFunctions.getDrawableIntFromStatus;
 import static com.example.workoutpixel.Core.CommonFunctions.lastWorkoutDateBeautiful;
-import static com.example.workoutpixel.Core.CommonFunctions.widgetText;
 
 // RecyclerViewAdapter fills the card view in the MainActivity.
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.WidgetViewHolder> {
@@ -49,7 +48,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
         for (Widget widget : widgets) {
             // Sometimes the onClickListener in the widgets stop working. This is a super stupid way to regularly reset the onClickListener when you open the main app.
-            WidgetFunctions.updateWidgetBasedOnNewStatus(context, widget);
+            widget.updateWidgetBasedOnNewStatus(context);
         }
     }
 
@@ -82,10 +81,10 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         }
         widgetViewHolder.widgetIntervalBlue.setText(text);
         widgetViewHolder.widgetPreview.setBackgroundResource(getDrawableIntFromStatus(widgets.get(i).getStatus()));
-        widgetViewHolder.widgetPreview.setText(widgetText(widgets.get(i)));
+        widgetViewHolder.widgetPreview.setText(widgets.get(i).widgetText());
         widgetViewHolder.widgetPreview.setOnClickListener(v -> {
             // Update the widget the same way as a click on the widget would.
-            WidgetFunctions.updateAfterClick(context, widgets.get(i));
+            widgets.get(i).updateAfterClick(context);
             widgets.get(i).setLastWorkout(System.currentTimeMillis());
             widgets.get(i).setStatus(STATUS_GREEN);
             // Not needed if there is an observer on all items in the MainActivity
