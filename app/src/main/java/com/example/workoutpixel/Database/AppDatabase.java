@@ -8,8 +8,6 @@ import androidx.room.RoomDatabase;
 import androidx.room.migration.Migration;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
-import com.example.workoutpixel.Core.Widget;
-
 @Database(entities = {PastWorkout.class, Widget.class}, version = 2)
 public abstract class AppDatabase extends RoomDatabase {
     private static final Object sLock = new Object();

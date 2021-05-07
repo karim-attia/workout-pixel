@@ -16,7 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.workoutpixel.Core.CommonFunctions;
 import com.example.workoutpixel.Core.ConfigureActivity;
-import com.example.workoutpixel.Core.Widget;
+import com.example.workoutpixel.Database.Widget;
 import com.example.workoutpixel.PastWorkouts.ViewWorkoutsActivity;
 import com.example.workoutpixel.R;
 

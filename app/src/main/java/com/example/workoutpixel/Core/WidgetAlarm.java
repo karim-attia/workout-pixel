@@ -6,6 +6,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
+import com.example.workoutpixel.Database.Widget;
+
 import java.text.DateFormat;
 import java.util.Calendar;
 
@@ -56,7 +58,7 @@ public class WidgetAlarm {
 
     private PendingIntent pendingIntent() {
         Intent alarmIntent = new Intent(context, Widget.class);
-        alarmIntent.setAction(Widget.ACTION_ALARM_UPDATE);
+        alarmIntent.setAction(WidgetFunctions.ACTION_ALARM_UPDATE);
         return PendingIntent.getBroadcast(context, 0, alarmIntent, PendingIntent.FLAG_CANCEL_CURRENT);
     }
 }

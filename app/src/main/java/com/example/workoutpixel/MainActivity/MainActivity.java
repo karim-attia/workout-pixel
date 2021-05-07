@@ -15,7 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.workoutpixel.Core.CommonFunctions;
-import com.example.workoutpixel.Core.Widget;
+import com.example.workoutpixel.Database.Widget;
 import com.example.workoutpixel.R;
 
 public class MainActivity extends AppCompatActivity {

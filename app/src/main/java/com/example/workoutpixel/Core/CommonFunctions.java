@@ -5,6 +5,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.util.Log;
 
+import com.example.workoutpixel.Database.Widget;
 import com.example.workoutpixel.R;
 
 import java.time.Instant;

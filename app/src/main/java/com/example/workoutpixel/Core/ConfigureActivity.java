@@ -21,6 +21,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 
+import com.example.workoutpixel.Database.Widget;
 import com.example.workoutpixel.MainActivity.ManageSavedPreferences;
 import com.example.workoutpixel.R;
 
