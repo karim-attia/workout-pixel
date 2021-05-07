@@ -5,9 +5,18 @@ import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
+import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.RemoteViews;
+import android.widget.Spinner;
 import android.widget.Toast;
+
+import androidx.cardview.widget.CardView;
 
 import com.example.workoutpixel.Database.Widget;
 import com.example.workoutpixel.MainActivity.ManageSavedPreferences;
@@ -17,8 +26,10 @@ import com.example.workoutpixel.R;
 import java.util.List;
 
 import static com.example.workoutpixel.Core.CommonFunctions.STATUS_GREEN;
+import static com.example.workoutpixel.Core.CommonFunctions.executorService;
 import static com.example.workoutpixel.Core.CommonFunctions.getNewStatus;
 import static com.example.workoutpixel.Core.CommonFunctions.widgetText;
+import static com.example.workoutpixel.Core.CommonFunctions.widgetsWithoutValidAppWidgetId;
 
 /**
  * Implementation of App Widget functionality.
@@ -52,6 +63,8 @@ public class WidgetFunctions extends AppWidgetProvider {
         ManageSavedPreferences.updateWidget(context, widget);
 
         int numberOfPastWorkouts = PastWorkoutsViewModel.getCountOfActiveClickedWorkouts(context, widget.uid) + 1;
+        // Handler handler = new Handler(Looper.getMainLooper());
+        // handler.post(() ->
         Toast.makeText(context, "Oh yeah! Already done this " + numberOfPastWorkouts + " times. :)", Toast.LENGTH_LONG).show();
 
         // Add the workout to the database. Technicalities are taken care of in PastWorkoutsViewModel.
@@ -100,6 +113,9 @@ public class WidgetFunctions extends AppWidgetProvider {
         super.onReceive(context, intent);
         Log.d(TAG, "ON_RECEIVE " + intent.getAction() + "\n------------------------------------------------------------------------");
 
+        // CommonFunctions.executorService.execute(() -> {
+
+
         // Do this if the widget has been clicked
         if (ACTION_DONE_EXERCISE.equals(intent.getAction())) {
             int appWidgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, 0);
@@ -115,11 +131,16 @@ public class WidgetFunctions extends AppWidgetProvider {
                 updateWidgetBasedOnNewStatus(context, widget);
             }
         }
+
+        // });
     }
 
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
-        // There may be multiple widgets active, so update all of them
+
+        //CommonFunctions.executorService.execute(() -> {
+
+            // There may be multiple widgets active, so update all of them
         Log.d(TAG, "ON_UPDATE\n------------------------------------------------------------------------");
         // Start alarm
         Log.d(TAG, "START_ALARM");
@@ -135,6 +156,7 @@ public class WidgetFunctions extends AppWidgetProvider {
             Log.d(TAG, "ON_UPDATE: " + widget.getAppWidgetId());
             updateWidgetBasedOnNewStatus(context, widget);
         }
+        //});
     }
 
     @Override

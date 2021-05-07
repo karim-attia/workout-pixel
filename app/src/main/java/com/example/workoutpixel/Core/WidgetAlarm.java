@@ -14,12 +14,11 @@ import java.util.Calendar;
 // WorkoutPixel.onUpdate() may not only be called upon device restarts but also in other cases. Check the documentation for that.
 public class WidgetAlarm {
     private static final String TAG = "WORKOUT_PIXEL ALARM";
-    private final int MILLISECONDS_IN_A_DAY = 24 * 60 * 60 * 1000;
-    private final Context mContext;
+    private final Context context;
 
     // Make singleton?
     public WidgetAlarm(Context context) {
-        mContext = context;
+        this.context = context;
     }
 
     public void startAlarm() {
@@ -32,7 +31,7 @@ public class WidgetAlarm {
         //calendar.set(Calendar.MILLISECOND, 0);
         if (hourOfDay >= 3) {
             // Can be commented to test alarm -> it will come up more or less instantly after restart.
-            calendar.setTimeInMillis(calendar.getTimeInMillis() + MILLISECONDS_IN_A_DAY);
+            calendar.setTimeInMillis(calendar.getTimeInMillis() + CommonFunctions.intervalInMilliseconds(1));
         }
 
         Log.d(TAG, "STARTING_ALARM " + dateTimeString(calendar.getTimeInMillis()));
@@ -52,12 +51,12 @@ public class WidgetAlarm {
     }
 
     private AlarmManager alarmManager() {
-        return (AlarmManager) mContext.getSystemService(Context.ALARM_SERVICE);
+        return (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
     }
 
     private PendingIntent pendingIntent() {
-        Intent alarmIntent = new Intent(mContext, WidgetFunctions.class);
+        Intent alarmIntent = new Intent(context, WidgetFunctions.class);
         alarmIntent.setAction(WidgetFunctions.ACTION_ALARM_UPDATE);
-        return PendingIntent.getBroadcast(mContext, 0, alarmIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+        return PendingIntent.getBroadcast(context, 0, alarmIntent, PendingIntent.FLAG_CANCEL_CURRENT);
     }
 }

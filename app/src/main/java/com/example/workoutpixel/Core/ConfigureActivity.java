@@ -211,7 +211,7 @@ public class ConfigureActivity extends AppCompatActivity {
         addAndUpdateButton.setOnClickListener(updateWidgetOnClickListener);
 
         // Reconnect widget
-        CommonFunctions.executorService.execute(() -> { // this run method's body will be executed by the service
+        CommonFunctions.executorService.execute(() -> {
             List<Widget> widgetsWithoutValidAppwidgetId = widgetsWithoutValidAppWidgetId(context, ManageSavedPreferences.loadAllWidgets(context));
             if (!isReconfigure & widgetsWithoutValidAppwidgetId.size() > 0) {
                 CardView connectWidgetView = findViewById(R.id.connect_widget);

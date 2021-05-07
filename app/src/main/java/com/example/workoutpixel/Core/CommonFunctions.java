@@ -39,9 +39,11 @@ public class CommonFunctions {
         today3AmCalendar.set(Calendar.HOUR_OF_DAY, 3);
         today3AmCalendar.set(Calendar.MINUTE, 0);
         long today3Am = today3AmCalendar.getTimeInMillis();
+/*
         Log.d(TAG, "intervalBlue: " + intervalBlue);
         Log.d(TAG, "today3Am:    " + today3Am);
         Log.d(TAG, "lastWorkout: " + lastWorkout);
+*/
 
         // TODO make this nice somehow. last time 3am?
         int after3Am = 0;
@@ -52,11 +54,13 @@ public class CommonFunctions {
         // Point in time when the widget should change to blue/red as soon as it's night time the next time.
         long timeBlue = lastWorkout + intervalInMilliseconds(intervalBlue) - intervalInMilliseconds(after3Am);
         long timeRed = timeBlue + intervalInMilliseconds(2);
+/*
         Log.d(TAG, "intervalInMilliseconds(intervalBlue): " + intervalInMilliseconds(intervalBlue));
         Log.d(TAG, "intervalInMilliseconds(after3Am):     " + intervalInMilliseconds(after3Am));
 
         Log.d(TAG, "timeBlue:    " + timeBlue);
         Log.d(TAG, "timeRed:     " + timeRed);
+*/
 
 
         // Don't change the widget status if this is the first time the alarm runs and thus lastWorkout == 0L.
@@ -141,6 +145,7 @@ public class CommonFunctions {
 
     public static List<Widget> widgetsWithoutValidAppWidgetId(Context context, List<Widget> widgets) {
         List<Widget> widgetsWithoutValidAppwidgetId = widgets.stream().filter(widget -> Arrays.stream(appWidgetIds(context)).noneMatch(i -> i == widget.getAppWidgetId())).collect(Collectors.toList());
+/*
         Log.d(TAG, "widgetsWithoutValidAppwidgetId");
         Log.d(TAG, "appWidgetIds(context): " + Arrays.toString(appWidgetIds(context)));
         for (Widget widget: widgets) {
@@ -149,12 +154,14 @@ public class CommonFunctions {
         for (Widget widget: widgetsWithoutValidAppwidgetId) {
             Log.d(TAG, "widgetsWithoutValidAppwidgetId -> AppWidgetId: " + widget.getAppWidgetId() + " Title: " + widget.getTitle());
         }
+*/
         return widgetsWithoutValidAppwidgetId;
     }
 
     public static List<Widget> widgetsWithValidAppWidgetId(Context context, List<Widget> widgets) {
 
         List<Widget> widgetsWithValidAppwidgetId = widgets.stream().filter(widget -> Arrays.stream(appWidgetIds(context)).anyMatch(i -> i == widget.getAppWidgetId())).collect(Collectors.toList());
+/*
         Log.d(TAG, "widgetsWithValidAppwidgetId");
         Log.d(TAG, "appWidgetIds(context): " + Arrays.toString(appWidgetIds(context)));
         for (Widget widget: widgets) {
@@ -163,6 +170,7 @@ public class CommonFunctions {
         for (Widget widget: widgetsWithValidAppwidgetId) {
             Log.d(TAG, "widgetsWithValidAppwidgetId -> AppWidgetId: " + widget.getAppWidgetId() + " Title: " + widget.getTitle());
         }
+*/
         return widgetsWithValidAppwidgetId;
     }
 
