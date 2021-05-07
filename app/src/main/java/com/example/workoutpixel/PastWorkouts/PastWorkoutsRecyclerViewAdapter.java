@@ -13,9 +13,8 @@ import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.workoutpixel.Core.WidgetFunctions;
+import com.example.workoutpixel.Core.Widget;
 import com.example.workoutpixel.Database.PastWorkout;
-import com.example.workoutpixel.Database.Widget;
 import com.example.workoutpixel.MainActivity.ManageSavedPreferences;
 import com.example.workoutpixel.R;
 
@@ -100,7 +99,7 @@ public class PastWorkoutsRecyclerViewAdapter extends RecyclerView.Adapter<PastWo
             }
             ManageSavedPreferences.updateWidget(context, widget);
 
-            WidgetFunctions.updateWidgetBasedOnNewStatus(context, widget);
+            widget.updateWidgetBasedOnNewStatus(context);
         });
 
     }

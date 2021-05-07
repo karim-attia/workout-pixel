@@ -55,8 +55,8 @@ public class WidgetAlarm {
     }
 
     private PendingIntent pendingIntent() {
-        Intent alarmIntent = new Intent(context, WidgetFunctions.class);
-        alarmIntent.setAction(WidgetFunctions.ACTION_ALARM_UPDATE);
+        Intent alarmIntent = new Intent(context, Widget.class);
+        alarmIntent.setAction(Widget.ACTION_ALARM_UPDATE);
         return PendingIntent.getBroadcast(context, 0, alarmIntent, PendingIntent.FLAG_CANCEL_CURRENT);
     }
 }

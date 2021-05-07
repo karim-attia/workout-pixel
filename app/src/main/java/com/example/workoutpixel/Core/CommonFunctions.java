@@ -5,7 +5,6 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.util.Log;
 
-import com.example.workoutpixel.Database.Widget;
 import com.example.workoutpixel.R;
 
 import java.time.Instant;
@@ -28,6 +27,12 @@ public class CommonFunctions {
     public static final String STATUS_NONE = "NO STATUS";
     public static final int MILLISECONDS_IN_A_DAY = 24 * 60 * 60 * 1000;
     public static final ExecutorService executorService = Executors.newSingleThreadExecutor();
+/*
+    private static final int NUMBER_OF_THREADS = 4;
+    static final ExecutorService databaseWriteExecutor =
+            Executors.newFixedThreadPool(NUMBER_OF_THREADS);
+*/
+
     private static final String TAG = "WORKOUT_PIXEL COMMON FUNCTIONS";
 
     // Controls which status to set. Will make it possible to implement a nicer day switch mechanism in the future.
@@ -139,7 +144,7 @@ public class CommonFunctions {
     }
 
     public static int[] appWidgetIds(Context context) {
-        ComponentName thisAppWidget = new ComponentName(context.getPackageName(), WidgetFunctions.class.getName());
+        ComponentName thisAppWidget = new ComponentName(context.getPackageName(), Widget.class.getName());
         return AppWidgetManager.getInstance(context).getAppWidgetIds(thisAppWidget);
     }
 

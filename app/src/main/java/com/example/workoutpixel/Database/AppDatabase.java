@@ -8,14 +8,10 @@ import androidx.room.RoomDatabase;
 import androidx.room.migration.Migration;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import com.example.workoutpixel.Core.Widget;
 
 @Database(entities = {PastWorkout.class, Widget.class}, version = 2)
 public abstract class AppDatabase extends RoomDatabase {
-    private static final int NUMBER_OF_THREADS = 4;
-    static final ExecutorService databaseWriteExecutor =
-            Executors.newFixedThreadPool(NUMBER_OF_THREADS);
     private static final Object sLock = new Object();
     private static AppDatabase pastWorkoutsDb;
 

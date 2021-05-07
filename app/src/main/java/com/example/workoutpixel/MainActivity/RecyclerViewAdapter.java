@@ -16,12 +16,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.workoutpixel.Core.CommonFunctions;
 import com.example.workoutpixel.Core.ConfigureActivity;
-import com.example.workoutpixel.Core.WidgetFunctions;
-import com.example.workoutpixel.Database.Widget;
+import com.example.workoutpixel.Core.Widget;
 import com.example.workoutpixel.PastWorkouts.ViewWorkoutsActivity;
 import com.example.workoutpixel.R;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static com.example.workoutpixel.Core.CommonFunctions.STATUS_GREEN;
@@ -49,7 +47,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
         for (Widget widget : widgets) {
             // Sometimes the onClickListener in the widgets stop working. This is a super stupid way to regularly reset the onClickListener when you open the main app.
-            WidgetFunctions.updateWidgetBasedOnNewStatus(context, widget);
+            widget.updateWidgetBasedOnNewStatus(context);
         }
     }
 
@@ -85,7 +83,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         widgetViewHolder.widgetPreview.setText(widgetText(widgets.get(i)));
         widgetViewHolder.widgetPreview.setOnClickListener(v -> {
             // Update the widget the same way as a click on the widget would.
-            WidgetFunctions.updateAfterClick(context, widgets.get(i));
+            widgets.get(i).updateAfterClick(context);
             widgets.get(i).setLastWorkout(System.currentTimeMillis());
             widgets.get(i).setStatus(STATUS_GREEN);
             // Not needed if there is an observer on all items in the MainActivity

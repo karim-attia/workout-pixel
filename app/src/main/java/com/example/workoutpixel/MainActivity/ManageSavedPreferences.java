@@ -8,8 +8,8 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 
+import com.example.workoutpixel.Core.Widget;
 import com.example.workoutpixel.Database.AppDatabase;
-import com.example.workoutpixel.Database.Widget;
 import com.example.workoutpixel.Database.WorkoutDao;
 
 import java.util.List;
