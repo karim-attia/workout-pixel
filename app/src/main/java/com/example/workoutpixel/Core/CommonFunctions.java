@@ -103,18 +103,6 @@ public class CommonFunctions {
         return 0;
     }
 
-    // widgetText returns the text of the whole widget based on a Widget object.
-    public static String widgetText(Widget widget) {
-        String widgetText = widget.getTitle();
-        if (widget.getShowDate() & !widget.getStatus().equals(STATUS_NONE)) {
-            widgetText += "\n" + lastWorkoutDateBeautiful(widget.getLastWorkout());
-        }
-        if (widget.getShowTime() & !widget.getStatus().equals(STATUS_NONE)) {
-            widgetText += "\n" + lastWorkoutTimeBeautiful(widget.getLastWorkout());
-        }
-        return widgetText;
-    }
-
     public static String lastWorkoutDateBeautiful(Long longLastWorkout) {
         if (longLastWorkout == 0L) {return "Never";} else {
             LocalDateTime lastWorkout = Instant.ofEpochMilli(longLastWorkout).atZone(ZoneId.systemDefault()).toLocalDateTime();
