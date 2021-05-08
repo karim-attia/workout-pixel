@@ -128,11 +128,23 @@ public class Widget {
     @NonNull
     @Override
     public String toString() {
-        return this.title;
+        return title + ": " + everyWording();
+    }
+
+    public String everyWording() {
+        String everyWording = "Every " + intervalBlue + " day";
+        if (intervalBlue > 1) {
+            everyWording += "s";
+        }
+        return everyWording;
+    }
+
+    public String debugString() {
+        return appWidgetId + "/ " + title + ": ";
     }
 
     public void updateAfterClick(Context context) {
-        Log.d(TAG, "ACTION_DONE_EXERCISE " + appWidgetId + " " + title + " start");
+        Log.d(TAG, "ACTION_DONE_EXERCISE " + debugString() + "start");
         RemoteViews widgetView = new RemoteViews(context.getPackageName(), R.layout.workout_pixel);
 
         long thisWorkoutTime = System.currentTimeMillis();
@@ -155,11 +167,11 @@ public class Widget {
         // Instruct the widget manager to update the widget
         runUpdate(context, widgetView);
 
-        Log.d(TAG, "ACTION_DONE_EXERCISE " + appWidgetId + " " + title + " complete\n------------------------------------------------------------------------");
+        Log.d(TAG, "ACTION_DONE_EXERCISE " + debugString() + "complete\n------------------------------------------------------------------------");
     }
 
     public void updateWidgetBasedOnNewStatus(Context context) {
-        Log.d(TAG, "updateBasedOnStatus: " + appWidgetId + " " + title + "\n------------------------------------------------------------------------");
+        Log.d(TAG, "updateBasedOnStatus: " + debugString() + "\n------------------------------------------------------------------------");
         RemoteViews widgetView = new RemoteViews(context.getPackageName(), R.layout.workout_pixel);
 
         // Update the widget in the db (only) when there is a new status.

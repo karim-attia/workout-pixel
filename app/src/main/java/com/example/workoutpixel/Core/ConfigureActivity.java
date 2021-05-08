@@ -112,10 +112,11 @@ public class ConfigureActivity extends AppCompatActivity {
         Bundle extras = intent.getExtras();
         if (extras != null) {
             widget.setAppWidgetId(extras.getInt(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID));
-        }
+        } else {Log.d(TAG, "extras = null");}
 
         // If this activity was started with an intent without an app widget ID, finish with an error.
         if (widget.getAppWidgetId() == AppWidgetManager.INVALID_APPWIDGET_ID) {
+            Log.d(TAG, "getAppWidgetId() == AppWidgetManager.INVALID_APPWIDGET_ID");
             finishAndRemoveTask();
             return;
         }

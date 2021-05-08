@@ -3,6 +3,7 @@ package com.example.workoutpixel.MainActivity;
 import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -72,12 +73,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     public void onBindViewHolder(final WidgetViewHolder widgetViewHolder, final int i) {
         widgetViewHolder.widgetTitle.setText(widgets.get(i).getTitle());
         widgetViewHolder.widgetLastWorkout.setText(lastWorkoutDateBeautiful(widgets.get(i).getLastWorkout()));
-        int intervalInDays = widgets.get(i).getIntervalBlue();
-        String text = "Every " + intervalInDays + " day";
-        if (intervalInDays > 1) {
-            text += "s";
-        }
-        widgetViewHolder.widgetIntervalBlue.setText(text);
+        widgetViewHolder.widgetIntervalBlue.setText(widgets.get(i).everyWording());
         widgetViewHolder.widgetPreview.setBackgroundResource(getDrawableIntFromStatus(widgets.get(i).getStatus()));
         widgetViewHolder.widgetPreview.setText(widgets.get(i).widgetText());
         widgetViewHolder.widgetPreview.setOnClickListener(v -> {
@@ -110,7 +106,12 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         widgetViewHolder.widgetPastWorkoutsText.setOnClickListener(viewWorkoutsOnClickListener);
 
         if(!CommonFunctions.doesWidgetHaveValidAppWidgetId(context, widgets.get(i))) {
+            Log.d(TAG, "connectInfo.setVisibility VISIBLE " + widgets.get(i).debugString());
             widgetViewHolder.connectInfo.setVisibility(View.VISIBLE);
+        }
+        else {
+            Log.d(TAG, "connectInfo.setVisibility GONE " + widgets.get(i).debugString());
+            widgetViewHolder.connectInfo.setVisibility(View.GONE);
         }
     }
 

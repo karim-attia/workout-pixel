@@ -133,7 +133,7 @@ public class CommonFunctions {
     }
 
     public static int[] appWidgetIds(Context context) {
-        ComponentName thisAppWidget = new ComponentName(context.getPackageName(), Widget.class.getName());
+        ComponentName thisAppWidget = new ComponentName(context.getPackageName(), WidgetFunctions.class.getName());
         return AppWidgetManager.getInstance(context).getAppWidgetIds(thisAppWidget);
     }
 
@@ -169,6 +169,8 @@ public class CommonFunctions {
     }
 
     public static boolean doesWidgetHaveValidAppWidgetId(Context context, Widget widget) {
-        return Arrays.stream(appWidgetIds(context)).anyMatch(i -> i == widget.getAppWidgetId());
+        boolean doesWidgetHaveValidAppWidgetId = Arrays.stream(appWidgetIds(context)).anyMatch(i -> i == widget.getAppWidgetId());
+        Log.d(TAG, "doesWidgetHaveValidAppWidgetId " + widget.debugString() + doesWidgetHaveValidAppWidgetId);
+        return doesWidgetHaveValidAppWidgetId;
     }
 }
