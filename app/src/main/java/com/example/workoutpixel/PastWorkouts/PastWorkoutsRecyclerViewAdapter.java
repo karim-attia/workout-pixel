@@ -15,7 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.workoutpixel.Database.PastWorkout;
 import com.example.workoutpixel.Database.Widget;
-import com.example.workoutpixel.MainActivity.ManageSavedPreferences;
+import com.example.workoutpixel.MainActivity.InteractWithWidget;
 import com.example.workoutpixel.R;
 
 import java.util.ArrayList;
@@ -80,7 +80,7 @@ public class PastWorkoutsRecyclerViewAdapter extends RecyclerView.Adapter<PastWo
         pastWorkoutsViewHolder.delete.setOnClickListener(v -> {
             // isActive is true if the workout has been active before the click of the delete button.
             pastWorkouts.get(i).setActive(!isActive);
-            PastWorkoutsViewModel.updatePastWorkout(context, pastWorkouts.get(i));
+            InteractWithPastWorkout.updatePastWorkout(context, pastWorkouts.get(i));
 
             // not needed since there is an observer on all items anyway
             // notifyItemChanged(i);
@@ -97,9 +97,9 @@ public class PastWorkoutsRecyclerViewAdapter extends RecyclerView.Adapter<PastWo
                 widget.setLastWorkout(0L);
                 Log.v(TAG, "Size: " + activeWorkoutsOrderedByWorkoutTime.size() + ", no remaining workout");
             }
-            ManageSavedPreferences.updateWidget(context, widget);
+            InteractWithWidget.updateWidget(context, widget);
 
-            widget.updateWidgetBasedOnNewStatus(context);
+            widget.updateWidgetBasedOnStatus(context);
         });
 
     }

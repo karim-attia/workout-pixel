@@ -14,7 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.workoutpixel.Database.Widget;
-import com.example.workoutpixel.MainActivity.ManageSavedPreferences;
+import com.example.workoutpixel.MainActivity.InteractWithWidget;
 import com.example.workoutpixel.R;
 
 public class ViewWorkoutsActivity extends AppCompatActivity {
@@ -46,7 +46,7 @@ public class ViewWorkoutsActivity extends AppCompatActivity {
             return;
         }
 
-        Widget widget = ManageSavedPreferences.loadWidgetByAppWidgetId(context, appWidgetId);
+        Widget widget = InteractWithWidget.loadWidgetByAppWidgetId(context, appWidgetId);
         setContentView(R.layout.view_workouts);
 
         // Bind views and set them
@@ -69,10 +69,10 @@ public class ViewWorkoutsActivity extends AppCompatActivity {
         recyclerView.setAdapter(pastWorkoutsRecyclerViewAdapter);
 
         // Get Viewmodel
-        PastWorkoutsViewModel pastWorkoutViewModel = new PastWorkoutsViewModel(getApplication());
+        InteractWithPastWorkout pastWorkoutViewModel = new InteractWithPastWorkout(getApplication());
         // Create the observer which updates the UI.
         // Observe the LiveData, passing in this activity as the LifecycleOwner and the observer.
-        PastWorkoutsViewModel.getPastWorkouts(context, widget.uid).observe(this, pastWorkouts -> pastWorkoutsRecyclerViewAdapter.setData(pastWorkouts, widget));
+        InteractWithPastWorkout.getPastWorkouts(context, widget.uid).observe(this, pastWorkouts -> pastWorkoutsRecyclerViewAdapter.setData(pastWorkouts, widget));
     }
 }
 

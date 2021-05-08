@@ -137,8 +137,9 @@ public class CommonFunctions {
         return AppWidgetManager.getInstance(context).getAppWidgetIds(thisAppWidget);
     }
 
+    // Not needed anymore if appWidgetId is set to null on deletion. Could be used to check consistency.
     public static List<Widget> widgetsWithoutValidAppWidgetId(Context context, List<Widget> widgets) {
-        List<Widget> widgetsWithoutValidAppwidgetId = widgets.stream().filter(widget -> Arrays.stream(appWidgetIds(context)).noneMatch(i -> i == widget.getAppWidgetId())).collect(Collectors.toList());
+        List<Widget> widgetsWithoutValidAppwidgetId = widgets.stream().filter(widget -> Arrays.stream(appWidgetIds(context)).noneMatch(i -> widget.getAppWidgetId() == null || i == widget.getAppWidgetId())).collect(Collectors.toList());
 /*
         Log.d(TAG, "widgetsWithoutValidAppwidgetId");
         Log.d(TAG, "appWidgetIds(context): " + Arrays.toString(appWidgetIds(context)));
@@ -152,9 +153,10 @@ public class CommonFunctions {
         return widgetsWithoutValidAppwidgetId;
     }
 
+    // Not needed anymore if appWidgetId is set to null on deletion. Could be used to check consistency.
     public static List<Widget> widgetsWithValidAppWidgetId(Context context, List<Widget> widgets) {
 
-        List<Widget> widgetsWithValidAppwidgetId = widgets.stream().filter(widget -> Arrays.stream(appWidgetIds(context)).anyMatch(i -> i == widget.getAppWidgetId())).collect(Collectors.toList());
+        List<Widget> widgetsWithValidAppwidgetId = widgets.stream().filter(widget -> Arrays.stream(appWidgetIds(context)).anyMatch(i -> !(widget.getAppWidgetId() == null) && i == widget.getAppWidgetId())).collect(Collectors.toList());
 /*
         Log.d(TAG, "widgetsWithValidAppwidgetId");
         Log.d(TAG, "appWidgetIds(context): " + Arrays.toString(appWidgetIds(context)));
@@ -168,8 +170,9 @@ public class CommonFunctions {
         return widgetsWithValidAppwidgetId;
     }
 
+    // Not needed anymore if appWidgetId is set to null on deletion. Could be used to check consistency.
     public static boolean doesWidgetHaveValidAppWidgetId(Context context, Widget widget) {
-        boolean doesWidgetHaveValidAppWidgetId = Arrays.stream(appWidgetIds(context)).anyMatch(i -> i == widget.getAppWidgetId());
+        boolean doesWidgetHaveValidAppWidgetId = Arrays.stream(appWidgetIds(context)).anyMatch(i -> widget.getAppWidgetId() == null || i == widget.getAppWidgetId());
         Log.d(TAG, "doesWidgetHaveValidAppWidgetId " + widget.debugString() + doesWidgetHaveValidAppWidgetId);
         return doesWidgetHaveValidAppWidgetId;
     }

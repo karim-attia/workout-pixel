@@ -15,10 +15,10 @@ import com.example.workoutpixel.Database.WorkoutDao;
 
 import java.util.List;
 
-public class PastWorkoutsViewModel extends AndroidViewModel {
+public class InteractWithPastWorkout extends AndroidViewModel {
     private static final String TAG = "WORKOUT_PIXEL InteractWithClickedWorkouts";
 
-    public PastWorkoutsViewModel(@NonNull Application application) {
+    public InteractWithPastWorkout(@NonNull Application application) {
         super(application);
     }
 

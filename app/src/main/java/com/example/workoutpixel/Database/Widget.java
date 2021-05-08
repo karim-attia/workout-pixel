@@ -9,14 +9,14 @@ import android.widget.RemoteViews;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
-import com.example.workoutpixel.Core.CommonFunctions;
 import com.example.workoutpixel.Core.WidgetFunctions;
-import com.example.workoutpixel.MainActivity.ManageSavedPreferences;
-import com.example.workoutpixel.PastWorkouts.PastWorkoutsViewModel;
+import com.example.workoutpixel.MainActivity.InteractWithWidget;
+import com.example.workoutpixel.PastWorkouts.InteractWithPastWorkout;
 import com.example.workoutpixel.R;
 
 import static com.example.workoutpixel.Core.CommonFunctions.*;
@@ -29,8 +29,9 @@ public class Widget {
 
     @PrimaryKey(autoGenerate = true)
     public int uid;
+    @Nullable
     @ColumnInfo(name = "appWidgetId")
-    private int appWidgetId;
+    private Integer appWidgetId;
     @ColumnInfo(name = "title")
     private String title;
     @ColumnInfo(name = "lastWorkout")
@@ -46,7 +47,7 @@ public class Widget {
     @ColumnInfo(name = "status")
     private String status;
 
-    public Widget(Integer appWidgetId, String title, long lastWorkout, int intervalBlue, int intervalRed, boolean showDate, boolean showTime, String status) {
+    public Widget(@Nullable Integer appWidgetId, String title, long lastWorkout, int intervalBlue, int intervalRed, boolean showDate, boolean showTime, String status) {
         this.appWidgetId = appWidgetId;
         this.title = title;
         this.lastWorkout = lastWorkout;
@@ -57,10 +58,11 @@ public class Widget {
         this.status = status;
     }
 
-    public int getAppWidgetId() {
+    @Nullable
+    public Integer getAppWidgetId() {
         return appWidgetId;
     }
-    public void setAppWidgetId(int appWidgetId) {
+    public void setAppWidgetId(@Nullable Integer appWidgetId) {
         this.appWidgetId = appWidgetId;
     }
     public String getTitle() {
@@ -151,15 +153,15 @@ public class Widget {
 
         setStatus(STATUS_GREEN);
         setLastWorkout(thisWorkoutTime);
-        ManageSavedPreferences.updateWidget(context, this);
+        InteractWithWidget.updateWidget(context, this);
 
-        int numberOfPastWorkouts = PastWorkoutsViewModel.getCountOfActiveClickedWorkouts(context, uid) + 1;
+        int numberOfPastWorkouts = InteractWithPastWorkout.getCountOfActiveClickedWorkouts(context, uid) + 1;
         // Handler handler = new Handler(Looper.getMainLooper());
         // handler.post(() ->
         Toast.makeText(context, "Oh yeah! Already done this " + numberOfPastWorkouts + " times. :)", Toast.LENGTH_LONG).show();
 
         // Add the workout to the database. Technicalities are taken care of in PastWorkoutsViewModel.
-        PastWorkoutsViewModel.insertClickedWorkout(context, uid, thisWorkoutTime);
+        InteractWithPastWorkout.insertClickedWorkout(context, uid, thisWorkoutTime);
 
         setWidgetText(widgetView);
         widgetView.setInt(R.id.appwidget_text, "setBackgroundResource", R.drawable.rounded_corner_green);
@@ -170,22 +172,27 @@ public class Widget {
         Log.d(TAG, "ACTION_DONE_EXERCISE " + debugString() + "complete\n------------------------------------------------------------------------");
     }
 
-    public void updateWidgetBasedOnNewStatus(Context context) {
+    public void updateWidgetBasedOnStatus(Context context) {
         Log.d(TAG, "updateBasedOnStatus: " + debugString() + "\n------------------------------------------------------------------------");
         RemoteViews widgetView = new RemoteViews(context.getPackageName(), R.layout.workout_pixel);
 
         // Update the widget in the db (only) when there is a new status.
         if (!status.equals(getNewStatus(lastWorkout, intervalBlue))) {
             setStatus(getNewStatus(lastWorkout, intervalBlue));
-            ManageSavedPreferences.updateWidget(context, this);
+            InteractWithWidget.updateWidget(context, this);
         }
 
+        runUpdate(context, widgetView(context));
+    }
+
+    RemoteViews widgetView(Context context) {
+        RemoteViews widgetView = new RemoteViews(context.getPackageName(), R.layout.workout_pixel);
         // Set an onClickListener for every widget: https://stackoverflow.com/questions/30174386/multiple-instances-of-widget-with-separated-working-clickable-imageview
         widgetView.setOnClickPendingIntent(R.id.appwidget_text, widgetPendingIntent(context));
         // Before updating a widget, the text and background of the view need to be set. Otherwise, an old text view
         setWidgetText(widgetView);
         widgetView.setInt(R.id.appwidget_text, "setBackgroundResource", getDrawableIntFromStatus(status));
-        runUpdate(context, widgetView);
+        return widgetView;
     }
 
     private void setWidgetText(RemoteViews widgetView) {
@@ -194,7 +201,8 @@ public class Widget {
 
     // Make sure to always set both the text and the background of the widget because otherwise it gets updated to some random old version.
     private void runUpdate(Context context, RemoteViews widgetView) {
-        AppWidgetManager.getInstance(context).updateAppWidget(appWidgetId, widgetView);
+        // Should only get this far if the appWidgetId is not null. But check nevertheless.
+        if(!(appWidgetId == null)) {AppWidgetManager.getInstance(context).updateAppWidget(appWidgetId, widgetView);}
     }
 
     // widgetText returns the text of the whole widget based on a Widget object.
@@ -214,7 +222,9 @@ public class Widget {
         Intent intent = new Intent(context, WidgetFunctions.class);
         intent.setAction(WidgetFunctions.ACTION_DONE_EXERCISE);
         // put the appWidgetId as an extra to the update intent
-        intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, appWidgetId);
-        return PendingIntent.getBroadcast(context, appWidgetId, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        if(!(appWidgetId == null)) {
+            intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, appWidgetId);
+            return PendingIntent.getBroadcast(context, appWidgetId, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        }
     }
 }

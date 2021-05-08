@@ -20,6 +20,6 @@
     <string name="connect">Connect</string>
     <string name="date_time_instructions">Do you want to show when you reached your goal the last time?</string>
     <string name="preview">Preview</string>
-    <string name="connect_widget_main_activity">There is no widget for this goal. The app keeps the data because more often than not, a widget gets removed by accident. You can add a new widget to your homescreen and connect it to this goal to keep the data.</string>
+    <string name="connect_widget_main_activity">There is no widget for this goal. The app keeps the data because more often than not, a widget gets removed by accident. You can add a new widget to your homescreen and connect it to this goal.</string>
     <string name="connect_delete">Delete</string>
 </resources>

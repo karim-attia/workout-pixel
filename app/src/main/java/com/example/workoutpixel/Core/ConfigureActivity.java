@@ -22,7 +22,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 
 import com.example.workoutpixel.Database.Widget;
-import com.example.workoutpixel.MainActivity.ManageSavedPreferences;
+import com.example.workoutpixel.MainActivity.InteractWithWidget;
 import com.example.workoutpixel.R;
 
 import java.util.List;
@@ -33,7 +33,6 @@ import static com.example.workoutpixel.Core.CommonFunctions.getDrawableIntFromSt
 import static com.example.workoutpixel.Core.CommonFunctions.getNewStatus;
 import static com.example.workoutpixel.Core.CommonFunctions.lastWorkoutDateBeautiful;
 import static com.example.workoutpixel.Core.CommonFunctions.lastWorkoutTimeBeautiful;
-import static com.example.workoutpixel.Core.CommonFunctions.widgetsWithoutValidAppWidgetId;
 
 /**
  * The configuration screen for the {@link WidgetFunctions WidgetFunctions} AppWidget.
@@ -72,8 +71,8 @@ public class ConfigureActivity extends AppCompatActivity {
             widget.setStatus(getNewStatus(widget.getLastWorkout(), widget.getIntervalBlue()));
 
             // Save new prefs
-            if (isReconfigure) ManageSavedPreferences.updateWidget(context, widget);
-            else ManageSavedPreferences.saveDuringInitialize(context, widget);
+            if (isReconfigure) InteractWithWidget.updateWidget(context, widget);
+            else InteractWithWidget.saveDuringInitialize(context, widget);
 
             setWidgetAndFinish();
         }
@@ -86,7 +85,7 @@ public class ConfigureActivity extends AppCompatActivity {
     private void setWidgetAndFinish() {
         // It is the responsibility of the configuration activity to update the app widget
         Log.v(TAG, "UPDATE_THROUGH_CONFIGURE_ACTIVITY");
-        widget.updateWidgetBasedOnNewStatus(context);
+        widget.updateWidgetBasedOnStatus(context);
 
         // Make sure we pass back the original appWidgetId.
         // WorkoutPixelReConfigureActivity does not need this.
@@ -115,8 +114,8 @@ public class ConfigureActivity extends AppCompatActivity {
         } else {Log.d(TAG, "extras = null");}
 
         // If this activity was started with an intent without an app widget ID, finish with an error.
-        if (widget.getAppWidgetId() == AppWidgetManager.INVALID_APPWIDGET_ID) {
-            Log.d(TAG, "getAppWidgetId() == AppWidgetManager.INVALID_APPWIDGET_ID");
+        if (widget.getAppWidgetId() == null || widget.getAppWidgetId() == AppWidgetManager.INVALID_APPWIDGET_ID) {
+            Log.d(TAG, "AppWidgetId is invalid.");
             finishAndRemoveTask();
             return;
         }
@@ -153,7 +152,7 @@ public class ConfigureActivity extends AppCompatActivity {
         if (isReconfigure) {
             // Don't show the initial text if the user edits the widget.
             introText.setVisibility(View.GONE);
-            widget = ManageSavedPreferences.loadWidgetByAppWidgetId(context, widget.getAppWidgetId());
+            widget = InteractWithWidget.loadWidgetByAppWidgetId(context, widget.getAppWidgetId());
             widgetTitle.setText(widget.getTitle());
             intervalInDays = widget.getIntervalBlue();
             showDateCheckbox.setChecked(widget.getShowDate());
@@ -213,7 +212,7 @@ public class ConfigureActivity extends AppCompatActivity {
 
         // Reconnect widget
         CommonFunctions.executorService.execute(() -> {
-            List<Widget> widgetsWithoutValidAppwidgetId = widgetsWithoutValidAppWidgetId(context, ManageSavedPreferences.loadAllWidgets(context));
+            List<Widget> widgetsWithoutValidAppwidgetId = InteractWithWidget.loadWidgetsWithoutValidAppWidgetId(context);
             if (!isReconfigure & widgetsWithoutValidAppwidgetId.size() > 0) {
                 CardView connectWidgetView = findViewById(R.id.connect_widget);
                 connectWidgetView.setVisibility(View.VISIBLE);
@@ -223,11 +222,11 @@ public class ConfigureActivity extends AppCompatActivity {
                 connectSpinner.setAdapter(adapter);
                 Button connectButton = findViewById(R.id.connect_widget_button);
                 connectButton.setOnClickListener((View v) -> {
-                    int appWidgetId = widget.getAppWidgetId();
+                    Integer appWidgetId = widget.getAppWidgetId();
                     widget = (Widget) ((Spinner) connectSpinner).getSelectedItem();
                     if (widget != null) {
                         widget.setAppWidgetId(appWidgetId);
-                        ManageSavedPreferences.updateWidget(context, widget);
+                        InteractWithWidget.updateWidget(context, widget);
                         setWidgetAndFinish();
                     } else {
                         connectSpinner.setBackgroundColor(Color.RED);

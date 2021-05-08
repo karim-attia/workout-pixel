@@ -16,11 +16,11 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class ManageSavedPreferences extends AndroidViewModel {
+public class InteractWithWidget extends AndroidViewModel {
     public static final ExecutorService executorService = Executors.newSingleThreadExecutor();
     private static final String TAG = "WORKOUT_PIXEL PREFERENCES";
 
-    public ManageSavedPreferences(@NonNull Application application) {
+    public InteractWithWidget(@NonNull Application application) {
         super(application);
     }
 
@@ -32,7 +32,7 @@ public class ManageSavedPreferences extends AndroidViewModel {
         executorService.execute(() -> workoutDao(context).insertWidget(widget));
     }
 
-    public static Widget loadWidgetByAppWidgetId(Context context, int appWidgetId) {
+    public static Widget loadWidgetByAppWidgetId(Context context, Integer appWidgetId) {
         Log.v(TAG, "getPastWorkoutsFromDbByAppWidgetId");
         return workoutDao(context).loadWidgetById(appWidgetId);
     }
@@ -45,6 +45,21 @@ public class ManageSavedPreferences extends AndroidViewModel {
     public static List<Widget> loadAllWidgets(Context context) {
         Log.v(TAG, "getWidgetsFromDb");
         return workoutDao(context).loadAllWidgets();
+    }
+
+    public static void setAppWidgetIdToNull(Context context, Integer appWidgetId) {
+        Log.v(TAG, "setAppWidgetIdToNull");
+        executorService.execute(() -> workoutDao(context).setAppWidgetIdToNull(appWidgetId));
+    }
+
+    public static List<Widget> loadWidgetsWithoutValidAppWidgetId(Context context) {
+        Log.v(TAG, "loadWidgetsWithInvalidAppWidgetId");
+        return workoutDao(context).loadWidgetsWithoutValidAppWidgetId();
+    }
+
+    public static List<Widget> loadWidgetsWithValidAppWidgetId(Context context) {
+        Log.v(TAG, "loadWidgetsWithInvalidAppWidgetId");
+        return workoutDao(context).loadWidgetsWithValidAppWidgetId();
     }
 
     public static WorkoutDao workoutDao(Context context) {

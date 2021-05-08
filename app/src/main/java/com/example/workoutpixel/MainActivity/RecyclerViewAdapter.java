@@ -43,11 +43,11 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
     RecyclerViewAdapter(Context context) {
         this.context = context;
-        widgets = ManageSavedPreferences.loadAllWidgets(context);
+        widgets = InteractWithWidget.loadAllWidgets(context);
 
         for (Widget widget : widgets) {
             // Sometimes the onClickListener in the widgets stop working. This is a super stupid way to regularly reset the onClickListener when you open the main app.
-            widget.updateWidgetBasedOnNewStatus(context);
+            if(widget.getAppWidgetId() != null) {widget.updateWidgetBasedOnStatus(context);}
         }
     }
 
@@ -87,14 +87,14 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
         View.OnClickListener editWidgetOnClickListener = v -> {
             // TODO: Also replace with uid?
-            int appWidgetId = widgets.get(i).getAppWidgetId();
+            Integer appWidgetId = widgets.get(i).getAppWidgetId();
             Intent intent = new Intent(context, ConfigureActivity.class);
             intent.setAction("APPWIDGET_RECONFIGURE");
             intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
             context.startActivity(intent);
         };
         View.OnClickListener viewWorkoutsOnClickListener = v -> {
-            int appWidgetId = widgets.get(i).getAppWidgetId();
+            Integer appWidgetId = widgets.get(i).getAppWidgetId();
             Intent intent = new Intent(context, ViewWorkoutsActivity.class);
             intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
             context.startActivity(intent);
@@ -105,9 +105,11 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         widgetViewHolder.widgetPastWorkouts.setOnClickListener(viewWorkoutsOnClickListener);
         widgetViewHolder.widgetPastWorkoutsText.setOnClickListener(viewWorkoutsOnClickListener);
 
-        if(!CommonFunctions.doesWidgetHaveValidAppWidgetId(context, widgets.get(i))) {
+        if(widgets.get(i).getAppWidgetId() == null) {
+        // if(!CommonFunctions.doesWidgetHaveValidAppWidgetId(context, widgets.get(i))) {
             Log.d(TAG, "connectInfo.setVisibility VISIBLE " + widgets.get(i).debugString());
             widgetViewHolder.connectInfo.setVisibility(View.VISIBLE);
+            InteractWithWidget.setAppWidgetIdToNull(context, widgets.get(i).getAppWidgetId());
         }
         else {
             Log.d(TAG, "connectInfo.setVisibility GONE " + widgets.get(i).debugString());
