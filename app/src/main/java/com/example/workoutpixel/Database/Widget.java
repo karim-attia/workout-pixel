@@ -222,9 +222,11 @@ public class Widget {
         Intent intent = new Intent(context, WidgetFunctions.class);
         intent.setAction(WidgetFunctions.ACTION_DONE_EXERCISE);
         // put the appWidgetId as an extra to the update intent
-        if(!(appWidgetId == null)) {
-            intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, appWidgetId);
-            return PendingIntent.getBroadcast(context, appWidgetId, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        if(appWidgetId == null) {
+            Log.d(TAG, "widgetPendingIntent: appWidgetId is null where it shouldn't be.");
+            return null;
         }
+        intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, appWidgetId);
+        return PendingIntent.getBroadcast(context, appWidgetId, intent, PendingIntent.FLAG_UPDATE_CURRENT);
     }
 }
