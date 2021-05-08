@@ -41,7 +41,7 @@ public class WidgetFunctions extends AppWidgetProvider {
 
         // Do this when the alarm hits
         if (ACTION_ALARM_UPDATE.equals(intent.getAction())) {
-            List<Widget> widgetList = CommonFunctions.widgetsWithValidAppWidgetId(context, InteractWithWidget.loadAllWidgets(context));
+            List<Widget> widgetList = InteractWithWidget.loadWidgetsWithValidAppWidgetId(context);
             for (Widget widget : widgetList) {
                 widget.updateWidgetBasedOnStatus(context);
             }

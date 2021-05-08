@@ -142,7 +142,7 @@ public class Widget {
     }
 
     public String debugString() {
-        return appWidgetId + "/ " + title + ": ";
+        return "appWidgetId: " + appWidgetId + ", Title: " + title + ": ";
     }
 
     public void updateAfterClick(Context context) {
@@ -174,7 +174,6 @@ public class Widget {
 
     public void updateWidgetBasedOnStatus(Context context) {
         Log.d(TAG, "updateBasedOnStatus: " + debugString() + "\n------------------------------------------------------------------------");
-        RemoteViews widgetView = new RemoteViews(context.getPackageName(), R.layout.workout_pixel);
 
         // Update the widget in the db (only) when there is a new status.
         if (!status.equals(getNewStatus(lastWorkout, intervalBlue))) {

@@ -20,10 +20,10 @@ public interface WorkoutDao {
     @Query("SELECT COUNT() FROM pastWorkouts WHERE widgetUid=:widgetUid AND active='1'")
     int getCountOfActivePastWorkouts(int widgetUid);
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE, entity = PastWorkout.class)
     void insertPastWorkout(PastWorkout pastWorkout);
 
-    @Update
+    @Update(onConflict = OnConflictStrategy.REPLACE, entity = PastWorkout.class)
     void updatePastWorkout(PastWorkout pastWorkout);
 
     // Widgets
@@ -43,7 +43,7 @@ public interface WorkoutDao {
     @Query("SELECT title FROM widgets WHERE appWidgetId=:appWidgetId LIMIT 1")
     LiveData<String> loadWidgetTitle(int appWidgetId);
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE, entity = Widget.class)
     void insertWidget(Widget widget);
 
     @Update(onConflict = OnConflictStrategy.REPLACE, entity = Widget.class)
