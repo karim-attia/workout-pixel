@@ -115,16 +115,8 @@ public class Widget {
     public void setStatus(String status) {
         this.status = status;
     }
-
-    public void setAll(int appWidgetId, String title, long lastWorkout, int intervalBlue, int intervalRed, boolean showDate, boolean showTime, String status) {
-        this.appWidgetId = appWidgetId;
-        this.title = title;
-        this.lastWorkout = lastWorkout;
-        this.intervalBlue = intervalBlue;
-        this.intervalRed = intervalRed;
-        this.showDate = showDate;
-        this.showTime = showTime;
-        this.status = status;
+    public boolean hasValidAppWidgetId() {
+        return !(appWidgetId == null);
     }
 
     @NonNull

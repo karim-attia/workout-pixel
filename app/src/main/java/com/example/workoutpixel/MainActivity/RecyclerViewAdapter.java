@@ -105,7 +105,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         widgetViewHolder.widgetPastWorkouts.setOnClickListener(viewWorkoutsOnClickListener);
         widgetViewHolder.widgetPastWorkoutsText.setOnClickListener(viewWorkoutsOnClickListener);
 
-        if(widgets.get(i).getAppWidgetId() == null) {
+        if(!widgets.get(i).hasValidAppWidgetId()) {
         // if(!CommonFunctions.doesWidgetHaveValidAppWidgetId(context, widgets.get(i))) {
             Log.d(TAG, "connectInfo.setVisibility VISIBLE " + widgets.get(i).debugString());
             widgetViewHolder.connectInfo.setVisibility(View.VISIBLE);
