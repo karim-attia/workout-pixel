@@ -114,7 +114,7 @@ public class ConfigureActivity extends AppCompatActivity {
         } else {Log.d(TAG, "extras = null");}
 
         // If this activity was started with an intent without an app widget ID, finish with an error.
-        if (!widget.hasValidAppWidgetId() || widget.getAppWidgetId() == AppWidgetManager.INVALID_APPWIDGET_ID) {
+        if (widget.getAppWidgetId() == null || widget.getAppWidgetId() == AppWidgetManager.INVALID_APPWIDGET_ID) {
             Log.d(TAG, "AppWidgetId is invalid.");
             finishAndRemoveTask();
             return;
