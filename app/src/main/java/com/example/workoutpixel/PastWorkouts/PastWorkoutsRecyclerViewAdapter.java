@@ -22,22 +22,23 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.example.workoutpixel.Core.CommonFunctions.getNewStatus;
 import static com.example.workoutpixel.Core.CommonFunctions.lastWorkoutDateBeautiful;
 import static com.example.workoutpixel.Core.CommonFunctions.lastWorkoutTimeBeautiful;
 
 // RecyclerViewAdapter fills the card view in the MainActivity.
 public class PastWorkoutsRecyclerViewAdapter extends RecyclerView.Adapter<PastWorkoutsRecyclerViewAdapter.PastWorkoutsViewHolder> {
     private static final String TAG = "WORKOUT_PIXEL Past Workouts RVAdapter";
-    int appWidgetId;
+    int uid;
 
     Context context;
     List<PastWorkout> pastWorkouts = new ArrayList<>();
     List<PastWorkout> activeWorkoutsOrderedByWorkoutTime = new ArrayList<>();
     Widget widget;
 
-    PastWorkoutsRecyclerViewAdapter(Context context, int appWidgetId) {
+    PastWorkoutsRecyclerViewAdapter(Context context, int uid) {
         this.context = context;
-        this.appWidgetId = appWidgetId;
+        this.uid = uid;
     }
 
     public void setData(List<PastWorkout> pastWorkouts, Widget widget) {
@@ -97,11 +98,11 @@ public class PastWorkoutsRecyclerViewAdapter extends RecyclerView.Adapter<PastWo
                 widget.setLastWorkout(0L);
                 Log.v(TAG, "Size: " + activeWorkoutsOrderedByWorkoutTime.size() + ", no remaining workout");
             }
+            widget.setNewStatus();
             InteractWithWidget.updateWidget(context, widget);
 
-            widget.updateWidgetBasedOnStatus(context);
+            if(widget.hasValidAppWidgetId()) {widget.updateWidgetBasedOnStatus(context);}
         });
-
     }
 
     @Override

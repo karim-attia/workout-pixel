@@ -21,6 +21,7 @@ import com.example.workoutpixel.Database.Widget;
 import com.example.workoutpixel.PastWorkouts.ViewWorkoutsActivity;
 import com.example.workoutpixel.R;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.example.workoutpixel.Core.CommonFunctions.STATUS_GREEN;
@@ -31,7 +32,7 @@ import static com.example.workoutpixel.Core.CommonFunctions.lastWorkoutDateBeaut
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.WidgetViewHolder> {
     private static final String TAG = "WORKOUT_PIXEL RVAdapter";
     Context context;
-    List<Widget> widgets;
+    List<Widget> widgets = new ArrayList<>();
 
 /*
     private static int[] appWidgetIds(Context context) {
@@ -43,12 +44,16 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
     RecyclerViewAdapter(Context context) {
         this.context = context;
+
+        // TODO: Restore this somewhere
+/*
         widgets = InteractWithWidget.loadAllWidgets(context);
 
         for (Widget widget : widgets) {
             // Sometimes the onClickListener in the widgets stop working. This is a super stupid way to regularly reset the onClickListener when you open the main app.
             if(widget.getAppWidgetId() != null) {widget.updateWidgetBasedOnStatus(context);}
         }
+*/
     }
 
     public void setData(List<Widget> widgets) {
@@ -82,21 +87,18 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             widgets.get(i).setLastWorkout(System.currentTimeMillis());
             widgets.get(i).setStatus(STATUS_GREEN);
             // Not needed if there is an observer on all items in the MainActivity
-            notifyItemChanged(i);
+            // notifyItemChanged(i);
         });
 
         View.OnClickListener editWidgetOnClickListener = v -> {
-            // TODO: Also replace with uid?
-            Integer appWidgetId = widgets.get(i).getAppWidgetId();
             Intent intent = new Intent(context, ConfigureActivity.class);
             intent.setAction("APPWIDGET_RECONFIGURE");
-            intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
+            intent.putExtra("widgetUid", widgets.get(i).getUid());
             context.startActivity(intent);
         };
         View.OnClickListener viewWorkoutsOnClickListener = v -> {
-            Integer appWidgetId = widgets.get(i).getAppWidgetId();
             Intent intent = new Intent(context, ViewWorkoutsActivity.class);
-            intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
+            intent.putExtra("widgetUid", widgets.get(i).getUid());
             context.startActivity(intent);
         };
 

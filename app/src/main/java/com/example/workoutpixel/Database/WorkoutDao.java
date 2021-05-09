@@ -29,7 +29,10 @@ public interface WorkoutDao {
     // Widgets
     // Get widget by appWidgetId
     @Query("SELECT * FROM widgets WHERE appWidgetId=:appWidgetId")
-    Widget loadWidgetById(int appWidgetId);
+    Widget loadWidgetByAppWidgetId(int appWidgetId);
+
+    @Query("SELECT * FROM widgets WHERE uid=:uid")
+    Widget loadWidgetByUid(int uid);
 
     // Get all widgets
     @Query("SELECT * FROM widgets")

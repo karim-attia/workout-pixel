@@ -58,6 +58,8 @@ public class Widget {
         this.status = status;
     }
 
+    public int getUid() {return uid;}
+    public void setUid(int uid) {this.uid = uid;}
     @Nullable
     public Integer getAppWidgetId() {
         return appWidgetId;
@@ -115,8 +117,17 @@ public class Widget {
     public void setStatus(String status) {
         this.status = status;
     }
+    public boolean setNewStatus() {
+        String newStatus = getNewStatus(lastWorkout, intervalBlue);
+        boolean setNewStatus= !status.equals(newStatus);
+        status = newStatus;
+        return setNewStatus;
+    }
+
     public boolean hasValidAppWidgetId() {
-        return !(appWidgetId == null);
+        boolean hasValidAppWidgetId = !(appWidgetId == null);
+        Log.i(TAG, "hasValidAppWidgetId: " + hasValidAppWidgetId);
+        return hasValidAppWidgetId;
     }
 
     @NonNull
@@ -139,27 +150,23 @@ public class Widget {
 
     public void updateAfterClick(Context context) {
         Log.d(TAG, "ACTION_DONE_EXERCISE " + debugString() + "start");
-        RemoteViews widgetView = new RemoteViews(context.getPackageName(), R.layout.workout_pixel);
-
-        long thisWorkoutTime = System.currentTimeMillis();
-
-        setStatus(STATUS_GREEN);
-        setLastWorkout(thisWorkoutTime);
-        InteractWithWidget.updateWidget(context, this);
 
         int numberOfPastWorkouts = InteractWithPastWorkout.getCountOfActiveClickedWorkouts(context, uid) + 1;
         // Handler handler = new Handler(Looper.getMainLooper());
         // handler.post(() ->
         Toast.makeText(context, "Oh yeah! Already done this " + numberOfPastWorkouts + " times. :)", Toast.LENGTH_LONG).show();
 
+        // Update the widget data with the latest click
+        status = STATUS_GREEN;
+        lastWorkout = System.currentTimeMillis();
         // Add the workout to the database. Technicalities are taken care of in PastWorkoutsViewModel.
-        InteractWithPastWorkout.insertClickedWorkout(context, uid, thisWorkoutTime);
+        InteractWithPastWorkout.insertClickedWorkout(context, uid, lastWorkout);
 
-        setWidgetText(widgetView);
-        widgetView.setInt(R.id.appwidget_text, "setBackgroundResource", R.drawable.rounded_corner_green);
+        // Update the widget data in the db
+        InteractWithWidget.updateWidget(context, this);
 
-        // Instruct the widget manager to update the widget
-        runUpdate(context, widgetView);
+        // Instruct the widget manager to update the widget with the latest widget data
+        runUpdate(context, false);
 
         Log.d(TAG, "ACTION_DONE_EXERCISE " + debugString() + "complete\n------------------------------------------------------------------------");
     }
@@ -167,33 +174,30 @@ public class Widget {
     public void updateWidgetBasedOnStatus(Context context) {
         Log.d(TAG, "updateBasedOnStatus: " + debugString() + "\n------------------------------------------------------------------------");
 
-        // Update the widget in the db (only) when there is a new status.
-        if (!status.equals(getNewStatus(lastWorkout, intervalBlue))) {
-            setStatus(getNewStatus(lastWorkout, intervalBlue));
+        // Update the widget data in the db (only) when there is a new status.
+        if (setNewStatus()) {
             InteractWithWidget.updateWidget(context, this);
         }
 
-        runUpdate(context, widgetView(context));
+        // Instruct the widget manager to update the widget with the latest widget data
+        runUpdate(context, true);
     }
 
-    RemoteViews widgetView(Context context) {
+    private void runUpdate(Context context, boolean setOnClickListener) {
+        // Make sure to always set both the text and the background of the widget because otherwise it gets updated to some random old version.
+        // Should only get this far if the appWidgetId is not null. But check nevertheless.
+        if(!(appWidgetId == null)) {AppWidgetManager.getInstance(context).updateAppWidget(appWidgetId, widgetView(context, setOnClickListener));}
+        else {Log.d(TAG, "runUpdate: appWidgetId == null where it shouldn't be.");}
+    }
+
+    RemoteViews widgetView(Context context, boolean setOnClickListener) {
         RemoteViews widgetView = new RemoteViews(context.getPackageName(), R.layout.workout_pixel);
         // Set an onClickListener for every widget: https://stackoverflow.com/questions/30174386/multiple-instances-of-widget-with-separated-working-clickable-imageview
-        widgetView.setOnClickPendingIntent(R.id.appwidget_text, widgetPendingIntent(context));
-        // Before updating a widget, the text and background of the view need to be set. Otherwise, an old text view
-        setWidgetText(widgetView);
+        if(setOnClickListener) {widgetView.setOnClickPendingIntent(R.id.appwidget_text, widgetPendingIntent(context));}
+        // Before updating a widget, the text and background of the view need to be set. Otherwise, the existing not updated properties of the widgetView will be passed.
+        widgetView.setTextViewText(R.id.appwidget_text, widgetText());
         widgetView.setInt(R.id.appwidget_text, "setBackgroundResource", getDrawableIntFromStatus(status));
         return widgetView;
-    }
-
-    private void setWidgetText(RemoteViews widgetView) {
-        widgetView.setTextViewText(R.id.appwidget_text, widgetText());
-    }
-
-    // Make sure to always set both the text and the background of the widget because otherwise it gets updated to some random old version.
-    private void runUpdate(Context context, RemoteViews widgetView) {
-        // Should only get this far if the appWidgetId is not null. But check nevertheless.
-        if(!(appWidgetId == null)) {AppWidgetManager.getInstance(context).updateAppWidget(appWidgetId, widgetView);}
     }
 
     // widgetText returns the text of the whole widget based on a Widget object.

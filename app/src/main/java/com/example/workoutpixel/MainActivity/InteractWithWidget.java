@@ -34,8 +34,14 @@ public class InteractWithWidget extends AndroidViewModel {
 
     public static Widget loadWidgetByAppWidgetId(Context context, Integer appWidgetId) {
         Log.v(TAG, "getPastWorkoutsFromDbByAppWidgetId");
-        return workoutDao(context).loadWidgetById(appWidgetId);
+        return workoutDao(context).loadWidgetByAppWidgetId(appWidgetId);
     }
+
+    public static Widget loadWidgetByUid(Context context, int uid) {
+        Log.v(TAG, "getPastWorkoutsFromDbByUid");
+        return workoutDao(context).loadWidgetByUid(uid);
+    }
+
 
     public static LiveData<List<Widget>> loadAllWidgetsLiveData(Context context) {
         Log.v(TAG, "getWidgetsFromDb");

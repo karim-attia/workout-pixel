@@ -85,7 +85,7 @@ public class ConfigureActivity extends AppCompatActivity {
     private void setWidgetAndFinish() {
         // It is the responsibility of the configuration activity to update the app widget
         Log.v(TAG, "UPDATE_THROUGH_CONFIGURE_ACTIVITY");
-        widget.updateWidgetBasedOnStatus(context);
+        if(widget.hasValidAppWidgetId()) {widget.updateWidgetBasedOnStatus(context);}
 
         // Make sure we pass back the original appWidgetId.
         // WorkoutPixelReConfigureActivity does not need this.
@@ -109,32 +109,44 @@ public class ConfigureActivity extends AppCompatActivity {
         // Find the widget id  and whether it is a reconfigure activity from the intent.
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();
-        if (extras != null) {
-            widget.setAppWidgetId(extras.getInt(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID));
-        } else {Log.d(TAG, "extras = null");}
 
-        // If this activity was started with an intent without an app widget ID, finish with an error.
-        if (widget.getAppWidgetId() == null || widget.getAppWidgetId() == AppWidgetManager.INVALID_APPWIDGET_ID) {
-            Log.d(TAG, "AppWidgetId is invalid.");
-            finishAndRemoveTask();
-            return;
-        }
         isReconfigure = intent.getAction().equals("APPWIDGET_RECONFIGURE");
         Log.v(TAG, "Is it a reconfigure activity? " + isReconfigure);
 
-        // Change the activity title in the app bar
-        if (isReconfigure) {
-            setTitle(R.string.ReconfigureWidgetActivityLabel);
-        }
-
-        setContentView(R.layout.workout_pixel_configure);
-
         if (!isReconfigure) {
+            if (extras != null) {
+                widget.setAppWidgetId(extras.getInt(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID));
+            } else {Log.d(TAG, "extras = null");}
+
+            // If this activity was started with an intent without an app widget ID, finish with an error.
+            if (widget.getAppWidgetId() == null || widget.getAppWidgetId() == AppWidgetManager.INVALID_APPWIDGET_ID) {
+                Log.d(TAG, "AppWidgetId is invalid.");
+                finishAndRemoveTask();
+                return;
+            }
+
             // Set the result to CANCELED.  This will cause the widget host to cancel out of the widget placement if the user presses the back button.
             setResult(RESULT_CANCELED);
             // Disable the back button in the app bar.
             Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(false);
         }
+
+        if (isReconfigure) {
+            if (extras != null) {
+                widget.setUid(extras.getInt("widgetUid", 0));
+            } else {Log.d(TAG, "extras = null");}
+
+            if (widget.getUid() == 0) {
+                Log.d(TAG, "widgetUid is invalid.");
+                finishAndRemoveTask();
+                return;
+            }
+            // Change the activity title in the app bar
+            setTitle(R.string.ReconfigureWidgetActivityLabel);
+        }
+
+        setContentView(R.layout.workout_pixel_configure);
+
 
         // Bind views
         TextView introText = findViewById(R.id.configure_activity_intro_text);
@@ -152,7 +164,7 @@ public class ConfigureActivity extends AppCompatActivity {
         if (isReconfigure) {
             // Don't show the initial text if the user edits the widget.
             introText.setVisibility(View.GONE);
-            widget = InteractWithWidget.loadWidgetByAppWidgetId(context, widget.getAppWidgetId());
+            widget = InteractWithWidget.loadWidgetByUid(context, widget.getUid());
             widgetTitle.setText(widget.getTitle());
             intervalInDays = widget.getIntervalBlue();
             showDateCheckbox.setChecked(widget.getShowDate());
@@ -211,30 +223,31 @@ public class ConfigureActivity extends AppCompatActivity {
         addAndUpdateButton.setOnClickListener(updateWidgetOnClickListener);
 
         // Reconnect widget
-        CommonFunctions.executorService.execute(() -> {
-            List<Widget> widgetsWithoutValidAppwidgetId = InteractWithWidget.loadWidgetsWithoutValidAppWidgetId(context);
-            if (!isReconfigure & widgetsWithoutValidAppwidgetId.size() > 0) {
-                CardView connectWidgetView = findViewById(R.id.connect_widget);
-                connectWidgetView.setVisibility(View.VISIBLE);
-                Spinner connectSpinner = (Spinner) findViewById(R.id.connect_spinner);
-                ArrayAdapter<Widget> adapter = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item, widgetsWithoutValidAppwidgetId);
-                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                connectSpinner.setAdapter(adapter);
-                Button connectButton = findViewById(R.id.connect_widget_button);
-                connectButton.setOnClickListener((View v) -> {
-                    Integer appWidgetId = widget.getAppWidgetId();
-                    widget = (Widget) ((Spinner) connectSpinner).getSelectedItem();
-                    if (widget != null) {
-                        widget.setAppWidgetId(appWidgetId);
-                        InteractWithWidget.updateWidget(context, widget);
-                        setWidgetAndFinish();
-                    } else {
-                        connectSpinner.setBackgroundColor(Color.RED);
-                    }
-                });
-            }
-        });
-
+        if (!isReconfigure) {
+            CommonFunctions.executorService.execute(() -> {
+                List<Widget> widgetsWithoutValidAppwidgetId = InteractWithWidget.loadWidgetsWithoutValidAppWidgetId(context);
+                if (widgetsWithoutValidAppwidgetId.size() > 0) {
+                    CardView connectWidgetView = findViewById(R.id.connect_widget);
+                    connectWidgetView.setVisibility(View.VISIBLE);
+                    Spinner connectSpinner = (Spinner) findViewById(R.id.connect_spinner);
+                    ArrayAdapter<Widget> adapter = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item, widgetsWithoutValidAppwidgetId);
+                    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                    connectSpinner.setAdapter(adapter);
+                    Button connectButton = findViewById(R.id.connect_widget_button);
+                    connectButton.setOnClickListener((View v) -> {
+                        Integer appWidgetId = widget.getAppWidgetId();
+                        widget = (Widget) ((Spinner) connectSpinner).getSelectedItem();
+                        if (widget != null) {
+                            widget.setAppWidgetId(appWidgetId);
+                            InteractWithWidget.updateWidget(context, widget);
+                            setWidgetAndFinish();
+                        } else {
+                            connectSpinner.setBackgroundColor(Color.RED);
+                        }
+                    });
+                }
+            });
+        }
     }
 
     private void setPreview(TextView preview) {

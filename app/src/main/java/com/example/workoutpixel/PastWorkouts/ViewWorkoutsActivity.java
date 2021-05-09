@@ -21,7 +21,7 @@ public class ViewWorkoutsActivity extends AppCompatActivity {
     private static final String TAG = "WORKOUT_PIXEL ViewWorkoutsActivity";
     final Context context = ViewWorkoutsActivity.this;
 
-    int appWidgetId;
+    int uid;
 
     public ViewWorkoutsActivity() {
         super();
@@ -36,17 +36,17 @@ public class ViewWorkoutsActivity extends AppCompatActivity {
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();
         if (extras != null) {
-            appWidgetId = extras.getInt(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
+            uid = extras.getInt("widgetUid", 0);
         }
 
         // If this activity was started with an intent without an app widget ID, finish with an error.
-        if (appWidgetId == AppWidgetManager.INVALID_APPWIDGET_ID) {
+        if (uid == 0) {
             finishAndRemoveTask();
             Log.d(TAG, "AppWidgetId invalid.");
             return;
         }
 
-        Widget widget = InteractWithWidget.loadWidgetByAppWidgetId(context, appWidgetId);
+        Widget widget = InteractWithWidget.loadWidgetByUid(context, uid);
         setContentView(R.layout.view_workouts);
 
         // Bind views and set them
@@ -61,10 +61,9 @@ public class ViewWorkoutsActivity extends AppCompatActivity {
         delete.setImageResource(0);
 
         RecyclerView recyclerView = findViewById(R.id.recycler_view);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
-        recyclerView.setLayoutManager(linearLayoutManager);
+        recyclerView.setLayoutManager(new LinearLayoutManager(context));
 
-        PastWorkoutsRecyclerViewAdapter pastWorkoutsRecyclerViewAdapter = new PastWorkoutsRecyclerViewAdapter(context, appWidgetId);
+        PastWorkoutsRecyclerViewAdapter pastWorkoutsRecyclerViewAdapter = new PastWorkoutsRecyclerViewAdapter(context, uid);
         recyclerView.setHasFixedSize(true);
         recyclerView.setAdapter(pastWorkoutsRecyclerViewAdapter);
 
