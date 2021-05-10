@@ -118,8 +118,8 @@ public class CommonFunctions {
         return lastWorkout.format(dateFormatter);
     }
 
-    public static String lastWorkoutDateTimeBeautiful(Long longLastWorkout) {
-        LocalDateTime lastWorkout = Instant.ofEpochMilli(longLastWorkout).atZone(ZoneId.systemDefault()).toLocalDateTime();
+    public static String lastWorkoutDateTimeBeautiful(Long time) {
+        LocalDateTime lastWorkout = Instant.ofEpochMilli(time).atZone(ZoneId.systemDefault()).toLocalDateTime();
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT).withLocale(new Locale("de", "CH"));
         return lastWorkout.format(dateFormatter);
     }

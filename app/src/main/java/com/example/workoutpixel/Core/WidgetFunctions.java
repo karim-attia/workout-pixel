@@ -4,6 +4,7 @@ import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.util.Log;
 
 import com.example.workoutpixel.Database.Widget;
@@ -21,6 +22,7 @@ public class WidgetFunctions extends AppWidgetProvider {
     public static final String ACTION_ALARM_UPDATE = "ALARM_UPDATE";
     // TODO: Replace strings with enums?
     public static final String ACTION_DONE_EXERCISE = "DONE_EXERCISE";
+    private static final String PREFS_NAME = "com.example.WorkoutPixel";
     private static final String TAG = "WidgetFunctions";
 
 
@@ -41,6 +43,7 @@ public class WidgetFunctions extends AppWidgetProvider {
 
         // Do this when the alarm hits
         if (ACTION_ALARM_UPDATE.equals(intent.getAction())) {
+            saveLastAlarm(context);
             List<Widget> widgetList = InteractWithWidget.loadWidgetsWithValidAppWidgetId(context);
             for (Widget widget : widgetList) {
                 widget.updateWidgetBasedOnStatus(context);
@@ -112,6 +115,14 @@ public class WidgetFunctions extends AppWidgetProvider {
         }
     }
 
+    // Last alarm
+    static void saveLastAlarm(Context context) {
+        SharedPreferences.Editor prefs = context.getSharedPreferences(PREFS_NAME, 0).edit();
+        long lastAlarm = System.currentTimeMillis();
+        String timeLastWorkoutBeautiful = CommonFunctions.lastWorkoutDateTimeBeautiful(lastAlarm);
+        prefs.putString("Last Alarm", timeLastWorkoutBeautiful);
+        prefs.apply();
+    }
 
 }
 
