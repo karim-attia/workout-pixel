@@ -52,8 +52,11 @@ public interface WorkoutDao {
     @Update(onConflict = OnConflictStrategy.REPLACE, entity = Widget.class)
     void updateWidget(Widget widget);
 
+    @Query("UPDATE widgets SET appWidgetId = null WHERE uid=:uid")
+    void setAppWidgetIdToNullByUid(int uid);
+
     @Query("UPDATE widgets SET appWidgetId = null WHERE appWidgetId=:appWidgetId")
-    void setAppWidgetIdToNull(Integer appWidgetId);
+    void setAppWidgetIdToNullByAppwidgetId(Integer appWidgetId);
 
     // Get all widgets without AppWidgetId
     @Query("SELECT * FROM widgets WHERE appWidgetId IS NULL")

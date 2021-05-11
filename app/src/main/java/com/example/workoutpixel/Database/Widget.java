@@ -15,7 +15,7 @@ import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
 import com.example.workoutpixel.Core.WidgetFunctions;
-import com.example.workoutpixel.MainActivity.InteractWithWidget;
+import com.example.workoutpixel.Main.InteractWithWidgetInDb;
 import com.example.workoutpixel.PastWorkouts.InteractWithPastWorkout;
 import com.example.workoutpixel.R;
 
@@ -83,6 +83,14 @@ public class Widget {
     public void setLastWorkout(long lastWorkout) {
         this.lastWorkout = lastWorkout;
     }
+    public boolean setNewLastWorkout(long lastWorkout) {
+        if(this.lastWorkout == lastWorkout) {return false;}
+        else {
+            this.lastWorkout = lastWorkout;
+            setNewStatus();
+            return true;
+        }
+    }
     public int getIntervalBlue() {
         return intervalBlue;
     }
@@ -107,26 +115,21 @@ public class Widget {
     public void setShowTime(boolean showTime) {
         this.showTime = showTime;
     }
-    public String getStatus() {
-        if (status != null) {
-            return status;
-        } else {
-            return "";
-        }
-    }
+    public String getStatus() { return status;}
     public void setStatus(String status) {
         this.status = status;
     }
     public boolean setNewStatus() {
         String newStatus = getNewStatus(lastWorkout, intervalBlue);
-        boolean setNewStatus= !status.equals(newStatus);
-        status = newStatus;
-        return setNewStatus;
+        if(this.status.equals(newStatus)) {return false;}
+        else {
+            status = newStatus;
+            return true;
+        }
     }
-
     public boolean hasValidAppWidgetId() {
         boolean hasValidAppWidgetId = !(appWidgetId == null);
-        Log.i(TAG, "hasValidAppWidgetId: " + hasValidAppWidgetId);
+        Log.v(TAG, "hasValidAppWidgetId: " + hasValidAppWidgetId);
         return hasValidAppWidgetId;
     }
 
@@ -154,7 +157,7 @@ public class Widget {
         int numberOfPastWorkouts = InteractWithPastWorkout.getCountOfActiveClickedWorkouts(context, uid) + 1;
         // Handler handler = new Handler(Looper.getMainLooper());
         // handler.post(() ->
-        Toast.makeText(context, "Oh yeah! Already done this " + numberOfPastWorkouts + " times. :)", Toast.LENGTH_LONG).show();
+        Toast.makeText(context, "Oh yeah! Already done this " + numberOfPastWorkouts + " times. :)", Toast.LENGTH_SHORT).show();
 
         // Update the widget data with the latest click
         status = STATUS_GREEN;
@@ -163,7 +166,7 @@ public class Widget {
         InteractWithPastWorkout.insertClickedWorkout(context, uid, lastWorkout);
 
         // Update the widget data in the db
-        InteractWithWidget.updateWidget(context, this);
+        InteractWithWidgetInDb.updateWidget(context, this);
 
         // Instruct the widget manager to update the widget with the latest widget data
         runUpdate(context, false);
@@ -171,22 +174,23 @@ public class Widget {
         Log.d(TAG, "ACTION_DONE_EXERCISE " + debugString() + "complete\n------------------------------------------------------------------------");
     }
 
+    // Can also be called on widget with invalid AppWidgetId
     public void updateWidgetBasedOnStatus(Context context) {
         Log.d(TAG, "updateBasedOnStatus: " + debugString() + "\n------------------------------------------------------------------------");
 
         // Update the widget data in the db (only) when there is a new status.
         if (setNewStatus()) {
-            InteractWithWidget.updateWidget(context, this);
+            InteractWithWidgetInDb.updateWidget(context, this);
         }
 
         // Instruct the widget manager to update the widget with the latest widget data
         runUpdate(context, true);
     }
 
-    private void runUpdate(Context context, boolean setOnClickListener) {
+    public void runUpdate(Context context, boolean setOnClickListener) {
         // Make sure to always set both the text and the background of the widget because otherwise it gets updated to some random old version.
         // Should only get this far if the appWidgetId is not null. But check nevertheless.
-        if(!(appWidgetId == null)) {AppWidgetManager.getInstance(context).updateAppWidget(appWidgetId, widgetView(context, setOnClickListener));}
+        if(hasValidAppWidgetId()) {AppWidgetManager.getInstance(context).updateAppWidget(appWidgetId, widgetView(context, setOnClickListener));}
         else {Log.d(TAG, "runUpdate: appWidgetId == null where it shouldn't be.");}
     }
 

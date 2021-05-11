@@ -3,6 +3,7 @@ package com.example.workoutpixel.Core;
 import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.util.Log;
 
 import com.example.workoutpixel.Database.Widget;
@@ -28,11 +29,11 @@ public class CommonFunctions {
     public static final String STATUS_NONE = "NO STATUS";
     public static final int MILLISECONDS_IN_A_DAY = 24 * 60 * 60 * 1000;
     public static final ExecutorService executorService = Executors.newSingleThreadExecutor();
-/*
-    private static final int NUMBER_OF_THREADS = 4;
-    static final ExecutorService databaseWriteExecutor =
-            Executors.newFixedThreadPool(NUMBER_OF_THREADS);
-*/
+
+    private static final String PREFS_NAME = "com.example.WorkoutPixel";
+
+    // private static final int NUMBER_OF_THREADS = 4;
+    // public static final ExecutorService executorService = Executors.newFixedThreadPool(NUMBER_OF_THREADS);
 
     private static final String TAG = "WORKOUT_PIXEL COMMON FUNCTIONS";
 
@@ -176,4 +177,13 @@ public class CommonFunctions {
         Log.d(TAG, "doesWidgetHaveValidAppWidgetId " + widget.debugString() + doesWidgetHaveValidAppWidgetId);
         return doesWidgetHaveValidAppWidgetId;
     }
+
+    // Last alarm
+    public static void saveTimeWithStringToSharedPreferences(Context context, String string) {
+        SharedPreferences.Editor prefs = context.getSharedPreferences(PREFS_NAME, 0).edit();
+        String timeLastWorkoutBeautiful = CommonFunctions.lastWorkoutDateTimeBeautiful(System.currentTimeMillis());
+        prefs.putString(string, timeLastWorkoutBeautiful);
+        prefs.apply();
+    }
+
 }

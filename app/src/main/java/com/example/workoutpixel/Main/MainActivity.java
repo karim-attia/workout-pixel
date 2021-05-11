@@ -1,29 +1,29 @@
-package com.example.workoutpixel.MainActivity;
+package com.example.workoutpixel.Main;
 
-import android.appwidget.AppWidgetManager;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
-import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.LiveData;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.workoutpixel.Database.Widget;
 import com.example.workoutpixel.R;
+
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "WORKOUT_PIXEL_APP";
-    final Context context = MainActivity.this;
-    RecyclerViewAdapter recyclerViewAdapter;
+    private final Context context = MainActivity.this;
 
     // onCreate is called when the main app is first loaded.
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d(TAG, "MainActivity\n------------------------------------------------------------------------");
+        Log.d(TAG, "------------------------------------------\n                                                                              -------------- MainActivity --------------");
         setContentView(R.layout.activity_main);
         setContent();
     }
@@ -37,8 +37,17 @@ public class MainActivity extends AppCompatActivity {
         RecyclerViewAdapter recyclerViewAdapter = new RecyclerViewAdapter(context);
         recyclerView.setAdapter(recyclerViewAdapter);
 
+
+        InteractWithWidgetInDb interactWithWidgetInDb = new InteractWithWidgetInDb(this.getApplication());
         // Create the observer which updates the UI.
         // Observe the LiveData, passing this activity as the LifecycleOwner and the observer.
-        InteractWithWidget.loadAllWidgetsLiveData(context).observe(this, recyclerViewAdapter::setData);
+        LiveData<List<Widget>> liveData = interactWithWidgetInDb.loadAllWidgetsLiveData(context.getApplicationContext());
+        liveData.observe(this, widgets -> {
+            Log.d(TAG, "has observers " + liveData.hasActiveObservers());
+            recyclerViewAdapter.setData(widgets);
+            recyclerView.setItemAnimator(null);
+            liveData.removeObservers(this);
+            Log.d(TAG, "has observers " + liveData.hasActiveObservers());
+        });
     }
 }

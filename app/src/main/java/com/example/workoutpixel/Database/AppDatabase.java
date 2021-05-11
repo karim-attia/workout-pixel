@@ -8,20 +8,20 @@ import androidx.room.RoomDatabase;
 import androidx.room.migration.Migration;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
-@Database(entities = {PastWorkout.class, Widget.class}, version = 2)
+@Database(entities = {PastWorkout.class, Widget.class}, version = 1)
 public abstract class AppDatabase extends RoomDatabase {
-    private static final Object sLock = new Object();
-    private static AppDatabase pastWorkoutsDb;
+    // private static final Object sLock = new Object();
+    private static AppDatabase workoutPixelDb;
 
     // Return database - if there already exists one, return this one, otherwise create one.
     public static AppDatabase getDatabase(Context context) {
-        synchronized (sLock) {
-            if (null == pastWorkoutsDb) {
-                pastWorkoutsDb = buildDatabaseInstance(context);
+        // synchronized (sLock) {
+            if (null == workoutPixelDb) {
+                workoutPixelDb = buildDatabaseInstance(context);
             }
-            return pastWorkoutsDb;
+            return workoutPixelDb;
         }
-    }
+    // }
 
     private static AppDatabase buildDatabaseInstance(Context context) {
         return Room.databaseBuilder(context,
@@ -36,7 +36,7 @@ public abstract class AppDatabase extends RoomDatabase {
     public abstract WorkoutDao workoutDao();
 
     public void cleanUp() {
-        pastWorkoutsDb = null;
+        workoutPixelDb = null;
     }
 
     static final Migration MIGRATION_1_2 = new Migration(1, 2) {

@@ -34,12 +34,14 @@ public class InteractWithPastWorkout extends AndroidViewModel {
 
     public static void updatePastWorkout(Context context, PastWorkout clickedWorkout) {
         CommonFunctions.executorService.execute(() -> workoutDao(context).updatePastWorkout(clickedWorkout));
+        // CommonFunctions.executorService.shutdown();
     }
 
     // Better to do by uid?
     public static void insertClickedWorkout(Context context, int widgetUid, long thisWorkoutTime) {
         PastWorkout clickedWorkout = new PastWorkout(widgetUid, thisWorkoutTime);
         CommonFunctions.executorService.execute(() -> workoutDao(context).insertPastWorkout(clickedWorkout));
+        // CommonFunctions.executorService.shutdown();
     }
 
     public static WorkoutDao workoutDao(Context context) {

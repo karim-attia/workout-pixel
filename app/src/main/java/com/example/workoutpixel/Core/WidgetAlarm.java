@@ -21,6 +21,7 @@ public class WidgetAlarm {
     // Make singleton?
     public WidgetAlarm(Context context) {
         this.context = context;
+        CommonFunctions.saveTimeWithStringToSharedPreferences(context, "WidgetAlarm Constructor");
     }
 
     public void startAlarm() {
@@ -37,13 +38,14 @@ public class WidgetAlarm {
         }
 
         Log.d(TAG, "STARTING_ALARM " + dateTimeString(calendar.getTimeInMillis()));
+        CommonFunctions.saveTimeWithStringToSharedPreferences(context, "WidgetAlarm startAlarm");
 
         // RTC does not wake the device up
         alarmManager().setInexactRepeating(AlarmManager.RTC, calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pendingIntent());
     }
 
     public void stopAlarm() {
-        Log.v(TAG, "STOPPING_ALARM");
+        Log.d(TAG, "STOPPING_ALARM");
         alarmManager().cancel(pendingIntent());
     }
 
@@ -57,7 +59,7 @@ public class WidgetAlarm {
     }
 
     private PendingIntent pendingIntent() {
-        Intent alarmIntent = new Intent(context, Widget.class);
+        Intent alarmIntent = new Intent(context, WidgetFunctions.class);
         alarmIntent.setAction(WidgetFunctions.ACTION_ALARM_UPDATE);
         return PendingIntent.getBroadcast(context, 0, alarmIntent, PendingIntent.FLAG_CANCEL_CURRENT);
     }

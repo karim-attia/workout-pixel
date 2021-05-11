@@ -4,11 +4,10 @@ import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.util.Log;
 
 import com.example.workoutpixel.Database.Widget;
-import com.example.workoutpixel.MainActivity.InteractWithWidget;
+import com.example.workoutpixel.Main.InteractWithWidgetInDb;
 
 import java.util.List;
 
@@ -22,7 +21,6 @@ public class WidgetFunctions extends AppWidgetProvider {
     public static final String ACTION_ALARM_UPDATE = "ALARM_UPDATE";
     // TODO: Replace strings with enums?
     public static final String ACTION_DONE_EXERCISE = "DONE_EXERCISE";
-    private static final String PREFS_NAME = "com.example.WorkoutPixel";
     private static final String TAG = "WidgetFunctions";
 
 
@@ -37,18 +35,22 @@ public class WidgetFunctions extends AppWidgetProvider {
         // Do this if the widget has been clicked
         if (ACTION_DONE_EXERCISE.equals(intent.getAction())) {
             int appWidgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, 0);
-            Widget widget = InteractWithWidget.loadWidgetByAppWidgetId(context, appWidgetId);
+            Widget widget = InteractWithWidgetInDb.loadWidgetByAppWidgetId(context, appWidgetId);
             widget.updateAfterClick(context);
         }
 
         // Do this when the alarm hits
         if (ACTION_ALARM_UPDATE.equals(intent.getAction())) {
-            saveLastAlarm(context);
-            List<Widget> widgetList = InteractWithWidget.loadWidgetsWithValidAppWidgetId(context);
+            CommonFunctions.saveTimeWithStringToSharedPreferences(context, "Last Alarm");
+            List<Widget> widgetList = InteractWithWidgetInDb.loadWidgetsWithValidAppWidgetId(context);
             for (Widget widget : widgetList) {
                 widget.updateWidgetBasedOnStatus(context);
             }
         }
+
+        // AppDatabase.getDatabase(context).cleanUp();
+        // CommonFunctions.executorService.shutdown();
+
 
         // });
     }
@@ -68,62 +70,57 @@ public class WidgetFunctions extends AppWidgetProvider {
 
         // TODO: Understand
         // TODO: Replaced iteration through appWidgetIds with data from DB. Insert check that this is the same and fix if not. Maybe before it only iterated through some widgets. But I don't think it matters.
-        List<Widget> widgetList = InteractWithWidget.loadWidgetsWithValidAppWidgetId(context);
+        List<Widget> widgetList = InteractWithWidgetInDb.loadWidgetsWithValidAppWidgetId(context);
         for (Widget widget : widgetList) {
             // Tell the AppWidgetManager to perform an update on the current app widget
             Log.d(TAG, "ON_UPDATE: " + widget.getAppWidgetId());
             widget.updateWidgetBasedOnStatus(context);
         }
+
+        // CommonFunctions.executorService.shutdown();
+
         //});
     }
 
     @Override
     public void onDeleted(Context context, int[] appWidgetIds) {
         // When the user deletes the widget, delete the preference associated with it.
-        Log.v(TAG, "ON_DELETED");
+        Log.d(TAG, "ON_DELETED");
         // Not necessary anymore because I want to keep the deleted ones in the DB
 
         for (int appWidgetId : appWidgetIds) {
-            InteractWithWidget.setAppWidgetIdToNull(context, appWidgetId);
+            InteractWithWidgetInDb.setAppWidgetIdToNullByAppwidgetId(context, appWidgetId);
         }
+
+        // CommonFunctions.executorService.shutdown();
     }
 
     @Override
     public void onEnabled(Context context) {
         // Enter relevant functionality for when the first widget is created
-        Log.v(TAG, "ON_ENABLED");
+        Log.d(TAG, "ON_ENABLED");
         super.onEnabled(context);
 
         // Start alarm
-        Log.v(TAG, "START_ALARM");
+        Log.d(TAG, "START_ALARM");
         WidgetAlarm widgetAlarm = new WidgetAlarm(context.getApplicationContext());
         widgetAlarm.startAlarm();
-        Log.v(TAG, "ALARM_STARTED");
+        Log.d(TAG, "ALARM_STARTED");
     }
 
     @Override
     public void onDisabled(Context context) {
         // Enter relevant functionality for when the last widget is disabled
         // Stop alarm only if all widgets have been disabled
-        Log.v(TAG, "ON_DISABLED");
+        Log.d(TAG, "ON_DISABLED");
         if (CommonFunctions.appWidgetIds(context).length == 0) {
             // stop alarm
-            Log.v(TAG, "STOP_ALARM");
+            Log.d(TAG, "STOP_ALARM");
             WidgetAlarm widgetAlarm = new WidgetAlarm(context.getApplicationContext());
             widgetAlarm.stopAlarm();
-            Log.v(TAG, "STOPPED_ALARM");
+            Log.d(TAG, "STOPPED_ALARM");
         }
     }
-
-    // Last alarm
-    static void saveLastAlarm(Context context) {
-        SharedPreferences.Editor prefs = context.getSharedPreferences(PREFS_NAME, 0).edit();
-        long lastAlarm = System.currentTimeMillis();
-        String timeLastWorkoutBeautiful = CommonFunctions.lastWorkoutDateTimeBeautiful(lastAlarm);
-        prefs.putString("Last Alarm", timeLastWorkoutBeautiful);
-        prefs.apply();
-    }
-
 }
 
 

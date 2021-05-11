@@ -1,6 +1,5 @@
-package com.example.workoutpixel.MainActivity;
+package com.example.workoutpixel.Main;
 
-import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
@@ -15,7 +14,6 @@ import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.workoutpixel.Core.CommonFunctions;
 import com.example.workoutpixel.Core.ConfigureActivity;
 import com.example.workoutpixel.Database.Widget;
 import com.example.workoutpixel.PastWorkouts.ViewWorkoutsActivity;
@@ -30,9 +28,10 @@ import static com.example.workoutpixel.Core.CommonFunctions.lastWorkoutDateBeaut
 
 // RecyclerViewAdapter fills the card view in the MainActivity.
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.WidgetViewHolder> {
-    private static final String TAG = "WORKOUT_PIXEL RVAdapter";
+    private static final String TAG = "WORKOUT_PIXEL MainActivity RVAdapter";
     Context context;
     List<Widget> widgets = new ArrayList<>();
+    boolean notSetupYet = true;
 
 /*
     private static int[] appWidgetIds(Context context) {
@@ -44,21 +43,22 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
     RecyclerViewAdapter(Context context) {
         this.context = context;
-
-        // TODO: Restore this somewhere
-/*
-        widgets = InteractWithWidget.loadAllWidgets(context);
-
-        for (Widget widget : widgets) {
-            // Sometimes the onClickListener in the widgets stop working. This is a super stupid way to regularly reset the onClickListener when you open the main app.
-            if(widget.getAppWidgetId() != null) {widget.updateWidgetBasedOnStatus(context);}
-        }
-*/
     }
 
     public void setData(List<Widget> widgets) {
         this.widgets = widgets;
         notifyDataSetChanged();
+
+        if (notSetupYet) {
+            for (Widget widget : widgets) {
+                // Sometimes the onClickListener in the widgets stop working. This is a super stupid way to regularly reset the onClickListener when you open the main app.
+                if (widget.hasValidAppWidgetId()) {
+                    widget.updateWidgetBasedOnStatus(context);
+                }
+            }
+        }
+        // Otherwise all widgets get set up with every change.
+        notSetupYet = false;
     }
 
     @Override
@@ -86,8 +86,9 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             widgets.get(i).updateAfterClick(context);
             widgets.get(i).setLastWorkout(System.currentTimeMillis());
             widgets.get(i).setStatus(STATUS_GREEN);
-            // Not needed if there is an observer on all items in the MainActivity
-            // notifyItemChanged(i);
+
+            // Update the data in the recycler view
+            notifyItemChanged(i);
         });
 
         View.OnClickListener editWidgetOnClickListener = v -> {
@@ -107,14 +108,12 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         widgetViewHolder.widgetPastWorkouts.setOnClickListener(viewWorkoutsOnClickListener);
         widgetViewHolder.widgetPastWorkoutsText.setOnClickListener(viewWorkoutsOnClickListener);
 
-        if(!widgets.get(i).hasValidAppWidgetId()) {
-        // if(!CommonFunctions.doesWidgetHaveValidAppWidgetId(context, widgets.get(i))) {
-            Log.d(TAG, "connectInfo.setVisibility VISIBLE " + widgets.get(i).debugString());
+        if (!widgets.get(i).hasValidAppWidgetId()) {
+            // if(!CommonFunctions.doesWidgetHaveValidAppWidgetId(context, widgets.get(i))) {
+            Log.v(TAG, "connectInfo.setVisibility VISIBLE " + widgets.get(i).debugString());
             widgetViewHolder.connectInfo.setVisibility(View.VISIBLE);
-            InteractWithWidget.setAppWidgetIdToNull(context, widgets.get(i).getAppWidgetId());
-        }
-        else {
-            Log.d(TAG, "connectInfo.setVisibility GONE " + widgets.get(i).debugString());
+        } else {
+            Log.v(TAG, "connectInfo.setVisibility GONE " + widgets.get(i).debugString());
             widgetViewHolder.connectInfo.setVisibility(View.GONE);
         }
     }

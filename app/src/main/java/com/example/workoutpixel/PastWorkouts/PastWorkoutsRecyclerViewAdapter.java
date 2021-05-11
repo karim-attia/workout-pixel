@@ -15,35 +15,32 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.workoutpixel.Database.PastWorkout;
 import com.example.workoutpixel.Database.Widget;
-import com.example.workoutpixel.MainActivity.InteractWithWidget;
+import com.example.workoutpixel.Main.InteractWithWidgetInDb;
 import com.example.workoutpixel.R;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.example.workoutpixel.Core.CommonFunctions.getNewStatus;
 import static com.example.workoutpixel.Core.CommonFunctions.lastWorkoutDateBeautiful;
 import static com.example.workoutpixel.Core.CommonFunctions.lastWorkoutTimeBeautiful;
 
 // RecyclerViewAdapter fills the card view in the MainActivity.
 public class PastWorkoutsRecyclerViewAdapter extends RecyclerView.Adapter<PastWorkoutsRecyclerViewAdapter.PastWorkoutsViewHolder> {
     private static final String TAG = "WORKOUT_PIXEL Past Workouts RVAdapter";
-    int uid;
 
     Context context;
     List<PastWorkout> pastWorkouts = new ArrayList<>();
     List<PastWorkout> activeWorkoutsOrderedByWorkoutTime = new ArrayList<>();
     Widget widget;
 
-    PastWorkoutsRecyclerViewAdapter(Context context, int uid) {
+    PastWorkoutsRecyclerViewAdapter(Context context, Widget widget) {
         this.context = context;
-        this.uid = uid;
+        this.widget = widget;
     }
 
-    public void setData(List<PastWorkout> pastWorkouts, Widget widget) {
+    public void setData(List<PastWorkout> pastWorkouts) {
         this.pastWorkouts = pastWorkouts;
-        this.widget = widget;
         notifyDataSetChanged();
     }
 
@@ -83,26 +80,29 @@ public class PastWorkoutsRecyclerViewAdapter extends RecyclerView.Adapter<PastWo
             pastWorkouts.get(i).setActive(!isActive);
             InteractWithPastWorkout.updatePastWorkout(context, pastWorkouts.get(i));
 
-            // not needed since there is an observer on all items anyway
-            // notifyItemChanged(i);
+            // Update the data in the recycler view
+            notifyItemChanged(i);
 
-            activeWorkoutsOrderedByWorkoutTime = pastWorkouts.stream().filter(clickedWorkout -> clickedWorkout.active).collect(Collectors.toList());
-
-            // If there still is an active past workout, take the latest one to set the last workout time
-            if (activeWorkoutsOrderedByWorkoutTime.size() > 0) {
-                widget.setLastWorkout(activeWorkoutsOrderedByWorkoutTime.get(0).getWorkoutTime());
-                Log.v(TAG, "Size: " + activeWorkoutsOrderedByWorkoutTime.size());
+            // If this change causes a new last workout time, do all the necessary updates.
+            if(widget.setNewLastWorkout(lastWorkoutBasedOnActiveWorkouts())) {
+                InteractWithWidgetInDb.updateWidget(context, widget);
+                widget.runUpdate(context, false);
             }
-            // Otherwise, set it to 0.
-            else {
-                widget.setLastWorkout(0L);
-                Log.v(TAG, "Size: " + activeWorkoutsOrderedByWorkoutTime.size() + ", no remaining workout");
-            }
-            widget.setNewStatus();
-            InteractWithWidget.updateWidget(context, widget);
-
-            if(widget.hasValidAppWidgetId()) {widget.updateWidgetBasedOnStatus(context);}
         });
+    }
+
+    long lastWorkoutBasedOnActiveWorkouts() {
+        activeWorkoutsOrderedByWorkoutTime = pastWorkouts.stream().filter(clickedWorkout -> clickedWorkout.active).collect(Collectors.toList());
+        // If there still is an active past workout, take the latest one to set the last workout time
+        if (activeWorkoutsOrderedByWorkoutTime.size() > 0) {
+            Log.v(TAG, "Size: " + activeWorkoutsOrderedByWorkoutTime.size());
+            return activeWorkoutsOrderedByWorkoutTime.get(0).getWorkoutTime();
+        }
+        // Otherwise, set it to 0.
+        else {
+            Log.v(TAG, "Size: " + activeWorkoutsOrderedByWorkoutTime.size() + ", no remaining workout");
+            return 0L;
+        }
     }
 
     @Override

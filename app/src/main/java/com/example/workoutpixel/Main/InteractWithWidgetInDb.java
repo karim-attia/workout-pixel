@@ -1,4 +1,4 @@
-package com.example.workoutpixel.MainActivity;
+package com.example.workoutpixel.Main;
 
 import android.app.Application;
 import android.content.Context;
@@ -13,58 +13,73 @@ import com.example.workoutpixel.Database.Widget;
 import com.example.workoutpixel.Database.WorkoutDao;
 
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
-public class InteractWithWidget extends AndroidViewModel {
-    public static final ExecutorService executorService = Executors.newSingleThreadExecutor();
-    private static final String TAG = "WORKOUT_PIXEL PREFERENCES";
+import static com.example.workoutpixel.Core.CommonFunctions.*;
 
-    public InteractWithWidget(@NonNull Application application) {
+public class InteractWithWidgetInDb extends AndroidViewModel {
+    private static final String TAG = "WORKOUT_PIXEL InteractWithWidgetInDb";
+
+    public InteractWithWidgetInDb(@NonNull Application application) {
         super(application);
     }
 
     public static void updateWidget(Context context, Widget widget) {
+        Log.d(TAG, "executorService updateWidget");
         executorService.execute(() -> workoutDao(context).updateWidget(widget));
+        // executorService.shutdown();
+        // executorService.awaitTermination(2, TimeUnit.MINUTES);
     }
 
     public static void saveDuringInitialize(Context context, Widget widget) {
+        Log.d(TAG, "executorService saveDuringInitialize");
         executorService.execute(() -> workoutDao(context).insertWidget(widget));
+        // executorService.shutdown();
+        //executorService.awaitTermination(2, TimeUnit.MINUTES);
     }
 
     public static Widget loadWidgetByAppWidgetId(Context context, Integer appWidgetId) {
-        Log.v(TAG, "getPastWorkoutsFromDbByAppWidgetId");
+        Log.d(TAG, "getPastWorkoutsFromDbByAppWidgetId");
         return workoutDao(context).loadWidgetByAppWidgetId(appWidgetId);
     }
 
     public static Widget loadWidgetByUid(Context context, int uid) {
-        Log.v(TAG, "getPastWorkoutsFromDbByUid");
+        Log.d(TAG, "getPastWorkoutsFromDbByUid");
         return workoutDao(context).loadWidgetByUid(uid);
     }
 
 
     public static LiveData<List<Widget>> loadAllWidgetsLiveData(Context context) {
-        Log.v(TAG, "getWidgetsFromDb");
+        Log.d(TAG, "loadAllWidgetsLiveData");
         return workoutDao(context).loadAllWidgetsLiveData();
     }
 
     public static List<Widget> loadAllWidgets(Context context) {
-        Log.v(TAG, "getWidgetsFromDb");
+        Log.d(TAG, "loadAllWidgets");
         return workoutDao(context).loadAllWidgets();
     }
 
-    public static void setAppWidgetIdToNull(Context context, Integer appWidgetId) {
-        Log.v(TAG, "setAppWidgetIdToNull");
-        executorService.execute(() -> workoutDao(context).setAppWidgetIdToNull(appWidgetId));
+    public static void setAppWidgetIdToNullByAppwidgetId(Context context, Integer appWidgetId) {
+        Log.d(TAG, "executorService setAppWidgetIdToNullByAppwidgetId");
+        executorService.execute(() -> workoutDao(context).setAppWidgetIdToNullByAppwidgetId(appWidgetId));
+        // executorService.shutdown();
+        //executorService.awaitTermination(2, TimeUnit.MINUTES);
     }
 
+    public static void setAppWidgetIdToNullByUid(Context context, int uid) {
+        Log.d(TAG, "executorService setAppWidgetIdToNullByUid");
+        executorService.execute(() -> workoutDao(context).setAppWidgetIdToNullByUid(uid));
+        // executorService.shutdown();
+        //executorService.awaitTermination(2, TimeUnit.MINUTES);
+    }
+
+
     public static List<Widget> loadWidgetsWithoutValidAppWidgetId(Context context) {
-        Log.v(TAG, "loadWidgetsWithInvalidAppWidgetId");
+        Log.d(TAG, "loadWidgetsWithoutValidAppWidgetId");
         return workoutDao(context).loadWidgetsWithoutValidAppWidgetId();
     }
 
     public static List<Widget> loadWidgetsWithValidAppWidgetId(Context context) {
-        Log.v(TAG, "loadWidgetsWithInvalidAppWidgetId");
+        Log.d(TAG, "loadWidgetsWithValidAppWidgetId");
         return workoutDao(context).loadWidgetsWithValidAppWidgetId();
     }
 

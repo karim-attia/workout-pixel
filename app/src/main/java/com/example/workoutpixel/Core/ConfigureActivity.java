@@ -22,7 +22,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 
 import com.example.workoutpixel.Database.Widget;
-import com.example.workoutpixel.MainActivity.InteractWithWidget;
+import com.example.workoutpixel.Main.InteractWithWidgetInDb;
 import com.example.workoutpixel.R;
 
 import java.util.List;
@@ -71,8 +71,8 @@ public class ConfigureActivity extends AppCompatActivity {
             widget.setStatus(getNewStatus(widget.getLastWorkout(), widget.getIntervalBlue()));
 
             // Save new prefs
-            if (isReconfigure) InteractWithWidget.updateWidget(context, widget);
-            else InteractWithWidget.saveDuringInitialize(context, widget);
+            if (isReconfigure) InteractWithWidgetInDb.updateWidget(context, widget);
+            else InteractWithWidgetInDb.saveDuringInitialize(context, widget);
 
             setWidgetAndFinish();
         }
@@ -164,7 +164,7 @@ public class ConfigureActivity extends AppCompatActivity {
         if (isReconfigure) {
             // Don't show the initial text if the user edits the widget.
             introText.setVisibility(View.GONE);
-            widget = InteractWithWidget.loadWidgetByUid(context, widget.getUid());
+            widget = InteractWithWidgetInDb.loadWidgetByUid(context, widget.getUid());
             widgetTitle.setText(widget.getTitle());
             intervalInDays = widget.getIntervalBlue();
             showDateCheckbox.setChecked(widget.getShowDate());
@@ -225,7 +225,7 @@ public class ConfigureActivity extends AppCompatActivity {
         // Reconnect widget
         if (!isReconfigure) {
             CommonFunctions.executorService.execute(() -> {
-                List<Widget> widgetsWithoutValidAppwidgetId = InteractWithWidget.loadWidgetsWithoutValidAppWidgetId(context);
+                List<Widget> widgetsWithoutValidAppwidgetId = InteractWithWidgetInDb.loadWidgetsWithoutValidAppWidgetId(context);
                 if (widgetsWithoutValidAppwidgetId.size() > 0) {
                     CardView connectWidgetView = findViewById(R.id.connect_widget);
                     connectWidgetView.setVisibility(View.VISIBLE);
@@ -239,7 +239,7 @@ public class ConfigureActivity extends AppCompatActivity {
                         widget = (Widget) ((Spinner) connectSpinner).getSelectedItem();
                         if (widget != null) {
                             widget.setAppWidgetId(appWidgetId);
-                            InteractWithWidget.updateWidget(context, widget);
+                            InteractWithWidgetInDb.updateWidget(context, widget);
                             setWidgetAndFinish();
                         } else {
                             connectSpinner.setBackgroundColor(Color.RED);
