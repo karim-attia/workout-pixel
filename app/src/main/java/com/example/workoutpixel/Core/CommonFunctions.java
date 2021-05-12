@@ -48,8 +48,8 @@ public class CommonFunctions {
         long today3Am = today3AmCalendar.getTimeInMillis();
 /*
         Log.d(TAG, "intervalBlue: " + intervalBlue);
-        Log.d(TAG, "today3Am:    " + today3Am);
-        Log.d(TAG, "lastWorkout: " + lastWorkout);
+        Log.d(TAG, "today3Am:     " + today3Am);
+        Log.d(TAG, "lastWorkout:  " + lastWorkout);
 */
 
         // TODO make this nice somehow. last time 3am?
@@ -72,16 +72,16 @@ public class CommonFunctions {
 
         // Don't change the widget status if this is the first time the alarm runs and thus lastWorkout == 0L.
         if (lastWorkout == 0L) {
-            Log.d(TAG, "GetNewStatus: " + STATUS_NONE);
+            // Log.d(TAG, "GetNewStatus: " + STATUS_NONE);
             return STATUS_NONE;
         } else if (timeRed < today3Am) {
-            Log.d(TAG, "GetNewStatus: " + STATUS_RED);
+            // Log.d(TAG, "GetNewStatus: " + STATUS_RED);
             return STATUS_RED;
         } else if (timeBlue < today3Am) {
-            Log.d(TAG, "GetNewStatus: " + STATUS_BLUE);
+            // Log.d(TAG, "GetNewStatus: " + STATUS_BLUE);
             return STATUS_BLUE;
         }
-        Log.d(TAG, "GetNewStatus: " + STATUS_GREEN);
+        // Log.d(TAG, "GetNewStatus: " + STATUS_GREEN);
         return STATUS_GREEN;
     }
 
@@ -125,11 +125,11 @@ public class CommonFunctions {
         return lastWorkout.format(dateFormatter);
     }
 
-    static long intervalInMilliseconds(int intervalInDays) {
+    public static long intervalInMilliseconds(int intervalInDays) {
         return (long) MILLISECONDS_IN_A_DAY * intervalInDays;
     }
 
-    static int intervalInDays(long intervalInMilliseconds) {
+    public static int intervalInDays(long intervalInMilliseconds) {
         return (int) (intervalInMilliseconds / MILLISECONDS_IN_A_DAY);
     }
 

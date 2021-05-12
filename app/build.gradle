@@ -44,9 +44,11 @@ dependencies {
     implementation 'androidx.recyclerview:recyclerview:1.2.0'
     implementation "androidx.cardview:cardview:1.0.0"
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
+    testImplementation 'junit:junit:4.13.2'
+    testImplementation 'org.testng:testng:6.9.6'
 
     // debugImplementation because LeakCanary should only run in debug builds.
-    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.7'
+    // debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.7'
 
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'

@@ -10,7 +10,7 @@
     <string name="plural">s</string>
     <string name="add_widget">Add widget</string>
     <string name="add_widget_reconfigure">Update widget</string>
-    <string name="instructions_main_app">Hey there! :D\n\nSuper awesome that you downloaded WorkoutPixel.\n\nTo start using it, go to your homescreen and add your first WorkoutPixel widget.</string>
+    <string name="instructions_main_app">Super awesome that you downloaded WorkoutPixel.\n\nTo start using it, go to your homescreen and add your first WorkoutPixel widget.</string>
     <string name="ReconfigureWidgetActivityLabel">Edit your widget</string>
     <string name="edit_widget">Edit widget</string>
     <string name="view_clicks">View clicks</string>
@@ -23,4 +23,5 @@
     <string name="connect_widget_main_activity">There is no widget for this goal. You can add a new widget to your homescreen and connect it to this goal.</string>
     <string name="connect_widget_main_activity_old">There is no widget for this goal. The app keeps the data because more often than not, a widget gets removed by accident. You can add a new widget to your homescreen and connect it to this goal.</string>
     <string name="connect_delete">Delete</string>
+    <string name="instructions_title">Instructions</string>
 </resources>
