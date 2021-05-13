@@ -191,8 +191,7 @@ public class Goal {
     // Can also be called on widget with invalid AppWidgetId
     public void runUpdate(Context context, boolean setOnClickListener) {
         // Make sure to always set both the text and the background of the widget because otherwise it gets updated to some random old version.
-        // Should only get this far if the appWidgetId is not null. But check nevertheless.
-        if(hasValidAppWidgetId()) {AppWidgetManager.getInstance(context).updateAppWidget(appWidgetId, widgetView(context, setOnClickListener));}
+        if(appWidgetId != null) {AppWidgetManager.getInstance(context).updateAppWidget(appWidgetId, widgetView(context, setOnClickListener));}
         else {Log.d(TAG, "runUpdate: appWidgetId == null");}
     }
 
@@ -228,7 +227,6 @@ public class Goal {
             return null;
         }
         intent.putExtra("widgetUid", uid);
-        Log.d(TAG, "DEBUG CLICK AFTER CREATE Create Pending Intent " + uid);
         return PendingIntent.getBroadcast(context, appWidgetId, intent, PendingIntent.FLAG_UPDATE_CURRENT);
     }
 }

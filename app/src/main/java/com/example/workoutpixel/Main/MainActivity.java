@@ -18,10 +18,8 @@ import com.example.workoutpixel.Core.WidgetAlarm;
 import com.example.workoutpixel.Database.Goal;
 import com.example.workoutpixel.R;
 
-import java.util.Arrays;
 import java.util.List;
 
-import static com.example.workoutpixel.Core.CommonFunctions.appWidgetIds;
 import static com.example.workoutpixel.Core.CommonFunctions.cleanGoals;
 
 public class MainActivity extends AppCompatActivity {
@@ -128,7 +126,6 @@ public class MainActivity extends AppCompatActivity {
             toggleExpando();
         }
         WidgetAlarm.startAlarm(context);
-        Log.d(TAG, "appwidgetIds: " + Arrays.toString(appWidgetIds(context)));
 
         cleanGoals(context, goals);
 
