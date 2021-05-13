@@ -14,8 +14,8 @@ import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
-import com.example.workoutpixel.Core.WidgetFunctions;
-import com.example.workoutpixel.Main.InteractWithWidgetInDb;
+import com.example.workoutpixel.Core.WorkoutPixelAppWidgetProvider;
+import com.example.workoutpixel.Main.InteractWithGoalInDb;
 import com.example.workoutpixel.PastWorkouts.InteractWithPastWorkout;
 import com.example.workoutpixel.R;
 
@@ -25,7 +25,7 @@ import static com.example.workoutpixel.Core.CommonFunctions.getNewStatus;
 
 @Entity(tableName = "goals")
 public class Goal {
-    private static final String TAG = "Widget";
+    private static final String TAG = "GOAL";
 
     @PrimaryKey(autoGenerate = true)
     public int uid;
@@ -167,7 +167,7 @@ public class Goal {
         InteractWithPastWorkout.insertClickedWorkout(context, uid, lastWorkout);
 
         // Update the widget data in the db
-        InteractWithWidgetInDb.updateWidget(context, this);
+        InteractWithGoalInDb.updateGoal(context, this);
 
         // Instruct the widget manager to update the widget with the latest widget data
         runUpdate(context, false);
@@ -181,7 +181,7 @@ public class Goal {
 
         // Update the widget data in the db (only) when there is a new status.
         if (setNewStatus()) {
-            InteractWithWidgetInDb.updateWidget(context, this);
+            InteractWithGoalInDb.updateGoal(context, this);
         }
 
         // Instruct the widget manager to update the widget with the latest widget data
@@ -220,8 +220,8 @@ public class Goal {
 
     // Create an Intent to set the action DONE_EXERCISE. This will be received in onReceive.
     private PendingIntent widgetPendingIntent(Context context) {
-        Intent intent = new Intent(context, WidgetFunctions.class);
-        intent.setAction(WidgetFunctions.ACTION_DONE_EXERCISE);
+        Intent intent = new Intent(context, WorkoutPixelAppWidgetProvider.class);
+        intent.setAction(WorkoutPixelAppWidgetProvider.ACTION_DONE_EXERCISE);
         // put the appWidgetId as an extra to the update intent
         if(appWidgetId == null) {
             Log.d(TAG, "widgetPendingIntent: appWidgetId is null where it shouldn't be.");

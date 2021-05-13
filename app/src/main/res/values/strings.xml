@@ -24,4 +24,5 @@
     <string name="connect_widget_main_activity_old">There is no goal for this goal. The app keeps the data because more often than not, a goal gets removed by accident. You can add a new goal to your homescreen and connect it to this goal.</string>
     <string name="connect_delete">Delete</string>
     <string name="instructions_title">Instructions</string>
+    <string name="standard_widget_text">Your goal</string>
 </resources>

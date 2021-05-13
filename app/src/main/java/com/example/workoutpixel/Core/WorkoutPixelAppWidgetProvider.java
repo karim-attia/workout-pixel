@@ -7,7 +7,7 @@ import android.content.Intent;
 import android.util.Log;
 
 import com.example.workoutpixel.Database.Goal;
-import com.example.workoutpixel.Main.InteractWithWidgetInDb;
+import com.example.workoutpixel.Main.InteractWithGoalInDb;
 
 import java.util.List;
 
@@ -16,7 +16,7 @@ import java.util.List;
  * App Widget Configuration implemented in {@link ConfigureActivity WorkoutPixelConfigureActivity}
  */
 
-public class WidgetFunctions extends AppWidgetProvider {
+public class WorkoutPixelAppWidgetProvider extends AppWidgetProvider {
 
     public static final String ACTION_ALARM_UPDATE = "ALARM_UPDATE";
     // TODO: Replace strings with enums?
@@ -30,29 +30,21 @@ public class WidgetFunctions extends AppWidgetProvider {
         super.onReceive(context, intent);
         Log.d(TAG, "ON_RECEIVE " + intent.getAction() + "\n------------------------------------------------------------------------");
 
-        // CommonFunctions.executorService.execute(() -> {
-
         // Do this if the widget has been clicked
         if (ACTION_DONE_EXERCISE.equals(intent.getAction())) {
             int uid = intent.getIntExtra("widgetUid", 0);
-            Goal goal = InteractWithWidgetInDb.loadWidgetByUid(context, uid);
+            Goal goal = InteractWithGoalInDb.loadGoalByUid(context, uid);
             goal.updateAfterClick(context);
         }
 
         // Do this when the alarm hits
         if (ACTION_ALARM_UPDATE.equals(intent.getAction())) {
             CommonFunctions.saveTimeWithStringToSharedPreferences(context, "Last Alarm");
-            List<Goal> goalList = InteractWithWidgetInDb.loadWidgetsWithValidAppWidgetId(context);
+            List<Goal> goalList = InteractWithGoalInDb.loadWidgetsWithValidAppWidgetId(context);
             for (Goal goal : goalList) {
                 goal.updateWidgetBasedOnStatus(context);
             }
         }
-
-        // AppDatabase.getDatabase(context).cleanUp();
-        // CommonFunctions.executorService.shutdown();
-
-
-        // });
     }
 
     @Override
@@ -63,15 +55,14 @@ public class WidgetFunctions extends AppWidgetProvider {
             // There may be multiple widgets active, so update all of them
         Log.d(TAG, "ON_UPDATE\n------------------------------------------------------------------------");
         // Start alarm
-        Log.d(TAG, "START_ALARM");
-        WidgetAlarm widgetAlarm = new WidgetAlarm(context.getApplicationContext());
-        widgetAlarm.startAlarm();
-        Log.d(TAG, "ALARM_STARTED");
+        Log.v(TAG, "START_ALARM");
+        new WidgetAlarm(context.getApplicationContext()).startAlarm();
+        Log.v(TAG, "ALARM_STARTED");
 
         // TODO: Understand
         // TODO: Replaced iteration through appWidgetIds with data from DB. Insert check that this is the same and fix if not. Maybe before it only iterated through some widgets. But I don't think it matters.
         // TODO: Could check with CommonFunctions.widgetsWithValidAppWidgetId whether they are the same and at least log if not,
-        List<Goal> goalList = InteractWithWidgetInDb.loadWidgetsWithValidAppWidgetId(context);
+        List<Goal> goalList = InteractWithGoalInDb.loadWidgetsWithValidAppWidgetId(context);
         for (Goal goal : goalList) {
             // Tell the AppWidgetManager to perform an update on the current app widget
             Log.d(TAG, "ON_UPDATE: " + goal.debugString());
@@ -90,7 +81,7 @@ public class WidgetFunctions extends AppWidgetProvider {
         // Not necessary anymore because I want to keep the deleted ones in the DB
 
         for (int appWidgetId : appWidgetIds) {
-            InteractWithWidgetInDb.setAppWidgetIdToNullByAppwidgetId(context, appWidgetId);
+            InteractWithGoalInDb.setAppWidgetIdToNullByAppwidgetId(context, appWidgetId);
         }
 
         // CommonFunctions.executorService.shutdown();
@@ -103,10 +94,9 @@ public class WidgetFunctions extends AppWidgetProvider {
         super.onEnabled(context);
 
         // Start alarm
-        Log.d(TAG, "START_ALARM");
-        WidgetAlarm widgetAlarm = new WidgetAlarm(context.getApplicationContext());
-        widgetAlarm.startAlarm();
-        Log.d(TAG, "ALARM_STARTED");
+        Log.v(TAG, "START_ALARM");
+        new WidgetAlarm(context.getApplicationContext()).startAlarm();
+        Log.v(TAG, "ALARM_STARTED");
     }
 
     @Override
@@ -116,10 +106,9 @@ public class WidgetFunctions extends AppWidgetProvider {
         Log.d(TAG, "ON_DISABLED");
         if (CommonFunctions.appWidgetIds(context).length == 0) {
             // stop alarm
-            Log.d(TAG, "STOP_ALARM");
-            WidgetAlarm widgetAlarm = new WidgetAlarm(context.getApplicationContext());
-            widgetAlarm.stopAlarm();
-            Log.d(TAG, "STOPPED_ALARM");
+            Log.v(TAG, "STOP_ALARM");
+            new WidgetAlarm(context.getApplicationContext()).stopAlarm();
+            Log.v(TAG, "STOPPED_ALARM");
         }
     }
 }

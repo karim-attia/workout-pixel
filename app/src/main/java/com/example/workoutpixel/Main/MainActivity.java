@@ -14,20 +14,33 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.workoutpixel.Core.WidgetAlarm;
 import com.example.workoutpixel.Database.Goal;
 import com.example.workoutpixel.R;
 
+import java.util.Arrays;
 import java.util.List;
+
+import static com.example.workoutpixel.Core.CommonFunctions.appWidgetIds;
+import static com.example.workoutpixel.Core.CommonFunctions.cleanGoals;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "WORKOUT_PIXEL_APP";
     private final Context context = MainActivity.this;
-    private InteractWithWidgetInDb widgetViewModel;
+    private InteractWithGoalInDb widgetViewModel;
     public boolean instructionsExpanded = false;
     ImageView instructionsExpando;
     TextView instructionsTextView;
     GridLayout instructionsGridLayout;
     RecyclerViewAdapter recyclerViewAdapter = new RecyclerViewAdapter(context);
+
+    ImageView instructions_long_click;
+    ImageView instructions_widget_selection;
+    ImageView instructions_place_widget;
+    ImageView instructions_configure_widget;
+    ImageView instructions_widget_created;
+    ImageView instructions_widget_clicked;
+    ImageView instructions_main_app;
 
     // onCreate is called when the main app is first loaded.
     @Override
@@ -39,13 +52,14 @@ public class MainActivity extends AppCompatActivity {
         instructionsExpando = findViewById(R.id.instructions_expando_icon);
         instructionsTextView = findViewById(R.id.instructions_text);
         instructionsGridLayout = findViewById(R.id.instructions_grid);
-        ImageView instructions_long_click = findViewById(R.id.instructions_long_click);
-        ImageView instructions_widget_selection = findViewById(R.id.instructions_widget_selection);
-        ImageView instructions_place_widget = findViewById(R.id.instructions_place_widget);
-        ImageView instructions_configure_widget = findViewById(R.id.instructions_configure_widget);
-        ImageView instructions_widget_created = findViewById(R.id.instructions_widget_created);
-        ImageView instructions_widget_clicked = findViewById(R.id.instructions_widget_clicked);
-        ImageView instructions_main_app = findViewById(R.id.instructions_main_app);
+
+        instructions_long_click = findViewById(R.id.instructions_long_click);
+        instructions_widget_selection = findViewById(R.id.instructions_widget_selection);
+        instructions_place_widget = findViewById(R.id.instructions_place_widget);
+        instructions_configure_widget = findViewById(R.id.instructions_configure_widget);
+        instructions_widget_created = findViewById(R.id.instructions_widget_created);
+        instructions_widget_clicked = findViewById(R.id.instructions_widget_clicked);
+        instructions_main_app = findViewById(R.id.instructions_main_app);
 
         // toggleExpando();
 
@@ -69,6 +83,14 @@ public class MainActivity extends AppCompatActivity {
             instructionsTextView.setVisibility(View.VISIBLE);
             instructionsGridLayout.setVisibility(View.VISIBLE);
             instructionsExpando.setBackgroundResource(R.drawable.icon_expand_less);
+
+            instructions_long_click.setImageResource(R.drawable.instructions_long_click);
+            instructions_widget_selection.setImageResource(R.drawable.instructions_widget_selection);
+            instructions_place_widget.setImageResource(R.drawable.instructions_place_widget);
+            instructions_configure_widget.setImageResource(R.drawable.instructions_configure_widget);
+            instructions_widget_created.setImageResource(R.drawable.instructions_widget_created);
+            instructions_widget_clicked.setImageResource(R.drawable.instructions_widget_clicked);
+            instructions_main_app.setImageResource(R.drawable.instructions_main_app);
         }
         else {
             instructionsTextView.setVisibility(View.GONE);
@@ -87,19 +109,28 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setNestedScrollingEnabled(false);
         recyclerView.setAdapter(recyclerViewAdapter);
 
-        widgetViewModel = new ViewModelProvider(this).get(InteractWithWidgetInDb.class);
+        widgetViewModel = new ViewModelProvider(this).get(InteractWithGoalInDb.class);
 
         // Create the observer which updates the UI.
         // Observe the LiveData, passing this activity as the LifecycleOwner and the observer.
-        LiveData<List<Goal>> liveData = widgetViewModel.loadAllWidgetsLiveData(context.getApplicationContext());
-        liveData.observe(this, widgets -> {
-            recyclerViewAdapter.setData(widgets);
+        LiveData<List<Goal>> liveData = widgetViewModel.loadAllGoalsLiveData(context.getApplicationContext());
+        liveData.observe(this, goals -> {
+            recyclerViewAdapter.setData(goals);
             recyclerView.setItemAnimator(null);
             liveData.removeObservers(this);
-            if (widgets.size() == 0) {
-                instructionsExpanded = true;
-                toggleExpando();
-            }
+            executeAfterRecyclerViewWasPopulated(goals);
         });
+    }
+
+    private void executeAfterRecyclerViewWasPopulated (List<Goal> goals) {
+        if (goals.size() == 0) {
+            instructionsExpanded = true;
+            toggleExpando();
+        }
+        new WidgetAlarm(context).startAlarm();
+        Log.d(TAG, "appwidgetIds: " + Arrays.toString(appWidgetIds(context)));
+
+        cleanGoals(context, goals);
+
     }
 }

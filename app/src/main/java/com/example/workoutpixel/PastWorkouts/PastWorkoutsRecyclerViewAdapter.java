@@ -15,7 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.workoutpixel.Database.PastWorkout;
 import com.example.workoutpixel.Database.Goal;
-import com.example.workoutpixel.Main.InteractWithWidgetInDb;
+import com.example.workoutpixel.Main.InteractWithGoalInDb;
 import com.example.workoutpixel.R;
 
 import java.util.ArrayList;
@@ -85,7 +85,7 @@ public class PastWorkoutsRecyclerViewAdapter extends RecyclerView.Adapter<PastWo
 
             // If this change causes a new last workout time, do all the necessary updates.
             if(goal.setNewLastWorkout(lastWorkoutBasedOnActiveWorkouts())) {
-                InteractWithWidgetInDb.updateWidget(context, goal);
+                InteractWithGoalInDb.updateGoal(context, goal);
                 goal.runUpdate(context, false);
             }
         });

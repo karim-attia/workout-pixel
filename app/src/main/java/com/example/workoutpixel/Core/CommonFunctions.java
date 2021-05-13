@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.util.Log;
 
 import com.example.workoutpixel.Database.Goal;
+import com.example.workoutpixel.Main.InteractWithGoalInDb;
 import com.example.workoutpixel.R;
 
 import java.time.Instant;
@@ -134,12 +135,11 @@ public class CommonFunctions {
     }
 
     public static int[] appWidgetIds(Context context) {
-        ComponentName thisAppWidget = new ComponentName(context.getPackageName(), WidgetFunctions.class.getName());
+        ComponentName thisAppWidget = new ComponentName(context.getPackageName(), WorkoutPixelAppWidgetProvider.class.getName());
         return AppWidgetManager.getInstance(context).getAppWidgetIds(thisAppWidget);
     }
 
-    // Not needed anymore if appWidgetId is set to null on deletion. Could be used to check consistency.
-    public static List<Goal> widgetsWithoutValidAppWidgetId(Context context, List<Goal> goals) {
+    public static List<Goal> goalsWithoutValidAppWidgetId(Context context, List<Goal> goals) {
         List<Goal> widgetsWithoutValidAppwidgetId = goals.stream().filter(widget -> Arrays.stream(appWidgetIds(context)).noneMatch(i -> widget.getAppWidgetId() == null || i == widget.getAppWidgetId())).collect(Collectors.toList());
 /*
         Log.d(TAG, "widgetsWithoutValidAppwidgetId");
@@ -186,4 +186,27 @@ public class CommonFunctions {
         prefs.apply();
     }
 
+    public static long next3am() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(System.currentTimeMillis());
+        int hourOfDay = calendar.get(Calendar.HOUR_OF_DAY);
+        calendar.set(Calendar.HOUR_OF_DAY, 3);
+        calendar.set(Calendar.MINUTE, 0);
+        //calendar.set(Calendar.SECOND, 0);
+        //calendar.set(Calendar.MILLISECOND, 0);
+        if (hourOfDay >= 3) {
+            // Can be commented to test alarm -> it will come up more or less instantly after restart.
+            calendar.setTimeInMillis(calendar.getTimeInMillis() + CommonFunctions.intervalInMilliseconds(1));
+        }
+        return calendar.getTimeInMillis();
+    }
+
+    // Sets all appWidgetIds of goals that are not valid to null. Maybe later even reassigns some to unassigned widgets.
+    public static void cleanGoals(Context context, List<Goal> goals) {
+        for (Goal goal: goalsWithoutValidAppWidgetId(context, goals)) {
+            if(goal.hasValidAppWidgetId()) {
+                InteractWithGoalInDb.setAppWidgetIdToNullByUid(context, goal.getUid());
+            }
+        }
+    }
 }

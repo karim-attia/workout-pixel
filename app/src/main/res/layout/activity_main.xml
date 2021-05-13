@@ -63,7 +63,7 @@
             <ImageView
                 style="@style/InstructionsImages"
                 android:id="@+id/instructions_long_click"
-                android:src="@drawable/instructions_long_click"
+                tools:src="@drawable/instructions_long_click"
                 />
             <TextView
                 style="@style/InstructionsTextView.Title"
@@ -78,7 +78,7 @@
             <ImageView
                 style="@style/InstructionsImages"
                 android:id="@+id/instructions_widget_selection"
-                android:src="@drawable/instructions_widget_selection"
+                tools:src="@drawable/instructions_widget_selection"
                 />
             <TextView
                 style="@style/InstructionsTextView.Title"
@@ -93,7 +93,7 @@
             <ImageView
                 style="@style/InstructionsImages"
                 android:id="@+id/instructions_place_widget"
-                android:src="@drawable/instructions_place_widget"
+                tools:src="@drawable/instructions_place_widget"
                 />
             <TextView
                 style="@style/InstructionsTextView.Title"
@@ -108,7 +108,7 @@
             <ImageView
                 style="@style/InstructionsImages"
                 android:id="@+id/instructions_configure_widget"
-                android:src="@drawable/instructions_configure_widget"
+                tools:src="@drawable/instructions_configure_widget"
                 />
             <TextView
                 style="@style/InstructionsTextView.Title"
@@ -123,7 +123,7 @@
             <ImageView
                 style="@style/InstructionsImages"
                 android:id="@+id/instructions_widget_created"
-                android:src="@drawable/instructions_widget_created"
+                tools:src="@drawable/instructions_widget_created"
                 />
             <TextView
                 style="@style/InstructionsTextView.Title"
@@ -138,7 +138,7 @@
             <ImageView
                 style="@style/InstructionsImages"
                 android:id="@+id/instructions_widget_clicked"
-                android:src="@drawable/instructions_widget_clicked"
+                tools:src="@drawable/instructions_widget_clicked"
                 />
             <TextView
                 style="@style/InstructionsTextView.Title"
@@ -153,7 +153,7 @@
             <ImageView
                 style="@style/InstructionsImages"
                 android:id="@+id/instructions_main_app"
-                android:src="@drawable/instructions_main_app"
+                tools:src="@drawable/instructions_main_app"
                 />
             <TextView
                 style="@style/InstructionsTextView.Title"

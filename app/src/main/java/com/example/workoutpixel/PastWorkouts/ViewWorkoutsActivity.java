@@ -15,7 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.workoutpixel.Database.PastWorkout;
 import com.example.workoutpixel.Database.Goal;
-import com.example.workoutpixel.Main.InteractWithWidgetInDb;
+import com.example.workoutpixel.Main.InteractWithGoalInDb;
 import com.example.workoutpixel.R;
 
 import java.util.List;
@@ -49,7 +49,7 @@ public class ViewWorkoutsActivity extends AppCompatActivity {
             return;
         }
 
-        Goal goal = InteractWithWidgetInDb.loadWidgetByUid(context, uid);
+        Goal goal = InteractWithGoalInDb.loadGoalByUid(context, uid);
         setContentView(R.layout.view_workouts);
 
         // Bind views and set them

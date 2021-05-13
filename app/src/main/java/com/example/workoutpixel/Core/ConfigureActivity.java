@@ -22,7 +22,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 
 import com.example.workoutpixel.Database.Goal;
-import com.example.workoutpixel.Main.InteractWithWidgetInDb;
+import com.example.workoutpixel.Main.InteractWithGoalInDb;
 import com.example.workoutpixel.R;
 
 import java.util.List;
@@ -35,7 +35,7 @@ import static com.example.workoutpixel.Core.CommonFunctions.dateBeautiful;
 import static com.example.workoutpixel.Core.CommonFunctions.timeBeautiful;
 
 /**
- * The configuration screen for the {@link WidgetFunctions WidgetFunctions} AppWidget.
+ * The configuration screen for the {@link WorkoutPixelAppWidgetProvider WidgetFunctions} AppWidget.
  */
 public class ConfigureActivity extends AppCompatActivity {
     private static final String TAG = "WORKOUT_PIXEL CONFIGURE ACTIVITY";
@@ -126,7 +126,7 @@ public class ConfigureActivity extends AppCompatActivity {
         if (isReconfigure) {
             // Don't show the initial text if the user edits the widget.
             introText.setVisibility(View.GONE);
-            goal = InteractWithWidgetInDb.loadWidgetByUid(context, goal.getUid());
+            goal = InteractWithGoalInDb.loadGoalByUid(context, goal.getUid());
             widgetTitle.setText(goal.getTitle());
             intervalInDays = goal.getIntervalBlue();
             showDateCheckbox.setChecked(goal.getShowDate());
@@ -187,7 +187,7 @@ public class ConfigureActivity extends AppCompatActivity {
         // Reconnect widget
         if (!isReconfigure) {
             CommonFunctions.executorService.execute(() -> {
-                List<Goal> widgetsWithoutValidAppwidgetId = InteractWithWidgetInDb.loadWidgetsWithoutValidAppWidgetId(context);
+                List<Goal> widgetsWithoutValidAppwidgetId = InteractWithGoalInDb.loadWidgetsWithoutValidAppWidgetId(context);
                 if (widgetsWithoutValidAppwidgetId.size() > 0) {
                     CardView connectWidgetView = findViewById(R.id.connect_widget);
                     connectWidgetView.setVisibility(View.VISIBLE);
@@ -201,7 +201,7 @@ public class ConfigureActivity extends AppCompatActivity {
                         goal = (Goal) connectSpinner.getSelectedItem();
                         if (goal != null) {
                             goal.setAppWidgetId(appWidgetId);
-                            InteractWithWidgetInDb.updateWidget(context, goal);
+                            InteractWithGoalInDb.updateGoal(context, goal);
                             setWidgetAndFinish();
                         } else {
                             connectSpinner.setBackgroundColor(Color.RED);
@@ -277,8 +277,8 @@ public class ConfigureActivity extends AppCompatActivity {
             goal.setStatus(getNewStatus(goal.getLastWorkout(), goal.getIntervalBlue()));
 
             // Save new prefs
-            if (isReconfigure) InteractWithWidgetInDb.updateWidget(context, goal);
-            else InteractWithWidgetInDb.saveDuringInitialize(context, goal);
+            if (isReconfigure) InteractWithGoalInDb.updateGoal(context, goal);
+            else InteractWithGoalInDb.saveDuringInitialize(context, goal);
 
             setWidgetAndFinish();
         }

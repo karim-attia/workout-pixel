@@ -12,7 +12,7 @@
         android:theme="@style/AppTheme"
         android:fullBackupContent="false">
 
-        <receiver android:name=".Core.WidgetFunctions">
+        <receiver android:name=".Core.WorkoutPixelAppWidgetProvider">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>

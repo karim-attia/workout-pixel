@@ -16,14 +16,14 @@ import java.util.List;
 
 import static com.example.workoutpixel.Core.CommonFunctions.*;
 
-public class InteractWithWidgetInDb extends AndroidViewModel {
+public class InteractWithGoalInDb extends AndroidViewModel {
     private static final String TAG = "WORKOUT_PIXEL InteractWithWidgetInDb";
 
-    public InteractWithWidgetInDb(@NonNull Application application) {
+    public InteractWithGoalInDb(@NonNull Application application) {
         super(application);
     }
 
-    public static void updateWidget(Context context, Goal goal) {
+    public static void updateGoal(Context context, Goal goal) {
         Log.d(TAG, "executorService updateWidget");
         executorService.execute(() -> workoutDao(context).updateWidget(goal));
         // executorService.shutdown();
@@ -37,23 +37,23 @@ public class InteractWithWidgetInDb extends AndroidViewModel {
         //executorService.awaitTermination(2, TimeUnit.MINUTES);
     }
 
-    public static Goal loadWidgetByAppWidgetId(Context context, Integer appWidgetId) {
+    public static Goal loadGoalByAppWidgetId(Context context, Integer appWidgetId) {
         Log.d(TAG, "getPastWorkoutsFromDbByAppWidgetId");
         return workoutDao(context).loadWidgetByAppWidgetId(appWidgetId);
     }
 
-    public static Goal loadWidgetByUid(Context context, int uid) {
+    public static Goal loadGoalByUid(Context context, int uid) {
         Log.d(TAG, "getPastWorkoutsFromDbByUid");
         return workoutDao(context).loadWidgetByUid(uid);
     }
 
 
-    public static LiveData<List<Goal>> loadAllWidgetsLiveData(Context context) {
+    public static LiveData<List<Goal>> loadAllGoalsLiveData(Context context) {
         Log.d(TAG, "loadAllWidgetsLiveData");
         return workoutDao(context).loadAllWidgetsLiveData();
     }
 
-    public static List<Goal> loadAllWidgets(Context context) {
+    public static List<Goal> loadAllGoals(Context context) {
         Log.d(TAG, "loadAllWidgets");
         return workoutDao(context).loadAllWidgets();
     }
@@ -66,7 +66,7 @@ public class InteractWithWidgetInDb extends AndroidViewModel {
     }
 
     public static void setAppWidgetIdToNullByUid(Context context, int uid) {
-        Log.d(TAG, "executorService setAppWidgetIdToNullByUid");
+        Log.d(TAG, "executorService setAppWidgetIdToNullByUid: " + uid);
         executorService.execute(() -> workoutDao(context).setAppWidgetIdToNullByUid(uid));
         // executorService.shutdown();
         //executorService.awaitTermination(2, TimeUnit.MINUTES);
