@@ -21,7 +21,7 @@ public class WorkoutPixelAppWidgetProvider extends AppWidgetProvider {
     public static final String ACTION_ALARM_UPDATE = "ALARM_UPDATE";
     // TODO: Replace strings with enums?
     public static final String ACTION_DONE_EXERCISE = "DONE_EXERCISE";
-    private static final String TAG = "WidgetFunctions";
+    private static final String TAG = "WorkoutPixelAppWidgetProvider";
 
 
     // Entry point
@@ -78,13 +78,12 @@ public class WorkoutPixelAppWidgetProvider extends AppWidgetProvider {
     public void onDeleted(Context context, int[] appWidgetIds) {
         // When the user deletes the widget, delete the preference associated with it.
         Log.d(TAG, "ON_DELETED");
-        // Not necessary anymore because I want to keep the deleted ones in the DB
 
+        // TODO: This is also called if the configuration is aborted. Then, this database call is useless.
         for (int appWidgetId : appWidgetIds) {
             InteractWithGoalInDb.setAppWidgetIdToNullByAppwidgetId(context, appWidgetId);
         }
 
-        // CommonFunctions.executorService.shutdown();
     }
 
     @Override

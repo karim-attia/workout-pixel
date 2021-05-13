@@ -19,7 +19,7 @@
         android:padding="12dp"
         />
 
-    <include layout="@layout/workout_card"/>
+    <include layout="@layout/past_workout_card"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view"

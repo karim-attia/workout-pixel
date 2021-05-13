@@ -69,7 +69,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     @NonNull
     @Override
     public WidgetViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
-        View widgetView = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.cardview, viewGroup, false);
+        View widgetView = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.goal_card, viewGroup, false);
         return new WidgetViewHolder(widgetView);
     }
 

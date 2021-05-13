@@ -197,7 +197,7 @@ public class Goal {
     }
 
     RemoteViews widgetView(Context context, boolean setOnClickListener) {
-        RemoteViews widgetView = new RemoteViews(context.getPackageName(), R.layout.workout_pixel);
+        RemoteViews widgetView = new RemoteViews(context.getPackageName(), R.layout.widget_layout);
         // Set an onClickListener for every widget: https://stackoverflow.com/questions/30174386/multiple-instances-of-widget-with-separated-working-clickable-imageview
         if(setOnClickListener) {widgetView.setOnClickPendingIntent(R.id.appwidget_text, widgetPendingIntent(context));}
         // Before updating a widget, the text and background of the view need to be set. Otherwise, the existing not updated properties of the widgetView will be passed.

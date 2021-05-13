@@ -2,7 +2,7 @@
     <string name="app_name">Workout Pixel</string>
     <string name="header">Add a Workout Pixel goal</string>
     <string name="header_reconfigure">Edit your goal</string>
-    <string name="instructions">Add the goal for the goal you want to track here.\n\nYou can set the name of your goal and how often you want to reach it here. I recommend to start with a small goal and build a habit of feeling a sense of accomplishment when clicking the goal and seeing that it\'s green afterwards.\n\nHave fun reaching your goal!\n</string>
+    <string name="instructions">Add the goal for the goal you want to track here.\n\nYou can set the name of your goal and how often you want to reach it here. I recommend to start with a small goal and build a habit of feeling a sense of accomplishment when clicking the goal and seeing that it\'s green afterwards.\n\nHave fun reaching your goal!</string>
     <string name="instructions_reconfigure">Have fun reaching your goal!\n</string>
     <string name="widgetTitle">Describe your goal in 1–2 words:</string>
     <string name="interval">How often do you want to reach your goal? Every</string>
@@ -16,7 +16,7 @@
     <string name="view_clicks">View clicks</string>
     <string name="show_time_in_the_widget">Show time in the goal</string>
     <string name="show_date_in_the_widget">Show date in the goal</string>
-    <string name="connect_widget_instructions">You have defined goals that currently don\'t have a goal. You can connect this goal to a goal that you have already created to take over all its data including the history.</string>
+    <string name="connect_widget_instructions">You have defined goals that currently don\'t have a widget. You can connect the widget you are currently creating to a goal that you have already defined to take over all its data including the history.</string>
     <string name="connect">Connect</string>
     <string name="date_time_instructions">Do you want to show when you reached your goal the last time?</string>
     <string name="preview">Preview</string>

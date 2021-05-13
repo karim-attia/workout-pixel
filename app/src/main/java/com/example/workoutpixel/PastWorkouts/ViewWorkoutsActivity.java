@@ -50,7 +50,7 @@ public class ViewWorkoutsActivity extends AppCompatActivity {
         }
 
         Goal goal = InteractWithGoalInDb.loadGoalByUid(context, uid);
-        setContentView(R.layout.view_workouts);
+        setContentView(R.layout.activity_view_workouts);
 
         // Bind views and set them
         TextView title = findViewById(R.id.widget_title);

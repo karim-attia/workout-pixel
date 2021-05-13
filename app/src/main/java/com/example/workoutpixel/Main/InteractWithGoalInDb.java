@@ -17,7 +17,7 @@ import java.util.List;
 import static com.example.workoutpixel.Core.CommonFunctions.*;
 
 public class InteractWithGoalInDb extends AndroidViewModel {
-    private static final String TAG = "WORKOUT_PIXEL InteractWithWidgetInDb";
+    private static final String TAG = "InteractWithWidgetInDb";
 
     public InteractWithGoalInDb(@NonNull Application application) {
         super(application);
@@ -38,7 +38,7 @@ public class InteractWithGoalInDb extends AndroidViewModel {
     }
 
     public static Goal loadGoalByAppWidgetId(Context context, Integer appWidgetId) {
-        Log.d(TAG, "getPastWorkoutsFromDbByAppWidgetId");
+        Log.d(TAG, "getPastWorkoutsFromDbByAppWidgetId" + appWidgetId);
         return workoutDao(context).loadWidgetByAppWidgetId(appWidgetId);
     }
 
