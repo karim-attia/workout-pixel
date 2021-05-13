@@ -32,7 +32,7 @@ import static com.example.workoutpixel.Core.CommonFunctions.STATUS_NONE;
 import static com.example.workoutpixel.Core.CommonFunctions.getDrawableIntFromStatus;
 import static com.example.workoutpixel.Core.CommonFunctions.getNewStatus;
 import static com.example.workoutpixel.Core.CommonFunctions.lastWorkoutDateBeautiful;
-import static com.example.workoutpixel.Core.CommonFunctions.lastWorkoutTimeBeautiful;
+import static com.example.workoutpixel.Core.CommonFunctions.timeBeautiful;
 
 /**
  * The configuration screen for the {@link WidgetFunctions WidgetFunctions} AppWidget.
@@ -41,7 +41,7 @@ public class ConfigureActivity extends AppCompatActivity {
     private static final String TAG = "WORKOUT_PIXEL CONFIGURE ACTIVITY";
     final Context context = ConfigureActivity.this;
 
-    boolean isReconfigure;
+    boolean isReconfigure = false;
 
     TextView goalIntervalTextView;
     TextView goalIntervalPluralTextView;
@@ -53,52 +53,8 @@ public class ConfigureActivity extends AppCompatActivity {
 
     Widget widget = new Widget(AppWidgetManager.INVALID_APPWIDGET_ID, "", 0, intervalInDays, 2, false, false, STATUS_NONE);
 
-    // OnClickListener for button
-    View.OnClickListener updateWidgetOnClickListener = new View.OnClickListener() {
-        public void onClick(View v) {
-
-            // When the button is clicked, store the string locally
-            String widgetText = widgetTitle.getText().toString();
-            boolean showDate = showDateCheckbox.isChecked();
-            boolean showTime = showTimeCheckbox.isChecked();
-
-            // Create widget object. Save it in the preferences.
-            widget.setTitle(widgetText);
-            widget.setIntervalBlue(intervalInDays);
-            widget.setShowDate(showDate);
-            widget.setShowTime(showTime);
-            // If the status is updated based on the new interval, doing it here saves a DB interaction in updateWidgetBasedOnNewStatus.
-            widget.setStatus(getNewStatus(widget.getLastWorkout(), widget.getIntervalBlue()));
-
-            // Save new prefs
-            if (isReconfigure) InteractWithWidgetInDb.updateWidget(context, widget);
-            else InteractWithWidgetInDb.saveDuringInitialize(context, widget);
-
-            setWidgetAndFinish();
-        }
-    };
-
     public ConfigureActivity() {
         super();
-    }
-
-    private void setWidgetAndFinish() {
-        // It is the responsibility of the configuration activity to update the app widget
-        Log.v(TAG, "UPDATE_THROUGH_CONFIGURE_ACTIVITY");
-        if(widget.hasValidAppWidgetId()) {widget.updateWidgetBasedOnStatus(context);}
-
-        // Make sure we pass back the original appWidgetId.
-        // WorkoutPixelReConfigureActivity does not need this.
-        if (!isReconfigure) {
-            Intent resultValue = new Intent();
-            resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widget.getAppWidgetId());
-            setResult(RESULT_OK, resultValue);
-            Toast.makeText(context, "Widget created. Click on it to register a workout.", Toast.LENGTH_LONG).show();
-        } else {
-            Toast.makeText(context, "Widget updated.", Toast.LENGTH_LONG).show();
-        }
-
-        finishAndRemoveTask();
     }
 
     @Override
@@ -110,8 +66,14 @@ public class ConfigureActivity extends AppCompatActivity {
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();
 
-        isReconfigure = intent.getAction().equals("APPWIDGET_RECONFIGURE");
-        Log.v(TAG, "Is it a reconfigure activity? " + isReconfigure);
+        if(intent.getAction() != null) {
+            isReconfigure = intent.getAction().equals("APPWIDGET_RECONFIGURE");
+        }
+        else {
+            isReconfigure = false;
+            Log.d(TAG, "No action set");
+        }
+        Log.d(TAG, "Is it a reconfigure activity? " + isReconfigure);
 
         if (!isReconfigure) {
             if (extras != null) {
@@ -267,14 +229,59 @@ public class ConfigureActivity extends AppCompatActivity {
         if (showTimeCheckbox.isChecked()) {
             String lastWorkoutTimeBeautiful;
             if (isReconfigure) {
-                lastWorkoutTimeBeautiful = lastWorkoutTimeBeautiful(widget.getLastWorkout());
+                lastWorkoutTimeBeautiful = timeBeautiful(widget.getLastWorkout());
             } else {
-                lastWorkoutTimeBeautiful = lastWorkoutTimeBeautiful(System.currentTimeMillis());
+                lastWorkoutTimeBeautiful = timeBeautiful(System.currentTimeMillis());
             }
             widgetText += "\n" + lastWorkoutTimeBeautiful;
         }
 
         preview.setText(widgetText);
     }
+
+    private void setWidgetAndFinish() {
+        // It is the responsibility of the configuration activity to update the app widget
+        Log.v(TAG, "UPDATE_THROUGH_CONFIGURE_ACTIVITY");
+        if(widget.hasValidAppWidgetId()) {widget.updateWidgetBasedOnStatus(context);}
+
+        // Make sure we pass back the original appWidgetId.
+        // WorkoutPixelReConfigureActivity does not need this.
+        if (!isReconfigure) {
+            Intent resultValue = new Intent();
+            resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widget.getAppWidgetId());
+            setResult(RESULT_OK, resultValue);
+            Toast.makeText(context, "Widget created. Click on it to register a workout.", Toast.LENGTH_LONG).show();
+        } else {
+            Toast.makeText(context, "Widget updated.", Toast.LENGTH_LONG).show();
+        }
+
+        finishAndRemoveTask();
+    }
+
+    // OnClickListener for button
+    View.OnClickListener updateWidgetOnClickListener = new View.OnClickListener() {
+        public void onClick(View v) {
+
+            // When the button is clicked, store the string locally
+            String widgetText = widgetTitle.getText().toString();
+            boolean showDate = showDateCheckbox.isChecked();
+            boolean showTime = showTimeCheckbox.isChecked();
+
+            // Create widget object. Save it in the preferences.
+            widget.setTitle(widgetText);
+            widget.setIntervalBlue(intervalInDays);
+            widget.setShowDate(showDate);
+            widget.setShowTime(showTime);
+            // If the status is updated based on the new interval, doing it here saves a DB interaction in updateWidgetBasedOnNewStatus.
+            widget.setStatus(getNewStatus(widget.getLastWorkout(), widget.getIntervalBlue()));
+
+            // Save new prefs
+            if (isReconfigure) InteractWithWidgetInDb.updateWidget(context, widget);
+            else InteractWithWidgetInDb.saveDuringInitialize(context, widget);
+
+            setWidgetAndFinish();
+        }
+    };
+
 }
 

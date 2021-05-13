@@ -211,7 +211,7 @@ public class Widget {
             widgetText += "\n" + lastWorkoutDateBeautiful(lastWorkout);
         }
         if (showTime & !status.equals(STATUS_NONE)) {
-            widgetText += "\n" + lastWorkoutTimeBeautiful(lastWorkout);
+            widgetText += "\n" + timeBeautiful(lastWorkout);
         }
         return widgetText;
     }

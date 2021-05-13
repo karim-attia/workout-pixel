@@ -39,6 +39,9 @@
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
             </intent-filter>
+            <intent-filter>
+                <action android:name="APPWIDGET_RECONFIGURE" />
+            </intent-filter>
         </activity>
 
         <activity android:name=".PastWorkouts.ViewWorkoutsActivity"

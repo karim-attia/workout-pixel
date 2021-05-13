@@ -113,13 +113,13 @@ public class CommonFunctions {
         }
     }
 
-    public static String lastWorkoutTimeBeautiful(Long longLastWorkout) {
-        LocalDateTime lastWorkout = Instant.ofEpochMilli(longLastWorkout).atZone(ZoneId.systemDefault()).toLocalDateTime();
+    public static String timeBeautiful(Long time) {
+        LocalDateTime lastWorkout = Instant.ofEpochMilli(time).atZone(ZoneId.systemDefault()).toLocalDateTime();
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT).withLocale(new Locale("de", "CH"));
         return lastWorkout.format(dateFormatter);
     }
 
-    public static String lastWorkoutDateTimeBeautiful(Long time) {
+    public static String dateTimeBeautiful(Long time) {
         LocalDateTime lastWorkout = Instant.ofEpochMilli(time).atZone(ZoneId.systemDefault()).toLocalDateTime();
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT).withLocale(new Locale("de", "CH"));
         return lastWorkout.format(dateFormatter);
@@ -181,7 +181,7 @@ public class CommonFunctions {
     // Last alarm
     public static void saveTimeWithStringToSharedPreferences(Context context, String string) {
         SharedPreferences.Editor prefs = context.getSharedPreferences(PREFS_NAME, 0).edit();
-        String timeLastWorkoutBeautiful = CommonFunctions.lastWorkoutDateTimeBeautiful(System.currentTimeMillis());
+        String timeLastWorkoutBeautiful = CommonFunctions.dateTimeBeautiful(System.currentTimeMillis());
         prefs.putString(string, timeLastWorkoutBeautiful);
         prefs.apply();
     }

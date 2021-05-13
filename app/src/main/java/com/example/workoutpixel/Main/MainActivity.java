@@ -4,18 +4,13 @@ import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.GridLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.DefaultItemAnimator;
-import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -28,10 +23,11 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "WORKOUT_PIXEL_APP";
     private final Context context = MainActivity.this;
     private InteractWithWidgetInDb widgetViewModel;
-    boolean instructionsExpanded = false;
+    public boolean instructionsExpanded = false;
     ImageView instructionsExpando;
     TextView instructionsTextView;
     GridLayout instructionsGridLayout;
+    RecyclerViewAdapter recyclerViewAdapter = new RecyclerViewAdapter(context);
 
     // onCreate is called when the main app is first loaded.
     @Override
@@ -61,7 +57,14 @@ public class MainActivity extends AppCompatActivity {
         setContent();
     }
 
-    private void toggleExpando() {
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        setContent();
+        Log.d(TAG, "on Restart");
+    }
+
+        private void toggleExpando() {
         if(instructionsExpanded) {
             instructionsTextView.setVisibility(View.VISIBLE);
             instructionsGridLayout.setVisibility(View.VISIBLE);
@@ -82,7 +85,6 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
         recyclerView.setHasFixedSize(true);
         recyclerView.setNestedScrollingEnabled(false);
-        RecyclerViewAdapter recyclerViewAdapter = new RecyclerViewAdapter(context);
         recyclerView.setAdapter(recyclerViewAdapter);
 
         widgetViewModel = new ViewModelProvider(this).get(InteractWithWidgetInDb.class);
@@ -91,7 +93,6 @@ public class MainActivity extends AppCompatActivity {
         // Observe the LiveData, passing this activity as the LifecycleOwner and the observer.
         LiveData<List<Widget>> liveData = widgetViewModel.loadAllWidgetsLiveData(context.getApplicationContext());
         liveData.observe(this, widgets -> {
-            Log.d(TAG, "has observers " + liveData.hasActiveObservers());
             recyclerViewAdapter.setData(widgets);
             recyclerView.setItemAnimator(null);
             liveData.removeObservers(this);
@@ -99,7 +100,6 @@ public class MainActivity extends AppCompatActivity {
                 instructionsExpanded = true;
                 toggleExpando();
             }
-            Log.d(TAG, "has observers " + liveData.hasActiveObservers());
         });
     }
 }
