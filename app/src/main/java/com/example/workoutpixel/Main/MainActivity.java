@@ -127,7 +127,7 @@ public class MainActivity extends AppCompatActivity {
             instructionsExpanded = true;
             toggleExpando();
         }
-        new WidgetAlarm(context).startAlarm();
+        WidgetAlarm.startAlarm(context);
         Log.d(TAG, "appwidgetIds: " + Arrays.toString(appWidgetIds(context)));
 
         cleanGoals(context, goals);

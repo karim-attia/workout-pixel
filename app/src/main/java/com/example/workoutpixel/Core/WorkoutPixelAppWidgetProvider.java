@@ -57,7 +57,7 @@ public class WorkoutPixelAppWidgetProvider extends AppWidgetProvider {
         Log.d(TAG, "ON_UPDATE\n------------------------------------------------------------------------");
         // Start alarm
         Log.v(TAG, "START_ALARM");
-        new WidgetAlarm(context.getApplicationContext()).startAlarm();
+        WidgetAlarm.startAlarm(context);
         Log.v(TAG, "ALARM_STARTED");
 
         // TODO: Understand
@@ -95,7 +95,7 @@ public class WorkoutPixelAppWidgetProvider extends AppWidgetProvider {
 
         // Start alarm
         Log.v(TAG, "START_ALARM");
-        new WidgetAlarm(context.getApplicationContext()).startAlarm();
+        WidgetAlarm.startAlarm(context);
         Log.v(TAG, "ALARM_STARTED");
     }
 
@@ -107,7 +107,7 @@ public class WorkoutPixelAppWidgetProvider extends AppWidgetProvider {
         if (CommonFunctions.appWidgetIds(context).length == 0) {
             // stop alarm
             Log.v(TAG, "STOP_ALARM");
-            new WidgetAlarm(context.getApplicationContext()).stopAlarm();
+            WidgetAlarm.startAlarm(context);
             Log.v(TAG, "STOPPED_ALARM");
         }
     }

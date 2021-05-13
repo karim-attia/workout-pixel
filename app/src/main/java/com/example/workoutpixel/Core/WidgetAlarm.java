@@ -16,38 +16,31 @@ import static com.example.workoutpixel.Core.CommonFunctions.saveTimeWithStringTo
 // WorkoutPixel.onUpdate() may not only be called upon device restarts but also in other cases. Check the documentation for that.
 public class WidgetAlarm {
     private static final String TAG = "WORKOUT_PIXEL ALARM";
-    private final Context context;
 
-    // Make singleton?
-    public WidgetAlarm(Context context) {
-        this.context = context;
-        saveTimeWithStringToSharedPreferences(context, "WidgetAlarm Constructor");
-    }
-
-    public void startAlarm() {
+    public static void startAlarm(Context context) {
         Log.d(TAG, "STARTING_ALARM " + dateTimeString(next3am()));
         saveTimeWithStringToSharedPreferences(context, "WidgetAlarm startAlarm");
 
         // RTC does not wake the device up
-        alarmManager().setInexactRepeating(AlarmManager.RTC, next3am(), AlarmManager.INTERVAL_DAY, pendingIntent());
+        alarmManager(context).setInexactRepeating(AlarmManager.RTC, next3am(), AlarmManager.INTERVAL_DAY, pendingIntent(context));
     }
 
-    public void stopAlarm() {
+    public static void stopAlarm(Context context) {
         Log.d(TAG, "STOPPING_ALARM");
         saveTimeWithStringToSharedPreferences(context, "WidgetAlarm stopAlarm");
-        alarmManager().cancel(pendingIntent());
+        alarmManager(context).cancel(pendingIntent(context));
     }
 
     // Just for log. For anything else, use the functions in CommonFunctions
-    private String dateTimeString(long timeInMillis) {
+    private static String dateTimeString(long timeInMillis) {
         return DateFormat.getDateTimeInstance().format(timeInMillis);
     }
 
-    public AlarmManager alarmManager() {
+    private static AlarmManager alarmManager(Context context) {
         return (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
     }
 
-    private PendingIntent pendingIntent() {
+    private static PendingIntent pendingIntent(Context context) {
         Intent alarmIntent = new Intent(context, WorkoutPixelAppWidgetProvider.class);
         alarmIntent.setAction(WorkoutPixelAppWidgetProvider.ACTION_ALARM_UPDATE);
         return PendingIntent.getBroadcast(context, 0, alarmIntent, PendingIntent.FLAG_CANCEL_CURRENT);
