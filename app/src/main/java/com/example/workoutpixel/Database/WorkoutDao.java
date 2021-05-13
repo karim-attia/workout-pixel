@@ -28,41 +28,41 @@ public interface WorkoutDao {
 
     // Widgets
     // Get widget by appWidgetId
-    @Query("SELECT * FROM widgets WHERE appWidgetId=:appWidgetId")
-    Widget loadWidgetByAppWidgetId(int appWidgetId);
+    @Query("SELECT * FROM goals WHERE appWidgetId=:appWidgetId")
+    Goal loadWidgetByAppWidgetId(int appWidgetId);
 
-    @Query("SELECT * FROM widgets WHERE uid=:uid")
-    Widget loadWidgetByUid(int uid);
-
-    // Get all widgets
-    @Query("SELECT * FROM widgets")
-    LiveData<List<Widget>> loadAllWidgetsLiveData();
+    @Query("SELECT * FROM goals WHERE uid=:uid")
+    Goal loadWidgetByUid(int uid);
 
     // Get all widgets
-    @Query("SELECT * FROM widgets")
-    List<Widget> loadAllWidgets();
+    @Query("SELECT * FROM goals")
+    LiveData<List<Goal>> loadAllWidgetsLiveData();
+
+    // Get all widgets
+    @Query("SELECT * FROM goals")
+    List<Goal> loadAllWidgets();
 
     // Get widget title by appWidgetId
-    @Query("SELECT title FROM widgets WHERE appWidgetId=:appWidgetId LIMIT 1")
+    @Query("SELECT title FROM goals WHERE appWidgetId=:appWidgetId LIMIT 1")
     LiveData<String> loadWidgetTitle(int appWidgetId);
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE, entity = Widget.class)
-    void insertWidget(Widget widget);
+    @Insert(onConflict = OnConflictStrategy.REPLACE, entity = Goal.class)
+    void insertWidget(Goal goal);
 
-    @Update(onConflict = OnConflictStrategy.REPLACE, entity = Widget.class)
-    void updateWidget(Widget widget);
+    @Update(onConflict = OnConflictStrategy.REPLACE, entity = Goal.class)
+    void updateWidget(Goal goal);
 
-    @Query("UPDATE widgets SET appWidgetId = null WHERE uid=:uid")
+    @Query("UPDATE goals SET appWidgetId = null WHERE uid=:uid")
     void setAppWidgetIdToNullByUid(int uid);
 
-    @Query("UPDATE widgets SET appWidgetId = null WHERE appWidgetId=:appWidgetId")
+    @Query("UPDATE goals SET appWidgetId = null WHERE appWidgetId=:appWidgetId")
     void setAppWidgetIdToNullByAppwidgetId(Integer appWidgetId);
 
     // Get all widgets without AppWidgetId
-    @Query("SELECT * FROM widgets WHERE appWidgetId IS NULL")
-    List<Widget> loadWidgetsWithoutValidAppWidgetId();
+    @Query("SELECT * FROM goals WHERE appWidgetId IS NULL")
+    List<Goal> loadWidgetsWithoutValidAppWidgetId();
 
     // Get all widgets without AppWidgetId
-    @Query("SELECT * FROM widgets WHERE appWidgetId IS NOT NULL")
-    List<Widget> loadWidgetsWithValidAppWidgetId();
+    @Query("SELECT * FROM goals WHERE appWidgetId IS NOT NULL")
+    List<Goal> loadWidgetsWithValidAppWidgetId();
 }

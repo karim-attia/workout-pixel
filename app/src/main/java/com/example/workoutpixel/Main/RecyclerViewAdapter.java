@@ -15,7 +15,7 @@ import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.workoutpixel.Core.ConfigureActivity;
-import com.example.workoutpixel.Database.Widget;
+import com.example.workoutpixel.Database.Goal;
 import com.example.workoutpixel.PastWorkouts.ViewWorkoutsActivity;
 import com.example.workoutpixel.R;
 
@@ -30,7 +30,7 @@ import static com.example.workoutpixel.Core.CommonFunctions.dateBeautiful;
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.WidgetViewHolder> {
     private static final String TAG = "WORKOUT_PIXEL MainActivity RVAdapter";
     Context context;
-    List<Widget> widgets = new ArrayList<>();
+    List<Goal> goals = new ArrayList<>();
     boolean notSetupYet = true;
 
 /*
@@ -45,15 +45,15 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         this.context = context;
     }
 
-    public void setData(List<Widget> widgets) {
-        this.widgets = widgets;
+    public void setData(List<Goal> goals) {
+        this.goals = goals;
         notifyDataSetChanged();
 
         if (notSetupYet) {
-            for (Widget widget : widgets) {
+            for (Goal goal : goals) {
                 // Sometimes the onClickListener in the widgets stop working. This is a super stupid way to regularly reset the onClickListener when you open the main app.
-                if (widget.hasValidAppWidgetId()) {
-                    widget.updateWidgetBasedOnStatus(context);
+                if (goal.hasValidAppWidgetId()) {
+                    goal.updateWidgetBasedOnStatus(context);
                 }
             }
         }
@@ -63,7 +63,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
     @Override
     public int getItemCount() {
-        return widgets.size();
+        return goals.size();
     }
 
     @NonNull
@@ -76,16 +76,16 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     // onBindViewHolder sets all the parameters for an individual card view.
     @Override
     public void onBindViewHolder(final WidgetViewHolder widgetViewHolder, final int i) {
-        widgetViewHolder.widgetTitle.setText(widgets.get(i).getTitle());
-        widgetViewHolder.widgetLastWorkout.setText(dateBeautiful(widgets.get(i).getLastWorkout()));
-        widgetViewHolder.widgetIntervalBlue.setText(widgets.get(i).everyWording());
-        widgetViewHolder.widgetPreview.setBackgroundResource(getDrawableIntFromStatus(widgets.get(i).getStatus()));
-        widgetViewHolder.widgetPreview.setText(widgets.get(i).widgetText());
+        widgetViewHolder.widgetTitle.setText(goals.get(i).getTitle());
+        widgetViewHolder.widgetLastWorkout.setText(dateBeautiful(goals.get(i).getLastWorkout()));
+        widgetViewHolder.widgetIntervalBlue.setText(goals.get(i).everyWording());
+        widgetViewHolder.widgetPreview.setBackgroundResource(getDrawableIntFromStatus(goals.get(i).getStatus()));
+        widgetViewHolder.widgetPreview.setText(goals.get(i).widgetText());
         widgetViewHolder.widgetPreview.setOnClickListener(v -> {
             // Update the widget the same way as a click on the widget would.
-            widgets.get(i).updateAfterClick(context);
-            widgets.get(i).setLastWorkout(System.currentTimeMillis());
-            widgets.get(i).setStatus(STATUS_GREEN);
+            goals.get(i).updateAfterClick(context);
+            goals.get(i).setLastWorkout(System.currentTimeMillis());
+            goals.get(i).setStatus(STATUS_GREEN);
 
             // Update the data in the recycler view
             notifyItemChanged(i);
@@ -94,12 +94,12 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         View.OnClickListener editWidgetOnClickListener = v -> {
             Intent intent = new Intent(context, ConfigureActivity.class);
             intent.setAction("APPWIDGET_RECONFIGURE");
-            intent.putExtra("widgetUid", widgets.get(i).getUid());
+            intent.putExtra("widgetUid", goals.get(i).getUid());
             context.startActivity(intent);
         };
         View.OnClickListener viewWorkoutsOnClickListener = v -> {
             Intent intent = new Intent(context, ViewWorkoutsActivity.class);
-            intent.putExtra("widgetUid", widgets.get(i).getUid());
+            intent.putExtra("widgetUid", goals.get(i).getUid());
             context.startActivity(intent);
         };
 
@@ -108,12 +108,12 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         widgetViewHolder.widgetPastWorkouts.setOnClickListener(viewWorkoutsOnClickListener);
         widgetViewHolder.widgetPastWorkoutsText.setOnClickListener(viewWorkoutsOnClickListener);
 
-        if (!widgets.get(i).hasValidAppWidgetId()) {
+        if (!goals.get(i).hasValidAppWidgetId()) {
             // if(!CommonFunctions.doesWidgetHaveValidAppWidgetId(context, widgets.get(i))) {
-            Log.v(TAG, "connectInfo.setVisibility VISIBLE " + widgets.get(i).debugString());
+            Log.v(TAG, "connectInfo.setVisibility VISIBLE " + goals.get(i).debugString());
             widgetViewHolder.connectInfo.setVisibility(View.VISIBLE);
         } else {
-            Log.v(TAG, "connectInfo.setVisibility GONE " + widgets.get(i).debugString());
+            Log.v(TAG, "connectInfo.setVisibility GONE " + goals.get(i).debugString());
             widgetViewHolder.connectInfo.setVisibility(View.GONE);
         }
     }

@@ -6,7 +6,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
 
-import com.example.workoutpixel.Database.Widget;
+import com.example.workoutpixel.Database.Goal;
 import com.example.workoutpixel.R;
 
 import java.time.Instant;
@@ -139,8 +139,8 @@ public class CommonFunctions {
     }
 
     // Not needed anymore if appWidgetId is set to null on deletion. Could be used to check consistency.
-    public static List<Widget> widgetsWithoutValidAppWidgetId(Context context, List<Widget> widgets) {
-        List<Widget> widgetsWithoutValidAppwidgetId = widgets.stream().filter(widget -> Arrays.stream(appWidgetIds(context)).noneMatch(i -> widget.getAppWidgetId() == null || i == widget.getAppWidgetId())).collect(Collectors.toList());
+    public static List<Goal> widgetsWithoutValidAppWidgetId(Context context, List<Goal> goals) {
+        List<Goal> widgetsWithoutValidAppwidgetId = goals.stream().filter(widget -> Arrays.stream(appWidgetIds(context)).noneMatch(i -> widget.getAppWidgetId() == null || i == widget.getAppWidgetId())).collect(Collectors.toList());
 /*
         Log.d(TAG, "widgetsWithoutValidAppwidgetId");
         Log.d(TAG, "appWidgetIds(context): " + Arrays.toString(appWidgetIds(context)));
@@ -155,9 +155,9 @@ public class CommonFunctions {
     }
 
     // Not needed anymore if appWidgetId is set to null on deletion. Could be used to check consistency.
-    public static List<Widget> widgetsWithValidAppWidgetId(Context context, List<Widget> widgets) {
+    public static List<Goal> widgetsWithValidAppWidgetId(Context context, List<Goal> goals) {
 
-        List<Widget> widgetsWithValidAppwidgetId = widgets.stream().filter(widget -> Arrays.stream(appWidgetIds(context)).anyMatch(i -> !(widget.getAppWidgetId() == null) && i == widget.getAppWidgetId())).collect(Collectors.toList());
+        List<Goal> widgetsWithValidAppwidgetId = goals.stream().filter(widget -> Arrays.stream(appWidgetIds(context)).anyMatch(i -> !(widget.getAppWidgetId() == null) && i == widget.getAppWidgetId())).collect(Collectors.toList());
 /*
         Log.d(TAG, "widgetsWithValidAppwidgetId");
         Log.d(TAG, "appWidgetIds(context): " + Arrays.toString(appWidgetIds(context)));
@@ -172,9 +172,9 @@ public class CommonFunctions {
     }
 
     // Not needed anymore if appWidgetId is set to null on deletion. Could be used to check consistency.
-    public static boolean doesWidgetHaveValidAppWidgetId(Context context, Widget widget) {
-        boolean doesWidgetHaveValidAppWidgetId = Arrays.stream(appWidgetIds(context)).anyMatch(i -> widget.getAppWidgetId() == null || i == widget.getAppWidgetId());
-        Log.d(TAG, "doesWidgetHaveValidAppWidgetId " + widget.debugString() + doesWidgetHaveValidAppWidgetId);
+    public static boolean doesWidgetHaveValidAppWidgetId(Context context, Goal goal) {
+        boolean doesWidgetHaveValidAppWidgetId = Arrays.stream(appWidgetIds(context)).anyMatch(i -> goal.getAppWidgetId() == null || i == goal.getAppWidgetId());
+        Log.d(TAG, "doesWidgetHaveValidAppWidgetId " + goal.debugString() + doesWidgetHaveValidAppWidgetId);
         return doesWidgetHaveValidAppWidgetId;
     }
 

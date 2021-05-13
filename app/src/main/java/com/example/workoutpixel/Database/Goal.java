@@ -23,8 +23,8 @@ import static com.example.workoutpixel.Core.CommonFunctions.*;
 import static com.example.workoutpixel.Core.CommonFunctions.STATUS_GREEN;
 import static com.example.workoutpixel.Core.CommonFunctions.getNewStatus;
 
-@Entity(tableName = "widgets")
-public class Widget {
+@Entity(tableName = "goals")
+public class Goal {
     private static final String TAG = "Widget";
 
     @PrimaryKey(autoGenerate = true)
@@ -47,7 +47,7 @@ public class Widget {
     @ColumnInfo(name = "status")
     private String status;
 
-    public Widget(@Nullable Integer appWidgetId, String title, long lastWorkout, int intervalBlue, int intervalRed, boolean showDate, boolean showTime, String status) {
+    public Goal(@Nullable Integer appWidgetId, String title, long lastWorkout, int intervalBlue, int intervalRed, boolean showDate, boolean showTime, String status) {
         this.appWidgetId = appWidgetId;
         this.title = title;
         this.lastWorkout = lastWorkout;

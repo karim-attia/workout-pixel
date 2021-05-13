@@ -6,8 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
-import com.example.workoutpixel.Database.Widget;
-
 import java.text.DateFormat;
 import java.util.Calendar;
 

@@ -34,7 +34,7 @@
         </activity>
 
         <activity android:name=".Core.ConfigureActivity"
-            android:label="Add a Workout Pixel widget"
+            android:label="Add a Workout Pixel goal"
             android:parentActivityName=".Main.MainActivity">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />

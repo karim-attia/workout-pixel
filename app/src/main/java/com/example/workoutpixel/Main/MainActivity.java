@@ -14,7 +14,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.workoutpixel.Database.Widget;
+import com.example.workoutpixel.Database.Goal;
 import com.example.workoutpixel.R;
 
 import java.util.List;
@@ -91,7 +91,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Create the observer which updates the UI.
         // Observe the LiveData, passing this activity as the LifecycleOwner and the observer.
-        LiveData<List<Widget>> liveData = widgetViewModel.loadAllWidgetsLiveData(context.getApplicationContext());
+        LiveData<List<Goal>> liveData = widgetViewModel.loadAllWidgetsLiveData(context.getApplicationContext());
         liveData.observe(this, widgets -> {
             recyclerViewAdapter.setData(widgets);
             recyclerView.setItemAnimator(null);

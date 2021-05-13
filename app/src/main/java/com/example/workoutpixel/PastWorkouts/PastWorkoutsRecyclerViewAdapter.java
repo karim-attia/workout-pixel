@@ -14,7 +14,7 @@ import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.workoutpixel.Database.PastWorkout;
-import com.example.workoutpixel.Database.Widget;
+import com.example.workoutpixel.Database.Goal;
 import com.example.workoutpixel.Main.InteractWithWidgetInDb;
 import com.example.workoutpixel.R;
 
@@ -32,11 +32,11 @@ public class PastWorkoutsRecyclerViewAdapter extends RecyclerView.Adapter<PastWo
     Context context;
     List<PastWorkout> pastWorkouts = new ArrayList<>();
     List<PastWorkout> activeWorkoutsOrderedByWorkoutTime = new ArrayList<>();
-    Widget widget;
+    Goal goal;
 
-    PastWorkoutsRecyclerViewAdapter(Context context, Widget widget) {
+    PastWorkoutsRecyclerViewAdapter(Context context, Goal goal) {
         this.context = context;
-        this.widget = widget;
+        this.goal = goal;
     }
 
     public void setData(List<PastWorkout> pastWorkouts) {
@@ -84,9 +84,9 @@ public class PastWorkoutsRecyclerViewAdapter extends RecyclerView.Adapter<PastWo
             notifyItemChanged(i);
 
             // If this change causes a new last workout time, do all the necessary updates.
-            if(widget.setNewLastWorkout(lastWorkoutBasedOnActiveWorkouts())) {
-                InteractWithWidgetInDb.updateWidget(context, widget);
-                widget.runUpdate(context, false);
+            if(goal.setNewLastWorkout(lastWorkoutBasedOnActiveWorkouts())) {
+                InteractWithWidgetInDb.updateWidget(context, goal);
+                goal.runUpdate(context, false);
             }
         });
     }

@@ -14,7 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.workoutpixel.Database.PastWorkout;
-import com.example.workoutpixel.Database.Widget;
+import com.example.workoutpixel.Database.Goal;
 import com.example.workoutpixel.Main.InteractWithWidgetInDb;
 import com.example.workoutpixel.R;
 
@@ -49,12 +49,12 @@ public class ViewWorkoutsActivity extends AppCompatActivity {
             return;
         }
 
-        Widget widget = InteractWithWidgetInDb.loadWidgetByUid(context, uid);
+        Goal goal = InteractWithWidgetInDb.loadWidgetByUid(context, uid);
         setContentView(R.layout.view_workouts);
 
         // Bind views and set them
         TextView title = findViewById(R.id.widget_title);
-        title.setText(widget.getTitle());
+        title.setText(goal.getTitle());
         // ManageSavedPreferences.loadTitleByAppWidgetId(context, appWidgetId).observe(this, title::setText);
         TextView date = findViewById(R.id.workout_date);
         date.setTypeface(null, Typeface.BOLD);
@@ -66,14 +66,14 @@ public class ViewWorkoutsActivity extends AppCompatActivity {
         RecyclerView recyclerView = findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
 
-        PastWorkoutsRecyclerViewAdapter pastWorkoutsRecyclerViewAdapter = new PastWorkoutsRecyclerViewAdapter(context, widget);
+        PastWorkoutsRecyclerViewAdapter pastWorkoutsRecyclerViewAdapter = new PastWorkoutsRecyclerViewAdapter(context, goal);
         recyclerView.setHasFixedSize(true);
         recyclerView.setAdapter(pastWorkoutsRecyclerViewAdapter);
 
         // Create the observer which updates the UI.
         // Observe the LiveData, passing in this activity as the LifecycleOwner and the observer.
-        LiveData<List<PastWorkout>> liveData = InteractWithPastWorkout.getPastWorkouts(context.getApplicationContext(), widget.uid);
-        InteractWithPastWorkout.getPastWorkouts(context, widget.uid).observe(this, pastWorkouts -> {
+        LiveData<List<PastWorkout>> liveData = InteractWithPastWorkout.getPastWorkouts(context.getApplicationContext(), goal.uid);
+        InteractWithPastWorkout.getPastWorkouts(context, goal.uid).observe(this, pastWorkouts -> {
             pastWorkoutsRecyclerViewAdapter.setData(pastWorkouts);
             liveData.removeObservers(this);
         });

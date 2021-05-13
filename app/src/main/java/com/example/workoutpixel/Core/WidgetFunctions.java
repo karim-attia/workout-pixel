@@ -6,7 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
-import com.example.workoutpixel.Database.Widget;
+import com.example.workoutpixel.Database.Goal;
 import com.example.workoutpixel.Main.InteractWithWidgetInDb;
 
 import java.util.List;
@@ -35,16 +35,16 @@ public class WidgetFunctions extends AppWidgetProvider {
         // Do this if the widget has been clicked
         if (ACTION_DONE_EXERCISE.equals(intent.getAction())) {
             int uid = intent.getIntExtra("widgetUid", 0);
-            Widget widget = InteractWithWidgetInDb.loadWidgetByUid(context, uid);
-            widget.updateAfterClick(context);
+            Goal goal = InteractWithWidgetInDb.loadWidgetByUid(context, uid);
+            goal.updateAfterClick(context);
         }
 
         // Do this when the alarm hits
         if (ACTION_ALARM_UPDATE.equals(intent.getAction())) {
             CommonFunctions.saveTimeWithStringToSharedPreferences(context, "Last Alarm");
-            List<Widget> widgetList = InteractWithWidgetInDb.loadWidgetsWithValidAppWidgetId(context);
-            for (Widget widget : widgetList) {
-                widget.updateWidgetBasedOnStatus(context);
+            List<Goal> goalList = InteractWithWidgetInDb.loadWidgetsWithValidAppWidgetId(context);
+            for (Goal goal : goalList) {
+                goal.updateWidgetBasedOnStatus(context);
             }
         }
 
@@ -71,11 +71,11 @@ public class WidgetFunctions extends AppWidgetProvider {
         // TODO: Understand
         // TODO: Replaced iteration through appWidgetIds with data from DB. Insert check that this is the same and fix if not. Maybe before it only iterated through some widgets. But I don't think it matters.
         // TODO: Could check with CommonFunctions.widgetsWithValidAppWidgetId whether they are the same and at least log if not,
-        List<Widget> widgetList = InteractWithWidgetInDb.loadWidgetsWithValidAppWidgetId(context);
-        for (Widget widget : widgetList) {
+        List<Goal> goalList = InteractWithWidgetInDb.loadWidgetsWithValidAppWidgetId(context);
+        for (Goal goal : goalList) {
             // Tell the AppWidgetManager to perform an update on the current app widget
-            Log.d(TAG, "ON_UPDATE: " + widget.debugString());
-            widget.updateWidgetBasedOnStatus(context);
+            Log.d(TAG, "ON_UPDATE: " + goal.debugString());
+            goal.updateWidgetBasedOnStatus(context);
         }
 
         // CommonFunctions.executorService.shutdown();

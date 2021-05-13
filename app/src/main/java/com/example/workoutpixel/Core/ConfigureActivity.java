@@ -21,7 +21,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 
-import com.example.workoutpixel.Database.Widget;
+import com.example.workoutpixel.Database.Goal;
 import com.example.workoutpixel.Main.InteractWithWidgetInDb;
 import com.example.workoutpixel.R;
 
@@ -51,7 +51,7 @@ public class ConfigureActivity extends AppCompatActivity {
     CheckBox showDateCheckbox;
     CheckBox showTimeCheckbox;
 
-    Widget widget = new Widget(AppWidgetManager.INVALID_APPWIDGET_ID, "", 0, intervalInDays, 2, false, false, STATUS_NONE);
+    Goal goal = new Goal(AppWidgetManager.INVALID_APPWIDGET_ID, "", 0, intervalInDays, 2, false, false, STATUS_NONE);
 
     public ConfigureActivity() {
         super();
@@ -77,11 +77,11 @@ public class ConfigureActivity extends AppCompatActivity {
 
         if (!isReconfigure) {
             if (extras != null) {
-                widget.setAppWidgetId(extras.getInt(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID));
+                goal.setAppWidgetId(extras.getInt(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID));
             } else {Log.d(TAG, "extras = null");}
 
             // If this activity was started with an intent without an app widget ID, finish with an error.
-            if (widget.getAppWidgetId() == null || widget.getAppWidgetId() == AppWidgetManager.INVALID_APPWIDGET_ID) {
+            if (goal.getAppWidgetId() == null || goal.getAppWidgetId() == AppWidgetManager.INVALID_APPWIDGET_ID) {
                 Log.d(TAG, "AppWidgetId is invalid.");
                 finishAndRemoveTask();
                 return;
@@ -95,10 +95,10 @@ public class ConfigureActivity extends AppCompatActivity {
 
         if (isReconfigure) {
             if (extras != null) {
-                widget.setUid(extras.getInt("widgetUid", 0));
+                goal.setUid(extras.getInt("widgetUid", 0));
             } else {Log.d(TAG, "extras = null");}
 
-            if (widget.getUid() == 0) {
+            if (goal.getUid() == 0) {
                 Log.d(TAG, "widgetUid is invalid.");
                 finishAndRemoveTask();
                 return;
@@ -126,11 +126,11 @@ public class ConfigureActivity extends AppCompatActivity {
         if (isReconfigure) {
             // Don't show the initial text if the user edits the widget.
             introText.setVisibility(View.GONE);
-            widget = InteractWithWidgetInDb.loadWidgetByUid(context, widget.getUid());
-            widgetTitle.setText(widget.getTitle());
-            intervalInDays = widget.getIntervalBlue();
-            showDateCheckbox.setChecked(widget.getShowDate());
-            showTimeCheckbox.setChecked(widget.getShowTime());
+            goal = InteractWithWidgetInDb.loadWidgetByUid(context, goal.getUid());
+            widgetTitle.setText(goal.getTitle());
+            intervalInDays = goal.getIntervalBlue();
+            showDateCheckbox.setChecked(goal.getShowDate());
+            showTimeCheckbox.setChecked(goal.getShowTime());
 
             addAndUpdateButton.setText(R.string.add_widget_reconfigure);
         }
@@ -160,7 +160,7 @@ public class ConfigureActivity extends AppCompatActivity {
 
         // Preview
         if (isReconfigure)
-            preview.setBackgroundResource(getDrawableIntFromStatus(widget.getStatus()));
+            preview.setBackgroundResource(getDrawableIntFromStatus(goal.getStatus()));
         else preview.setBackgroundResource(R.drawable.rounded_corner_green);
 
         setPreview(preview);
@@ -187,21 +187,21 @@ public class ConfigureActivity extends AppCompatActivity {
         // Reconnect widget
         if (!isReconfigure) {
             CommonFunctions.executorService.execute(() -> {
-                List<Widget> widgetsWithoutValidAppwidgetId = InteractWithWidgetInDb.loadWidgetsWithoutValidAppWidgetId(context);
+                List<Goal> widgetsWithoutValidAppwidgetId = InteractWithWidgetInDb.loadWidgetsWithoutValidAppWidgetId(context);
                 if (widgetsWithoutValidAppwidgetId.size() > 0) {
                     CardView connectWidgetView = findViewById(R.id.connect_widget);
                     connectWidgetView.setVisibility(View.VISIBLE);
                     Spinner connectSpinner = (Spinner) findViewById(R.id.connect_spinner);
-                    ArrayAdapter<Widget> adapter = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item, widgetsWithoutValidAppwidgetId);
+                    ArrayAdapter<Goal> adapter = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item, widgetsWithoutValidAppwidgetId);
                     adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                     connectSpinner.setAdapter(adapter);
                     Button connectButton = findViewById(R.id.connect_widget_button);
                     connectButton.setOnClickListener((View v) -> {
-                        Integer appWidgetId = widget.getAppWidgetId();
-                        widget = (Widget) connectSpinner.getSelectedItem();
-                        if (widget != null) {
-                            widget.setAppWidgetId(appWidgetId);
-                            InteractWithWidgetInDb.updateWidget(context, widget);
+                        Integer appWidgetId = goal.getAppWidgetId();
+                        goal = (Goal) connectSpinner.getSelectedItem();
+                        if (goal != null) {
+                            goal.setAppWidgetId(appWidgetId);
+                            InteractWithWidgetInDb.updateWidget(context, goal);
                             setWidgetAndFinish();
                         } else {
                             connectSpinner.setBackgroundColor(Color.RED);
@@ -219,7 +219,7 @@ public class ConfigureActivity extends AppCompatActivity {
             String lastWorkoutDateBeautiful;
             // For the initial screen, show now, otherwise load the last workout
             if (isReconfigure) {
-                lastWorkoutDateBeautiful = dateBeautiful(widget.getLastWorkout());
+                lastWorkoutDateBeautiful = dateBeautiful(goal.getLastWorkout());
             } else {
                 lastWorkoutDateBeautiful = dateBeautiful(System.currentTimeMillis());
             }
@@ -229,7 +229,7 @@ public class ConfigureActivity extends AppCompatActivity {
         if (showTimeCheckbox.isChecked()) {
             String lastWorkoutTimeBeautiful;
             if (isReconfigure) {
-                lastWorkoutTimeBeautiful = timeBeautiful(widget.getLastWorkout());
+                lastWorkoutTimeBeautiful = timeBeautiful(goal.getLastWorkout());
             } else {
                 lastWorkoutTimeBeautiful = timeBeautiful(System.currentTimeMillis());
             }
@@ -242,13 +242,14 @@ public class ConfigureActivity extends AppCompatActivity {
     private void setWidgetAndFinish() {
         // It is the responsibility of the configuration activity to update the app widget
         Log.v(TAG, "UPDATE_THROUGH_CONFIGURE_ACTIVITY");
-        if(widget.hasValidAppWidgetId()) {widget.updateWidgetBasedOnStatus(context);}
+        if(goal.hasValidAppWidgetId()) {
+            goal.updateWidgetBasedOnStatus(context);}
 
         // Make sure we pass back the original appWidgetId.
         // WorkoutPixelReConfigureActivity does not need this.
         if (!isReconfigure) {
             Intent resultValue = new Intent();
-            resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widget.getAppWidgetId());
+            resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, goal.getAppWidgetId());
             setResult(RESULT_OK, resultValue);
             Toast.makeText(context, "Widget created. Click on it to register a workout.", Toast.LENGTH_LONG).show();
         } else {
@@ -268,16 +269,16 @@ public class ConfigureActivity extends AppCompatActivity {
             boolean showTime = showTimeCheckbox.isChecked();
 
             // Create widget object. Save it in the preferences.
-            widget.setTitle(widgetText);
-            widget.setIntervalBlue(intervalInDays);
-            widget.setShowDate(showDate);
-            widget.setShowTime(showTime);
+            goal.setTitle(widgetText);
+            goal.setIntervalBlue(intervalInDays);
+            goal.setShowDate(showDate);
+            goal.setShowTime(showTime);
             // If the status is updated based on the new interval, doing it here saves a DB interaction in updateWidgetBasedOnNewStatus.
-            widget.setStatus(getNewStatus(widget.getLastWorkout(), widget.getIntervalBlue()));
+            goal.setStatus(getNewStatus(goal.getLastWorkout(), goal.getIntervalBlue()));
 
             // Save new prefs
-            if (isReconfigure) InteractWithWidgetInDb.updateWidget(context, widget);
-            else InteractWithWidgetInDb.saveDuringInitialize(context, widget);
+            if (isReconfigure) InteractWithWidgetInDb.updateWidget(context, goal);
+            else InteractWithWidgetInDb.saveDuringInitialize(context, goal);
 
             setWidgetAndFinish();
         }
