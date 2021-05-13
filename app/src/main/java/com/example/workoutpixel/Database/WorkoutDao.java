@@ -2,6 +2,7 @@ package com.example.workoutpixel.Database;
 
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
+import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
@@ -65,4 +66,7 @@ public interface WorkoutDao {
     // Get all widgets without AppWidgetId
     @Query("SELECT * FROM goals WHERE appWidgetId IS NOT NULL")
     List<Goal> loadWidgetsWithValidAppWidgetId();
+
+    @Delete
+    void deleteGoal(Goal goal);
 }

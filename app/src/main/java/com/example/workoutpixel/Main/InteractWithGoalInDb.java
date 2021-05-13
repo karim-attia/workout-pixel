@@ -66,8 +66,6 @@ public class InteractWithGoalInDb extends AndroidViewModel {
     public static void setAppWidgetIdToNullByUid(Context context, int uid) {
         Log.d(TAG, "executorService setAppWidgetIdToNullByUid: " + uid);
         executorService.execute(() -> workoutDao(context).setAppWidgetIdToNullByUid(uid));
-        // executorService.shutdown();
-        //executorService.awaitTermination(2, TimeUnit.MINUTES);
     }
 
 
@@ -79,6 +77,11 @@ public class InteractWithGoalInDb extends AndroidViewModel {
     public static List<Goal> loadWidgetsWithValidAppWidgetId(Context context) {
         Log.d(TAG, "loadWidgetsWithValidAppWidgetId");
         return workoutDao(context).loadWidgetsWithValidAppWidgetId();
+    }
+
+    public static void deleteGoal(Context context, Goal goal) {
+        Log.d(TAG, "executorService deleteGoal: " + goal.debugString());
+        executorService.execute(() -> workoutDao(context).deleteGoal(goal));
     }
 
     public static WorkoutDao workoutDao(Context context) {

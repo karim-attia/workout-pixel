@@ -69,7 +69,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     @NonNull
     @Override
     public WidgetViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
-        View widgetView = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.goal_card, viewGroup, false);
+        View widgetView = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.card_goal, viewGroup, false);
         return new WidgetViewHolder(widgetView);
     }
 
@@ -112,6 +112,11 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             // if(!CommonFunctions.doesWidgetHaveValidAppWidgetId(context, widgets.get(i))) {
             Log.v(TAG, "connectInfo.setVisibility VISIBLE " + goals.get(i).debugString());
             widgetViewHolder.connectInfo.setVisibility(View.VISIBLE);
+            widgetViewHolder.deleteGoal.setOnClickListener(v -> {
+                InteractWithGoalInDb.deleteGoal(context, goals.get(i));
+                goals.remove(i);
+                notifyDataSetChanged();
+            });
         } else {
             Log.v(TAG, "connectInfo.setVisibility GONE " + goals.get(i).debugString());
             widgetViewHolder.connectInfo.setVisibility(View.GONE);
@@ -134,6 +139,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         ImageView widgetPastWorkouts;
         TextView widgetPastWorkoutsText;
         LinearLayout connectInfo;
+        ImageView deleteGoal;
 
         WidgetViewHolder(View itemView) {
             super(itemView);
@@ -147,6 +153,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             widgetPastWorkouts = itemView.findViewById(R.id.widget_past_workouts);
             widgetPastWorkoutsText = itemView.findViewById(R.id.widget_past_workout_text);
             connectInfo = itemView.findViewById(R.id.connect_info);
+            deleteGoal = itemView.findViewById(R.id.delete_goal);
         }
     }
 }

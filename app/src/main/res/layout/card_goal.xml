@@ -107,20 +107,30 @@
                 tools:visibility="visible">
 
                 <ImageView
-                    style="@style/Icon.Narrow"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_gravity="center_vertical"
                     android:src="@drawable/icon_info"
-                    tools:ignore="ContentDescription" />
+                    tools:ignore="ContentDescription"
+                    android:layout_weight="0"
+                    />
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
                     android:paddingHorizontal="6dp"
                     android:text="@string/connect_widget_main_activity"
+                    android:layout_weight="1"
                     />
-                <Button
-                    style="@style/button"
-                    android:text="@string/connect_delete"
-                    android:visibility="gone"
+
+                <ImageView
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_gravity="center_vertical"
+                    android:id="@+id/delete_goal"
+                    android:src="@drawable/icon_delete"
+                    android:layout_weight="0"
                     />
 
             </LinearLayout>

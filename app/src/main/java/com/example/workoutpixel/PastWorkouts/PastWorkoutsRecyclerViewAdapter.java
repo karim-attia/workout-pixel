@@ -52,7 +52,7 @@ public class PastWorkoutsRecyclerViewAdapter extends RecyclerView.Adapter<PastWo
     @NonNull
     @Override
     public PastWorkoutsViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
-        View PastWorkoutsView = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.past_workout_card, viewGroup, false);
+        View PastWorkoutsView = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.card_past_workout, viewGroup, false);
         return new PastWorkoutsViewHolder(PastWorkoutsView);
     }
 

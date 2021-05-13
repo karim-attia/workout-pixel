@@ -1,8 +1,8 @@
 <resources>
     <string name="app_name">Workout Pixel</string>
-    <string name="header">Add a Workout Pixel goal</string>
+    <string name="header">Add a Workout Pixel widget</string>
     <string name="header_reconfigure">Edit your goal</string>
-    <string name="instructions">Add the goal for the goal you want to track here.\n\nYou can set the name of your goal and how often you want to reach it here. I recommend to start with a small goal and build a habit of feeling a sense of accomplishment when clicking the goal and seeing that it\'s green afterwards.\n\nHave fun reaching your goal!</string>
+    <string name="instructions">Add the widget for the goal you want to track here.\n\nYou can set the name of your goal and how often you want to reach it here. I recommend to start with a small goal and build a habit of feeling a sense of accomplishment when clicking the widget and seeing that it\'s green afterwards.\n\nHave fun reaching your goal!</string>
     <string name="instructions_reconfigure">Have fun reaching your goal!\n</string>
     <string name="widgetTitle">Describe your goal in 1–2 words:</string>
     <string name="interval">How often do you want to reach your goal? Every</string>
@@ -10,18 +10,18 @@
     <string name="plural">s</string>
     <string name="add_widget">Add goal</string>
     <string name="add_widget_reconfigure">Update goal</string>
-    <string name="instructions_main_app">Super awesome that you downloaded WorkoutPixel.\n\nTo start using it, go to your homescreen and add your first WorkoutPixel goal.</string>
+    <string name="instructions_main_app">Super awesome that you downloaded WorkoutPixel.\n\nTo start using it, go to your homescreen and add your first WorkoutPixel widget.</string>
     <string name="ReconfigureWidgetActivityLabel">Edit your goal</string>
     <string name="edit_widget">Edit goal</string>
     <string name="view_clicks">View clicks</string>
-    <string name="show_time_in_the_widget">Show time in the goal</string>
-    <string name="show_date_in_the_widget">Show date in the goal</string>
+    <string name="show_time_in_the_widget">Show time in the widget</string>
+    <string name="show_date_in_the_widget">Show date in the widget</string>
     <string name="connect_widget_instructions">You have defined goals that currently don\'t have a widget. You can connect the widget to one of those goals. This takes over all its data including the history.</string>
     <string name="connect">Connect</string>
     <string name="date_time_instructions">Do you want to show when you reached your goal the last time?</string>
     <string name="preview">Preview</string>
-    <string name="connect_widget_main_activity">There is no goal for this goal. You can add a new goal to your homescreen and connect it to this goal.</string>
-    <string name="connect_widget_main_activity_old">There is no goal for this goal. The app keeps the data because more often than not, a goal gets removed by accident. You can add a new goal to your homescreen and connect it to this goal.</string>
+    <string name="connect_widget_main_activity">There is no widget for this goal. You can add a new widget to your homescreen and connect it to this goal.</string>
+    <string name="connect_widget_main_activity_old">There is no widget for this goal. The app keeps the data because more often than not, a goal gets removed by accident. You can add a new widget to your homescreen and connect it to this goal.</string>
     <string name="connect_delete">Delete</string>
     <string name="instructions_title">Instructions</string>
     <string name="standard_widget_text">Your goal</string>
