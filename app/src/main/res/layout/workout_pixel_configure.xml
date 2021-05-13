@@ -13,17 +13,18 @@
         android:padding="16dp">
 
         <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:id="@+id/configure_activity_intro_text"
-            style="@style/configureActivityMainItem"
-            android:text="@string/instructions" />
+            android:text="@string/instructions"
+            android:layout_marginBottom="16dp"/>
 
         <androidx.cardview.widget.CardView
             android:id="@+id/connect_widget"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="2dp"
-            android:layout_marginTop="2dp"
-            android:layout_marginBottom="8dp"
+            android:layout_marginBottom="16dp"
             android:visibility="gone"
             tools:visibility="visible"
             card_view:cardCornerRadius="2dp"
@@ -82,19 +83,25 @@
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
-
         <TextView
-            style="configureActivityMainItem"
+            style="@style/Title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:text="@string/configuration_title"
+            android:id="@+id/configuration_title"
+        />
+
+        <TextView
+            style="@style/configureActivityMainItem"
             android:text="@string/widgetTitle"
             android:labelFor="@+id/appwidget_text"/>
 
         <EditText
             android:id="@+id/appwidget_text"
             style="@style/configureActivityMainItem"
-            android:inputType="text"
-            android:importantForAutofill="no" />
+            android:inputType="textCapSentences"
+            android:importantForAutofill="no"
+            />
 
         <TextView
             style="@style/configureActivityMainItem"
@@ -153,7 +160,7 @@
         <CheckBox
             android:id="@+id/showDateCheckbox"
             style="@style/configureActivityMainItem"
-            android:layout_marginVertical="0dp"
+            android:layout_marginTop="0dp"
             android:text="@string/show_date_in_the_widget" />
 
         <CheckBox
@@ -169,6 +176,7 @@
         <TextView
             android:id="@+id/widget_preview"
             style="@style/WorkoutPixelPreview"
+            android:layout_marginTop="8dp"
             android:background="#7b1fa2" />
 
         <View

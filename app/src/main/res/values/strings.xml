@@ -16,7 +16,7 @@
     <string name="view_clicks">View clicks</string>
     <string name="show_time_in_the_widget">Show time in the goal</string>
     <string name="show_date_in_the_widget">Show date in the goal</string>
-    <string name="connect_widget_instructions">You have defined goals that currently don\'t have a widget. You can connect the widget you are currently creating to a goal that you have already defined to take over all its data including the history.</string>
+    <string name="connect_widget_instructions">You have defined goals that currently don\'t have a widget. You can connect the widget to one of those goals. This takes over all its data including the history.</string>
     <string name="connect">Connect</string>
     <string name="date_time_instructions">Do you want to show when you reached your goal the last time?</string>
     <string name="preview">Preview</string>
@@ -25,4 +25,5 @@
     <string name="connect_delete">Delete</string>
     <string name="instructions_title">Instructions</string>
     <string name="standard_widget_text">Your goal</string>
+    <string name="configuration_title">Set up your widget</string>
 </resources>

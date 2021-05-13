@@ -191,7 +191,7 @@ public class ConfigureActivity extends AppCompatActivity {
                 if (widgetsWithoutValidAppwidgetId.size() > 0) {
                     CardView connectWidgetView = findViewById(R.id.connect_widget);
                     connectWidgetView.setVisibility(View.VISIBLE);
-                    Spinner connectSpinner = (Spinner) findViewById(R.id.connect_spinner);
+                    Spinner connectSpinner = findViewById(R.id.connect_spinner);
                     ArrayAdapter<Goal> adapter = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item, widgetsWithoutValidAppwidgetId);
                     adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                     connectSpinner.setAdapter(adapter);
