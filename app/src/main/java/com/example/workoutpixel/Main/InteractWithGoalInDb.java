@@ -30,11 +30,9 @@ public class InteractWithGoalInDb extends AndroidViewModel {
         // executorService.awaitTermination(2, TimeUnit.MINUTES);
     }
 
-    public static void saveDuringInitialize(Context context, Goal goal) {
+    public static int saveDuringInitialize(Context context, Goal goal) {
         Log.d(TAG, "executorService saveDuringInitialize");
-        executorService.execute(() -> workoutDao(context).insertWidget(goal));
-        // executorService.shutdown();
-        //executorService.awaitTermination(2, TimeUnit.MINUTES);
+        return ((int) workoutDao(context).insertWidget(goal));
     }
 
     public static Goal loadGoalByAppWidgetId(Context context, Integer appWidgetId) {

@@ -47,7 +47,7 @@ public interface WorkoutDao {
     LiveData<String> loadWidgetTitle(int appWidgetId);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE, entity = Goal.class)
-    void insertWidget(Goal goal);
+    long insertWidget(Goal goal);
 
     @Update(onConflict = OnConflictStrategy.REPLACE, entity = Goal.class)
     void updateWidget(Goal goal);

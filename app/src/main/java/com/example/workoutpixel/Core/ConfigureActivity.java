@@ -239,26 +239,6 @@ public class ConfigureActivity extends AppCompatActivity {
         preview.setText(widgetText);
     }
 
-    private void setWidgetAndFinish() {
-        // It is the responsibility of the configuration activity to update the app widget
-        Log.v(TAG, "UPDATE_THROUGH_CONFIGURE_ACTIVITY");
-        if(goal.hasValidAppWidgetId()) {
-            goal.updateWidgetBasedOnStatus(context);}
-
-        // Make sure we pass back the original appWidgetId.
-        // WorkoutPixelReConfigureActivity does not need this.
-        if (!isReconfigure) {
-            Intent resultValue = new Intent();
-            resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, goal.getAppWidgetId());
-            setResult(RESULT_OK, resultValue);
-            Toast.makeText(context, "Widget created. Click on it to register a workout.", Toast.LENGTH_LONG).show();
-        } else {
-            Toast.makeText(context, "Widget updated.", Toast.LENGTH_LONG).show();
-        }
-
-        finishAndRemoveTask();
-    }
-
     // OnClickListener for button
     View.OnClickListener updateWidgetOnClickListener = new View.OnClickListener() {
         public void onClick(View v) {
@@ -278,11 +258,31 @@ public class ConfigureActivity extends AppCompatActivity {
 
             // Save new prefs
             if (isReconfigure) InteractWithGoalInDb.updateGoal(context, goal);
-            else InteractWithGoalInDb.saveDuringInitialize(context, goal);
+            // Save it to the db and store the generated uid to the widget so that the onClickListener can be generated with a valid uid later.
+            else goal.setUid(InteractWithGoalInDb.saveDuringInitialize(context, goal));
 
             setWidgetAndFinish();
         }
     };
 
+    private void setWidgetAndFinish() {
+        // It is the responsibility of the configuration activity to update the app widget
+        Log.v(TAG, "UPDATE_THROUGH_CONFIGURE_ACTIVITY");
+        if(goal.hasValidAppWidgetId()) {
+            goal.updateWidgetBasedOnStatus(context);}
+
+        // Make sure we pass back the original appWidgetId.
+        // WorkoutPixelReConfigureActivity does not need this.
+        if (!isReconfigure) {
+            Intent resultValue = new Intent();
+            resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, goal.getAppWidgetId());
+            setResult(RESULT_OK, resultValue);
+            Toast.makeText(context, "Widget created. Click on it to register a workout.", Toast.LENGTH_LONG).show();
+        } else {
+            Toast.makeText(context, "Widget updated.", Toast.LENGTH_LONG).show();
+        }
+
+        finishAndRemoveTask();
+    }
 }
 

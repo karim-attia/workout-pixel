@@ -228,6 +228,7 @@ public class Goal {
             return null;
         }
         intent.putExtra("widgetUid", uid);
+        Log.d(TAG, "DEBUG CLICK AFTER CREATE Create Pending Intent " + uid);
         return PendingIntent.getBroadcast(context, appWidgetId, intent, PendingIntent.FLAG_UPDATE_CURRENT);
     }
 }

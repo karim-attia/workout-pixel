@@ -33,6 +33,7 @@ public class WorkoutPixelAppWidgetProvider extends AppWidgetProvider {
         // Do this if the widget has been clicked
         if (ACTION_DONE_EXERCISE.equals(intent.getAction())) {
             int uid = intent.getIntExtra("widgetUid", 0);
+            Log.d(TAG, "DEBUG CLICK AFTER CREATE widgetUid: " + uid);
             Goal goal = InteractWithGoalInDb.loadGoalByUid(context, uid);
             goal.updateAfterClick(context);
         }
