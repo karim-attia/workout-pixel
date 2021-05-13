@@ -45,7 +45,7 @@ public class ViewWorkoutsActivity extends AppCompatActivity {
         // If this activity was started with an intent without an app widget ID, finish with an error.
         if (uid == 0) {
             finishAndRemoveTask();
-            Log.d(TAG, "AppWidgetId invalid.");
+            Log.d(TAG, "uid invalid.");
             return;
         }
 

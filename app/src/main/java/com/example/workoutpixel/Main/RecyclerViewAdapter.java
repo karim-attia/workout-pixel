@@ -24,7 +24,7 @@ import java.util.List;
 
 import static com.example.workoutpixel.Core.CommonFunctions.STATUS_GREEN;
 import static com.example.workoutpixel.Core.CommonFunctions.getDrawableIntFromStatus;
-import static com.example.workoutpixel.Core.CommonFunctions.lastWorkoutDateBeautiful;
+import static com.example.workoutpixel.Core.CommonFunctions.dateBeautiful;
 
 // RecyclerViewAdapter fills the card view in the MainActivity.
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.WidgetViewHolder> {
@@ -77,7 +77,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     @Override
     public void onBindViewHolder(final WidgetViewHolder widgetViewHolder, final int i) {
         widgetViewHolder.widgetTitle.setText(widgets.get(i).getTitle());
-        widgetViewHolder.widgetLastWorkout.setText(lastWorkoutDateBeautiful(widgets.get(i).getLastWorkout()));
+        widgetViewHolder.widgetLastWorkout.setText(dateBeautiful(widgets.get(i).getLastWorkout()));
         widgetViewHolder.widgetIntervalBlue.setText(widgets.get(i).everyWording());
         widgetViewHolder.widgetPreview.setBackgroundResource(getDrawableIntFromStatus(widgets.get(i).getStatus()));
         widgetViewHolder.widgetPreview.setText(widgets.get(i).widgetText());

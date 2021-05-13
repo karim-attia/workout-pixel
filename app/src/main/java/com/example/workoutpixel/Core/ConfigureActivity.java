@@ -31,7 +31,7 @@ import java.util.Objects;
 import static com.example.workoutpixel.Core.CommonFunctions.STATUS_NONE;
 import static com.example.workoutpixel.Core.CommonFunctions.getDrawableIntFromStatus;
 import static com.example.workoutpixel.Core.CommonFunctions.getNewStatus;
-import static com.example.workoutpixel.Core.CommonFunctions.lastWorkoutDateBeautiful;
+import static com.example.workoutpixel.Core.CommonFunctions.dateBeautiful;
 import static com.example.workoutpixel.Core.CommonFunctions.timeBeautiful;
 
 /**
@@ -198,7 +198,7 @@ public class ConfigureActivity extends AppCompatActivity {
                     Button connectButton = findViewById(R.id.connect_widget_button);
                     connectButton.setOnClickListener((View v) -> {
                         Integer appWidgetId = widget.getAppWidgetId();
-                        widget = (Widget) ((Spinner) connectSpinner).getSelectedItem();
+                        widget = (Widget) connectSpinner.getSelectedItem();
                         if (widget != null) {
                             widget.setAppWidgetId(appWidgetId);
                             InteractWithWidgetInDb.updateWidget(context, widget);
@@ -219,9 +219,9 @@ public class ConfigureActivity extends AppCompatActivity {
             String lastWorkoutDateBeautiful;
             // For the initial screen, show now, otherwise load the last workout
             if (isReconfigure) {
-                lastWorkoutDateBeautiful = lastWorkoutDateBeautiful(widget.getLastWorkout());
+                lastWorkoutDateBeautiful = dateBeautiful(widget.getLastWorkout());
             } else {
-                lastWorkoutDateBeautiful = lastWorkoutDateBeautiful(System.currentTimeMillis());
+                lastWorkoutDateBeautiful = dateBeautiful(System.currentTimeMillis());
             }
             widgetText += "\n" + lastWorkoutDateBeautiful;
         }

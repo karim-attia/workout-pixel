@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.example.workoutpixel.Core.CommonFunctions.lastWorkoutDateBeautiful;
+import static com.example.workoutpixel.Core.CommonFunctions.dateBeautiful;
 import static com.example.workoutpixel.Core.CommonFunctions.timeBeautiful;
 
 // RecyclerViewAdapter fills the card view in the MainActivity.
@@ -61,7 +61,7 @@ public class PastWorkoutsRecyclerViewAdapter extends RecyclerView.Adapter<PastWo
     public void onBindViewHolder(final PastWorkoutsViewHolder pastWorkoutsViewHolder, final int i) {
 
         pastWorkoutsViewHolder.time.setText(timeBeautiful(pastWorkouts.get(i).getWorkoutTime()));
-        pastWorkoutsViewHolder.date.setText(lastWorkoutDateBeautiful(pastWorkouts.get(i).getWorkoutTime()));
+        pastWorkoutsViewHolder.date.setText(dateBeautiful(pastWorkouts.get(i).getWorkoutTime()));
 
         boolean isActive = pastWorkouts.get(i).isActive();
 

@@ -105,7 +105,7 @@ public class CommonFunctions {
         return 0;
     }
 
-    public static String lastWorkoutDateBeautiful(Long longLastWorkout) {
+    public static String dateBeautiful(Long longLastWorkout) {
         if (longLastWorkout == 0L) {return "Never";} else {
             LocalDateTime lastWorkout = Instant.ofEpochMilli(longLastWorkout).atZone(ZoneId.systemDefault()).toLocalDateTime();
             DateTimeFormatter dateFormatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT).withLocale(new Locale("de", "CH"));

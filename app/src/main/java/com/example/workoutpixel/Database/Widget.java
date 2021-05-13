@@ -148,7 +148,7 @@ public class Widget {
     }
 
     public String debugString() {
-        return "appWidgetId: " + appWidgetId + ", Title: " + title + ": ";
+        return "widgetUid: " + uid + ", appWidgetId: " + appWidgetId + ", Title: " + title + ": ";
     }
 
     public void updateAfterClick(Context context) {
@@ -162,6 +162,7 @@ public class Widget {
         // Update the widget data with the latest click
         status = STATUS_GREEN;
         lastWorkout = System.currentTimeMillis();
+
         // Add the workout to the database. Technicalities are taken care of in PastWorkoutsViewModel.
         InteractWithPastWorkout.insertClickedWorkout(context, uid, lastWorkout);
 
@@ -187,11 +188,12 @@ public class Widget {
         runUpdate(context, true);
     }
 
+    // Can also be called on widget with invalid AppWidgetId
     public void runUpdate(Context context, boolean setOnClickListener) {
         // Make sure to always set both the text and the background of the widget because otherwise it gets updated to some random old version.
         // Should only get this far if the appWidgetId is not null. But check nevertheless.
         if(hasValidAppWidgetId()) {AppWidgetManager.getInstance(context).updateAppWidget(appWidgetId, widgetView(context, setOnClickListener));}
-        else {Log.d(TAG, "runUpdate: appWidgetId == null where it shouldn't be.");}
+        else {Log.d(TAG, "runUpdate: appWidgetId == null");}
     }
 
     RemoteViews widgetView(Context context, boolean setOnClickListener) {
@@ -208,7 +210,7 @@ public class Widget {
     public String widgetText() {
         String widgetText = title;
         if (showDate & !status.equals(STATUS_NONE)) {
-            widgetText += "\n" + lastWorkoutDateBeautiful(lastWorkout);
+            widgetText += "\n" + dateBeautiful(lastWorkout);
         }
         if (showTime & !status.equals(STATUS_NONE)) {
             widgetText += "\n" + timeBeautiful(lastWorkout);
@@ -225,7 +227,7 @@ public class Widget {
             Log.d(TAG, "widgetPendingIntent: appWidgetId is null where it shouldn't be.");
             return null;
         }
-        intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, appWidgetId);
+        intent.putExtra("widgetUid", uid);
         return PendingIntent.getBroadcast(context, appWidgetId, intent, PendingIntent.FLAG_UPDATE_CURRENT);
     }
 }

@@ -34,8 +34,8 @@ public class WidgetFunctions extends AppWidgetProvider {
 
         // Do this if the widget has been clicked
         if (ACTION_DONE_EXERCISE.equals(intent.getAction())) {
-            int appWidgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, 0);
-            Widget widget = InteractWithWidgetInDb.loadWidgetByAppWidgetId(context, appWidgetId);
+            int uid = intent.getIntExtra("widgetUid", 0);
+            Widget widget = InteractWithWidgetInDb.loadWidgetByUid(context, uid);
             widget.updateAfterClick(context);
         }
 
@@ -70,10 +70,11 @@ public class WidgetFunctions extends AppWidgetProvider {
 
         // TODO: Understand
         // TODO: Replaced iteration through appWidgetIds with data from DB. Insert check that this is the same and fix if not. Maybe before it only iterated through some widgets. But I don't think it matters.
+        // TODO: Could check with CommonFunctions.widgetsWithValidAppWidgetId whether they are the same and at least log if not,
         List<Widget> widgetList = InteractWithWidgetInDb.loadWidgetsWithValidAppWidgetId(context);
         for (Widget widget : widgetList) {
             // Tell the AppWidgetManager to perform an update on the current app widget
-            Log.d(TAG, "ON_UPDATE: " + widget.getAppWidgetId());
+            Log.d(TAG, "ON_UPDATE: " + widget.debugString());
             widget.updateWidgetBasedOnStatus(context);
         }
 
