@@ -40,7 +40,7 @@ public class ConfigureActivity extends AppCompatActivity {
     private static final String TAG = "WORKOUT_PIXEL CONFIGURE ACTIVITY";
     final Context context = ConfigureActivity.this;
 
-    boolean isReconfigure = false;
+    boolean isFirstConfigure = true;
 
     TextView goalIntervalTextView;
     TextView goalIntervalPluralTextView;
@@ -65,16 +65,21 @@ public class ConfigureActivity extends AppCompatActivity {
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();
 
-        if(intent.getAction() != null) {
-            isReconfigure = intent.getAction().equals("APPWIDGET_RECONFIGURE");
+        // Check form the intent whether this goal gets configured for the first time or gets reconfigured.
+        if(intent.getAction() != null && intent.getAction().equals("APPWIDGET_RECONFIGURE")) {
+            isFirstConfigure = false;
         }
         else {
-            isReconfigure = false;
+            isFirstConfigure = true;
             Log.d(TAG, "No action set");
         }
-        Log.d(TAG, "Is it a reconfigure activity? " + isReconfigure);
+        Log.d(TAG, "Is it a first configure activity? " + isFirstConfigure);
 
-        if (!isReconfigure) {
+        // Get the AppWidgetId from the launcher if there is one provided. Else exit.
+        if (isFirstConfigure) {
+            // Set the result to CANCELED. This will cause the widget host to cancel out of the widget placement if the user presses the back button.
+            setResult(RESULT_CANCELED);
+
             if (extras != null) {
                 goal.setAppWidgetId(extras.getInt(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID));
             } else {Log.d(TAG, "extras = null");}
@@ -86,13 +91,12 @@ public class ConfigureActivity extends AppCompatActivity {
                 return;
             }
 
-            // Set the result to CANCELED.  This will cause the widget host to cancel out of the widget placement if the user presses the back button.
-            setResult(RESULT_CANCELED);
             // Disable the back button in the app bar.
             Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(false);
         }
 
-        if (isReconfigure) {
+        // Get the Uid of the goal that should be configured
+        if (!isFirstConfigure) {
             if (extras != null) {
                 goal.setUid(extras.getInt("widgetUid", 0));
             } else {Log.d(TAG, "extras = null");}
@@ -108,7 +112,6 @@ public class ConfigureActivity extends AppCompatActivity {
 
         setContentView(R.layout.workout_pixel_configure);
 
-
         // Bind views
         TextView introText = findViewById(R.id.configure_activity_intro_text);
         widgetTitle = findViewById(R.id.appwidget_text);
@@ -122,7 +125,7 @@ public class ConfigureActivity extends AppCompatActivity {
         Button addAndUpdateButton = findViewById(R.id.add_button);
 
         // Load and pre-fill existing configurations.
-        if (isReconfigure) {
+        if (!isFirstConfigure) {
             // Don't show the initial text if the user edits the widget.
             introText.setVisibility(View.GONE);
             goal = InteractWithGoalInDb.loadGoalByUid(context, goal.getUid());
@@ -138,29 +141,20 @@ public class ConfigureActivity extends AppCompatActivity {
 
         // Make plus and minus button work
         minusButtonInterval.setOnClickListener(v -> {
-            if (intervalInDays > 1) {
-                intervalInDays--;
-            }
+            if (intervalInDays > 1) {intervalInDays--;}
             goalIntervalTextView.setText(String.valueOf(intervalInDays));
-            if (intervalInDays < 2) {
-                goalIntervalPluralTextView.setVisibility(View.GONE);
-            }
+            if (intervalInDays < 2) {goalIntervalPluralTextView.setVisibility(View.GONE);}
         });
 
         plusButtonInterval.setOnClickListener(v -> {
-            if (intervalInDays < 366) {
-                intervalInDays++;
-            }
+            if (intervalInDays < 366) {intervalInDays++;}
             goalIntervalTextView.setText(String.valueOf(intervalInDays));
-            if (intervalInDays > 1) {
-                goalIntervalPluralTextView.setVisibility(View.VISIBLE);
-            }
+            if (intervalInDays > 1) {goalIntervalPluralTextView.setVisibility(View.VISIBLE);}
         });
 
         // Preview
-        if (isReconfigure)
-            preview.setBackgroundResource(getDrawableIntFromStatus(goal.getStatus()));
-        else preview.setBackgroundResource(R.drawable.rounded_corner_green);
+        if (isFirstConfigure) preview.setBackgroundResource(R.drawable.rounded_corner_green);
+        else preview.setBackgroundResource(getDrawableIntFromStatus(goal.getStatus()));
 
         setPreview(preview);
         CompoundButton.OnCheckedChangeListener onCheckedChangeListener = (buttonView, isChecked) -> setPreview(preview);
@@ -180,11 +174,11 @@ public class ConfigureActivity extends AppCompatActivity {
             }
         });
 
-        // Update widget button
+        // 'Update widget' button
         addAndUpdateButton.setOnClickListener(updateWidgetOnClickListener);
 
-        // Reconnect widget
-        if (!isReconfigure) {
+        // Setup reconnect widget card
+        if (isFirstConfigure) {
             CommonFunctions.executorService.execute(() -> {
                 List<Goal> widgetsWithoutValidAppwidgetId = InteractWithGoalInDb.loadWidgetsWithoutValidAppWidgetId(context);
                 if (widgetsWithoutValidAppwidgetId.size() > 0) {
@@ -195,6 +189,7 @@ public class ConfigureActivity extends AppCompatActivity {
                     adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                     connectSpinner.setAdapter(adapter);
                     Button connectButton = findViewById(R.id.connect_widget_button);
+
                     connectButton.setOnClickListener((View v) -> {
                         Integer appWidgetId = goal.getAppWidgetId();
                         goal = (Goal) connectSpinner.getSelectedItem();
@@ -213,27 +208,13 @@ public class ConfigureActivity extends AppCompatActivity {
 
     private void setPreview(TextView preview) {
         String widgetText = widgetTitle.getText().toString();
+        long previewDateTime;
+        // For the initial screen, show now, otherwise load the last workout
+        if (isFirstConfigure) {previewDateTime = System.currentTimeMillis();}
+        else {previewDateTime = goal.getLastWorkout();}
 
-        if (showDateCheckbox.isChecked()) {
-            String lastWorkoutDateBeautiful;
-            // For the initial screen, show now, otherwise load the last workout
-            if (isReconfigure) {
-                lastWorkoutDateBeautiful = dateBeautiful(goal.getLastWorkout());
-            } else {
-                lastWorkoutDateBeautiful = dateBeautiful(System.currentTimeMillis());
-            }
-            widgetText += "\n" + lastWorkoutDateBeautiful;
-        }
-
-        if (showTimeCheckbox.isChecked()) {
-            String lastWorkoutTimeBeautiful;
-            if (isReconfigure) {
-                lastWorkoutTimeBeautiful = timeBeautiful(goal.getLastWorkout());
-            } else {
-                lastWorkoutTimeBeautiful = timeBeautiful(System.currentTimeMillis());
-            }
-            widgetText += "\n" + lastWorkoutTimeBeautiful;
-        }
+        if (showDateCheckbox.isChecked()) {widgetText += "\n" + dateBeautiful(previewDateTime);}
+        if (showTimeCheckbox.isChecked()) {widgetText += "\n" + timeBeautiful(previewDateTime);}
 
         preview.setText(widgetText);
     }
@@ -255,10 +236,10 @@ public class ConfigureActivity extends AppCompatActivity {
             // If the status is updated based on the new interval, doing it here saves a DB interaction in updateWidgetBasedOnNewStatus.
             goal.setNewStatus();
 
-            // Save new prefs
-            if (isReconfigure) InteractWithGoalInDb.updateGoal(context, goal);
-            // Save it to the db and store the generated uid to the widget so that the onClickListener can be generated with a valid uid later.
-            else goal.setUid(InteractWithGoalInDb.saveDuringInitialize(context, goal));
+            // Store the goal in the DB
+            // Save the new goal to the db and store the generated uid to the widget so that the onClickListener can be generated with a valid uid later.
+            if (isFirstConfigure) goal.setUid(InteractWithGoalInDb.saveDuringInitialize(context, goal));
+            else InteractWithGoalInDb.updateGoal(context, goal);
 
             setWidgetAndFinish();
         }
@@ -266,13 +247,12 @@ public class ConfigureActivity extends AppCompatActivity {
 
     private void setWidgetAndFinish() {
         // It is the responsibility of the configuration activity to update the app widget
-        Log.v(TAG, "UPDATE_THROUGH_CONFIGURE_ACTIVITY");
         if(goal.hasValidAppWidgetId()) {
             goal.updateWidgetBasedOnStatus(context);}
 
         // Make sure we pass back the original appWidgetId.
-        // WorkoutPixelReConfigureActivity does not need this.
-        if (!isReconfigure) {
+        // Reconfiguration does not need this.
+        if (isFirstConfigure) {
             Intent resultValue = new Intent();
             resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, goal.getAppWidgetId());
             setResult(RESULT_OK, resultValue);
