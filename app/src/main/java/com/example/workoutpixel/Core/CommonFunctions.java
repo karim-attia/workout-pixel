@@ -65,13 +65,13 @@ public class CommonFunctions {
      * Calendar stuff
      */
     public static long last3Am() {
-        long next3Am = today3Am();
+        long last3Am = today3Am();
         // If it's before 3am, the last 3am way yesterday, thus subtract a day.
         if (!after3Am()) {
             // Can be commented to test alarm -> it will come up more or less instantly after restart.
-            next3Am -= CommonFunctions.intervalInMilliseconds(1);
+            last3Am -= CommonFunctions.intervalInMilliseconds(1);
         }
-        return next3Am;
+        return last3Am;
     }
 
     public static long next3Am() {
@@ -95,7 +95,7 @@ public class CommonFunctions {
     public static boolean after3Am() {
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis());
-        return calendar.get(Calendar.HOUR_OF_DAY) > 3;
+        return calendar.get(Calendar.HOUR_OF_DAY) >= 3;
     }
 
     public static long intervalInMilliseconds(int intervalInDays) {
@@ -132,24 +132,28 @@ public class CommonFunctions {
     /**
      * Time and date formatting stuff
      */
-    public static String dateBeautiful(Long longLastWorkout) {
-        if (longLastWorkout == 0L) {return "Never";} else {
-            LocalDateTime lastWorkout = Instant.ofEpochMilli(longLastWorkout).atZone(ZoneId.systemDefault()).toLocalDateTime();
+    public static String dateBeautiful(Long date) {
+        if (date == 0L) {return "Never";} else {
+            LocalDateTime lastWorkout = Instant.ofEpochMilli(date).atZone(ZoneId.systemDefault()).toLocalDateTime();
             DateTimeFormatter dateFormatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT).withLocale(new Locale("de", "CH"));
             return lastWorkout.format(dateFormatter);
         }
     }
 
-    public static String timeBeautiful(Long time) {
-        LocalDateTime lastWorkout = Instant.ofEpochMilli(time).atZone(ZoneId.systemDefault()).toLocalDateTime();
-        DateTimeFormatter dateFormatter = DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT).withLocale(new Locale("de", "CH"));
-        return lastWorkout.format(dateFormatter);
+    public static String timeBeautiful(Long date) {
+        if (date == 0L) {return "";} else {
+            LocalDateTime lastWorkout = Instant.ofEpochMilli(date).atZone(ZoneId.systemDefault()).toLocalDateTime();
+            DateTimeFormatter dateFormatter = DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT).withLocale(new Locale("de", "CH"));
+            return lastWorkout.format(dateFormatter);
+        }
     }
 
-    public static String dateTimeBeautiful(Long time) {
-        LocalDateTime lastWorkout = Instant.ofEpochMilli(time).atZone(ZoneId.systemDefault()).toLocalDateTime();
-        DateTimeFormatter dateFormatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT).withLocale(new Locale("de", "CH"));
-        return lastWorkout.format(dateFormatter);
+    public static String dateTimeBeautiful(Long date) {
+        if (date == 0L) {return "Never";} else {
+            LocalDateTime lastWorkout = Instant.ofEpochMilli(date).atZone(ZoneId.systemDefault()).toLocalDateTime();
+            DateTimeFormatter dateFormatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT).withLocale(new Locale("de", "CH"));
+            return lastWorkout.format(dateFormatter);
+        }
     }
 
     /**

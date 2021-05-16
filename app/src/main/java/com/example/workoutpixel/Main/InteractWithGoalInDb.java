@@ -68,7 +68,6 @@ public class InteractWithGoalInDb extends AndroidViewModel {
         executorService.execute(() -> workoutDao(context).setAppWidgetIdToNullByUid(uid));
     }
 
-
     public static List<Goal> loadWidgetsWithoutValidAppWidgetId(Context context) {
         Log.d(TAG, "loadWidgetsWithoutValidAppWidgetId");
         return workoutDao(context).loadWidgetsWithoutValidAppWidgetId();
