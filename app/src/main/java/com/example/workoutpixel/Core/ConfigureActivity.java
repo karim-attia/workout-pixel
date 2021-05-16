@@ -29,9 +29,8 @@ import java.util.List;
 import java.util.Objects;
 
 import static com.example.workoutpixel.Core.CommonFunctions.STATUS_NONE;
-import static com.example.workoutpixel.Core.CommonFunctions.getDrawableIntFromStatus;
-import static com.example.workoutpixel.Core.CommonFunctions.getNewStatus;
 import static com.example.workoutpixel.Core.CommonFunctions.dateBeautiful;
+import static com.example.workoutpixel.Core.CommonFunctions.getDrawableIntFromStatus;
 import static com.example.workoutpixel.Core.CommonFunctions.timeBeautiful;
 
 /**
@@ -254,7 +253,7 @@ public class ConfigureActivity extends AppCompatActivity {
             goal.setShowDate(showDate);
             goal.setShowTime(showTime);
             // If the status is updated based on the new interval, doing it here saves a DB interaction in updateWidgetBasedOnNewStatus.
-            goal.setStatus(getNewStatus(goal.getLastWorkout(), goal.getIntervalBlue()));
+            goal.setNewStatus();
 
             // Save new prefs
             if (isReconfigure) InteractWithGoalInDb.updateGoal(context, goal);

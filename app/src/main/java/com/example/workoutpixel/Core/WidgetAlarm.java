@@ -8,7 +8,7 @@ import android.util.Log;
 
 import java.text.DateFormat;
 
-import static com.example.workoutpixel.Core.CommonFunctions.next3am;
+import static com.example.workoutpixel.Core.CommonFunctions.next3Am;
 import static com.example.workoutpixel.Core.CommonFunctions.saveTimeWithStringToSharedPreferences;
 
 // Responsible to start and stop the alarm that updates the widget at 3:00 every day.
@@ -18,11 +18,11 @@ public class WidgetAlarm {
     private static final String TAG = "WORKOUT_PIXEL ALARM";
 
     public static void startAlarm(Context context) {
-        Log.d(TAG, "STARTING_ALARM " + dateTimeString(next3am()));
+        Log.d(TAG, "STARTING_ALARM " + dateTimeString(next3Am()));
         saveTimeWithStringToSharedPreferences(context, "WidgetAlarm startAlarm");
 
         // RTC does not wake the device up
-        alarmManager(context).setInexactRepeating(AlarmManager.RTC, next3am(), AlarmManager.INTERVAL_DAY, pendingIntent(context));
+        alarmManager(context).setInexactRepeating(AlarmManager.RTC, next3Am(), AlarmManager.INTERVAL_DAY, pendingIntent(context));
     }
 
     public static void stopAlarm(Context context) {

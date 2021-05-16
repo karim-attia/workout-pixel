@@ -24,61 +24,36 @@ import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 public class CommonFunctions {
-    public static final String STATUS_RED = "RED";
-    public static final String STATUS_BLUE = "BLUE";
-    public static final String STATUS_GREEN = "GREEN";
+    private static final String TAG = "WORKOUT_PIXEL COMMON FUNCTIONS";
+    // TODO: Change to enum or int 0-3. enum not great for room DB.
     public static final String STATUS_NONE = "NO STATUS";
+    public static final String STATUS_GREEN = "GREEN";
+    public static final String STATUS_BLUE = "BLUE";
+    public static final String STATUS_RED = "RED";
     public static final int MILLISECONDS_IN_A_DAY = 24 * 60 * 60 * 1000;
-    public static final ExecutorService executorService = Executors.newSingleThreadExecutor();
-
     private static final String PREFS_NAME = "com.example.WorkoutPixel";
-
+    public static final ExecutorService executorService = Executors.newSingleThreadExecutor();
     // private static final int NUMBER_OF_THREADS = 4;
     // public static final ExecutorService executorService = Executors.newFixedThreadPool(NUMBER_OF_THREADS);
 
-    private static final String TAG = "WORKOUT_PIXEL COMMON FUNCTIONS";
-
-    // Controls which status to set. Will make it possible to implement a nicer day switch mechanism in the future.
+    /**
+     * Get new status
+     */
+    // Controls which status to set.
     public static String getNewStatus(long lastWorkout, int intervalBlue) {
 
-        Calendar today3AmCalendar = Calendar.getInstance();
-        today3AmCalendar.setTimeInMillis(System.currentTimeMillis());
-        int hourOfDay = today3AmCalendar.get(Calendar.HOUR_OF_DAY);
-        today3AmCalendar.set(Calendar.HOUR_OF_DAY, 3);
-        today3AmCalendar.set(Calendar.MINUTE, 0);
-        long today3Am = today3AmCalendar.getTimeInMillis();
-/*
-        Log.d(TAG, "intervalBlue: " + intervalBlue);
-        Log.d(TAG, "today3Am:     " + today3Am);
-        Log.d(TAG, "lastWorkout:  " + lastWorkout);
-*/
-
-        // TODO make this nice somehow. last time 3am?
-        int after3Am = 0;
-        if (hourOfDay >= 3) {
-            after3Am = 1;
-        }
-
         // Point in time when the widget should change to blue/red as soon as it's night time the next time.
-        long timeBlue = lastWorkout + intervalInMilliseconds(intervalBlue) - intervalInMilliseconds(after3Am);
+        long timeBlue = lastWorkout + intervalInMilliseconds(intervalBlue -1);
         long timeRed = timeBlue + intervalInMilliseconds(2);
-/*
-        Log.d(TAG, "intervalInMilliseconds(intervalBlue): " + intervalInMilliseconds(intervalBlue));
-        Log.d(TAG, "intervalInMilliseconds(after3Am):     " + intervalInMilliseconds(after3Am));
-
-        Log.d(TAG, "timeBlue:    " + timeBlue);
-        Log.d(TAG, "timeRed:     " + timeRed);
-*/
-
 
         // Don't change the widget status if this is the first time the alarm runs and thus lastWorkout == 0L.
         if (lastWorkout == 0L) {
             // Log.d(TAG, "GetNewStatus: " + STATUS_NONE);
             return STATUS_NONE;
-        } else if (timeRed < today3Am) {
+        } else if (timeRed < last3Am()) {
             // Log.d(TAG, "GetNewStatus: " + STATUS_RED);
             return STATUS_RED;
-        } else if (timeBlue < today3Am) {
+        } else if (timeBlue < last3Am()) {
             // Log.d(TAG, "GetNewStatus: " + STATUS_BLUE);
             return STATUS_BLUE;
         }
@@ -86,6 +61,54 @@ public class CommonFunctions {
         return STATUS_GREEN;
     }
 
+    /**
+     * Calendar stuff
+     */
+    public static long last3Am() {
+        long next3Am = today3Am();
+        // If it's before 3am, the last 3am way yesterday, thus subtract a day.
+        if (!after3Am()) {
+            // Can be commented to test alarm -> it will come up more or less instantly after restart.
+            next3Am -= CommonFunctions.intervalInMilliseconds(1);
+        }
+        return next3Am;
+    }
+
+    public static long next3Am() {
+        long next3Am = today3Am();
+        // If it's already after 3am, the next 3am will be tomorrow, thus add a day.
+        if (after3Am()) {
+            // Can be commented to test alarm -> it will come up more or less instantly after restart.
+            next3Am += CommonFunctions.intervalInMilliseconds(1);
+        }
+        return next3Am;
+    }
+
+    public static long today3Am() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(System.currentTimeMillis());
+        calendar.set(Calendar.HOUR_OF_DAY, 3);
+        calendar.set(Calendar.MINUTE, 0);
+        return calendar.getTimeInMillis();
+    }
+
+    public static boolean after3Am() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(System.currentTimeMillis());
+        return calendar.get(Calendar.HOUR_OF_DAY) > 3;
+    }
+
+    public static long intervalInMilliseconds(int intervalInDays) {
+        return (long) MILLISECONDS_IN_A_DAY * intervalInDays;
+    }
+
+    public static int intervalInDays(long intervalInMilliseconds) {
+        return (int) (intervalInMilliseconds / MILLISECONDS_IN_A_DAY);
+    }
+
+    /**
+     * Match status to background color
+     */
     public static int getDrawableIntFromStatus(String status) {
         switch (status) {
             case STATUS_GREEN:
@@ -106,6 +129,9 @@ public class CommonFunctions {
         return 0;
     }
 
+    /**
+     * Time and date formatting stuff
+     */
     public static String dateBeautiful(Long longLastWorkout) {
         if (longLastWorkout == 0L) {return "Never";} else {
             LocalDateTime lastWorkout = Instant.ofEpochMilli(longLastWorkout).atZone(ZoneId.systemDefault()).toLocalDateTime();
@@ -126,14 +152,20 @@ public class CommonFunctions {
         return lastWorkout.format(dateFormatter);
     }
 
-    public static long intervalInMilliseconds(int intervalInDays) {
-        return (long) MILLISECONDS_IN_A_DAY * intervalInDays;
+    /**
+     * Save to shared preferences stuff
+     */
+    // Last alarm
+    public static void saveTimeWithStringToSharedPreferences(Context context, String string) {
+        SharedPreferences.Editor prefs = context.getSharedPreferences(PREFS_NAME, 0).edit();
+        String timeLastWorkoutBeautiful = CommonFunctions.dateTimeBeautiful(System.currentTimeMillis());
+        prefs.putString(string, timeLastWorkoutBeautiful);
+        prefs.apply();
     }
 
-    public static int intervalInDays(long intervalInMilliseconds) {
-        return (int) (intervalInMilliseconds / MILLISECONDS_IN_A_DAY);
-    }
-
+    /**
+     * AppWidgetId stuff
+     */
     public static int[] appWidgetIds(Context context) {
         ComponentName thisAppWidget = new ComponentName(context.getPackageName(), WorkoutPixelAppWidgetProvider.class.getName());
         return AppWidgetManager.getInstance(context).getAppWidgetIds(thisAppWidget);
@@ -176,29 +208,6 @@ public class CommonFunctions {
         boolean doesWidgetHaveValidAppWidgetId = Arrays.stream(appWidgetIds(context)).anyMatch(i -> goal.getAppWidgetId() == null || i == goal.getAppWidgetId());
         Log.d(TAG, "doesWidgetHaveValidAppWidgetId " + goal.debugString() + doesWidgetHaveValidAppWidgetId);
         return doesWidgetHaveValidAppWidgetId;
-    }
-
-    // Last alarm
-    public static void saveTimeWithStringToSharedPreferences(Context context, String string) {
-        SharedPreferences.Editor prefs = context.getSharedPreferences(PREFS_NAME, 0).edit();
-        String timeLastWorkoutBeautiful = CommonFunctions.dateTimeBeautiful(System.currentTimeMillis());
-        prefs.putString(string, timeLastWorkoutBeautiful);
-        prefs.apply();
-    }
-
-    public static long next3am() {
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(System.currentTimeMillis());
-        int hourOfDay = calendar.get(Calendar.HOUR_OF_DAY);
-        calendar.set(Calendar.HOUR_OF_DAY, 3);
-        calendar.set(Calendar.MINUTE, 0);
-        //calendar.set(Calendar.SECOND, 0);
-        //calendar.set(Calendar.MILLISECOND, 0);
-        if (hourOfDay >= 3) {
-            // Can be commented to test alarm -> it will come up more or less instantly after restart.
-            calendar.setTimeInMillis(calendar.getTimeInMillis() + CommonFunctions.intervalInMilliseconds(1));
-        }
-        return calendar.getTimeInMillis();
     }
 
     // Sets all appWidgetIds of goals that are not valid to null. Maybe later even reassigns some to unassigned widgets.
