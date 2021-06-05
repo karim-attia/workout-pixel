@@ -33,6 +33,14 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".Core.FragmentActivity"
+            android:label="Workout Pixel">
+            <intent-filter>
+                <action android:name="android.intent.action.FragmentActivity" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
         <activity android:name=".Core.ConfigureActivity"
             android:label="Add a Workout Pixel goal"
             android:parentActivityName=".Main.MainActivity">

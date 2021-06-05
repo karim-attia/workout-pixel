@@ -32,6 +32,7 @@ public class WorkoutPixelAppWidgetProvider extends AppWidgetProvider {
 
         // Do this if the widget has been clicked
         if (ACTION_DONE_EXERCISE.equals(intent.getAction())) {
+            // TODO: widgetUid -> goalUid
             int uid = intent.getIntExtra("widgetUid", 0);
             Goal goal = InteractWithGoalInDb.loadGoalByUid(context, uid);
             goal.updateAfterClick(context);
@@ -44,6 +45,7 @@ public class WorkoutPixelAppWidgetProvider extends AppWidgetProvider {
             for (Goal goal : goalList) {
                 goal.updateWidgetBasedOnStatus(context);
             }
+            // TODO: Also update status of goals without widget in DB.
         }
     }
 

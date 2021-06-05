@@ -214,7 +214,7 @@ public class CommonFunctions {
         return doesWidgetHaveValidAppWidgetId;
     }
 
-    // Sets all appWidgetIds of goals that are not valid to null. Maybe later even reassigns some to unassigned widgets.
+    // Sets all appWidgetIds of goals that are not valid to null. Maybe later even reassign some to unassigned widgets.
     public static void cleanGoals(Context context, List<Goal> goals) {
         for (Goal goal: goalsWithoutValidAppWidgetId(context, goals)) {
             if(goal.hasValidAppWidgetId()) {

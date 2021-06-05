@@ -42,6 +42,7 @@ public class InteractWithGoalInDb extends AndroidViewModel {
 
     public static Goal loadGoalByUid(Context context, int uid) {
         Log.d(TAG, "getPastWorkoutsFromDbByUid");
+        // TODO: widget -> goal
         return workoutDao(context).loadWidgetByUid(uid);
     }
 

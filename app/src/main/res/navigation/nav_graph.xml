@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/instructionsFragment">
+
+    <fragment
+        android:id="@+id/instructionsFragment"
+        android:name="com.example.workoutpixel.Main.InstructionsFragment"
+        android:label="fragment_goals"
+        tools:layout="@layout/instructions"
+        >
+    </fragment>
+    <fragment
+        android:id="@+id/goalsFragment"
+        android:name="com.example.workoutpixel.Main.GoalsFragment"
+        android:label="GoalsFragment"
+        tools:layout="@layout/goals"
+        >
+    </fragment>
+</navigation>

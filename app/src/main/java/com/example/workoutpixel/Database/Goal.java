@@ -163,14 +163,14 @@ public class Goal {
         status = STATUS_GREEN;
         lastWorkout = System.currentTimeMillis();
 
+        // Instruct the widget manager to update the widget with the latest widget data
+        runUpdate(context, false);
+
         // Add the workout to the database. Technicalities are taken care of in PastWorkoutsViewModel.
         InteractWithPastWorkout.insertClickedWorkout(context, uid, lastWorkout);
 
         // Update the widget data in the db
         InteractWithGoalInDb.updateGoal(context, this);
-
-        // Instruct the widget manager to update the widget with the latest widget data
-        runUpdate(context, false);
 
         Log.d(TAG, "ACTION_DONE_EXERCISE " + debugString() + "complete\n------------------------------------------------------------------------");
     }

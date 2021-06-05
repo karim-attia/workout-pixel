@@ -19,11 +19,12 @@ http://developer.android.com/guide/topics/appwidgets/index.html#CreatingLayout
     -->
     <dimen name="inner_frame_layout_padding">5dp</dimen>
 
-        <dimen name="margins">12dp</dimen>
-        <dimen name="marginsTop">8dp</dimen>
-        <dimen name="marginsBottom">4dp</dimen>
-        <dimen name="marginsPlusTwo">14dp</dimen>
-        <dimen name="marginsMinusTwo">10dp</dimen>
+    <dimen name="margins">12dp</dimen>
+    <dimen name="marginsTop">8dp</dimen>
+    <dimen name="marginsBottom">4dp</dimen>
+    <dimen name="marginsPlusTwo">14dp</dimen>
+    <dimen name="marginsMinusTwo">10dp</dimen>
+    <dimen name="text_margin">16dp</dimen>
 
 
 </resources>

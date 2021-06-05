@@ -1,19 +1,16 @@
 package com.example.workoutpixel;
 
-import com.example.workoutpixel.Core.CommonFunctions;
-
 import org.testng.annotations.Test;
 
 import java.util.Calendar;
 
-import static com.example.workoutpixel.Core.CommonFunctions.*;
-import static org.junit.Assert.*;
+import static com.example.workoutpixel.Core.CommonFunctions.STATUS_BLUE;
+import static com.example.workoutpixel.Core.CommonFunctions.STATUS_GREEN;
+import static com.example.workoutpixel.Core.CommonFunctions.STATUS_RED;
+import static com.example.workoutpixel.Core.CommonFunctions.getNewStatus;
+import static com.example.workoutpixel.Core.CommonFunctions.intervalInMilliseconds;
+import static org.junit.Assert.assertEquals;
 
-/**
- * Example local unit test, which will execute on the development machine (host).
- *
- * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
- */
 public class TestNewStatus {
     long now = System.currentTimeMillis();
 
