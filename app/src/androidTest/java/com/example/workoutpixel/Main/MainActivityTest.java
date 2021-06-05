@@ -1,10 +1,8 @@
 package com.example.workoutpixel.Main;
 
 import android.app.Activity;
-import android.util.Log;
 import android.widget.CheckBox;
 
-import androidx.recyclerview.widget.RecyclerView;
 import androidx.test.espresso.ViewInteraction;
 import androidx.test.espresso.action.ViewActions;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
@@ -26,7 +24,6 @@ import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.scrollTo;
 import static androidx.test.espresso.action.ViewActions.typeText;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
-import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.isRoot;
 import static androidx.test.espresso.matcher.ViewMatchers.withContentDescription;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
@@ -37,25 +34,9 @@ import static com.example.workoutpixel.TestUtils.time;
 
 public class MainActivityTest {
     static final String TAG = "MainActivityTest";
+
     @Rule
     public ActivityScenarioRule<MainActivity> activityScenarioRule = new ActivityScenarioRule<>(MainActivity.class);
-
-    @Test
-    public void expandoClick() {
-        RecyclerView recyclerView = getActivityInstance().findViewById(R.id.recycler_view);
-        int itemCount = recyclerView.getAdapter().getItemCount();
-        Log.d(TAG, "itemCount: " + itemCount);
-        if (itemCount > 0) {
-            Log.d(TAG, "itemCount > 0");
-            // Click should be here
-        }
-
-        // Only passes if there are widgets.
-        onView(withId(R.id.instructions_expando_icon)).perform(click());
-        onView(withId(R.id.instructions_text)).check(matches(isDisplayed()));
-
-
-    }
 
     @Test
     public void recyclerViewCheck() {

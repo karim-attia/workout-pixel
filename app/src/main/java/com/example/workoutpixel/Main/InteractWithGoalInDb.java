@@ -84,6 +84,11 @@ public class InteractWithGoalInDb extends AndroidViewModel {
         executorService.execute(() -> workoutDao(context).deleteGoal(goal));
     }
 
+    public static int getCountOfGoals(Context context) {
+        Log.d(TAG, "getCountOfGoals");
+        return workoutDao(context).getCountOfGoals();
+    }
+
     public static WorkoutDao workoutDao(Context context) {
         AppDatabase db = AppDatabase.getDatabase(context);
         return db.workoutDao();

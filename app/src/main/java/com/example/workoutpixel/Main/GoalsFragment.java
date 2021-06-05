@@ -79,7 +79,6 @@ public class GoalsFragment extends Fragment {
 
     private void executeAfterRecyclerViewWasPopulated (List<Goal> goals) {
         // TODO: Move to activity?
-        WidgetAlarm.startAlarm(context);
         cleanGoals(context, goals);
     }
 

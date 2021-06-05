@@ -17,7 +17,7 @@ public interface WorkoutDao {
     @Query("SELECT * FROM pastWorkouts WHERE widgetUid=:widgetUid ORDER BY workoutTime DESC")
     LiveData<List<PastWorkout>> loadAllPastWorkouts(int widgetUid);
 
-    // Return all workouts by appWidgetId that are active
+    // Return number of active workouts by appWidgetId
     @Query("SELECT COUNT() FROM pastWorkouts WHERE widgetUid=:widgetUid AND active='1'")
     int getCountOfActivePastWorkouts(int widgetUid);
 
@@ -66,6 +66,10 @@ public interface WorkoutDao {
     // Get all widgets without AppWidgetId
     @Query("SELECT * FROM goals WHERE appWidgetId IS NOT NULL")
     List<Goal> loadWidgetsWithValidAppWidgetId();
+
+    // Return number of goals
+    @Query("SELECT COUNT() FROM goals")
+    int getCountOfGoals();
 
     @Delete
     void deleteGoal(Goal goal);
