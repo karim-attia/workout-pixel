@@ -3,17 +3,16 @@ package com.example.workoutpixel.Main;
 import android.content.Context;
 import android.os.Bundle;
 
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.NavController;
-import androidx.navigation.NavGraph;
-import androidx.navigation.NavInflater;
-import androidx.navigation.fragment.NavHostFragment;
+import androidx.navigation.Navigation;
 import androidx.navigation.ui.NavigationUI;
 
 import com.example.workoutpixel.Core.WidgetAlarm;
 import com.example.workoutpixel.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
-public class MainActivity extends androidx.fragment.app.FragmentActivity {
+public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,12 +21,22 @@ public class MainActivity extends androidx.fragment.app.FragmentActivity {
 
         setContentView(R.layout.fragment_activity);
 
-/*
+
         NavController navController = Navigation.findNavController(this, R.id.activity_main_nav_host_fragment);
         BottomNavigationView bottomNavigationView = findViewById(R.id.activity_main_bottom_navigation_view);
         NavigationUI.setupWithNavController(bottomNavigationView, navController);
+
+        if (InteractWithGoalInDb.getCountOfGoals(context) == 0) {
+            navController.navigate(R.id.instructionsFragment);
+            navController.popBackStack();
+        }
+
+/*
+        Toolbar myToolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(myToolbar);
 */
 
+/*
         NavHostFragment navHost = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.activity_main_nav_host_fragment);
         NavController navController = navHost.getNavController();
 
@@ -44,6 +53,9 @@ public class MainActivity extends androidx.fragment.app.FragmentActivity {
 
         BottomNavigationView bottomNavigationView = findViewById(R.id.activity_main_bottom_navigation_view);
         NavigationUI.setupWithNavController(bottomNavigationView, navController);
+*/
+
+
 
         WidgetAlarm.startAlarm(context);
     }

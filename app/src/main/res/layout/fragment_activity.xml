@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Main.FragmentActivity">
+    tools:context=".Main.MainActivity">
 
     <fragment
         android:id="@+id/activity_main_nav_host_fragment"
@@ -25,6 +25,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:menu="@menu/navigation_menu"/>
+        app:menu="@menu/navigation_menu"
+        android:background="@android:color/white"
+        />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,7 +1,7 @@
 package com.example.workoutpixel.Main;
 
 import android.content.Context;
-import android.content.Intent;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,19 +12,18 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.workoutpixel.Core.ConfigureActivity;
 import com.example.workoutpixel.Database.Goal;
-import com.example.workoutpixel.PastWorkouts.ViewWorkoutsActivity;
 import com.example.workoutpixel.R;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static com.example.workoutpixel.Core.CommonFunctions.STATUS_GREEN;
-import static com.example.workoutpixel.Core.CommonFunctions.getDrawableIntFromStatus;
 import static com.example.workoutpixel.Core.CommonFunctions.dateBeautiful;
+import static com.example.workoutpixel.Core.CommonFunctions.getDrawableIntFromStatus;
 
 // RecyclerViewAdapter fills the card view in the MainActivity.
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.WidgetViewHolder> {
@@ -91,16 +90,28 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             notifyItemChanged(i);
         });
 
-        View.OnClickListener editWidgetOnClickListener = v -> {
+        View.OnClickListener editWidgetOnClickListener = view -> {
+            Bundle bundle = new Bundle();
+            bundle.putBoolean("isFirstConfigure", false);
+            bundle.putInt("goalUid", goals.get(i).getUid());
+            Navigation.findNavController(view).navigate(R.id.configureFragment, bundle);
+
+/*
             Intent intent = new Intent(context, ConfigureActivity.class);
             intent.setAction("APPWIDGET_RECONFIGURE");
             intent.putExtra("widgetUid", goals.get(i).getUid());
             context.startActivity(intent);
+*/
         };
-        View.OnClickListener viewWorkoutsOnClickListener = v -> {
+        View.OnClickListener viewWorkoutsOnClickListener = view -> {
+            Bundle bundle = new Bundle();
+            bundle.putInt("goalUid", goals.get(i).getUid());
+            Navigation.findNavController(view).navigate(R.id.goalDetailFragment, bundle);
+/*
             Intent intent = new Intent(context, ViewWorkoutsActivity.class);
             intent.putExtra("widgetUid", goals.get(i).getUid());
             context.startActivity(intent);
+*/
         };
 
         widgetViewHolder.widgetEdit.setOnClickListener(editWidgetOnClickListener);

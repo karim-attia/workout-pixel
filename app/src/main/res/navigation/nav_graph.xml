@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/instructionsFragment">
+    app:startDestination="@id/goalsFragment">
 
     <fragment
         android:id="@+id/instructionsFragment"
@@ -18,5 +18,52 @@
         android:label="GoalsFragment"
         tools:layout="@layout/goals"
         >
+        <action
+            android:id="@+id/action_goalsFragment_to_configureFragment"
+            app:destination="@id/configureFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popUpTo="@id/nav_graph"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+        <action
+            android:id="@+id/action_goalsFragment_to_instructionsFragment"
+            app:destination="@id/instructionsFragment"
+            app:popUpTo="@id/nav_graph"
+            app:popUpToInclusive="true"
+            />
+        <action
+            android:id="@+id/action_goalsFragment_to_goalDetailFragment"
+            app:destination="@id/goalDetailFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/configureFragment"
+        android:name="com.example.workoutpixel.Core.ConfigureFragment"
+        android:label="ConfigureFragment"
+        tools:layout="@layout/workout_pixel_configure"
+        >
+        <argument
+            android:name="isFirstConfigure"
+            app:argType="boolean"
+            android:defaultValue="true" />
+        <argument
+            android:name="goalUid"
+            app:argType="integer"
+            android:defaultValue="0" />
+        <argument
+            android:name="appWidgetId"
+            app:argType="integer"
+            android:defaultValue="0" />
+    </fragment>
+    <fragment
+        android:id="@+id/goalDetailFragment"
+        android:name="com.example.workoutpixel.PastWorkouts.GoalDetailFragment"
+        android:label="GoalDetailFragment"
+        tools:layout="@layout/goal_detail_view"
+        >
+        <argument
+            android:name="goalUid"
+            app:argType="integer"
+            android:defaultValue="0" />
     </fragment>
 </navigation>
