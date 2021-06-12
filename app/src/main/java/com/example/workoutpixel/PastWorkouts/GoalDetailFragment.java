@@ -5,6 +5,9 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -12,8 +15,10 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LiveData;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -31,7 +36,9 @@ public class GoalDetailFragment extends Fragment {
     // final Context context = GoalDetailFragment.this;
     private Context context;
 
+    View view;
     int uid;
+    Goal goal;
 
     @Override
     public void onAttach(@NotNull Context context) {
@@ -52,26 +59,41 @@ public class GoalDetailFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+        Log.d(TAG, "setHasOptionsMenu");
+    }
+
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        Log.d(TAG, "onCreateOptionsMenu");
+        inflater.inflate(R.menu.goal_detail_menu, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.edit_goal:
+                Bundle bundle = new Bundle();
+                bundle.putBoolean("isFirstConfigure", false);
+                bundle.putInt("goalUid", goal.getUid());
+                Navigation.findNavController(view).navigate(R.id.configureFragment, bundle);
+                return true;
+            default:
+                // If we got here, the user's action was not recognized.
+                // Invoke the superclass to handle it.
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.goal_detail_view, container, false);
+        view = inflater.inflate(R.layout.goal_detail_view, container, false);
         Log.v(TAG, "onCreateView");
-
-        // Find the widget id  from the intent.
-/*
-        Intent intent = getIntent();
-        Bundle extras = intent.getExtras();
-        if (extras != null) {
-            uid = extras.getInt("widgetUid", 0);
-        }
-*/
 
         assert getArguments() != null;
         uid = getArguments().getInt("goalUid");
-
 
         // If this activity was started with an intent without an app widget ID, finish with an error.
         if (uid == 0) {
@@ -80,7 +102,15 @@ public class GoalDetailFragment extends Fragment {
             return view;
         }
 
-        Goal goal = InteractWithGoalInDb.loadGoalByUid(context, uid);
+        goal = InteractWithGoalInDb.loadGoalByUid(context, uid);
+
+        // Toolbar
+        requireActivity().setTitle("Workout Pixel > " + goal.getTitle());
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        // requireActivity().getActionBar().setDisplayHomeAsUpEnabled(true);
+        // requireActivity().getActionBar().setDisplayShowHomeEnabled(true);
+        // requireActivity().getActionBar().setHomeButtonEnabled(true);
+
 
         // Bind views and set them
         TextView title = view.findViewById(R.id.widget_title);

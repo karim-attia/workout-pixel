@@ -8,13 +8,12 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.workoutpixel.Core.WidgetAlarm;
 import com.example.workoutpixel.Database.Goal;
 import com.example.workoutpixel.R;
 
@@ -26,7 +25,6 @@ import static com.example.workoutpixel.Core.CommonFunctions.cleanGoals;
 
 public class GoalsFragment extends Fragment {
     private Context context;
-    private InteractWithGoalInDb widgetViewModel;
     RecyclerViewAdapter recyclerViewAdapter;
 
     @Override
@@ -45,12 +43,21 @@ public class GoalsFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
     }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.goals, container, false);
+
+        // Toolbar
+        requireActivity().setTitle("Workout Pixel");
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+        // requireActivity().getActionBar().setDisplayHomeAsUpEnabled(false);
+        // requireActivity().getActionBar().setDisplayShowHomeEnabled(true);
+        // requireActivity().getActionBar().setHomeButtonEnabled(true);
+
         setContent(view);
         return view;
     }
@@ -64,11 +71,9 @@ public class GoalsFragment extends Fragment {
         recyclerView.setNestedScrollingEnabled(false);
         recyclerView.setAdapter(recyclerViewAdapter);
 
-        widgetViewModel = new ViewModelProvider(this).get(InteractWithGoalInDb.class);
-
         // Create the observer which updates the UI.
         // Observe the LiveData, passing this activity as the LifecycleOwner and the observer.
-        LiveData<List<Goal>> liveData = widgetViewModel.loadAllGoalsLiveData(context.getApplicationContext());
+        LiveData<List<Goal>> liveData = InteractWithGoalInDb.loadAllGoalsLiveData(context.getApplicationContext());
         liveData.observe(getViewLifecycleOwner(), goals -> {
             recyclerViewAdapter.setData(goals);
             recyclerView.setItemAnimator(null);

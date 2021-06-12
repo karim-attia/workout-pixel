@@ -8,6 +8,7 @@ import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
 import com.example.workoutpixel.R;
@@ -22,6 +23,10 @@ public class InstructionsFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.instructions, container, false);
+
+        requireActivity().setTitle("Workout Pixel");
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+
         ImageView instructions_long_click = view.findViewById(R.id.instructions_long_click);
         ImageView instructions_widget_selection = view.findViewById(R.id.instructions_widget_selection);
         ImageView instructions_place_widget = view.findViewById(R.id.instructions_place_widget);

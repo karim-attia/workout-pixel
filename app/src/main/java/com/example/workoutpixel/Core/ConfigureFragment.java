@@ -22,6 +22,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
@@ -42,7 +43,7 @@ import static com.example.workoutpixel.Core.CommonFunctions.getDrawableIntFromSt
 import static com.example.workoutpixel.Core.CommonFunctions.timeBeautiful;
 
 public class ConfigureFragment extends Fragment {
-    private static final String TAG = "WORKOUT_PIXEL CONFIGURE ACTIVITY";
+    private static final String TAG = "WORKOUT_PIXEL CONFIGURE FRAGMENT";
     private Context context;
     private View view;
 
@@ -131,7 +132,12 @@ public class ConfigureFragment extends Fragment {
             }
             // Change the activity title in the app bar
             // TODO: Is this correct? Undo as soon as this screen gets closed.
-            getActivity().setTitle(R.string.ReconfigureWidgetActivityLabel);
+
+            // Toolbar
+            requireActivity().setTitle(R.string.ReconfigureWidgetActivityLabel);
+            ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            // requireActivity().getActionBar().setDisplayShowHomeEnabled(true);
+            // requireActivity().getActionBar().setHomeButtonEnabled(true);
         }
 
         // Bind views
@@ -284,12 +290,9 @@ public class ConfigureFragment extends Fragment {
             getActivity().finishAndRemoveTask();
         } else {
             Toast.makeText(context, "Widget updated.", Toast.LENGTH_LONG).show();
-            Navigation.findNavController(view).navigate(R.id.goalsFragment);
-            Navigation.findNavController(view).popBackStack();
+            // TODO: Figure out navigation back.
+            Navigation.findNavController(view).navigateUp();
+            // Navigation.findNavController(view).popBackStack();
         }
-
-        // TODO: Close fragment
-        // NavController.navigateUp();
-        // finishAndRemoveTask();
     }
 }

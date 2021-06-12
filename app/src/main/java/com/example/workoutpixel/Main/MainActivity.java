@@ -13,6 +13,7 @@ import com.example.workoutpixel.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class MainActivity extends AppCompatActivity {
+    private static final String TAG = "WORKOUT_PIXEL MainActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,8 +22,13 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView(R.layout.fragment_activity);
 
+        androidx.appcompat.widget.Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        // TODO: Better use navigate up? Does it matter?
+        toolbar.setNavigationOnClickListener(v -> onBackPressed());
 
         NavController navController = Navigation.findNavController(this, R.id.activity_main_nav_host_fragment);
+        navController.setGraph(R.navigation.nav_graph);
         BottomNavigationView bottomNavigationView = findViewById(R.id.activity_main_bottom_navigation_view);
         NavigationUI.setupWithNavController(bottomNavigationView, navController);
 
@@ -30,11 +36,6 @@ public class MainActivity extends AppCompatActivity {
             navController.navigate(R.id.instructionsFragment);
             navController.popBackStack();
         }
-
-/*
-        Toolbar myToolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(myToolbar);
-*/
 
 /*
         NavHostFragment navHost = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.activity_main_nav_host_fragment);

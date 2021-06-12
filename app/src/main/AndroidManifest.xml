@@ -11,6 +11,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:theme="@style/AppTheme"
         android:fullBackupContent="false">
+        <!--        android:theme="@style/Theme.AppCompat.Light.NoActionBar"-->
 
         <receiver android:name=".Core.WorkoutPixelAppWidgetProvider">
             <intent-filter>
@@ -35,7 +36,9 @@
 
         <activity android:name=".Core.ConfigureActivity"
             android:label="Add a Workout Pixel goal"
-            android:parentActivityName=".Main.MainActivity">
+            android:parentActivityName=".Main.MainActivity"
+            android:theme="@style/ConfigureTheme"
+            >
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
             </intent-filter>

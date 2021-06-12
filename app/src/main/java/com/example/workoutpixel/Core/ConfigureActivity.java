@@ -26,7 +26,6 @@ import com.example.workoutpixel.Main.InteractWithGoalInDb;
 import com.example.workoutpixel.R;
 
 import java.util.List;
-import java.util.Objects;
 
 import static com.example.workoutpixel.Core.CommonFunctions.STATUS_NONE;
 import static com.example.workoutpixel.Core.CommonFunctions.dateBeautiful;
@@ -92,7 +91,7 @@ public class ConfigureActivity extends AppCompatActivity {
             }
 
             // Disable the back button in the app bar.
-            Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(false);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         }
 
         // Get the Uid of the goal that should be configured
