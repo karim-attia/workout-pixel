@@ -54,7 +54,7 @@
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/goal_overview_title"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    android:layout_marginVertical="4dp"
+                    android:layout_marginTop="2dp"
                     android:background="#7b1fa2"
                     />
 
@@ -112,12 +112,13 @@
             style="@style/CardInnerView"
             android:background="#e3f2fd"
             android:orientation="vertical"
+            android:paddingBottom="4dp"
             >
 
             <TextView
                 style="@style/DetailViewText.Title"
                 android:id="@+id/connect_widget_title"
-                android:text="No widget for this goal"
+                android:text="@string/connect_widget_title"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
