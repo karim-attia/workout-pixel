@@ -222,4 +222,14 @@ public class CommonFunctions {
             }
         }
     }
+
+    /**
+     * Wordings
+     */
+    public static String times (int times) {
+        if (times == 0) {return "0 times";}
+        else if (times == 1) {return "1 time";}
+        else if (times > 1) {return times + " times";}
+        else return "INVALID NUMBER OF TIMES";
+    }
 }

@@ -2,12 +2,9 @@ package com.example.workoutpixel.Main;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -31,14 +28,6 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     Context context;
     List<Goal> goals = new ArrayList<>();
     boolean notSetupYet = true;
-
-/*
-    private static int[] appWidgetIds(Context context) {
-        ComponentName thisAppWidget = new ComponentName(context.getPackageName(), WidgetFunctions.class.getName());
-        AppWidgetManager.getInstance(context).notifyAppWidgetViewDataChanged(55,0);
-        return AppWidgetManager.getInstance(context).getAppWidgetIds(thisAppWidget);
-    }
-*/
 
     RecyclerViewAdapter(Context context) {
         this.context = context;
@@ -90,48 +79,13 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             notifyItemChanged(i);
         });
 
-        View.OnClickListener editWidgetOnClickListener = view -> {
-            Bundle bundle = new Bundle();
-            bundle.putBoolean("isFirstConfigure", false);
-            bundle.putInt("goalUid", goals.get(i).getUid());
-            Navigation.findNavController(view).navigate(R.id.configureFragment, bundle);
-
-/*
-            Intent intent = new Intent(context, ConfigureActivity.class);
-            intent.setAction("APPWIDGET_RECONFIGURE");
-            intent.putExtra("widgetUid", goals.get(i).getUid());
-            context.startActivity(intent);
-*/
-        };
-        View.OnClickListener viewWorkoutsOnClickListener = view -> {
+        View.OnClickListener goalDetailsOnClickListener = view -> {
             Bundle bundle = new Bundle();
             bundle.putInt("goalUid", goals.get(i).getUid());
             Navigation.findNavController(view).navigate(R.id.goalDetailFragment, bundle);
-/*
-            Intent intent = new Intent(context, ViewWorkoutsActivity.class);
-            intent.putExtra("widgetUid", goals.get(i).getUid());
-            context.startActivity(intent);
-*/
         };
 
-        widgetViewHolder.widgetEdit.setOnClickListener(editWidgetOnClickListener);
-        widgetViewHolder.widgetEditText.setOnClickListener(editWidgetOnClickListener);
-        widgetViewHolder.widgetPastWorkouts.setOnClickListener(viewWorkoutsOnClickListener);
-        widgetViewHolder.widgetPastWorkoutsText.setOnClickListener(viewWorkoutsOnClickListener);
-
-        if (!goals.get(i).hasValidAppWidgetId()) {
-            // if(!CommonFunctions.doesWidgetHaveValidAppWidgetId(context, widgets.get(i))) {
-            Log.v(TAG, "connectInfo.setVisibility VISIBLE " + goals.get(i).debugString());
-            widgetViewHolder.connectInfo.setVisibility(View.VISIBLE);
-            widgetViewHolder.deleteGoal.setOnClickListener(v -> {
-                InteractWithGoalInDb.deleteGoal(context, goals.get(i));
-                goals.remove(i);
-                notifyDataSetChanged();
-            });
-        } else {
-            Log.v(TAG, "connectInfo.setVisibility GONE " + goals.get(i).debugString());
-            widgetViewHolder.connectInfo.setVisibility(View.GONE);
-        }
+        widgetViewHolder.cardView.setOnClickListener(goalDetailsOnClickListener);
     }
 
     @Override
@@ -145,26 +99,14 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         TextView widgetLastWorkout;
         TextView widgetIntervalBlue;
         TextView widgetPreview;
-        ImageView widgetEdit;
-        TextView widgetEditText;
-        ImageView widgetPastWorkouts;
-        TextView widgetPastWorkoutsText;
-        LinearLayout connectInfo;
-        ImageView deleteGoal;
 
         WidgetViewHolder(View itemView) {
             super(itemView);
-            cardView = itemView.findViewById(R.id.card_view);
+            cardView = itemView.findViewById(R.id.card_view_goal);
             widgetTitle = itemView.findViewById(R.id.widget_title);
             widgetLastWorkout = itemView.findViewById(R.id.widget_last_workout);
             widgetIntervalBlue = itemView.findViewById(R.id.widget_interval);
             widgetPreview = itemView.findViewById(R.id.widget_preview);
-            widgetEdit = itemView.findViewById(R.id.widget_edit);
-            widgetEditText = itemView.findViewById(R.id.widget_edit_text);
-            widgetPastWorkouts = itemView.findViewById(R.id.widget_past_workouts);
-            widgetPastWorkoutsText = itemView.findViewById(R.id.widget_past_workout_text);
-            connectInfo = itemView.findViewById(R.id.connect_info);
-            deleteGoal = itemView.findViewById(R.id.delete_goal);
         }
     }
 }

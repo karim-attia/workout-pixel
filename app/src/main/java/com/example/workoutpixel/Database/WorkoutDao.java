@@ -30,28 +30,31 @@ public interface WorkoutDao {
     // Widgets
     // Get widget by appWidgetId
     @Query("SELECT * FROM goals WHERE appWidgetId=:appWidgetId")
-    Goal loadWidgetByAppWidgetId(int appWidgetId);
+    Goal loadGoalByAppWidgetId(int appWidgetId);
 
     @Query("SELECT * FROM goals WHERE uid=:uid")
-    Goal loadWidgetByUid(int uid);
+    Goal loadGoalByUid(int uid);
+
+    @Query("SELECT * FROM goals WHERE uid=:uid")
+    LiveData<Goal> liveDataGoalByUid(int uid);
 
     // Get all widgets
     @Query("SELECT * FROM goals")
-    LiveData<List<Goal>> loadAllWidgetsLiveData();
+    LiveData<List<Goal>> loadAllGoalsLiveData();
 
     // Get all widgets
     @Query("SELECT * FROM goals")
-    List<Goal> loadAllWidgets();
+    List<Goal> loadAllGoals();
 
     // Get widget title by appWidgetId
     @Query("SELECT title FROM goals WHERE appWidgetId=:appWidgetId LIMIT 1")
     LiveData<String> loadWidgetTitle(int appWidgetId);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE, entity = Goal.class)
-    long insertWidget(Goal goal);
+    long insertGoal(Goal goal);
 
     @Update(onConflict = OnConflictStrategy.REPLACE, entity = Goal.class)
-    void updateWidget(Goal goal);
+    void updateGoal(Goal goal);
 
     @Query("UPDATE goals SET appWidgetId = null WHERE uid=:uid")
     void setAppWidgetIdToNullByUid(int uid);
@@ -61,11 +64,11 @@ public interface WorkoutDao {
 
     // Get all widgets without AppWidgetId
     @Query("SELECT * FROM goals WHERE appWidgetId IS NULL")
-    List<Goal> loadWidgetsWithoutValidAppWidgetId();
+    List<Goal> loadGoalsWithoutValidAppWidgetId();
 
     // Get all widgets without AppWidgetId
     @Query("SELECT * FROM goals WHERE appWidgetId IS NOT NULL")
-    List<Goal> loadWidgetsWithValidAppWidgetId();
+    List<Goal> loadGoalsWithValidAppWidgetId();
 
     // Return number of goals
     @Query("SELECT COUNT() FROM goals")

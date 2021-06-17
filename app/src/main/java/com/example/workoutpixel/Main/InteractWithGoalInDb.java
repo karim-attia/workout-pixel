@@ -25,36 +25,39 @@ public class InteractWithGoalInDb extends AndroidViewModel {
 
     public static void updateGoal(Context context, Goal goal) {
         Log.d(TAG, "executorService updateWidget");
-        executorService.execute(() -> workoutDao(context).updateWidget(goal));
+        executorService.execute(() -> workoutDao(context).updateGoal(goal));
         // executorService.shutdown();
         // executorService.awaitTermination(2, TimeUnit.MINUTES);
     }
 
     public static int saveDuringInitialize(Context context, Goal goal) {
         Log.d(TAG, "executorService saveDuringInitialize");
-        return ((int) workoutDao(context).insertWidget(goal));
+        return ((int) workoutDao(context).insertGoal(goal));
     }
 
     public static Goal loadGoalByAppWidgetId(Context context, Integer appWidgetId) {
         Log.d(TAG, "getPastWorkoutsFromDbByAppWidgetId" + appWidgetId);
-        return workoutDao(context).loadWidgetByAppWidgetId(appWidgetId);
+        return workoutDao(context).loadGoalByAppWidgetId(appWidgetId);
     }
 
     public static Goal loadGoalByUid(Context context, int uid) {
         Log.d(TAG, "getPastWorkoutsFromDbByUid");
-        // TODO: widget -> goal
-        return workoutDao(context).loadWidgetByUid(uid);
+        return workoutDao(context).loadGoalByUid(uid);
     }
 
+    public static LiveData<Goal> liveDataGoalByUid(Context context, int uid) {
+        Log.d(TAG, "getPastWorkoutsFromDbByUid");
+        return workoutDao(context).liveDataGoalByUid(uid);
+    }
 
     public static LiveData<List<Goal>> loadAllGoalsLiveData(Context context) {
         Log.d(TAG, "loadAllWidgetsLiveData");
-        return workoutDao(context).loadAllWidgetsLiveData();
+        return workoutDao(context).loadAllGoalsLiveData();
     }
 
     public static List<Goal> loadAllGoals(Context context) {
         Log.d(TAG, "loadAllWidgets");
-        return workoutDao(context).loadAllWidgets();
+        return workoutDao(context).loadAllGoals();
     }
 
     public static void setAppWidgetIdToNullByAppwidgetId(Context context, Integer appWidgetId) {
@@ -71,12 +74,12 @@ public class InteractWithGoalInDb extends AndroidViewModel {
 
     public static List<Goal> loadWidgetsWithoutValidAppWidgetId(Context context) {
         Log.d(TAG, "loadWidgetsWithoutValidAppWidgetId");
-        return workoutDao(context).loadWidgetsWithoutValidAppWidgetId();
+        return workoutDao(context).loadGoalsWithoutValidAppWidgetId();
     }
 
     public static List<Goal> loadWidgetsWithValidAppWidgetId(Context context) {
         Log.d(TAG, "loadWidgetsWithValidAppWidgetId");
-        return workoutDao(context).loadWidgetsWithValidAppWidgetId();
+        return workoutDao(context).loadGoalsWithValidAppWidgetId();
     }
 
     public static void deleteGoal(Context context, Goal goal) {

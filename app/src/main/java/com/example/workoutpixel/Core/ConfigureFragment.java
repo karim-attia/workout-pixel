@@ -135,7 +135,7 @@ public class ConfigureFragment extends Fragment {
 
             // Toolbar
             requireActivity().setTitle(R.string.ReconfigureWidgetActivityLabel);
-            ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            ((AppCompatActivity) requireActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             // requireActivity().getActionBar().setDisplayShowHomeEnabled(true);
             // requireActivity().getActionBar().setHomeButtonEnabled(true);
         }

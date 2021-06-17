@@ -27,7 +27,7 @@ public class InteractWithPastWorkout extends AndroidViewModel {
         return workoutDao(context).loadAllPastWorkouts(widgetUid);
     }
 
-    public static int getCountOfActiveClickedWorkouts(Context context, int widgetUid) {
+    public static int getCountOfActivePastWorkouts(Context context, int widgetUid) {
         Log.v(TAG, "getCountOfActivePastWorkouts ");
         return workoutDao(context).getCountOfActivePastWorkouts(widgetUid);
     }

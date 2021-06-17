@@ -154,7 +154,7 @@ public class Goal {
     public void updateAfterClick(Context context) {
         Log.d(TAG, "ACTION_DONE_EXERCISE " + debugString() + "start");
 
-        int numberOfPastWorkouts = InteractWithPastWorkout.getCountOfActiveClickedWorkouts(context, uid) + 1;
+        int numberOfPastWorkouts = InteractWithPastWorkout.getCountOfActivePastWorkouts(context, uid) + 1;
         // Handler handler = new Handler(Looper.getMainLooper());
         // handler.post(() ->
         Toast.makeText(context, "Oh yeah! Already done this " + numberOfPastWorkouts + " times. :)", Toast.LENGTH_SHORT).show();

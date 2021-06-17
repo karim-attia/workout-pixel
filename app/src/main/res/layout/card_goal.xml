@@ -1,58 +1,68 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    >
 
     <androidx.cardview.widget.CardView
-        android:id="@+id/card_view"
+        android:id="@+id/card_view_goal"
         style="@style/Card"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         card_view:cardCornerRadius="2dp">
 
-        <RelativeLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingHorizontal="8dp"
-            android:paddingVertical="6dp">
+            android:paddingVertical="4dp">
+
+            <TextView
+                android:id="@+id/widget_preview"
+                style="@style/WorkoutPixelPreview"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:layout_marginVertical="4dp"
+                android:background="#7b1fa2"
+                />
 
             <TextView
                 android:id="@+id/widget_title"
                 style="@style/Title"
-                android:layout_width="wrap_content"
+                app:layout_constraintLeft_toRightOf="@id/widget_preview"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:gravity="fill_horizontal"
+                android:layout_marginTop="2dp"
+                android:layout_marginStart="8dp"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
                 tools:ignore="RelativeOverlap"
                 tools:text="Title" />
 
             <LinearLayout
-                android:layout_width="wrap_content"
+                android:id="@+id/subtitle"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentEnd="true">
-
-                <TextView
-                    android:id="@+id/widget_preview"
-                    style="@style/WorkoutPixelPreview"
-                    android:layout_marginTop="4dp"
-                    android:background="#7b1fa2" />
-            </LinearLayout>
-
-            <GridLayout
-                android:id="@+id/grid_layout"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/widget_title"
-                android:columnCount="4"
-                android:paddingTop="4dp">
+                android:layout_marginTop="1dp"
+                android:layout_marginStart="6dp"
+                app:layout_constraintLeft_toRightOf="@id/widget_preview"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/widget_title"
+                >
 
                 <ImageView
                     style="@style/Icon.Narrow"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
                     android:src="@drawable/icon_date"
-                    tools:ignore="ContentDescription" />
+                    tools:ignore="ContentDescription"
+                    />
 
                 <TextView
                     android:id="@+id/widget_interval"
@@ -60,19 +70,9 @@
                     tools:text="Every 2 days" />
 
                 <ImageView
-                    android:id="@+id/widget_edit"
-                    style="@style/Icon.Narrow"
-                    android:layout_width="30dp"
-                    android:src="@drawable/icon_edit"
-                    tools:ignore="ContentDescription" />
-
-                <TextView
-                    android:id="@+id/widget_edit_text"
-                    style="@style/GridText"
-                    android:text="@string/edit_widget" />
-
-                <ImageView
                     style="@style/Icon.Wide"
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
                     android:src="@drawable/icon_done"
                     tools:ignore="ContentDescription" />
 
@@ -81,59 +81,14 @@
                     style="@style/GridText"
                     tools:text="Last Workout" />
 
-                <ImageView
-                    android:id="@+id/widget_past_workouts"
-                    style="@style/Icon.Wide"
-                    android:src="@drawable/icon_list"
-                    tools:ignore="ContentDescription" />
-
-                <TextView
-                    android:id="@+id/widget_past_workout_text"
-                    style="@style/GridText"
-                    android:text="@string/view_clicks" />
-
-            </GridLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/connect_info"
-                android:layout_below="@id/grid_layout"
-                android:layout_marginTop="4dp"
-                android:background="@drawable/rounded_corner_info"
-                android:orientation="horizontal"
-                android:paddingVertical="2dp"
-                android:visibility="gone"
-                tools:visibility="visible">
-
-                <ImageView
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:layout_gravity="center_vertical"
-                    android:src="@drawable/icon_info"
-                    tools:ignore="ContentDescription"
-                    android:layout_weight="0"
-                    />
-
-                <TextView
+                <Space
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:paddingHorizontal="6dp"
-                    android:text="@string/connect_widget_main_activity"
+                    android:layout_height="0dp"
                     android:layout_weight="1"
                     />
 
-                <ImageView
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:layout_gravity="center_vertical"
-                    android:id="@+id/delete_goal"
-                    android:src="@drawable/icon_delete"
-                    android:layout_weight="0"
-                    />
-
             </LinearLayout>
-        </RelativeLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
 </LinearLayout>

@@ -53,10 +53,7 @@ public class GoalsFragment extends Fragment {
 
         // Toolbar
         requireActivity().setTitle("Workout Pixel");
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-        // requireActivity().getActionBar().setDisplayHomeAsUpEnabled(false);
-        // requireActivity().getActionBar().setDisplayShowHomeEnabled(true);
-        // requireActivity().getActionBar().setHomeButtonEnabled(true);
+        ((AppCompatActivity) requireActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
 
         setContent(view);
         return view;

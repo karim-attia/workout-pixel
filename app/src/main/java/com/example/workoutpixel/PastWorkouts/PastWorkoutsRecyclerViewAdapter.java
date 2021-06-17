@@ -7,14 +7,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.workoutpixel.Database.PastWorkout;
 import com.example.workoutpixel.Database.Goal;
+import com.example.workoutpixel.Database.PastWorkout;
 import com.example.workoutpixel.Main.InteractWithGoalInDb;
 import com.example.workoutpixel.R;
 
@@ -111,14 +111,14 @@ public class PastWorkoutsRecyclerViewAdapter extends RecyclerView.Adapter<PastWo
     }
 
     public static class PastWorkoutsViewHolder extends RecyclerView.ViewHolder {
-        CardView cardView;
+        LinearLayout cardView;
         TextView date;
         TextView time;
         ImageView delete;
 
         PastWorkoutsViewHolder(View itemView) {
             super(itemView);
-            cardView = itemView.findViewById(R.id.card_view);
+            cardView = itemView.findViewById(R.id.card_view_past_workout);
             date = itemView.findViewById(R.id.workout_date);
             time = itemView.findViewById(R.id.workout_time);
             delete = itemView.findViewById(R.id.workout_delete);
