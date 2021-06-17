@@ -87,7 +87,7 @@ public class GoalDetailFragment extends Fragment {
                 Bundle bundle = new Bundle();
                 bundle.putBoolean("isFirstConfigure", false);
                 bundle.putInt("goalUid", goal.getUid());
-                Navigation.findNavController(view).navigate(R.id.configureFragment, bundle);
+                Navigation.findNavController(view).navigate(R.id.action_goalDetailFragment_to_configureFragment, bundle);
                 return true;
             default:
                 // If we got here, the user's action was not recognized.

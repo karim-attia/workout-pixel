@@ -2,6 +2,7 @@ package com.example.workoutpixel.Main;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.NavController;
@@ -17,6 +18,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.d(TAG, "onCreate ");
         super.onCreate(savedInstanceState);
         final Context context = MainActivity.this;
 
@@ -32,9 +34,9 @@ public class MainActivity extends AppCompatActivity {
         BottomNavigationView bottomNavigationView = findViewById(R.id.activity_main_bottom_navigation_view);
         NavigationUI.setupWithNavController(bottomNavigationView, navController);
 
+        Log.d(TAG, "InteractWithGoalInDb.getCountOfGoals(context): " + InteractWithGoalInDb.getCountOfGoals(context));
         if (InteractWithGoalInDb.getCountOfGoals(context) == 0) {
-            navController.navigate(R.id.instructionsFragment);
-            navController.popBackStack();
+            navController.navigate(GoalsFragmentDirections.actionGoalsFragmentToInstructionsFragment());
         }
 
 /*

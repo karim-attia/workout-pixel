@@ -82,7 +82,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         View.OnClickListener goalDetailsOnClickListener = view -> {
             Bundle bundle = new Bundle();
             bundle.putInt("goalUid", goals.get(i).getUid());
-            Navigation.findNavController(view).navigate(R.id.goalDetailFragment, bundle);
+            Navigation.findNavController(view).navigate(R.id.action_goalsFragment_to_goalDetailFragment, bundle);
         };
 
         widgetViewHolder.cardView.setOnClickListener(goalDetailsOnClickListener);
