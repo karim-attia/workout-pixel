@@ -2,7 +2,7 @@
     <string name="app_name">Workout Pixel</string>
     <string name="header">Add a Workout Pixel widget</string>
     <string name="header_reconfigure">Edit your goal</string>
-    <string name="instructions">Add the widget for the goal you want to track here.\n\nYou can set the name of your goal and how often you want to reach it here. I recommend to start with a small goal and build a habit of feeling a sense of accomplishment when clicking the widget and seeing that it\'s green afterwards.\n\nHave fun reaching your goal!</string>
+    <string name="instructions_add_widget">Add the widget for the goal you want to track here.\n\nYou can set the name of your goal and how often you want to reach it here. I recommend to start with a small goal and build a habit of feeling a sense of accomplishment when clicking the widget and seeing that it\'s green afterwards.\n\nHave fun reaching your goal!</string>
     <string name="instructions_reconfigure">Have fun reaching your goal!\n</string>
     <string name="widgetTitle">Describe your goal in 1–2 words:</string>
     <string name="interval">How often do you want to reach your goal? Every</string>
@@ -31,4 +31,5 @@
     <string name="past_clicks">Past clicks</string>
     <string name="you_have_never_completed_this_goal_as_soon_as_you_click_on_the_widget_the_click_will_show_up_here">You have never completed this goal. As soon as you click on the widget, the click will show up here.</string>
     <string name="connect_widget_title">No widget for this goal</string>
+    <string name="your_goals">Your goals</string>
 </resources>

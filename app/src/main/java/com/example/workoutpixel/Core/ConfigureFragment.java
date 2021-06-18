@@ -34,6 +34,7 @@ import com.example.workoutpixel.R;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Objects;
 
 import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
@@ -112,9 +113,12 @@ public class ConfigureFragment extends Fragment {
                 return view;
             }
 
-            // TODO: Do this in activity instead of fragment.
-            // Disable the back button in the app bar.
-            // Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(false);
+            // Toolbar
+            try {
+                Objects.requireNonNull(((AppCompatActivity) requireActivity()).getSupportActionBar()).setDisplayHomeAsUpEnabled(false);
+            } catch (Exception e) {
+                Log.w(TAG, "requireActivity " + e);
+            }
         }
 
         // Get the Uid of the goal that should be configured
@@ -130,14 +134,14 @@ public class ConfigureFragment extends Fragment {
                 // finishAndRemoveTask();
                 return view;
             }
-            // Change the activity title in the app bar
-            // TODO: Is this correct? Undo as soon as this screen gets closed.
 
             // Toolbar
             requireActivity().setTitle(R.string.ReconfigureWidgetActivityLabel);
-            ((AppCompatActivity) requireActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            // requireActivity().getActionBar().setDisplayShowHomeEnabled(true);
-            // requireActivity().getActionBar().setHomeButtonEnabled(true);
+            try {
+                Objects.requireNonNull(((AppCompatActivity) requireActivity()).getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
+            } catch (Exception e) {
+                Log.w(TAG, "requireActivity " + e);
+            }
         }
 
         // Bind views

@@ -3,50 +3,40 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools">
-<LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:gravity="center_vertical"
-    android:orientation="vertical">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_marginTop="4dp"
+    android:layout_marginBottom="6dp"
+    >
 
     <androidx.cardview.widget.CardView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
         style="@style/Card"
         >
 
     <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        style="@style/CardInnerView"
         android:orientation="vertical"
-        android:layout_marginLeft="8dp"
         android:animateLayoutChanges="true"
         >
         <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/instructions_title"
             android:id="@+id/instructions_title"
-            style="@style/Title"
-            android:layout_marginVertical="8dp"
+            style="@style/DetailViewText.Title"
+            android:text="@string/instructions_title"
             />
 
         <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:id="@+id/instructions_text"
+            style="@style/DetailViewText"
             android:layout_below="@id/instructions_title"
             android:text="@string/instructions_main_app"
-            android:layout_marginBottom="8dp"
-            android:id="@+id/instructions_text"
             />
+
         <GridLayout
+            android:id="@+id/instructions_grid"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:columnCount="2"
             android:layout_below="@+id/instructions_text"
             android:layout_marginBottom="8dp"
-            android:id="@+id/instructions_grid"
             >
             <ImageView
                 style="@style/InstructionsImages"
@@ -158,5 +148,4 @@
     </RelativeLayout>
     </androidx.cardview.widget.CardView>
 
-</LinearLayout>
 </androidx.core.widget.NestedScrollView>

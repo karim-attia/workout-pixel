@@ -1,6 +1,7 @@
 package com.example.workoutpixel.Main;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,7 +14,11 @@ import androidx.fragment.app.Fragment;
 
 import com.example.workoutpixel.R;
 
+import java.util.Objects;
+
 public class InstructionsFragment extends Fragment {
+    private static final String TAG = "WORKOUT_PIXEL InstructionsFragment";
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -25,7 +30,11 @@ public class InstructionsFragment extends Fragment {
         View view = inflater.inflate(R.layout.instructions, container, false);
 
         requireActivity().setTitle("Workout Pixel");
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+        try {
+            Objects.requireNonNull(((AppCompatActivity) requireActivity()).getSupportActionBar()).setDisplayHomeAsUpEnabled(false);
+        } catch (Exception e) {
+            Log.w(TAG, "requireActivity " + e);
+        }
 
         ImageView instructions_long_click = view.findViewById(R.id.instructions_long_click);
         ImageView instructions_widget_selection = view.findViewById(R.id.instructions_widget_selection);

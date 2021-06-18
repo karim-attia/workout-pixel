@@ -34,6 +34,7 @@ import com.example.workoutpixel.R;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Objects;
 
 import static android.widget.LinearLayout.VERTICAL;
 import static com.example.workoutpixel.Core.CommonFunctions.STATUS_GREEN;
@@ -41,7 +42,7 @@ import static com.example.workoutpixel.Core.CommonFunctions.dateBeautiful;
 import static com.example.workoutpixel.Core.CommonFunctions.getDrawableIntFromStatus;
 
 public class GoalDetailFragment extends Fragment {
-    private static final String TAG = "WORKOUT_PIXEL ViewWorkoutsActivity";
+    private static final String TAG = "WORKOUT_PIXEL GoalDetailFragment";
     View view;
     int uid;
     Goal goal;
@@ -118,7 +119,7 @@ public class GoalDetailFragment extends Fragment {
         // Toolbar
         requireActivity().setTitle(goal.getTitle());
         try {
-            ((AppCompatActivity) requireActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            Objects.requireNonNull(((AppCompatActivity) requireActivity()).getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
         } catch (Exception e) {
             Log.w(TAG, "requireActivity " + e);
         }

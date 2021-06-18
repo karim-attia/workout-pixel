@@ -2,6 +2,7 @@ package com.example.workoutpixel.Main;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,8 +10,10 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LiveData;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -20,10 +23,12 @@ import com.example.workoutpixel.R;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Objects;
 
 import static com.example.workoutpixel.Core.CommonFunctions.cleanGoals;
 
 public class GoalsFragment extends Fragment {
+    private static final String TAG = "WORKOUT_PIXEL GoalsFragment";
     private Context context;
     RecyclerViewAdapter recyclerViewAdapter;
 
@@ -53,7 +58,11 @@ public class GoalsFragment extends Fragment {
 
         // Toolbar
         requireActivity().setTitle("Workout Pixel");
-        ((AppCompatActivity) requireActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+        try {
+            Objects.requireNonNull(((AppCompatActivity) requireActivity()).getSupportActionBar()).setDisplayHomeAsUpEnabled(false);
+        } catch (Exception e) {
+            Log.w(TAG, "requireActivity " + e);
+        }
 
         setContent(view);
         return view;
@@ -75,11 +84,18 @@ public class GoalsFragment extends Fragment {
             recyclerViewAdapter.setData(goals);
             recyclerView.setItemAnimator(null);
             liveData.removeObservers(this);
-            executeAfterRecyclerViewWasPopulated(goals);
+            executeAfterRecyclerViewWasPopulated(goals, view);
         });
     }
 
-    private void executeAfterRecyclerViewWasPopulated (List<Goal> goals) {
+    private void executeAfterRecyclerViewWasPopulated (List<Goal> goals, View view) {
+        if(goals.size() == 0) {
+            CardView noGoalsInstructions = view.findViewById(R.id.no_goals_instructions);
+            noGoalsInstructions.setVisibility(View.VISIBLE);
+            noGoalsInstructions.setOnClickListener(v -> {
+                Navigation.findNavController(view).navigate(GoalsFragmentDirections.actionGoalsFragmentToInstructionsFragment());
+            });
+        }
         // TODO: Move to activity?
         cleanGoals(context, goals);
     }

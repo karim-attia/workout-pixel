@@ -16,9 +16,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/configure_activity_intro_text"
-            android:text="@string/instructions"
+            android:text="@string/instructions_add_widget"
             android:layout_marginBottom="16dp"/>
 
+<!--        TODO: Same card stuff as in goal detail view-->
         <androidx.cardview.widget.CardView
             android:id="@+id/connect_widget"
             android:layout_width="match_parent"

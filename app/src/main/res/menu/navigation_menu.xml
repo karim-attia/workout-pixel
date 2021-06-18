@@ -8,5 +8,5 @@
     <item
         android:id="@+id/goalsFragment"
         android:icon="@drawable/icon_done"
-        android:title="Your goals"/>
+        android:title="@string/your_goals"/>
 </menu>
