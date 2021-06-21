@@ -10,15 +10,18 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.workoutpixel.R;
+import com.synnapps.carouselview.CarouselView;
+import com.synnapps.carouselview.ImageListener;
+import com.synnapps.carouselview.ViewListener;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -33,6 +36,7 @@ public class InstructionsFragment extends Fragment {
     private static final String TAG = "WORKOUT_PIXEL InstructionsFragment";
     private Context context;
     InstructionsRecyclerViewAdapter instructionsRecyclerViewAdapter;
+    List<Instruction> instructions = new ArrayList<>();
 
     @Override
     public void onAttach(@NotNull Context context) {
@@ -49,7 +53,7 @@ public class InstructionsFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.instructions, container, false);
+        View view = inflater.inflate(R.layout.carousel_instructions, container, false);
 
         requireActivity().setTitle("Workout Pixel");
         try {
@@ -58,35 +62,76 @@ public class InstructionsFragment extends Fragment {
             Log.w(TAG, "requireActivity " + e);
         }
 
-        List<Instruction> instructions = new ArrayList<>();
         instructions.add(new Instruction(R.string.instructions_step1, R.drawable.step1, R.drawable.instructions_long_click));
         instructions.add(new Instruction(R.string.instructions_step2, R.drawable.step2, R.drawable.instructions_widget_selection));
         instructions.add(new Instruction(R.string.instructions_step3, R.drawable.step3, R.drawable.instructions_configure_widget));
         instructions.add(new Instruction(R.string.instructions_step4, R.drawable.step4, R.drawable.instructions_widget_created));
         instructions.add(new Instruction(R.string.instructions_step5, R.drawable.step5, R.drawable.instructions_main_app));
 
+        // CarouselView carouselView = view.findViewById(R.id.carouselView);
+        // carouselView.setPageCount(instructions.size());
+        // carouselView.setImageListener(imageListener);
+
+        CarouselView customCarouselView = view.findViewById(R.id.carouselView);
+        customCarouselView.setPageCount(instructions.size());
+        // set ViewListener for custom view
+        customCarouselView.setViewListener(viewListener);
+
+/*
         RecyclerView recyclerView = view.findViewById(R.id.instructions_recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
         recyclerView.setHasFixedSize(true);
         recyclerView.setNestedScrollingEnabled(false);
         instructionsRecyclerViewAdapter = new InstructionsRecyclerViewAdapter(context, instructions);
         recyclerView.setAdapter(instructionsRecyclerViewAdapter);
-
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.P) {
-            Drawable drawable;
-            try {
-                drawable = ImageDecoder.decodeDrawable(ImageDecoder.createSource(getResources(), R.drawable.step1));
-
-                if (drawable instanceof AnimatedImageDrawable) {
-                    ((AnimatedImageDrawable) drawable).start();
-                }
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            // instructions_long_click.setImageDrawable(drawable);
-        }
+*/
 
         return view;
     }
+
+    ImageListener imageListener = new ImageListener() {
+        @Override
+        public void setImageForPosition(int position, ImageView imageView) {
+            imageView.setImageResource(instructions.get(position).getBackupImage());
+        }
+    };
+
+    ViewListener viewListener = new ViewListener() {
+        @Override
+        public View setViewForPosition(int position) {
+            View view = getLayoutInflater().inflate(R.layout.carousel_instruction_step, null);
+            //set view attributes here
+            TextView title;
+            TextView text;
+            ImageView image;
+
+            title = view.findViewById(R.id.instructions_step_title);
+            text = view.findViewById(R.id.instructions_step_text);
+            image  = view.findViewById(R.id.instructions_step_image);
+
+            int positionPlusOne = position+1;
+            title.setText("Step " + positionPlusOne);
+            text.setText(instructions.get(position).getText());
+
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.P) {
+                try {
+                    Drawable drawable = ImageDecoder.decodeDrawable(ImageDecoder.createSource(view.getContext().getResources(), instructions.get(position).getGif()));
+
+                    if (drawable instanceof AnimatedImageDrawable) {
+                        ((AnimatedImageDrawable) drawable).start();
+                    }
+                    image.setImageDrawable(drawable);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    image.setBackgroundResource(instructions.get(position).getBackupImage());
+                }
+            }
+            else {
+                image.setBackgroundResource(instructions.get(position).getBackupImage());
+            }
+
+
+            return view;
+        }
+    };
 }
