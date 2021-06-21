@@ -100,7 +100,6 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.cardview.widget.CardView>
 
-
         <androidx.cardview.widget.CardView
             android:id="@+id/connect_info"
             style="@style/Card"
@@ -108,37 +107,52 @@
             tools:visibility="visible"
             >
 
-        <LinearLayout
-            style="@style/CardInnerView"
-            android:background="#e3f2fd"
-            android:orientation="vertical"
-            android:paddingBottom="4dp"
-            >
+            <LinearLayout
+                style="@style/CardInnerView"
+                android:orientation="vertical"
+                android:paddingBottom="4dp"
+                >
 
-            <TextView
-                style="@style/DetailViewText.Title"
-                android:id="@+id/connect_widget_title"
-                android:text="@string/connect_widget_title"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                <TextView
+                    style="@style/DetailViewText.Title"
+                    android:id="@+id/connect_widget_title"
+                    android:text="@string/connect_widget_title"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
-            <TextView
-                android:id="@+id/textView"
-                style="@style/DetailViewText"
-                android:text="@string/connect_widget_main_activity"
-                />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="4dp"
+                    android:background="@drawable/rounded_corner_info"
+                    android:orientation="horizontal"
+                    android:paddingVertical="4dp"
+                    >
 
-            <Button
-                android:id="@+id/delete_goal"
-                style="@style/button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/delete_goal"
-                tools:ignore="ContentDescription"
-                />
+                    <ImageView
+                        style="@style/Icon.Narrow"
+                        android:src="@drawable/icon_info"
+                        tools:ignore="ContentDescription" />
 
-        </LinearLayout>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/connect_widget_main_activity"
+                        android:paddingHorizontal="6dp"
+                        />
+                </LinearLayout>
+
+                <Button
+                    android:id="@+id/delete_goal"
+                    style="@style/button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/delete_goal"
+                    tools:ignore="ContentDescription"
+                    />
+
+            </LinearLayout>
         </androidx.cardview.widget.CardView>
 
         <androidx.cardview.widget.CardView

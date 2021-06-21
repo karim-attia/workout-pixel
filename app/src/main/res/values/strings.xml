@@ -20,7 +20,7 @@
     <string name="connect">Connect</string>
     <string name="date_time_instructions">Do you want to show when you reached your goal the last time?</string>
     <string name="preview">Preview</string>
-    <string name="connect_widget_main_activity">There is no widget for this goal on your homescreen. You can add a new widget to your homescreen and connect it to this goal or delete it here.</string>
+    <string name="connect_widget_main_activity">There is no widget for this goal on your homescreen. Add a new widget and connect it to this goal to keep the data.</string>
     <string name="connect_widget_main_activity_old">There is no widget for this goal. The app keeps the data because more often than not, a goal gets removed by accident. You can add a new widget to your homescreen and connect it to this goal.</string>
     <string name="connect_delete">Delete</string>
     <string name="instructions_title">Instructions</string>
@@ -32,4 +32,9 @@
     <string name="you_have_never_completed_this_goal_as_soon_as_you_click_on_the_widget_the_click_will_show_up_here">You have never completed this goal. As soon as you click on the widget, the click will show up here.</string>
     <string name="connect_widget_title">No widget for this goal</string>
     <string name="your_goals">Your goals</string>
+    <string name="instructions_step1">First, long click anywhere on your homescreen until you see an option to add widgets.</string>
+    <string name="instructions_step2">Find the WorkoutPixel widget and long click on it. Then, place it anywhere on your homescreen.</string>
+    <string name="instructions_step3">Follow the instructions to configure your widget. Afterwards, click on the ADD WIDGET button. This creates the widget on your home screen.</string>
+    <string name="instructions_step4">Have you reached your goal? Click on the widget and observe how it turns green. It will stay green for the number of days you configured and will turn blue at 3:00 at night afterwards.</string>
+    <string name="instructions_step5">Come back here to the main app for an overview over your goals, to edit them and to view when you reached them.</string>
 </resources>

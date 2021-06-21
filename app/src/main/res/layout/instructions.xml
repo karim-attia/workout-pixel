@@ -1,151 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
-    <androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_marginTop="4dp"
-    android:layout_marginBottom="6dp"
-    >
+    android:layout_marginBottom="6dp">
 
-    <androidx.cardview.widget.CardView
-        style="@style/Card"
-        >
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-    <RelativeLayout
-        style="@style/CardInnerView"
-        android:orientation="vertical"
-        android:animateLayoutChanges="true"
-        >
-        <TextView
-            android:id="@+id/instructions_title"
-            style="@style/DetailViewText.Title"
-            android:text="@string/instructions_title"
-            />
+        <androidx.cardview.widget.CardView style="@style/Card">
 
-        <TextView
-            android:id="@+id/instructions_text"
-            style="@style/DetailViewText"
-            android:layout_below="@id/instructions_title"
-            android:text="@string/instructions_main_app"
-            />
+            <RelativeLayout
+                style="@style/CardInnerView"
+                android:animateLayoutChanges="true"
+                android:orientation="vertical">
 
-        <GridLayout
-            android:id="@+id/instructions_grid"
+                <TextView
+                    android:id="@+id/instructions_title"
+                    style="@style/DetailViewText.Title"
+                    android:text="@string/instructions_title" />
+
+                <TextView
+                    android:id="@+id/instructions_text"
+                    style="@style/DetailViewText"
+                    android:layout_below="@id/instructions_title"
+                    android:text="@string/instructions_main_app" />
+
+            </RelativeLayout>
+        </androidx.cardview.widget.CardView>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/instructions_recycler_view"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:columnCount="2"
-            android:layout_below="@+id/instructions_text"
-            android:layout_marginBottom="8dp"
-            >
-            <ImageView
-                style="@style/InstructionsImages"
-                android:id="@+id/instructions_long_click"
-                tools:src="@drawable/instructions_long_click"
-                />
-            <TextView
-                style="@style/InstructionsTextView.Title"
-                android:text="Step 1"
-                />
+            android:layout_height="match_parent"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="6dp"
+            android:scrollbars="vertical"
+            app:layoutManager="LinearLayoutManager" />
 
-            <TextView
-                style="@style/InstructionsTextView"
-                android:text="First, long click anywhere on your homescreen until you see an option to add widgets."
-                />
-
-            <ImageView
-                style="@style/InstructionsImages"
-                android:id="@+id/instructions_widget_selection"
-                tools:src="@drawable/instructions_widget_selection"
-                />
-            <TextView
-                style="@style/InstructionsTextView.Title"
-                android:text="Step 2"
-                />
-
-            <TextView
-                style="@style/InstructionsTextView"
-                android:text="Find the WorkoutPixel widget and long click on it."
-                />
-
-            <ImageView
-                style="@style/InstructionsImages"
-                android:id="@+id/instructions_place_widget"
-                tools:src="@drawable/instructions_place_widget"
-                />
-            <TextView
-                style="@style/InstructionsTextView.Title"
-                android:text="Step 3"
-                />
-
-            <TextView
-                style="@style/InstructionsTextView"
-                android:text="Place the widget anywhere on your homescreen."
-                />
-
-            <ImageView
-                style="@style/InstructionsImages"
-                android:id="@+id/instructions_configure_widget"
-                tools:src="@drawable/instructions_configure_widget"
-                />
-            <TextView
-                style="@style/InstructionsTextView.Title"
-                android:text="Step 4"
-                />
-
-            <TextView
-                style="@style/InstructionsTextView"
-                android:text="Follow the instructions to configure your widget. Afterwards, click on the ADD WIDGET button."
-                />
-
-            <ImageView
-                style="@style/InstructionsImages"
-                android:id="@+id/instructions_widget_created"
-                tools:src="@drawable/instructions_widget_created"
-                />
-            <TextView
-                style="@style/InstructionsTextView.Title"
-                android:text="Step 5"
-                />
-
-            <TextView
-                style="@style/InstructionsTextView"
-                android:text="This creates the widget on your home screen."
-                />
-
-            <ImageView
-                style="@style/InstructionsImages"
-                android:id="@+id/instructions_widget_clicked"
-                tools:src="@drawable/instructions_widget_clicked"
-                />
-            <TextView
-                style="@style/InstructionsTextView.Title"
-                android:text="Step 6"
-                />
-
-            <TextView
-                style="@style/InstructionsTextView"
-                android:text="Have you reached your goal? Click on the widget and observe how it turns green. It will stay green for the number of days you configured and will turn blue at 3:00 at night afterwards."
-                />
-
-            <ImageView
-                style="@style/InstructionsImages"
-                android:id="@+id/instructions_main_app"
-                tools:src="@drawable/instructions_main_app"
-                />
-            <TextView
-                style="@style/InstructionsTextView.Title"
-                android:text="Step 7"
-                />
-            <TextView
-                style="@style/InstructionsTextView"
-                android:text="Come back here to the main app for an overview over your goals, to edit them and to view when you reached them."
-                />
-
-        </GridLayout>
-
-
-    </RelativeLayout>
-    </androidx.cardview.widget.CardView>
+    </LinearLayout>
 
 </androidx.core.widget.NestedScrollView>

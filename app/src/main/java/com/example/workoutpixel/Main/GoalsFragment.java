@@ -30,13 +30,13 @@ import static com.example.workoutpixel.Core.CommonFunctions.cleanGoals;
 public class GoalsFragment extends Fragment {
     private static final String TAG = "WORKOUT_PIXEL GoalsFragment";
     private Context context;
-    RecyclerViewAdapter recyclerViewAdapter;
+    GoalsRecyclerViewAdapter goalsRecyclerViewAdapter;
 
     @Override
     public void onAttach(@NotNull Context context) {
         super.onAttach(context);
         this.context = context;
-        recyclerViewAdapter = new RecyclerViewAdapter(context);
+        goalsRecyclerViewAdapter = new GoalsRecyclerViewAdapter(context);
     }
 
     @Override
@@ -75,13 +75,13 @@ public class GoalsFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
         recyclerView.setHasFixedSize(true);
         recyclerView.setNestedScrollingEnabled(false);
-        recyclerView.setAdapter(recyclerViewAdapter);
+        recyclerView.setAdapter(goalsRecyclerViewAdapter);
 
         // Create the observer which updates the UI.
         // Observe the LiveData, passing this activity as the LifecycleOwner and the observer.
         LiveData<List<Goal>> liveData = InteractWithGoalInDb.loadAllGoalsLiveData(context.getApplicationContext());
         liveData.observe(getViewLifecycleOwner(), goals -> {
-            recyclerViewAdapter.setData(goals);
+            goalsRecyclerViewAdapter.setData(goals);
             recyclerView.setItemAnimator(null);
             liveData.removeObservers(this);
             executeAfterRecyclerViewWasPopulated(goals, view);
