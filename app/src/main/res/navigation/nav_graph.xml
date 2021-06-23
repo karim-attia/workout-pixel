@@ -41,7 +41,7 @@
         android:id="@+id/configureFragment"
         android:name="com.example.workoutpixel.Core.ConfigureFragment"
         android:label="ConfigureFragment"
-        tools:layout="@layout/workout_pixel_configure"
+        tools:layout="@layout/configuration"
         >
         <argument
             android:name="isFirstConfigure"

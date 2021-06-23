@@ -67,7 +67,8 @@
                 <TextView
                     android:id="@+id/widget_interval"
                     style="@style/GridText"
-                    tools:text="Every 2 days" />
+                    tools:text="Every 21 days"
+                    />
 
                 <ImageView
                     style="@style/Icon.Wide"
@@ -80,12 +81,6 @@
                     android:id="@+id/widget_last_workout"
                     style="@style/GridText"
                     tools:text="Last Workout" />
-
-                <Space
-                    android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
-                    />
 
             </LinearLayout>
 

@@ -109,7 +109,7 @@ public class ConfigureActivity extends AppCompatActivity {
             setTitle(R.string.ReconfigureWidgetActivityLabel);
         }
 
-        setContentView(R.layout.workout_pixel_configure);
+        setContentView(R.layout.configuration);
 
         // Bind views
         TextView introText = findViewById(R.id.configure_activity_intro_text);

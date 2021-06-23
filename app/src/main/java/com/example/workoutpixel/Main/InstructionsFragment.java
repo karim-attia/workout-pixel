@@ -62,11 +62,12 @@ public class InstructionsFragment extends Fragment {
             Log.w(TAG, "requireActivity " + e);
         }
 
-        instructions.add(new Instruction(R.string.instructions_step1, R.drawable.step1, R.drawable.instructions_long_click));
-        instructions.add(new Instruction(R.string.instructions_step2, R.drawable.step2, R.drawable.instructions_widget_selection));
-        instructions.add(new Instruction(R.string.instructions_step3, R.drawable.step3, R.drawable.instructions_configure_widget));
-        instructions.add(new Instruction(R.string.instructions_step4, R.drawable.step4, R.drawable.instructions_widget_created));
-        instructions.add(new Instruction(R.string.instructions_step5, R.drawable.step5, R.drawable.instructions_main_app));
+        instructions.add(new Instruction("Reach your goals", R.string.instructions_pitch, R.drawable.instructions_pitch, R.drawable.instructions_pitch));
+        instructions.add(new Instruction(getString(R.string.step) + " 1", R.string.instructions_step1, R.drawable.step1, R.drawable.instructions_long_click));
+        instructions.add(new Instruction(getString(R.string.step) + " 2", R.string.instructions_step2, R.drawable.step2, R.drawable.instructions_widget_selection));
+        instructions.add(new Instruction(getString(R.string.step) + " 3", R.string.instructions_step3, R.drawable.step3, R.drawable.instructions_configure_widget));
+        instructions.add(new Instruction(getString(R.string.step) + " 4", R.string.instructions_step4, R.drawable.step4, R.drawable.instructions_widget_created));
+        instructions.add(new Instruction(getString(R.string.step) + " 5", R.string.instructions_step5, R.drawable.step5, R.drawable.instructions_main_app));
 
         // CarouselView carouselView = view.findViewById(R.id.carouselView);
         // carouselView.setPageCount(instructions.size());
@@ -96,42 +97,39 @@ public class InstructionsFragment extends Fragment {
         }
     };
 
-    ViewListener viewListener = new ViewListener() {
-        @Override
-        public View setViewForPosition(int position) {
-            View view = getLayoutInflater().inflate(R.layout.carousel_instruction_step, null);
-            //set view attributes here
-            TextView title;
-            TextView text;
-            ImageView image;
+    ViewListener viewListener = position -> {
+        View view = getLayoutInflater().inflate(R.layout.carousel_instruction_step, null);
+        //set view attributes here
+        TextView title;
+        TextView text;
+        ImageView image;
 
-            title = view.findViewById(R.id.instructions_step_title);
-            text = view.findViewById(R.id.instructions_step_text);
-            image  = view.findViewById(R.id.instructions_step_image);
+        title = view.findViewById(R.id.instructions_step_title);
+        text = view.findViewById(R.id.instructions_step_text);
+        image  = view.findViewById(R.id.instructions_step_image);
 
-            int positionPlusOne = position+1;
-            title.setText("Step " + positionPlusOne);
-            text.setText(instructions.get(position).getText());
+        title.setText(instructions.get(position).getTitle());
+        text.setText(instructions.get(position).getText());
 
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.P) {
-                try {
-                    Drawable drawable = ImageDecoder.decodeDrawable(ImageDecoder.createSource(view.getContext().getResources(), instructions.get(position).getGif()));
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.P) {
+            try {
+                Drawable drawable = ImageDecoder.decodeDrawable(ImageDecoder.createSource(view.getContext().getResources(), instructions.get(position).getGif()));
 
-                    if (drawable instanceof AnimatedImageDrawable) {
-                        ((AnimatedImageDrawable) drawable).start();
-                    }
-                    image.setImageDrawable(drawable);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    image.setBackgroundResource(instructions.get(position).getBackupImage());
+                if (drawable instanceof AnimatedImageDrawable) {
+                    ((AnimatedImageDrawable) drawable).start();
                 }
-            }
-            else {
+                image.setImageDrawable(drawable);
+            } catch (IOException e) {
+                e.printStackTrace();
                 image.setBackgroundResource(instructions.get(position).getBackupImage());
             }
-
-
-            return view;
         }
+        else {
+            image.setBackgroundResource(instructions.get(position).getBackupImage());
+        }
+
+        // TODO: If position = X add goal, then show instruction to add a widget for this goal.
+
+        return view;
     };
 }

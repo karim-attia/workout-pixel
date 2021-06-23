@@ -2,13 +2,16 @@
     <string name="app_name">Workout Pixel</string>
     <string name="header">Add a Workout Pixel widget</string>
     <string name="header_reconfigure">Edit your goal</string>
-    <string name="instructions_add_widget">Add the widget for the goal you want to track here.\n\nYou can set the name of your goal and how often you want to reach it here. I recommend to start with a small goal and build a habit of feeling a sense of accomplishment when clicking the widget and seeing that it\'s green afterwards.\n\nHave fun reaching your goal!</string>
+    <string name="instructions_add_widget"><b>Start small.</b> Start doing it every 2-3 days instead of every day.
+\n\n<b>Build a habit.</b> Feel a sense of accomplishment when clicking the widget.
+\n\n<b>Have fun reaching your goal.</b> Remind yourself that you have reached your goals whenever you look at your homescreen.
+</string>
     <string name="instructions_reconfigure">Have fun reaching your goal!\n</string>
     <string name="widgetTitle">Describe your goal in 1–2 words:</string>
     <string name="interval">How often do you want to reach your goal? Every</string>
     <string name="day">day</string>
     <string name="plural">s</string>
-    <string name="add_widget">Add goal</string>
+    <string name="add_widget">Add widget</string>
     <string name="add_widget_reconfigure">Update goal</string>
     <string name="instructions_main_app">Super awesome that you downloaded WorkoutPixel.\n\nTo start using it, go to your homescreen and add your first WorkoutPixel widget.</string>
     <string name="ReconfigureWidgetActivityLabel">Edit your goal</string>
@@ -32,9 +35,12 @@
     <string name="you_have_never_completed_this_goal_as_soon_as_you_click_on_the_widget_the_click_will_show_up_here">You have never completed this goal. As soon as you click on the widget, the click will show up here.</string>
     <string name="connect_widget_title">No widget for this goal</string>
     <string name="your_goals">Your goals</string>
-    <string name="instructions_step1">First, long click anywhere on your homescreen until you see an option to add widgets.</string>
-    <string name="instructions_step2">Find the WorkoutPixel widget and long click on it. Then, place it anywhere on your homescreen.</string>
-    <string name="instructions_step3">Follow the instructions to configure your widget. Afterwards, click on the ADD WIDGET button. This creates the widget on your home screen.</string>
-    <string name="instructions_step4">Have you reached your goal? Click on the widget and observe how it turns green. It will stay green for the number of days you configured and will turn blue at 3:00 at night afterwards.</string>
+    <string name="instructions_pitch">Swipe right to find out how to add a widget for your goal.</string>
+    <string name="instructions_step1">Long click anywhere on your homescreen until you see an option to add widgets.</string>
+    <string name="instructions_step2">Find the WorkoutPixel widget and long click on it. Place it anywhere on your homescreen.</string>
+    <string name="instructions_step3">Follow the instructions to configure your widget. \nClick on the «ADD GOAL» button to add the widget to your homescreen.</string>
+    <string name="instructions_step4">Have you reached your goal? Click on the widget and observe how it turns green. It will stay green for the number of days you configured and will turn blue during the next night (3:00).</string>
     <string name="instructions_step5">Come back here to the main app for an overview over your goals, to edit them and to view when you reached them.</string>
+    <string name="step">Step</string>
+    <string name="configuration_hint_title">Hints</string>
 </resources>

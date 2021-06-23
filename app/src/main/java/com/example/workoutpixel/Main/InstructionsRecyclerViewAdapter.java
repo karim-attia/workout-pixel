@@ -91,14 +91,20 @@ public class InstructionsRecyclerViewAdapter extends RecyclerView.Adapter<Instru
     }
 
     public static class Instruction {
+        String title;
         int text;
         int gif;
         int backupImage;
 
-        Instruction(int text, int gif, int backupImage) {
+        Instruction(String title, int text, int gif, int backupImage) {
+            this.title = title;
             this.text = text;
             this.gif = gif;
             this.backupImage  = backupImage;
+        }
+
+        public String getTitle() {
+            return title;
         }
 
         public int getText() {

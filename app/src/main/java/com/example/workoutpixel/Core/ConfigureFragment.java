@@ -80,13 +80,13 @@ public class ConfigureFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.workout_pixel_configure, container, false);
+        view = inflater.inflate(R.layout.configuration, container, false);
         Log.v(TAG, "onCreateView");
 
         // Find the widget id  and whether it is a reconfigure activity from the intent.
         // TODO: Get data. Move reading intent to activity in firstConfigure case.
 
-        // Check form the intent whether this goal gets configured for the first time or gets reconfigured.
+        // Check from the intent whether this goal gets configured for the first time or gets reconfigured.
         // if(getArguments().getBoolean("isFirstConfigure") != null && getArguments().getBoolean("isFirstConfigure").equals("APPWIDGET_RECONFIGURE")) {
         assert getArguments() != null;
         isFirstConfigure = getArguments().getBoolean("isFirstConfigure");
@@ -100,7 +100,7 @@ public class ConfigureFragment extends Fragment {
         // Get the AppWidgetId from the launcher if there is one provided. Else exit.
         if (isFirstConfigure) {
             // Set the result to CANCELED. This will cause the widget host to cancel out of the widget placement if the user presses the back button.
-            getActivity().setResult(RESULT_CANCELED);
+            requireActivity().setResult(RESULT_CANCELED);
 
             // if (getArguments().getInt("appWidgetId") != null) {
                 goal.setAppWidgetId(getArguments().getInt("appWidgetId"));
@@ -109,7 +109,7 @@ public class ConfigureFragment extends Fragment {
             // If this activity was started with an intent without an app widget ID, finish with an error.
             if (goal.getAppWidgetId() == null || goal.getAppWidgetId() == AppWidgetManager.INVALID_APPWIDGET_ID) {
                 Log.d(TAG, "AppWidgetId is invalid.");
-                getActivity().finishAndRemoveTask();
+                requireActivity().finishAndRemoveTask();
                 return view;
             }
 
@@ -120,18 +120,16 @@ public class ConfigureFragment extends Fragment {
                 Log.w(TAG, "requireActivity " + e);
             }
         }
-
-        // Get the Uid of the goal that should be configured
-        if (!isFirstConfigure) {
+        // else if (!isFirstConfigure) {
+        else {
+            // Get the Uid of the goal that should be configured
             // if (getArguments().getInt("widgetUid") != null) {
                 goal.setUid(getArguments().getInt("goalUid"));
             // } else {Log.d(TAG, "extras = null");}
 
             if (goal.getUid() == 0) {
-                Log.d(TAG, "goalUid is invalid.");
-                // TODO: Close fragment
-                // NavController.navigateUp()
-                // finishAndRemoveTask();
+                Log.w(TAG, "goalUid is invalid.");
+                Navigation.findNavController(view).navigateUp();
                 return view;
             }
 
@@ -145,6 +143,7 @@ public class ConfigureFragment extends Fragment {
         }
 
         // Bind views
+        TextView introTitle = view.findViewById(R.id.configuration_hint_title);
         TextView introText = view.findViewById(R.id.configure_activity_intro_text);
         widgetTitle = view.findViewById(R.id.appwidget_text);
         showDateCheckbox = view.findViewById(R.id.showDateCheckbox);
@@ -159,6 +158,7 @@ public class ConfigureFragment extends Fragment {
         // Load and pre-fill existing configurations.
         if (!isFirstConfigure) {
             // Don't show the initial text if the user edits the widget.
+            introTitle.setVisibility(View.GONE);
             introText.setVisibility(View.GONE);
             goal = InteractWithGoalInDb.loadGoalByUid(context, goal.getUid());
             widgetTitle.setText(goal.getTitle());
@@ -294,9 +294,7 @@ public class ConfigureFragment extends Fragment {
             getActivity().finishAndRemoveTask();
         } else {
             Toast.makeText(context, "Widget updated.", Toast.LENGTH_LONG).show();
-            // TODO: Figure out navigation back.
             Navigation.findNavController(view).navigateUp();
-            // Navigation.findNavController(view).popBackStack();
         }
     }
 }

@@ -13,11 +13,11 @@
         app:fillColor="@color/colorPrimary"
         app:pageColor="#00000000"
         app:radius="8dp"
-        app:slideInterval="10000"
+        app:slideInterval="30000"
         app:strokeColor="@color/colorPrimary"
         app:strokeWidth="1dp"
         app:disableAutoPlayOnUserInteraction="true"
-        app:snap="true"
+        app:snap="@bool/default_circle_indicator_centered"
         />
 
 </LinearLayout>

@@ -157,7 +157,7 @@ public class Goal {
         int numberOfPastWorkouts = InteractWithPastWorkout.getCountOfActivePastWorkouts(context, uid) + 1;
         // Handler handler = new Handler(Looper.getMainLooper());
         // handler.post(() ->
-        Toast.makeText(context, "Oh yeah! Already done this " + numberOfPastWorkouts + " times. :)", Toast.LENGTH_SHORT).show();
+        Toast.makeText(context, "Oh yeah! Already done this " + times(numberOfPastWorkouts) + " :)", Toast.LENGTH_SHORT).show();
 
         // Update the widget data with the latest click
         status = STATUS_GREEN;
