@@ -1,2 +1,2 @@
-include ':app'
+include ':workoutpixel'
 rootProject.name = "Workout Pixel"
