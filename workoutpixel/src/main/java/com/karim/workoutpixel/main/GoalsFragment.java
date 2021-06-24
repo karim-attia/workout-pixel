@@ -1,4 +1,4 @@
-package com.karim.workoutpixel.Main;
+package com.karim.workoutpixel.main;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -17,15 +17,16 @@ import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.karim.workoutpixel.Database.Goal;
+import com.karim.workoutpixel.core.Goal;
 import com.karim.workoutpixel.R;
+import com.karim.workoutpixel.database.InteractWithGoalInDb;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Objects;
 
-import static com.karim.workoutpixel.Core.CommonFunctions.cleanGoals;
+import static com.karim.workoutpixel.core.CommonFunctions.cleanGoals;
 
 public class GoalsFragment extends Fragment {
     private static final String TAG = "WORKOUT_PIXEL GoalsFragment";
@@ -92,9 +93,8 @@ public class GoalsFragment extends Fragment {
         if(goals.size() == 0) {
             CardView noGoalsInstructions = view.findViewById(R.id.no_goals_instructions);
             noGoalsInstructions.setVisibility(View.VISIBLE);
-            noGoalsInstructions.setOnClickListener(v -> {
-                Navigation.findNavController(view).navigate(GoalsFragmentDirections.actionGoalsFragmentToInstructionsFragment());
-            });
+            noGoalsInstructions.setOnClickListener(v ->
+                    Navigation.findNavController(view).navigate(GoalsFragmentDirections.actionGoalsFragmentToGoalDetailFragment()));
         }
         // TODO: Move to activity?
         cleanGoals(context, goals);

@@ -1,12 +1,12 @@
-package com.karim.workoutpixel.Database;
+package com.karim.workoutpixel.database;
 
 import android.content.Context;
 
 import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
-import androidx.room.migration.Migration;
-import androidx.sqlite.db.SupportSQLiteDatabase;
+
+import com.karim.workoutpixel.core.Goal;
 
 @Database(entities = {PastWorkout.class, Goal.class}, version = 2)
 public abstract class AppDatabase extends RoomDatabase {
@@ -35,15 +35,13 @@ public abstract class AppDatabase extends RoomDatabase {
 
     public abstract WorkoutDao workoutDao();
 
-    public void cleanUp() {
-        workoutPixelDb = null;
-    }
-
-    static final Migration MIGRATION_1_2 = new Migration(1, 2) {
-        @Override
-        public void migrate(SupportSQLiteDatabase database) {
-            database.execSQL("ALTER TABLE pastWorkouts ADD widgetUid int;");
-        }
-    };
+// --Commented out by Inspection START (23.06.21, 20:29):
+//    static final Migration MIGRATION_1_2 = new Migration(1, 2) {
+//        @Override
+//        public void migrate(SupportSQLiteDatabase database) {
+//            database.execSQL("ALTER TABLE pastWorkouts ADD widgetUid int;");
+//        }
+//    };
+// --Commented out by Inspection STOP (23.06.21, 20:29)
 
 }

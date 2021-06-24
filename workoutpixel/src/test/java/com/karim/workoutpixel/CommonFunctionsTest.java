@@ -1,6 +1,6 @@
 package com.karim.workoutpixel;
 
-import com.karim.workoutpixel.Core.CommonFunctions;
+import com.karim.workoutpixel.core.CommonFunctions;
 
 import org.junit.Test;
 

@@ -1,10 +1,10 @@
 package com.karim.workoutpixel;
 
-import com.karim.workoutpixel.Core.CommonFunctions;
+import com.karim.workoutpixel.core.CommonFunctions;
 
 public class TestUtils {
-    public static long now = System.currentTimeMillis();
-    public static String date = CommonFunctions.dateBeautiful(now);
-    public static String time = CommonFunctions.timeBeautiful(now);
+    public static final long now = System.currentTimeMillis();
+    public static final String date = CommonFunctions.dateBeautiful(now);
+    public static final String time = CommonFunctions.timeBeautiful(now);
 
 }

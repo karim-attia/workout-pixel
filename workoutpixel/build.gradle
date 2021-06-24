@@ -39,6 +39,7 @@ android {
     }
 }
 
+//noinspection SpellCheckingInspection,SpellCheckingInspection,SpellCheckingInspection
 dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'

@@ -1,4 +1,4 @@
-package com.karim.workoutpixel.Main;
+package com.karim.workoutpixel.main;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -12,20 +12,21 @@ import androidx.cardview.widget.CardView;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.karim.workoutpixel.Database.Goal;
+import com.karim.workoutpixel.core.Goal;
 import com.karim.workoutpixel.R;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.karim.workoutpixel.Core.CommonFunctions.STATUS_GREEN;
-import static com.karim.workoutpixel.Core.CommonFunctions.dateBeautiful;
-import static com.karim.workoutpixel.Core.CommonFunctions.getDrawableIntFromStatus;
+import static com.karim.workoutpixel.core.CommonFunctions.STATUS_GREEN;
+import static com.karim.workoutpixel.core.CommonFunctions.dateBeautiful;
+import static com.karim.workoutpixel.core.CommonFunctions.getDrawableIntFromStatus;
 
 // RecyclerViewAdapter fills the card view in the MainActivity.
 public class GoalsRecyclerViewAdapter extends RecyclerView.Adapter<GoalsRecyclerViewAdapter.WidgetViewHolder> {
+    @SuppressWarnings("unused")
     private static final String TAG = "WORKOUT_PIXEL GoalsFragment RVAdapter";
-    Context context;
+    final Context context;
     List<Goal> goals = new ArrayList<>();
     boolean notSetupYet = true;
 
@@ -94,11 +95,11 @@ public class GoalsRecyclerViewAdapter extends RecyclerView.Adapter<GoalsRecycler
     }
 
     public static class WidgetViewHolder extends RecyclerView.ViewHolder {
-        CardView cardView;
-        TextView widgetTitle;
-        TextView widgetLastWorkout;
-        TextView widgetIntervalBlue;
-        TextView widgetPreview;
+        final CardView cardView;
+        final TextView widgetTitle;
+        final TextView widgetLastWorkout;
+        final TextView widgetIntervalBlue;
+        final TextView widgetPreview;
 
         WidgetViewHolder(View itemView) {
             super(itemView);

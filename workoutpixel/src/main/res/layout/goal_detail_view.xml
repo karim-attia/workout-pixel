@@ -28,7 +28,6 @@
 -->
 
         <androidx.cardview.widget.CardView
-            android:id="@+id/card_view_goal_overview"
             style="@style/Card"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -59,7 +58,6 @@
                     />
 
                 <GridLayout
-                    android:id="@+id/grid_layout"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     app:layout_constraintLeft_toRightOf="@id/widget_preview"
@@ -115,7 +113,6 @@
 
                 <TextView
                     style="@style/DetailViewText.Title"
-                    android:id="@+id/connect_widget_title"
                     android:text="@string/connect_widget_title"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -165,7 +162,6 @@
 
                 <TextView
                     style="@style/DetailViewText.Title"
-                    android:id="@+id/past_workouts_title"
                     android:text="@string/past_clicks"
                     />
                 <TextView

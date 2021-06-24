@@ -1,4 +1,4 @@
-package com.karim.workoutpixel.Main;
+package com.karim.workoutpixel.main;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -9,9 +9,10 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.NavigationUI;
 
-import com.karim.workoutpixel.Core.WidgetAlarm;
+import com.karim.workoutpixel.core.WidgetAlarm;
 import com.karim.workoutpixel.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.karim.workoutpixel.database.InteractWithGoalInDb;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "WORKOUT_PIXEL MainActivity";

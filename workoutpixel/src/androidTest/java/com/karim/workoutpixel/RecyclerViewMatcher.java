@@ -9,6 +9,8 @@ import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
 
+import java.util.Objects;
+
 // https://stackoverflow.com/questions/51678563/how-to-access-recyclerview-viewholder-with-espresso
 public class RecyclerViewMatcher {
 
@@ -16,10 +18,6 @@ public class RecyclerViewMatcher {
 
     public RecyclerViewMatcher(int recyclerViewId) {
         this.recyclerViewId = recyclerViewId;
-    }
-
-    public Matcher<View> atPosition(final int position) {
-        return atPositionOnView(position, -1);
     }
 
     public Matcher<View> atPositionOnView(final int position, final int targetViewId) {
@@ -33,7 +31,7 @@ public class RecyclerViewMatcher {
                         idDescription = this.resources.getResourceName(recyclerViewId);
                     } catch (Resources.NotFoundException var4) {
                         idDescription = String.format("%s (resource name not found)",
-                                new Object[] {Integer.valueOf(recyclerViewId) });
+                                recyclerViewId);
                     }
                 }
                 description.appendText("with id: " + idDescription);
@@ -42,9 +40,9 @@ public class RecyclerViewMatcher {
             public boolean matchesSafely(View view) {
                 this.resources = view.getResources();
                 if (childView == null) {
-                    RecyclerView recyclerView = (RecyclerView) view.getRootView().findViewById(recyclerViewId);
+                    RecyclerView recyclerView = view.getRootView().findViewById(recyclerViewId);
                     if (recyclerView != null && recyclerView.getId() == recyclerViewId) {
-                        childView = recyclerView.findViewHolderForAdapterPosition(position).itemView;
+                        childView = Objects.requireNonNull(recyclerView.findViewHolderForAdapterPosition(position)).itemView;
                     } else {
                         return false;
                     }

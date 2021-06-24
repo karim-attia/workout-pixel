@@ -26,7 +26,7 @@
 
             <TextView
                 style="@style/DetailViewText.Title"
-                android:text="No goals defined yet"
+                android:text="@string/no_goals_defined_yet"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
@@ -34,7 +34,7 @@
 
             <TextView
                 style="@style/DetailViewText"
-                android:text="Go to instructions tab to find out how to add a goal."
+                android:text="@string/go_to_instructions_tab"
                 />
 
             </LinearLayout>

@@ -24,7 +24,8 @@
         android:elevation="4dp"
         android:background="@android:color/white"
         android:adjustViewBounds="true"
-        />
+        android:contentDescription="instructions image"
+        tools:ignore="HardcodedText" />
 
     <TextView
         android:id="@+id/instructions_step_title"

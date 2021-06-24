@@ -1,4 +1,4 @@
-package com.karim.workoutpixel.Database;
+package com.karim.workoutpixel.core;
 
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
@@ -14,14 +14,17 @@ import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
-import com.karim.workoutpixel.Core.WorkoutPixelAppWidgetProvider;
-import com.karim.workoutpixel.Main.InteractWithGoalInDb;
-import com.karim.workoutpixel.PastWorkouts.InteractWithPastWorkout;
 import com.karim.workoutpixel.R;
+import com.karim.workoutpixel.database.InteractWithGoalInDb;
+import com.karim.workoutpixel.database.InteractWithPastWorkout;
 
-import static com.karim.workoutpixel.Core.CommonFunctions.*;
-import static com.karim.workoutpixel.Core.CommonFunctions.STATUS_GREEN;
-import static com.karim.workoutpixel.Core.CommonFunctions.getNewStatus;
+import static com.karim.workoutpixel.core.CommonFunctions.STATUS_GREEN;
+import static com.karim.workoutpixel.core.CommonFunctions.STATUS_NONE;
+import static com.karim.workoutpixel.core.CommonFunctions.dateBeautiful;
+import static com.karim.workoutpixel.core.CommonFunctions.getDrawableIntFromStatus;
+import static com.karim.workoutpixel.core.CommonFunctions.getNewStatus;
+import static com.karim.workoutpixel.core.CommonFunctions.timeBeautiful;
+import static com.karim.workoutpixel.core.CommonFunctions.times;
 
 @Entity(tableName = "goals")
 public class Goal {
@@ -38,6 +41,7 @@ public class Goal {
     private long lastWorkout;
     @ColumnInfo(name = "intervalBlue")
     private int intervalBlue;
+    @SuppressWarnings({"FieldMayBeFinal", "CanBeFinal"})
     @ColumnInfo(name = "intervalRed")
     private int intervalRed;
     @ColumnInfo(name = "showDate")
@@ -100,9 +104,11 @@ public class Goal {
     public int getIntervalRed() {
         return intervalRed;
     }
-    public void setIntervalRed(int intervalRed) {
-        this.intervalRed = intervalRed;
-    }
+// --Commented out by Inspection START (23.06.21, 20:29):
+//    public void setIntervalRed(int intervalRed) {
+//        this.intervalRed = intervalRed;
+//    }
+// --Commented out by Inspection STOP (23.06.21, 20:29)
     public boolean getShowDate() {
         return showDate;
     }

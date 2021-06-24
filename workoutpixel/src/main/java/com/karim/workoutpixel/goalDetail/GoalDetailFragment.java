@@ -1,5 +1,6 @@
-package com.karim.workoutpixel.PastWorkouts;
+package com.karim.workoutpixel.goalDetail;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -26,9 +27,10 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.karim.workoutpixel.Database.Goal;
-import com.karim.workoutpixel.Database.PastWorkout;
-import com.karim.workoutpixel.Main.InteractWithGoalInDb;
+import com.karim.workoutpixel.core.Goal;
+import com.karim.workoutpixel.database.InteractWithPastWorkout;
+import com.karim.workoutpixel.database.PastWorkout;
+import com.karim.workoutpixel.database.InteractWithGoalInDb;
 import com.karim.workoutpixel.R;
 
 import org.jetbrains.annotations.NotNull;
@@ -37,16 +39,15 @@ import java.util.List;
 import java.util.Objects;
 
 import static android.widget.LinearLayout.VERTICAL;
-import static com.karim.workoutpixel.Core.CommonFunctions.STATUS_GREEN;
-import static com.karim.workoutpixel.Core.CommonFunctions.dateBeautiful;
-import static com.karim.workoutpixel.Core.CommonFunctions.getDrawableIntFromStatus;
+import static com.karim.workoutpixel.core.CommonFunctions.STATUS_GREEN;
+import static com.karim.workoutpixel.core.CommonFunctions.dateBeautiful;
+import static com.karim.workoutpixel.core.CommonFunctions.getDrawableIntFromStatus;
 
 public class GoalDetailFragment extends Fragment {
     private static final String TAG = "WORKOUT_PIXEL GoalDetailFragment";
     View view;
     int uid;
     Goal goal;
-    CardView goalCardView;
     TextView pastWorkoutsDescription;
     PastWorkoutsRecyclerViewAdapter pastWorkoutsRecyclerViewAdapter;
     private Context context;
@@ -81,8 +82,10 @@ public class GoalDetailFragment extends Fragment {
         super.onCreateOptionsMenu(menu, inflater);
     }
 
+    @SuppressLint("NonConstantResourceId")
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        //noinspection SwitchStatementWithTooFewBranches
         switch (item.getItemId()) {
             case R.id.edit_goal:
                 Bundle bundle = new Bundle();

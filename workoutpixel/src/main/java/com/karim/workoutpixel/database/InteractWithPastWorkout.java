@@ -1,4 +1,4 @@
-package com.karim.workoutpixel.PastWorkouts;
+package com.karim.workoutpixel.database;
 
 import android.app.Application;
 import android.content.Context;
@@ -8,13 +8,11 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 
-import com.karim.workoutpixel.Core.CommonFunctions;
-import com.karim.workoutpixel.Database.AppDatabase;
-import com.karim.workoutpixel.Database.PastWorkout;
-import com.karim.workoutpixel.Database.WorkoutDao;
+import com.karim.workoutpixel.core.CommonFunctions;
 
 import java.util.List;
 
+@SuppressWarnings("unused")
 public class InteractWithPastWorkout extends AndroidViewModel {
     private static final String TAG = "WORKOUT_PIXEL InteractWithClickedWorkouts";
 

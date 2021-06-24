@@ -3,7 +3,7 @@
     <item
         android:id="@+id/instructionsFragment"
         android:icon="@drawable/icon_info"
-        android:title="Instructions"/>
+        android:title="@string/instructions"/>
 
     <item
         android:id="@+id/goalsFragment"

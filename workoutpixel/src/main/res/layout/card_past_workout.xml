@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/app"
-    xmlns:card_view="http://schemas.android.com/apk/res-auto"
     android:id="@+id/card_view_past_workout"
     android:layout_height="wrap_content"
     android:layout_width="match_parent"
@@ -13,19 +11,19 @@
             android:layout_width="72dp"
             android:layout_height="wrap_content"
             android:id="@+id/workout_date"
-            android:text="Date"
-            android:paddingRight="12dp"
+            android:text="@string/date"
+            android:paddingStart="12dp"
             android:layout_gravity="center_vertical"
-            />
+            tools:ignore="RtlSymmetry" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/workout_time"
-            android:text="Time"
-            android:paddingRight="12dp"
+            android:text="@string/time"
+            android:paddingEnd="12dp"
             android:layout_gravity="center_vertical"
-            />
+            tools:ignore="RtlSymmetry" />
 
         <View
             android:layout_width="0dp"
@@ -37,10 +35,9 @@
             android:layout_height="24dp"
             android:padding="0dp"
             android:paddingHorizontal="16dp"
-            android:text="Delete"
             android:id="@+id/workout_delete"
             android:src="@drawable/icon_delete"
             tools:visibility="invisible"
-            />
+            android:contentDescription="@string/delete" />
 
 </LinearLayout>

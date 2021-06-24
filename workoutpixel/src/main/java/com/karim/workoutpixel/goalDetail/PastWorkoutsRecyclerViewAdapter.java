@@ -1,4 +1,4 @@
-package com.karim.workoutpixel.PastWorkouts;
+package com.karim.workoutpixel.goalDetail;
 
 import android.content.Context;
 import android.graphics.Paint;
@@ -7,32 +7,32 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.karim.workoutpixel.Database.Goal;
-import com.karim.workoutpixel.Database.PastWorkout;
-import com.karim.workoutpixel.Main.InteractWithGoalInDb;
 import com.karim.workoutpixel.R;
+import com.karim.workoutpixel.core.Goal;
+import com.karim.workoutpixel.database.InteractWithGoalInDb;
+import com.karim.workoutpixel.database.InteractWithPastWorkout;
+import com.karim.workoutpixel.database.PastWorkout;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.karim.workoutpixel.Core.CommonFunctions.dateBeautiful;
-import static com.karim.workoutpixel.Core.CommonFunctions.timeBeautiful;
+import static com.karim.workoutpixel.core.CommonFunctions.dateBeautiful;
+import static com.karim.workoutpixel.core.CommonFunctions.timeBeautiful;
 
 // RecyclerViewAdapter fills the card view in the MainActivity.
 public class PastWorkoutsRecyclerViewAdapter extends RecyclerView.Adapter<PastWorkoutsRecyclerViewAdapter.PastWorkoutsViewHolder> {
     private static final String TAG = "WORKOUT_PIXEL Past Workouts RVAdapter";
 
-    Context context;
+    final Context context;
     List<PastWorkout> pastWorkouts = new ArrayList<>();
     List<PastWorkout> activeWorkoutsOrderedByWorkoutTime = new ArrayList<>();
-    Goal goal;
+    final Goal goal;
 
     PastWorkoutsRecyclerViewAdapter(Context context, Goal goal) {
         this.context = context;
@@ -111,14 +111,12 @@ public class PastWorkoutsRecyclerViewAdapter extends RecyclerView.Adapter<PastWo
     }
 
     public static class PastWorkoutsViewHolder extends RecyclerView.ViewHolder {
-        LinearLayout cardView;
-        TextView date;
-        TextView time;
-        ImageView delete;
+        final TextView date;
+        final TextView time;
+        final ImageView delete;
 
         PastWorkoutsViewHolder(View itemView) {
             super(itemView);
-            cardView = itemView.findViewById(R.id.card_view_past_workout);
             date = itemView.findViewById(R.id.workout_date);
             time = itemView.findViewById(R.id.workout_time);
             delete = itemView.findViewById(R.id.workout_delete);

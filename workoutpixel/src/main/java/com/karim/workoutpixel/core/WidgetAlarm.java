@@ -1,4 +1,4 @@
-package com.karim.workoutpixel.Core;
+package com.karim.workoutpixel.core;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -8,8 +8,8 @@ import android.util.Log;
 
 import java.text.DateFormat;
 
-import static com.karim.workoutpixel.Core.CommonFunctions.next3Am;
-import static com.karim.workoutpixel.Core.CommonFunctions.saveTimeWithStringToSharedPreferences;
+import static com.karim.workoutpixel.core.CommonFunctions.next3Am;
+import static com.karim.workoutpixel.core.CommonFunctions.saveTimeWithStringToSharedPreferences;
 
 // Responsible to start and stop the alarm that updates the widget at 3:00 every day.
 // The alarm is started when the first widget is created (by WorkoutPixel.onCreate()) or the device restarts (by WorkoutPixel.onUpdate()).

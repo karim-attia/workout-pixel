@@ -59,7 +59,6 @@
                         tools:ignore="ContentDescription" />
 
                     <TextView
-                        android:id="@+id/connect_widget_instructions"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/connect_widget_instructions"
@@ -91,9 +90,7 @@
 
         <TextView
             style="@style/Title"
-            android:text="@string/configuration_title"
-            android:id="@+id/configuration_title"
-        />
+            android:text="@string/configuration_title" />
 
         <TextView
             style="@style/configureActivityMainItem"
@@ -112,7 +109,6 @@
             android:text="@string/interval" />
 
         <LinearLayout
-            android:id="@+id/days"
             style="@style/configureActivityMainItem"
             android:orientation="horizontal">
 

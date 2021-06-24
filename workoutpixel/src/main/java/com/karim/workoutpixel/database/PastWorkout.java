@@ -1,9 +1,11 @@
-package com.karim.workoutpixel.Database;
+package com.karim.workoutpixel.database;
 
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
 import androidx.room.PrimaryKey;
+
+import com.karim.workoutpixel.core.Goal;
 
 @Entity(tableName = "pastWorkouts", foreignKeys = @ForeignKey(entity = Goal.class,
         parentColumns = "uid", childColumns = "widgetUid", onDelete = ForeignKey.CASCADE))
@@ -25,7 +27,6 @@ public class PastWorkout {
         this.widgetUid = widgetUid;
         this.workoutTime = workoutTime;
     }
-
 
     public int getUid() {
         return uid;

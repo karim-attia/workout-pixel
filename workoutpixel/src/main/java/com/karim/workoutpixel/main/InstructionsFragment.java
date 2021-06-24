@@ -1,4 +1,4 @@
-package com.karim.workoutpixel.Main;
+package com.karim.workoutpixel.main;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -20,7 +20,6 @@ import androidx.fragment.app.Fragment;
 
 import com.karim.workoutpixel.R;
 import com.synnapps.carouselview.CarouselView;
-import com.synnapps.carouselview.ImageListener;
 import com.synnapps.carouselview.ViewListener;
 
 import org.jetbrains.annotations.NotNull;
@@ -30,18 +29,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import static com.karim.workoutpixel.Main.InstructionsRecyclerViewAdapter.Instruction;
-
 public class InstructionsFragment extends Fragment {
     private static final String TAG = "WORKOUT_PIXEL InstructionsFragment";
-    private Context context;
-    InstructionsRecyclerViewAdapter instructionsRecyclerViewAdapter;
-    List<Instruction> instructions = new ArrayList<>();
+    final List<Instruction> instructions = new ArrayList<>();
 
     @Override
     public void onAttach(@NotNull Context context) {
         super.onAttach(context);
-        this.context = context;
     }
 
     @Override
@@ -62,42 +56,22 @@ public class InstructionsFragment extends Fragment {
             Log.w(TAG, "requireActivity " + e);
         }
 
-        instructions.add(new Instruction("Reach your goals", R.string.instructions_pitch, R.drawable.instructions_pitch, R.drawable.instructions_pitch));
+        instructions.add(new Instruction(getString(R.string.instructions_intro_title), R.string.instructions_pitch, R.drawable.instructions_pitch, R.drawable.instructions_pitch));
         instructions.add(new Instruction(getString(R.string.step) + " 1", R.string.instructions_step1, R.drawable.step1, R.drawable.instructions_long_click));
         instructions.add(new Instruction(getString(R.string.step) + " 2", R.string.instructions_step2, R.drawable.step2, R.drawable.instructions_widget_selection));
         instructions.add(new Instruction(getString(R.string.step) + " 3", R.string.instructions_step3, R.drawable.step3, R.drawable.instructions_configure_widget));
         instructions.add(new Instruction(getString(R.string.step) + " 4", R.string.instructions_step4, R.drawable.step4, R.drawable.instructions_widget_created));
         instructions.add(new Instruction(getString(R.string.step) + " 5", R.string.instructions_step5, R.drawable.step5, R.drawable.instructions_main_app));
 
-        // CarouselView carouselView = view.findViewById(R.id.carouselView);
-        // carouselView.setPageCount(instructions.size());
-        // carouselView.setImageListener(imageListener);
-
         CarouselView customCarouselView = view.findViewById(R.id.carouselView);
         customCarouselView.setPageCount(instructions.size());
         // set ViewListener for custom view
         customCarouselView.setViewListener(viewListener);
 
-/*
-        RecyclerView recyclerView = view.findViewById(R.id.instructions_recycler_view);
-        recyclerView.setLayoutManager(new LinearLayoutManager(context));
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setNestedScrollingEnabled(false);
-        instructionsRecyclerViewAdapter = new InstructionsRecyclerViewAdapter(context, instructions);
-        recyclerView.setAdapter(instructionsRecyclerViewAdapter);
-*/
-
         return view;
     }
 
-    ImageListener imageListener = new ImageListener() {
-        @Override
-        public void setImageForPosition(int position, ImageView imageView) {
-            imageView.setImageResource(instructions.get(position).getBackupImage());
-        }
-    };
-
-    ViewListener viewListener = position -> {
+    final ViewListener viewListener = position -> {
         View view = getLayoutInflater().inflate(R.layout.carousel_instruction_step, null);
         //set view attributes here
         TextView title;
@@ -132,4 +106,34 @@ public class InstructionsFragment extends Fragment {
 
         return view;
     };
+
+    public static class Instruction {
+        final String title;
+        final int text;
+        final int gif;
+        final int backupImage;
+
+        Instruction(String title, int text, int gif, int backupImage) {
+            this.title = title;
+            this.text = text;
+            this.gif = gif;
+            this.backupImage  = backupImage;
+        }
+
+        public String getTitle() {
+            return title;
+        }
+
+        public int getText() {
+            return text;
+        }
+
+        public int getGif() {
+            return gif;
+        }
+
+        public int getBackupImage() {
+            return backupImage;
+        }
+    }
 }

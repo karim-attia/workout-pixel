@@ -1,4 +1,4 @@
-package com.karim.workoutpixel.Core;
+package com.karim.workoutpixel.core;
 
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
@@ -6,8 +6,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
-import com.karim.workoutpixel.Database.Goal;
-import com.karim.workoutpixel.Main.InteractWithGoalInDb;
+import com.karim.workoutpixel.configure.ConfigureActivity;
+import com.karim.workoutpixel.database.InteractWithGoalInDb;
 
 import java.util.List;
 
@@ -41,7 +41,7 @@ public class WorkoutPixelAppWidgetProvider extends AppWidgetProvider {
         // Do this when the alarm hits
         if (ACTION_ALARM_UPDATE.equals(intent.getAction())) {
             CommonFunctions.saveTimeWithStringToSharedPreferences(context, "Last Alarm");
-            List<Goal> goalList = InteractWithGoalInDb.loadWidgetsWithValidAppWidgetId(context);
+            List<Goal> goalList = InteractWithGoalInDb.loadAllGoals(context);
             for (Goal goal : goalList) {
                 goal.updateWidgetBasedOnStatus(context);
             }
@@ -63,8 +63,8 @@ public class WorkoutPixelAppWidgetProvider extends AppWidgetProvider {
 
         // TODO: Understand
         // TODO: Replaced iteration through appWidgetIds with data from DB. Insert check that this is the same and fix if not. Maybe before it only iterated through some widgets. But I don't think it matters.
-        // TODO: Could check with CommonFunctions.widgetsWithValidAppWidgetId whether they are the same and at least log if not,
-        List<Goal> goalList = InteractWithGoalInDb.loadWidgetsWithValidAppWidgetId(context);
+        // TODO: Could check with CommonFunctions.widgetsWithValidAppWidgetId whether they are the same and at least log if not.
+        List<Goal> goalList = InteractWithGoalInDb.loadGoalsWithValidAppWidgetId(context);
         for (Goal goal : goalList) {
             // Tell the AppWidgetManager to perform an update on the current app widget
             Log.d(TAG, "ON_UPDATE: " + goal.debugString());
@@ -108,7 +108,7 @@ public class WorkoutPixelAppWidgetProvider extends AppWidgetProvider {
         if (CommonFunctions.appWidgetIds(context).length == 0) {
             // stop alarm
             Log.v(TAG, "STOP_ALARM");
-            WidgetAlarm.startAlarm(context);
+            WidgetAlarm.stopAlarm(context);
             Log.v(TAG, "STOPPED_ALARM");
         }
     }

@@ -4,15 +4,16 @@ import org.testng.annotations.Test;
 
 import java.util.Calendar;
 
-import static com.karim.workoutpixel.Core.CommonFunctions.STATUS_BLUE;
-import static com.karim.workoutpixel.Core.CommonFunctions.STATUS_GREEN;
-import static com.karim.workoutpixel.Core.CommonFunctions.STATUS_RED;
-import static com.karim.workoutpixel.Core.CommonFunctions.getNewStatus;
-import static com.karim.workoutpixel.Core.CommonFunctions.intervalInMilliseconds;
+import static com.karim.workoutpixel.core.CommonFunctions.STATUS_BLUE;
+import static com.karim.workoutpixel.core.CommonFunctions.STATUS_GREEN;
+import static com.karim.workoutpixel.core.CommonFunctions.STATUS_RED;
+import static com.karim.workoutpixel.core.CommonFunctions.getNewStatus;
+import static com.karim.workoutpixel.core.CommonFunctions.intervalInMilliseconds;
 import static org.junit.Assert.assertEquals;
 
+@SuppressWarnings("UnnecessaryLocalVariable")
 public class TestNewStatus {
-    long now = System.currentTimeMillis();
+    final long now = System.currentTimeMillis();
 
     @Test
     public void testNewStatusGreen () {

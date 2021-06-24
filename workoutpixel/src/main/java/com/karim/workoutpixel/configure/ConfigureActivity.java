@@ -1,4 +1,4 @@
-package com.karim.workoutpixel.Core;
+package com.karim.workoutpixel.configure;
 
 import android.appwidget.AppWidgetManager;
 import android.content.Context;
@@ -21,16 +21,19 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 
-import com.karim.workoutpixel.Database.Goal;
-import com.karim.workoutpixel.Main.InteractWithGoalInDb;
+import com.karim.workoutpixel.core.CommonFunctions;
+import com.karim.workoutpixel.core.WorkoutPixelAppWidgetProvider;
+import com.karim.workoutpixel.core.Goal;
+import com.karim.workoutpixel.database.InteractWithGoalInDb;
 import com.karim.workoutpixel.R;
 
 import java.util.List;
+import java.util.Objects;
 
-import static com.karim.workoutpixel.Core.CommonFunctions.STATUS_NONE;
-import static com.karim.workoutpixel.Core.CommonFunctions.dateBeautiful;
-import static com.karim.workoutpixel.Core.CommonFunctions.getDrawableIntFromStatus;
-import static com.karim.workoutpixel.Core.CommonFunctions.timeBeautiful;
+import static com.karim.workoutpixel.core.CommonFunctions.STATUS_NONE;
+import static com.karim.workoutpixel.core.CommonFunctions.dateBeautiful;
+import static com.karim.workoutpixel.core.CommonFunctions.getDrawableIntFromStatus;
+import static com.karim.workoutpixel.core.CommonFunctions.timeBeautiful;
 
 /**
  * The configuration screen for the {@link WorkoutPixelAppWidgetProvider WidgetFunctions} AppWidget.
@@ -91,7 +94,11 @@ public class ConfigureActivity extends AppCompatActivity {
             }
 
             // Disable the back button in the app bar.
-            getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+            try {
+                Objects.requireNonNull(this.getSupportActionBar()).setDisplayHomeAsUpEnabled(false);
+            } catch (Exception e) {
+                Log.w(TAG, "requireActivity " + e);
+            }
         }
 
         // Get the Uid of the goal that should be configured
@@ -179,7 +186,7 @@ public class ConfigureActivity extends AppCompatActivity {
         // Setup reconnect widget card
         if (isFirstConfigure) {
             CommonFunctions.executorService.execute(() -> {
-                List<Goal> widgetsWithoutValidAppwidgetId = InteractWithGoalInDb.loadWidgetsWithoutValidAppWidgetId(context);
+                List<Goal> widgetsWithoutValidAppwidgetId = InteractWithGoalInDb.loadGoalsWithoutValidAppWidgetId(context);
                 if (widgetsWithoutValidAppwidgetId.size() > 0) {
                     CardView connectWidgetView = findViewById(R.id.connect_widget);
                     connectWidgetView.setVisibility(View.VISIBLE);
@@ -219,7 +226,7 @@ public class ConfigureActivity extends AppCompatActivity {
     }
 
     // OnClickListener for button
-    View.OnClickListener updateWidgetOnClickListener = new View.OnClickListener() {
+    final View.OnClickListener updateWidgetOnClickListener = new View.OnClickListener() {
         public void onClick(View v) {
 
             // When the button is clicked, store the string locally

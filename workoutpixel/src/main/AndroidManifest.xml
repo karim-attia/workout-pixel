@@ -13,7 +13,7 @@
         android:fullBackupContent="false">
         <!--        android:theme="@style/Theme.AppCompat.Light.NoActionBar"-->
 
-        <receiver android:name="com.karim.workoutpixel.Core.WorkoutPixelAppWidgetProvider">
+        <receiver android:name="com.karim.workoutpixel.core.WorkoutPixelAppWidgetProvider">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
@@ -26,7 +26,7 @@
                 android:resource="@xml/workout_pixel_info" />
         </receiver>
 
-        <activity android:name="com.karim.workoutpixel.Main.MainActivity"
+        <activity android:name="com.karim.workoutpixel.main.MainActivity"
             android:label="Workout Pixel">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -34,9 +34,9 @@
             </intent-filter>
         </activity>
 
-        <activity android:name="com.karim.workoutpixel.Core.ConfigureActivity"
+        <activity android:name="com.karim.workoutpixel.configure.ConfigureActivity"
             android:label="Add a widget for your goal"
-            android:parentActivityName="com.karim.workoutpixel.Main.MainActivity"
+            android:parentActivityName="com.karim.workoutpixel.main.MainActivity"
             android:theme="@style/ConfigureTheme"
             >
             <intent-filter>

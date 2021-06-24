@@ -1,4 +1,4 @@
-package com.karim.workoutpixel.Core;
+package com.karim.workoutpixel.core;
 
 import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
@@ -6,8 +6,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
 
-import com.karim.workoutpixel.Database.Goal;
-import com.karim.workoutpixel.Main.InteractWithGoalInDb;
+import com.karim.workoutpixel.database.InteractWithGoalInDb;
 import com.karim.workoutpixel.R;
 
 import java.time.Instant;
@@ -102,9 +101,11 @@ public class CommonFunctions {
         return (long) MILLISECONDS_IN_A_DAY * intervalInDays;
     }
 
-    public static int intervalInDays(long intervalInMilliseconds) {
-        return (int) (intervalInMilliseconds / MILLISECONDS_IN_A_DAY);
-    }
+// --Commented out by Inspection START (23.06.21, 20:28):
+//    public static int intervalInDays(long intervalInMilliseconds) {
+//        return (int) (intervalInMilliseconds / MILLISECONDS_IN_A_DAY);
+//    }
+// --Commented out by Inspection STOP (23.06.21, 20:28)
 
     /**
      * Match status to background color
@@ -176,43 +177,36 @@ public class CommonFunctions {
     }
 
     public static List<Goal> goalsWithoutValidAppWidgetId(Context context, List<Goal> goals) {
-        List<Goal> widgetsWithoutValidAppwidgetId = goals.stream().filter(widget -> Arrays.stream(appWidgetIds(context)).noneMatch(i -> widget.getAppWidgetId() == null || i == widget.getAppWidgetId())).collect(Collectors.toList());
-/*
-        Log.d(TAG, "widgetsWithoutValidAppwidgetId");
-        Log.d(TAG, "appWidgetIds(context): " + Arrays.toString(appWidgetIds(context)));
-        for (Widget widget: widgets) {
-            Log.d(TAG, "widgets -> AppWidgetId: " + widget.getAppWidgetId() + " Title: " + widget.getTitle() + "AppWidgetIds contain it: " + Arrays.stream(appWidgetIds(context)).anyMatch(i -> i == widget.getAppWidgetId()));
-        }
-        for (Widget widget: widgetsWithoutValidAppwidgetId) {
-            Log.d(TAG, "widgetsWithoutValidAppwidgetId -> AppWidgetId: " + widget.getAppWidgetId() + " Title: " + widget.getTitle());
-        }
-*/
-        return widgetsWithoutValidAppwidgetId;
+        return goals.stream().filter(widget -> Arrays.stream(appWidgetIds(context)).noneMatch(i -> widget.getAppWidgetId() == null || i == widget.getAppWidgetId())).collect(Collectors.toList());
     }
 
-    // Not needed anymore if appWidgetId is set to null on deletion. Could be used to check consistency.
-    public static List<Goal> widgetsWithValidAppWidgetId(Context context, List<Goal> goals) {
+// --Commented out by Inspection START (23.06.21, 20:28):
+//    // Not needed anymore if appWidgetId is set to null on deletion. Could be used to check consistency.
+//    public static List<Goal> widgetsWithValidAppWidgetId(Context context, List<Goal> goals) {
+//
+//        List<Goal> widgetsWithValidAppwidgetId = goals.stream().filter(widget -> Arrays.stream(appWidgetIds(context)).anyMatch(i -> !(widget.getAppWidgetId() == null) && i == widget.getAppWidgetId())).collect(Collectors.toList());
+///*
+//        Log.d(TAG, "widgetsWithValidAppwidgetId");
+//        Log.d(TAG, "appWidgetIds(context): " + Arrays.toString(appWidgetIds(context)));
+//        for (Widget widget: widgets) {
+//            Log.d(TAG, "widgets -> AppWidgetId: " + widget.getAppWidgetId() + " Title: " + widget.getTitle() + "AppWidgetIds contain it: " + Arrays.stream(appWidgetIds(context)).anyMatch(i -> i == widget.getAppWidgetId()));
+//        }
+//        for (Widget widget: widgetsWithValidAppwidgetId) {
+//            Log.d(TAG, "widgetsWithValidAppwidgetId -> AppWidgetId: " + widget.getAppWidgetId() + " Title: " + widget.getTitle());
+//        }
+//*/
+//        return widgetsWithValidAppwidgetId;
+//    }
+// --Commented out by Inspection STOP (23.06.21, 20:28)
 
-        List<Goal> widgetsWithValidAppwidgetId = goals.stream().filter(widget -> Arrays.stream(appWidgetIds(context)).anyMatch(i -> !(widget.getAppWidgetId() == null) && i == widget.getAppWidgetId())).collect(Collectors.toList());
-/*
-        Log.d(TAG, "widgetsWithValidAppwidgetId");
-        Log.d(TAG, "appWidgetIds(context): " + Arrays.toString(appWidgetIds(context)));
-        for (Widget widget: widgets) {
-            Log.d(TAG, "widgets -> AppWidgetId: " + widget.getAppWidgetId() + " Title: " + widget.getTitle() + "AppWidgetIds contain it: " + Arrays.stream(appWidgetIds(context)).anyMatch(i -> i == widget.getAppWidgetId()));
-        }
-        for (Widget widget: widgetsWithValidAppwidgetId) {
-            Log.d(TAG, "widgetsWithValidAppwidgetId -> AppWidgetId: " + widget.getAppWidgetId() + " Title: " + widget.getTitle());
-        }
-*/
-        return widgetsWithValidAppwidgetId;
-    }
-
-    // Not needed anymore if appWidgetId is set to null on deletion. Could be used to check consistency.
-    public static boolean doesWidgetHaveValidAppWidgetId(Context context, Goal goal) {
-        boolean doesWidgetHaveValidAppWidgetId = Arrays.stream(appWidgetIds(context)).anyMatch(i -> goal.getAppWidgetId() == null || i == goal.getAppWidgetId());
-        Log.d(TAG, "doesWidgetHaveValidAppWidgetId " + goal.debugString() + doesWidgetHaveValidAppWidgetId);
-        return doesWidgetHaveValidAppWidgetId;
-    }
+// --Commented out by Inspection START (23.06.21, 20:27):
+//    // Not needed anymore if appWidgetId is set to null on deletion. Could be used to check consistency.
+//    public static boolean doesWidgetHaveValidAppWidgetId(Context context, Goal goal) {
+//        boolean doesWidgetHaveValidAppWidgetId = Arrays.stream(appWidgetIds(context)).anyMatch(i -> goal.getAppWidgetId() == null || i == goal.getAppWidgetId());
+//        Log.d(TAG, "doesWidgetHaveValidAppWidgetId " + goal.debugString() + doesWidgetHaveValidAppWidgetId);
+//        return doesWidgetHaveValidAppWidgetId;
+//    }
+// --Commented out by Inspection STOP (23.06.21, 20:27)
 
     // Sets all appWidgetIds of goals that are not valid to null. Maybe later even reassign some to unassigned widgets.
     public static void cleanGoals(Context context, List<Goal> goals) {

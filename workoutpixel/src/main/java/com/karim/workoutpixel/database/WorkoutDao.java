@@ -1,4 +1,4 @@
-package com.karim.workoutpixel.Database;
+package com.karim.workoutpixel.database;
 
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
@@ -7,6 +7,8 @@ import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 import androidx.room.Update;
+
+import com.karim.workoutpixel.core.Goal;
 
 import java.util.List;
 
@@ -28,9 +30,12 @@ public interface WorkoutDao {
     void updatePastWorkout(PastWorkout pastWorkout);
 
     // Widgets
-    // Get widget by appWidgetId
-    @Query("SELECT * FROM goals WHERE appWidgetId=:appWidgetId")
-    Goal loadGoalByAppWidgetId(int appWidgetId);
+
+// --Commented out by Inspection START (24.06.21, 12:21):
+//    // Get widget by appWidgetId
+//    @Query("SELECT * FROM goals WHERE appWidgetId=:appWidgetId")
+//    Goal loadGoalByAppWidgetId(int appWidgetId);
+// --Commented out by Inspection STOP (24.06.21, 12:21)
 
     @Query("SELECT * FROM goals WHERE uid=:uid")
     Goal loadGoalByUid(int uid);
@@ -45,10 +50,6 @@ public interface WorkoutDao {
     // Get all widgets
     @Query("SELECT * FROM goals")
     List<Goal> loadAllGoals();
-
-    // Get widget title by appWidgetId
-    @Query("SELECT title FROM goals WHERE appWidgetId=:appWidgetId LIMIT 1")
-    LiveData<String> loadWidgetTitle(int appWidgetId);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE, entity = Goal.class)
     long insertGoal(Goal goal);

@@ -1,4 +1,4 @@
-package com.karim.workoutpixel.Main;
+package com.karim.workoutpixel.main;
 
 import android.app.Activity;
 import android.widget.CheckBox;
@@ -32,6 +32,7 @@ import static androidx.test.platform.app.InstrumentationRegistry.getInstrumentat
 import static com.karim.workoutpixel.TestUtils.date;
 import static com.karim.workoutpixel.TestUtils.time;
 
+@SuppressWarnings("unused")
 public class MainActivityTest {
     static final String TAG = "MainActivityTest";
 
@@ -45,7 +46,8 @@ public class MainActivityTest {
         getView(R.id.widget_preview).perform(click());
         getView(R.id.widget_last_workout).check(matches(withText(date)));
         getView(R.id.widget_last_workout).check(matches(withText(date)));
-        getView(R.id.widget_edit_text).perform(click());
+        getView(R.id.card_view_goal).perform(click());
+        getView(R.id.edit_goal).perform(click());
         CheckBox checkBox = getActivityInstance().findViewById(R.id.showDateCheckbox);
         if (checkBox.isChecked()) {
             onView(withId(R.id.showDateCheckbox)).perform(scrollTo(), click());
@@ -59,20 +61,23 @@ public class MainActivityTest {
         onView(withId(R.id.appwidget_text)).perform(clearText(), typeText(string1));
         onView(isRoot()).perform(ViewActions.closeSoftKeyboard());
         onView(withId(R.id.add_button)).perform(click());
+        // Another back missing
         getView(R.id.widget_title).check(matches(withText(string1)));
-        getView(R.id.widget_edit_text).perform(click());
+        getView(R.id.card_view_goal).perform(click());
+        getView(R.id.edit_goal).perform(click());
         onView(withId(R.id.appwidget_text)).perform(clearText(), typeText(string2));
         onView(withId(R.id.widget_preview)).check(matches(withText(string2)));
         onView(withId(R.id.appwidget_text)).perform(clearText(), typeText(string2));
         onView(isRoot()).perform(ViewActions.closeSoftKeyboard());
         onView(withId(R.id.add_button)).perform(click());
+        // Another back missing
         getView(R.id.widget_title).check(matches(withText(string2)));
     }
 
     @Test
     public void lastWorkout() {
         getView(R.id.widget_preview).perform(click());
-        getView(R.id.widget_past_workout_text).perform(click());
+        getView(R.id.card_view_goal).perform(click());
         getView(R.id.workout_date).check(matches(withText(date)));
         getView(R.id.workout_time).check(matches(withText(time)));
     }
@@ -82,7 +87,7 @@ public class MainActivityTest {
         // Get item count from recyclerView in PastWorkouts Activity.
         int itemCount = 2;
 
-        getView(R.id.widget_past_workout_text).perform(click());
+        getView(R.id.card_view_goal).perform(click());
         for (int i = 0; i < itemCount; i++) {
             getView(R.id.workout_delete, i).perform(click());
         }
@@ -103,12 +108,10 @@ public class MainActivityTest {
     private Activity getActivityInstance() {
         final Activity[] currentActivity = {null};
 
-        getInstrumentation().runOnMainSync(new Runnable() {
-            public void run() {
-                Collection<Activity> resumedActivity = ActivityLifecycleMonitorRegistry.getInstance().getActivitiesInStage(Stage.RESUMED);
-                Iterator<Activity> it = resumedActivity.iterator();
-                currentActivity[0] = it.next();
-            }
+        getInstrumentation().runOnMainSync(() -> {
+            Collection<Activity> resumedActivity = ActivityLifecycleMonitorRegistry.getInstance().getActivitiesInStage(Stage.RESUMED);
+            Iterator<Activity> it = resumedActivity.iterator();
+            currentActivity[0] = it.next();
         });
 
         return currentActivity[0];

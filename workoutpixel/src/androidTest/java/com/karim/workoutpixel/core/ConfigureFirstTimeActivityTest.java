@@ -1,4 +1,4 @@
-package com.karim.workoutpixel.Core;
+package com.karim.workoutpixel.core;
 
 import android.app.Activity;
 import android.appwidget.AppWidgetManager;
@@ -10,6 +10,7 @@ import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 
 import com.karim.workoutpixel.R;
+import com.karim.workoutpixel.configure.ConfigureActivity;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -26,7 +27,7 @@ import static com.karim.workoutpixel.TestUtils.time;
 
 public class ConfigureFirstTimeActivityTest {
 
-    static Intent intent;
+    static final Intent intent;
     static {
         intent = new Intent(ApplicationProvider.getApplicationContext(), ConfigureActivity.class);
         Bundle bundle = new Bundle();
@@ -35,7 +36,7 @@ public class ConfigureFirstTimeActivityTest {
     }
 
     @Rule
-    public ActivityScenarioRule<Activity> activityScenarioRule = new ActivityScenarioRule<>(intent);
+    public final ActivityScenarioRule<Activity> activityScenarioRule = new ActivityScenarioRule<>(intent);
 
     @Test
     public void checkPreview() {
@@ -43,9 +44,9 @@ public class ConfigureFirstTimeActivityTest {
         onView(withId(R.id.appwidget_text)).perform(typeText("This is a test."));
         onView(withId(R.id.widget_preview)).check(matches(withText("This is a test.")));
         activityScenarioRule.getScenario().onActivity(activity -> {
-            CheckBox checkBox = (CheckBox) activity.findViewById(R.id.showDateCheckbox);
+            CheckBox checkBox = activity.findViewById(R.id.showDateCheckbox);
             if(checkBox.isChecked()) {onView(withId(R.id.showDateCheckbox)).perform(scrollTo(), click());}
-            checkBox = (CheckBox) activity.findViewById(R.id.showTimeCheckbox);
+            checkBox = activity.findViewById(R.id.showTimeCheckbox);
             if(checkBox.isChecked()) {onView(withId(R.id.showTimeCheckbox)).perform(scrollTo(), click());}
         });
         onView(withId(R.id.showDateCheckbox)).perform(scrollTo(), click());

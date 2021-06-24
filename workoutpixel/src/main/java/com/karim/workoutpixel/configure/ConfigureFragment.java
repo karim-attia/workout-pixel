@@ -1,4 +1,4 @@
-package com.karim.workoutpixel.Core;
+package com.karim.workoutpixel.configure;
 
 import android.appwidget.AppWidgetManager;
 import android.content.Context;
@@ -27,8 +27,9 @@ import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
-import com.karim.workoutpixel.Database.Goal;
-import com.karim.workoutpixel.Main.InteractWithGoalInDb;
+import com.karim.workoutpixel.core.CommonFunctions;
+import com.karim.workoutpixel.core.Goal;
+import com.karim.workoutpixel.database.InteractWithGoalInDb;
 import com.karim.workoutpixel.R;
 
 import org.jetbrains.annotations.NotNull;
@@ -38,10 +39,10 @@ import java.util.Objects;
 
 import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
-import static com.karim.workoutpixel.Core.CommonFunctions.STATUS_NONE;
-import static com.karim.workoutpixel.Core.CommonFunctions.dateBeautiful;
-import static com.karim.workoutpixel.Core.CommonFunctions.getDrawableIntFromStatus;
-import static com.karim.workoutpixel.Core.CommonFunctions.timeBeautiful;
+import static com.karim.workoutpixel.core.CommonFunctions.STATUS_NONE;
+import static com.karim.workoutpixel.core.CommonFunctions.dateBeautiful;
+import static com.karim.workoutpixel.core.CommonFunctions.getDrawableIntFromStatus;
+import static com.karim.workoutpixel.core.CommonFunctions.timeBeautiful;
 
 public class ConfigureFragment extends Fragment {
     private static final String TAG = "WORKOUT_PIXEL CONFIGURE FRAGMENT";
@@ -212,7 +213,7 @@ public class ConfigureFragment extends Fragment {
         // Setup reconnect widget card
         if (isFirstConfigure) {
             CommonFunctions.executorService.execute(() -> {
-                List<Goal> widgetsWithoutValidAppwidgetId = InteractWithGoalInDb.loadWidgetsWithoutValidAppWidgetId(context);
+                List<Goal> widgetsWithoutValidAppwidgetId = InteractWithGoalInDb.loadGoalsWithoutValidAppWidgetId(context);
                 if (widgetsWithoutValidAppwidgetId.size() > 0) {
                     CardView connectWidgetView = view.findViewById(R.id.connect_widget);
                     connectWidgetView.setVisibility(View.VISIBLE);
@@ -254,7 +255,7 @@ public class ConfigureFragment extends Fragment {
     }
 
     // OnClickListener for button
-    View.OnClickListener updateWidgetOnClickListener = new View.OnClickListener() {
+    final View.OnClickListener updateWidgetOnClickListener = new View.OnClickListener() {
         public void onClick(View v) {
 
             // When the button is clicked, store the string locally
@@ -289,9 +290,9 @@ public class ConfigureFragment extends Fragment {
         if (isFirstConfigure) {
             Intent resultValue = new Intent();
             resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, goal.getAppWidgetId());
-            getActivity().setResult(RESULT_OK, resultValue);
+            requireActivity().setResult(RESULT_OK, resultValue);
             Toast.makeText(context, "Widget created. Click on it to register a workout.", Toast.LENGTH_LONG).show();
-            getActivity().finishAndRemoveTask();
+            requireActivity().finishAndRemoveTask();
         } else {
             Toast.makeText(context, "Widget updated.", Toast.LENGTH_LONG).show();
             Navigation.findNavController(view).navigateUp();
