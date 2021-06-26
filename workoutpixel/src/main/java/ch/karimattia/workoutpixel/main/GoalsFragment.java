@@ -98,6 +98,7 @@ public class GoalsFragment extends Fragment {
         }
         // TODO: Move to activity?
         CommonFunctions.cleanGoals(context, goals);
+        // TODO Update all goals?
     }
 
 }

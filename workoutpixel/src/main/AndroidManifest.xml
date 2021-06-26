@@ -9,8 +9,9 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme"
-        android:fullBackupContent="false">
-        <!--        android:theme="@style/Theme.AppCompat.Light.NoActionBar"-->
+        android:fullBackupContent="false"
+
+        >
 
         <receiver android:name="ch.karimattia.workoutpixel.core.WorkoutPixelAppWidgetProvider">
             <intent-filter>
