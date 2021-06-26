@@ -215,6 +215,8 @@ public class ConfigureFragment extends Fragment {
             CommonFunctions.executorService.execute(() -> {
                 List<Goal> widgetsWithoutValidAppwidgetId = InteractWithGoalInDb.loadGoalsWithoutValidAppWidgetId(context);
                 if (widgetsWithoutValidAppwidgetId.size() > 0) {
+                    TextView configurationConnectHintTitle = view.findViewById(R.id.configuration_connect_hint_title);
+                    configurationConnectHintTitle.setVisibility(View.VISIBLE);
                     CardView connectWidgetView = view.findViewById(R.id.connect_widget);
                     connectWidgetView.setVisibility(View.VISIBLE);
                     Spinner connectSpinner = view.findViewById(R.id.connect_spinner);
@@ -235,8 +237,8 @@ public class ConfigureFragment extends Fragment {
                         }
                     });
 
-                    TextView configuration_widget_setup_title = view.findViewById(R.id.configuration_widget_setup_title);
-                    configuration_widget_setup_title.setText(R.string.configuration_widget_setup_title_new_goal);
+                    TextView configurationWidgetSetupTitle = view.findViewById(R.id.configuration_widget_setup_title);
+                    configurationWidgetSetupTitle.setText(R.string.configuration_widget_setup_title_new_goal);
                 }
             });
         }

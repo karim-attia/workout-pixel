@@ -10,7 +10,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="16dp">
+        android:paddingVertical="12dp"
+        android:paddingHorizontal="16dp"
+        >
 
         <TextView
             style="@style/Title"
@@ -28,6 +30,8 @@
             android:id="@+id/configuration_connect_hint_title"
             style="@style/Title"
             android:text="@string/configuration_connect_hint_title"
+            android:visibility="gone"
+            tools:visibility="visible"
             />
 
         <androidx.cardview.widget.CardView
@@ -39,6 +43,7 @@
             android:visibility="gone"
             tools:visibility="visible"
             card_view:cardCornerRadius="2dp"
+            android:layout_marginTop="12dp"
             >
 
             <LinearLayout

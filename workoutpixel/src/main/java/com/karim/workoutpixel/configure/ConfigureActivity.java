@@ -14,12 +14,12 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 
 import com.karim.workoutpixel.R;
 import com.karim.workoutpixel.core.CommonFunctions;
@@ -188,7 +188,9 @@ public class ConfigureActivity extends AppCompatActivity {
             CommonFunctions.executorService.execute(() -> {
                 List<Goal> widgetsWithoutValidAppwidgetId = InteractWithGoalInDb.loadGoalsWithoutValidAppWidgetId(context);
                 if (widgetsWithoutValidAppwidgetId.size() > 0) {
-                    LinearLayout connectWidgetView = findViewById(R.id.connect_widget);
+                    TextView configurationConnectHintTitle = findViewById(R.id.configuration_connect_hint_title);
+                    configurationConnectHintTitle.setVisibility(View.VISIBLE);
+                    CardView connectWidgetView = findViewById(R.id.connect_widget);
                     connectWidgetView.setVisibility(View.VISIBLE);
                     Spinner connectSpinner = findViewById(R.id.connect_spinner);
                     ArrayAdapter<Goal> adapter = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item, widgetsWithoutValidAppwidgetId);
@@ -207,6 +209,9 @@ public class ConfigureActivity extends AppCompatActivity {
                             connectSpinner.setBackgroundColor(Color.RED);
                         }
                     });
+
+                    TextView configuration_widget_setup_title = findViewById(R.id.configuration_widget_setup_title);
+                    configuration_widget_setup_title.setText(R.string.configuration_widget_setup_title_new_goal);
                 }
             });
         }
