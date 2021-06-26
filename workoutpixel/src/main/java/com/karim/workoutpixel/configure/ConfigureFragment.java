@@ -234,6 +234,9 @@ public class ConfigureFragment extends Fragment {
                             connectSpinner.setBackgroundColor(Color.RED);
                         }
                     });
+
+                    TextView configuration_widget_setup_title = view.findViewById(R.id.configuration_widget_setup_title);
+                    configuration_widget_setup_title.setText(R.string.configuration_widget_setup_title_new_goal);
                 }
             });
         }

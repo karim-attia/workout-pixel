@@ -14,18 +14,18 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.cardview.widget.CardView;
 
-import com.karim.workoutpixel.core.CommonFunctions;
-import com.karim.workoutpixel.core.WorkoutPixelAppWidgetProvider;
-import com.karim.workoutpixel.core.Goal;
-import com.karim.workoutpixel.database.InteractWithGoalInDb;
 import com.karim.workoutpixel.R;
+import com.karim.workoutpixel.core.CommonFunctions;
+import com.karim.workoutpixel.core.Goal;
+import com.karim.workoutpixel.core.WorkoutPixelAppWidgetProvider;
+import com.karim.workoutpixel.database.InteractWithGoalInDb;
 
 import java.util.List;
 import java.util.Objects;
@@ -188,7 +188,7 @@ public class ConfigureActivity extends AppCompatActivity {
             CommonFunctions.executorService.execute(() -> {
                 List<Goal> widgetsWithoutValidAppwidgetId = InteractWithGoalInDb.loadGoalsWithoutValidAppWidgetId(context);
                 if (widgetsWithoutValidAppwidgetId.size() > 0) {
-                    CardView connectWidgetView = findViewById(R.id.connect_widget);
+                    LinearLayout connectWidgetView = findViewById(R.id.connect_widget);
                     connectWidgetView.setVisibility(View.VISIBLE);
                     Spinner connectSpinner = findViewById(R.id.connect_spinner);
                     ArrayAdapter<Goal> adapter = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item, widgetsWithoutValidAppwidgetId);

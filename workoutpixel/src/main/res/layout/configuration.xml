@@ -24,7 +24,12 @@
             android:text="@string/instructions_add_widget"
             android:layout_marginBottom="16dp"/>
 
-<!--        TODO: Same card stuff as in goal detail view-->
+        <TextView
+            android:id="@+id/configuration_connect_hint_title"
+            style="@style/Title"
+            android:text="@string/configuration_connect_hint_title"
+            />
+
         <androidx.cardview.widget.CardView
             android:id="@+id/connect_widget"
             android:layout_width="match_parent"
@@ -89,6 +94,7 @@
         </androidx.cardview.widget.CardView>
 
         <TextView
+            android:id="@+id/configuration_widget_setup_title"
             style="@style/Title"
             android:text="@string/configuration_title" />
 

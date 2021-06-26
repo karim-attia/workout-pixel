@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
@@ -226,4 +227,15 @@ public class CommonFunctions {
         else if (times > 1) {return times + " times";}
         else return "INVALID NUMBER OF TIMES";
     }
+
+    public static List<Goal> testData() {
+        List<Goal> testData = new ArrayList<>();
+        testData.add(new Goal(null, "Push ups", today3Am()-intervalInMilliseconds(1), 2,2, false, false, STATUS_GREEN));
+        testData.add(new Goal(null, "Back exercises", today3Am()-intervalInMilliseconds(2), 7,2, true, false, STATUS_GREEN));
+        testData.add(new Goal(null, "Visualize your day", today3Am()+Math.round(intervalInMilliseconds(1)*0.259), 1,2, false, true, STATUS_GREEN));
+        testData.add(new Goal(null, "Morning walk", today3Am(), 1,2, false, false, STATUS_GREEN));
+        testData.add(new Goal(null, "Water plants", 1624370642536L-intervalInMilliseconds(7), 7,2, true, false, STATUS_BLUE));
+        return testData;
+    }
+
 }

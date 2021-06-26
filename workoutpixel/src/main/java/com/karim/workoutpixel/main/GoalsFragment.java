@@ -17,8 +17,8 @@ import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.karim.workoutpixel.core.Goal;
 import com.karim.workoutpixel.R;
+import com.karim.workoutpixel.core.Goal;
 import com.karim.workoutpixel.database.InteractWithGoalInDb;
 
 import org.jetbrains.annotations.NotNull;
@@ -82,6 +82,7 @@ public class GoalsFragment extends Fragment {
         // Observe the LiveData, passing this activity as the LifecycleOwner and the observer.
         LiveData<List<Goal>> liveData = InteractWithGoalInDb.loadAllGoalsLiveData(context.getApplicationContext());
         liveData.observe(getViewLifecycleOwner(), goals -> {
+            //  goalsRecyclerViewAdapter.setData(testData());
             goalsRecyclerViewAdapter.setData(goals);
             recyclerView.setItemAnimator(null);
             liveData.removeObservers(this);
