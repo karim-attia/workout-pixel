@@ -1,5 +1,7 @@
 package ch.karimattia.workoutpixel.goalDetail;
 
+import static android.widget.LinearLayout.VERTICAL;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Typeface;
@@ -35,11 +37,9 @@ import java.util.Objects;
 import ch.karimattia.workoutpixel.R;
 import ch.karimattia.workoutpixel.core.CommonFunctions;
 import ch.karimattia.workoutpixel.core.Goal;
-import ch.karimattia.workoutpixel.database.InteractWithGoalInDb;
+import ch.karimattia.workoutpixel.database.GoalViewModel;
 import ch.karimattia.workoutpixel.database.InteractWithPastWorkout;
 import ch.karimattia.workoutpixel.database.PastWorkout;
-
-import static android.widget.LinearLayout.VERTICAL;
 
 public class GoalDetailFragment extends Fragment {
     private static final String TAG = "WORKOUT_PIXEL GoalDetailFragment";
@@ -114,8 +114,8 @@ public class GoalDetailFragment extends Fragment {
             return view;
         }
 
-        goal = InteractWithGoalInDb.loadGoalByUid(context, uid);
-        LiveData<Goal> goalLiveData = InteractWithGoalInDb.liveDataGoalByUid(context, uid);
+        goal = GoalViewModel.loadGoalByUid(context, uid);
+        LiveData<Goal> goalLiveData = GoalViewModel.liveDataGoalByUid(context, uid);
 
         // Toolbar
         requireActivity().setTitle(goal.getTitle());
@@ -180,7 +180,7 @@ public class GoalDetailFragment extends Fragment {
             Button deleteGoal = view.findViewById(R.id.delete_goal);
             deleteGoal.setOnClickListener(v -> {
                 // TODO: Confirmation dialog?
-                InteractWithGoalInDb.deleteGoal(context, goal);
+                GoalViewModel.deleteGoal(context, goal);
                 Navigation.findNavController(view).navigateUp();
             });
         } else {

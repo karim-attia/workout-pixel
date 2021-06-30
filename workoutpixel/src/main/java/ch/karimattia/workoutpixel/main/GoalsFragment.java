@@ -12,7 +12,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.LiveData;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -25,12 +25,13 @@ import java.util.Objects;
 import ch.karimattia.workoutpixel.R;
 import ch.karimattia.workoutpixel.core.CommonFunctions;
 import ch.karimattia.workoutpixel.core.Goal;
-import ch.karimattia.workoutpixel.database.InteractWithGoalInDb;
+import ch.karimattia.workoutpixel.database.GoalViewModel;
 
 public class GoalsFragment extends Fragment {
     private static final String TAG = "WORKOUT_PIXEL GoalsFragment";
-    private Context context;
     GoalsRecyclerViewAdapter goalsRecyclerViewAdapter;
+    private Context context;
+    private GoalViewModel goalViewModel;
 
     @Override
     public void onAttach(@NotNull Context context) {
@@ -76,10 +77,20 @@ public class GoalsFragment extends Fragment {
         recyclerView.setHasFixedSize(true);
         recyclerView.setNestedScrollingEnabled(false);
         recyclerView.setAdapter(goalsRecyclerViewAdapter);
+        goalViewModel = new ViewModelProvider(this).get(GoalViewModel.class);
 
         // Create the observer which updates the UI.
         // Observe the LiveData, passing this activity as the LifecycleOwner and the observer.
-        LiveData<List<Goal>> liveData = InteractWithGoalInDb.loadAllGoalsLiveData(context.getApplicationContext());
+        goalViewModel.getAllGoals().observe(getViewLifecycleOwner(), goals -> {
+            //  goalsRecyclerViewAdapter.setData(testData());
+            goalsRecyclerViewAdapter.setData(goals);
+            recyclerView.setItemAnimator(null);
+            goalViewModel.getAllGoals().removeObservers(this);
+            executeAfterRecyclerViewWasPopulated(goals, view);
+        });
+
+/*
+        LiveData<List<Goal>> liveData = GoalViewModel.loadAllGoalsLiveData(context.getApplicationContext());
         liveData.observe(getViewLifecycleOwner(), goals -> {
             //  goalsRecyclerViewAdapter.setData(testData());
             goalsRecyclerViewAdapter.setData(goals);
@@ -87,14 +98,16 @@ public class GoalsFragment extends Fragment {
             liveData.removeObservers(this);
             executeAfterRecyclerViewWasPopulated(goals, view);
         });
+*/
     }
 
-    private void executeAfterRecyclerViewWasPopulated (List<Goal> goals, View view) {
-        if(goals.size() == 0) {
+    private void executeAfterRecyclerViewWasPopulated(List<Goal> goals, View view) {
+        if (goals.size() == 0) {
             CardView noGoalsInstructions = view.findViewById(R.id.no_goals_instructions);
             noGoalsInstructions.setVisibility(View.VISIBLE);
             noGoalsInstructions.setOnClickListener(v ->
-                    Navigation.findNavController(view).navigate(GoalsFragmentDirections.actionGoalsFragmentToGoalDetailFragment()));
+                    Navigation.findNavController(view).navigate(GoalsFragmentDirections.actionGoalsFragmentToInstructionsFragment())
+            );
         }
         // TODO: Move to activity?
         CommonFunctions.cleanGoals(context, goals);

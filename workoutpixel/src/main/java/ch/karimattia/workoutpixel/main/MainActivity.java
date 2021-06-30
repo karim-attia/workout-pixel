@@ -13,7 +13,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import ch.karimattia.workoutpixel.R;
 import ch.karimattia.workoutpixel.core.WidgetAlarm;
-import ch.karimattia.workoutpixel.database.InteractWithGoalInDb;
+import ch.karimattia.workoutpixel.database.GoalViewModel;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "WORKOUT_PIXEL MainActivity";
@@ -36,8 +36,8 @@ public class MainActivity extends AppCompatActivity {
         BottomNavigationView bottomNavigationView = findViewById(R.id.activity_main_bottom_navigation_view);
         NavigationUI.setupWithNavController(bottomNavigationView, navController);
 
-        Log.d(TAG, "InteractWithGoalInDb.getCountOfGoals(context): " + InteractWithGoalInDb.getCountOfGoals(context));
-        if (InteractWithGoalInDb.getCountOfGoals(context) == 0) {
+        // Move to GoalsFragment and hide controls and make it full screen.
+        if (GoalViewModel.getCountOfGoals(context) == 0) {
             navController.navigate(GoalsFragmentDirections.actionGoalsFragmentToInstructionsFragment());
         }
 

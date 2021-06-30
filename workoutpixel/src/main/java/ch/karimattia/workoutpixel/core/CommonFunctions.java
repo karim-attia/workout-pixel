@@ -4,6 +4,7 @@ import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.util.Log;
 
 import java.time.Instant;
@@ -21,7 +22,7 @@ import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 import ch.karimattia.workoutpixel.R;
-import ch.karimattia.workoutpixel.database.InteractWithGoalInDb;
+import ch.karimattia.workoutpixel.database.GoalViewModel;
 
 public class CommonFunctions {
     private static final String TAG = "WORKOUT_PIXEL COMMON FUNCTIONS";
@@ -126,9 +127,25 @@ public class CommonFunctions {
                 Log.v(TAG, "set to purple");
                 return R.drawable.rounded_corner_purple;
             default:
-                Log.d(TAG, "newStatus not correctly assigned.");
+                Log.d(TAG, "getDrawableIntFromStatus: status not correctly assigned.");
+                return 0;
         }
-        return 0;
+    }
+
+    public static int getColorFromStatus(String status) {
+        switch (status) {
+            case STATUS_GREEN:
+                return Color.rgb( 56,142,60);
+            case STATUS_BLUE:
+                return Color.rgb(25,118,210);
+            case STATUS_RED:
+                return Color.rgb( 211,47,47);
+            case STATUS_NONE:
+                return Color.rgb( 123,31,162);
+            default:
+                Log.d(TAG, "getColorFromStatus: status not correctly assigned.");
+                return 0;
+        }
     }
 
     /**
@@ -213,7 +230,7 @@ public class CommonFunctions {
     public static void cleanGoals(Context context, List<Goal> goals) {
         for (Goal goal: goalsWithoutValidAppWidgetId(context, goals)) {
             if(goal.hasValidAppWidgetId()) {
-                InteractWithGoalInDb.setAppWidgetIdToNullByUid(context, goal.getUid());
+                GoalViewModel.setAppWidgetIdToNullByUid(context, goal.getUid());
             }
         }
     }

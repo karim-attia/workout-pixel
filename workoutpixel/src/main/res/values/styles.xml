@@ -1,116 +1,116 @@
 <resources>
-    <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-        <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorPrimary</item>
-        <item name="colorButtonNormal">@color/colorPrimary</item>
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-    </style>
+	<!-- Base application theme. -->
+	<style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+		<!-- Customize your theme here. -->
+		<item name="colorPrimary">@color/colorPrimary</item>
+		<item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+		<item name="colorAccent">@color/colorPrimary</item>
+		<item name="colorButtonNormal">@color/colorPrimary</item>
+		<item name="windowActionBar">false</item>
+		<item name="windowNoTitle">true</item>
+	</style>
 
-    <style name="ConfigureTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-        <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorPrimary</item>
-        <item name="colorButtonNormal">@color/colorPrimary</item>
-    </style>
+	<style name="ConfigureTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+		<!-- Customize your theme here. -->
+		<item name="colorPrimary">@color/colorPrimary</item>
+		<item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+		<item name="colorAccent">@color/colorPrimary</item>
+		<item name="colorButtonNormal">@color/colorPrimary</item>
+	</style>
 
-    <style name="button">
-        <item name="android:textColor">@android:color/white</item>
-        <item name="android:layout_width">36dp</item>
-        <item name="android:layout_height">40dp</item>
-    </style>
-
-
-    <style name="configureActivityMainItem">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_marginTop">12dp</item>
-    </style>
-
-    <style name="Card">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_marginTop">@dimen/marginsTop</item>
-        <item name="android:layout_marginLeft">@dimen/margins</item>
-        <item name="android:layout_marginRight">@dimen/margins</item>
-        <item name="android:layout_marginBottom">@dimen/marginsBottom</item>
-    </style>
-
-    <style name="CardInnerView">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:paddingHorizontal">8dp</item>
-        <item name="android:paddingTop">4dp</item>
-        <item name="android:paddingBottom">8dp</item>
-    </style>
-
-    <style name="DetailViewText">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:paddingLeft">0dp</item>
-        <item name="android:paddingTop">4dp</item>
-        <item name="android:paddingBottom">8dp</item>
-    </style>
-
-    <style name="DetailViewText.Title">
-        <item name="android:textSize">20sp</item>
-        <item name="android:textStyle">bold</item>
-    </style>
+	<style name="button">
+		<item name="android:textColor">@android:color/white</item>
+		<item name="android:layout_width">36dp</item>
+		<item name="android:layout_height">40dp</item>
+	</style>
 
 
-    <style name="WorkoutPixel">
-        <item name="android:layout_centerHorizontal">true</item>
-        <item name="android:layout_centerVertical">true</item>
-        <item name="android:textColor">#ffffff</item>
-        <item name="android:textSize">12sp</item>
-        <item name="android:gravity">center</item>
-    </style>
+	<style name="configureActivityMainItem">
+		<item name="android:layout_width">match_parent</item>
+		<item name="android:layout_height">wrap_content</item>
+		<item name="android:layout_marginTop">12dp</item>
+	</style>
 
-    <style name="WorkoutPixelPreview" parent="WorkoutPixel">
-        <item name="android:layout_width">66dp</item>
-        <item name="android:layout_height">44dp</item>
-        <item name="android:background">#7b1fa2</item>
-    </style>
+	<style name="Card">
+		<item name="android:layout_width">match_parent</item>
+		<item name="android:layout_height">wrap_content</item>
+		<item name="android:layout_marginTop">@dimen/marginsTop</item>
+		<item name="android:layout_marginLeft">@dimen/margins</item>
+		<item name="android:layout_marginRight">@dimen/margins</item>
+		<item name="android:layout_marginBottom">@dimen/marginsBottom</item>
+	</style>
 
-    <style name="Icon">
-        <item name="android:paddingLeft">0dp</item>
-        <item name="android:paddingRight">0dp</item>
-        <item name="android:paddingTop">0dp</item>
-        <item name="android:paddingBottom">0dp</item>
-        <item name="android:layout_gravity">center</item>
-    </style>
+	<style name="CardInnerView">
+		<item name="android:layout_width">match_parent</item>
+		<item name="android:layout_height">wrap_content</item>
+		<item name="android:paddingHorizontal">8dp</item>
+		<item name="android:paddingTop">4dp</item>
+		<item name="android:paddingBottom">8dp</item>
+	</style>
 
-    <style name="Icon.Narrow">
-        <item name="android:layout_width">32dp</item>
-        <item name="android:layout_height">32dp</item>
-    </style>
+	<style name="DetailViewText">
+		<item name="android:layout_width">match_parent</item>
+		<item name="android:layout_height">wrap_content</item>
+		<item name="android:paddingLeft">0dp</item>
+		<item name="android:paddingTop">4dp</item>
+		<item name="android:paddingBottom">8dp</item>
+	</style>
 
-    <style name="Icon.Wide">
-        <item name="android:layout_width">36dp</item>
-        <item name="android:layout_height">36dp</item>
-    </style>
+	<style name="DetailViewText.Title">
+		<item name="android:textSize">20sp</item>
+		<item name="android:textStyle">bold</item>
+	</style>
 
-    <style name="GridText">
-        <item name="android:paddingLeft">6dp</item>
-        <item name="android:paddingRight">6dp</item>
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:maxLines">1</item>
-        <item name="android:minWidth">100dp</item>
-    </style>
 
-    <style name="Title">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_marginTop">4dp</item>
-        <item name="android:textSize">16sp</item>
-        <item name="android:textStyle">bold</item>
-        <item name="android:textAllCaps">true</item>
-    </style>
+	<style name="WorkoutPixel">
+		<item name="android:layout_centerHorizontal">true</item>
+		<item name="android:layout_centerVertical">true</item>
+		<item name="android:textColor">#ffffff</item>
+		<item name="android:textSize">12sp</item>
+		<item name="android:gravity">center</item>
+	</style>
+
+	<style name="WorkoutPixelPreview" parent="WorkoutPixel">
+		<item name="android:layout_width">66dp</item>
+		<item name="android:layout_height">44dp</item>
+		<item name="android:background">#7b1fa2</item>
+	</style>
+
+	<style name="Icon">
+		<item name="android:paddingLeft">0dp</item>
+		<item name="android:paddingRight">0dp</item>
+		<item name="android:paddingTop">0dp</item>
+		<item name="android:paddingBottom">0dp</item>
+		<item name="android:layout_gravity">center</item>
+	</style>
+
+	<style name="Icon.Narrow">
+		<item name="android:layout_width">32dp</item>
+		<item name="android:layout_height">32dp</item>
+	</style>
+
+	<style name="Icon.Wide">
+		<item name="android:layout_width">36dp</item>
+		<item name="android:layout_height">36dp</item>
+	</style>
+
+	<style name="GridText">
+		<item name="android:paddingLeft">6dp</item>
+		<item name="android:paddingRight">6dp</item>
+		<item name="android:layout_width">wrap_content</item>
+		<item name="android:layout_height">wrap_content</item>
+		<item name="android:maxLines">1</item>
+		<item name="android:minWidth">100dp</item>
+	</style>
+
+	<style name="Title">
+		<item name="android:layout_width">match_parent</item>
+		<item name="android:layout_height">wrap_content</item>
+		<item name="android:layout_marginTop">4dp</item>
+		<item name="android:textSize">16sp</item>
+		<item name="android:textStyle">bold</item>
+		<item name="android:textAllCaps">true</item>
+	</style>
 
 
 </resources>

@@ -1,5 +1,10 @@
 package ch.karimattia.workoutpixel.configure;
 
+import static ch.karimattia.workoutpixel.core.CommonFunctions.STATUS_NONE;
+import static ch.karimattia.workoutpixel.core.CommonFunctions.dateBeautiful;
+import static ch.karimattia.workoutpixel.core.CommonFunctions.getDrawableIntFromStatus;
+import static ch.karimattia.workoutpixel.core.CommonFunctions.timeBeautiful;
+
 import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
@@ -28,12 +33,7 @@ import ch.karimattia.workoutpixel.R;
 import ch.karimattia.workoutpixel.core.CommonFunctions;
 import ch.karimattia.workoutpixel.core.Goal;
 import ch.karimattia.workoutpixel.core.WorkoutPixelAppWidgetProvider;
-import ch.karimattia.workoutpixel.database.InteractWithGoalInDb;
-
-import static ch.karimattia.workoutpixel.core.CommonFunctions.STATUS_NONE;
-import static ch.karimattia.workoutpixel.core.CommonFunctions.dateBeautiful;
-import static ch.karimattia.workoutpixel.core.CommonFunctions.getDrawableIntFromStatus;
-import static ch.karimattia.workoutpixel.core.CommonFunctions.timeBeautiful;
+import ch.karimattia.workoutpixel.database.GoalViewModel;
 
 /**
  * The configuration screen for the {@link WorkoutPixelAppWidgetProvider WidgetFunctions} AppWidget.
@@ -134,7 +134,7 @@ public class ConfigureActivity extends AppCompatActivity {
         if (!isFirstConfigure) {
             // Don't show the initial text if the user edits the widget.
             introText.setVisibility(View.GONE);
-            goal = InteractWithGoalInDb.loadGoalByUid(context, goal.getUid());
+            goal = GoalViewModel.loadGoalByUid(context, goal.getUid());
             widgetTitle.setText(goal.getTitle());
             intervalInDays = goal.getIntervalBlue();
             showDateCheckbox.setChecked(goal.getShowDate());
@@ -186,7 +186,7 @@ public class ConfigureActivity extends AppCompatActivity {
         // Setup reconnect widget card
         if (isFirstConfigure) {
             CommonFunctions.executorService.execute(() -> {
-                List<Goal> widgetsWithoutValidAppwidgetId = InteractWithGoalInDb.loadGoalsWithoutValidAppWidgetId(context);
+                List<Goal> widgetsWithoutValidAppwidgetId = GoalViewModel.loadGoalsWithoutValidAppWidgetId(context);
                 if (widgetsWithoutValidAppwidgetId.size() > 0) {
                     TextView configurationConnectHintTitle = findViewById(R.id.configuration_connect_hint_title);
                     configurationConnectHintTitle.setVisibility(View.VISIBLE);
@@ -203,7 +203,7 @@ public class ConfigureActivity extends AppCompatActivity {
                         goal = (Goal) connectSpinner.getSelectedItem();
                         if (goal != null) {
                             goal.setAppWidgetId(appWidgetId);
-                            InteractWithGoalInDb.updateGoal(context, goal);
+                            GoalViewModel.updateGoal(context, goal);
                             setWidgetAndFinish();
                         } else {
                             connectSpinner.setBackgroundColor(Color.RED);
@@ -249,8 +249,8 @@ public class ConfigureActivity extends AppCompatActivity {
 
             // Store the goal in the DB
             // Save the new goal to the db and store the generated uid to the widget so that the onClickListener can be generated with a valid uid later.
-            if (isFirstConfigure) goal.setUid(InteractWithGoalInDb.saveDuringInitialize(context, goal));
-            else InteractWithGoalInDb.updateGoal(context, goal);
+            if (isFirstConfigure) goal.setUid(GoalViewModel.saveDuringInitialize(context, goal));
+            else GoalViewModel.updateGoal(context, goal);
 
             setWidgetAndFinish();
         }

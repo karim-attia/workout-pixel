@@ -35,7 +35,7 @@ import java.util.Objects;
 import ch.karimattia.workoutpixel.R;
 import ch.karimattia.workoutpixel.core.CommonFunctions;
 import ch.karimattia.workoutpixel.core.Goal;
-import ch.karimattia.workoutpixel.database.InteractWithGoalInDb;
+import ch.karimattia.workoutpixel.database.GoalViewModel;
 
 import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
@@ -157,7 +157,7 @@ public class ConfigureFragment extends Fragment {
             // Don't show the initial text if the user edits the widget.
             introTitle.setVisibility(View.GONE);
             introText.setVisibility(View.GONE);
-            goal = InteractWithGoalInDb.loadGoalByUid(context, goal.getUid());
+            goal = GoalViewModel.loadGoalByUid(context, goal.getUid());
             widgetTitle.setText(goal.getTitle());
             intervalInDays = goal.getIntervalBlue();
             showDateCheckbox.setChecked(goal.getShowDate());
@@ -209,7 +209,7 @@ public class ConfigureFragment extends Fragment {
         // Setup reconnect widget card
         if (isFirstConfigure) {
             CommonFunctions.executorService.execute(() -> {
-                List<Goal> widgetsWithoutValidAppwidgetId = InteractWithGoalInDb.loadGoalsWithoutValidAppWidgetId(context);
+                List<Goal> widgetsWithoutValidAppwidgetId = GoalViewModel.loadGoalsWithoutValidAppWidgetId(context);
                 if (widgetsWithoutValidAppwidgetId.size() > 0) {
                     TextView configurationConnectHintTitle = view.findViewById(R.id.configuration_connect_hint_title);
                     configurationConnectHintTitle.setVisibility(View.VISIBLE);
@@ -226,7 +226,7 @@ public class ConfigureFragment extends Fragment {
                         goal = (Goal) connectSpinner.getSelectedItem();
                         if (goal != null) {
                             goal.setAppWidgetId(appWidgetId);
-                            InteractWithGoalInDb.updateGoal(context, goal);
+                            GoalViewModel.updateGoal(context, goal);
                             setWidgetAndFinish();
                         } else {
                             connectSpinner.setBackgroundColor(Color.RED);
@@ -274,8 +274,8 @@ public class ConfigureFragment extends Fragment {
 
             // Store the goal in the DB
             // Save the new goal to the db and store the generated uid to the widget so that the onClickListener can be generated with a valid uid later.
-            if (isFirstConfigure) goal.setUid(InteractWithGoalInDb.saveDuringInitialize(context, goal));
-            else InteractWithGoalInDb.updateGoal(context, goal);
+            if (isFirstConfigure) goal.setUid(GoalViewModel.saveDuringInitialize(context, goal));
+            else GoalViewModel.updateGoal(context, goal);
 
             setWidgetAndFinish();
         }

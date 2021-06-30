@@ -1,5 +1,10 @@
-apply plugin: 'com.android.application'
-apply plugin: "androidx.navigation.safeargs"
+plugins {
+    id 'com.android.application'
+    id 'androidx.navigation.safeargs'
+    id 'org.jetbrains.kotlin.android'
+    id 'kotlin-android'
+    id 'kotlin-kapt'
+}
 
 // Create a variable called keystorePropertiesFile, and initialize it to your
 // keystore.properties file, in the rootProject folder.
@@ -20,13 +25,14 @@ android {
             storePassword keystoreProperties['storePassword']
         }
     }
+
     compileSdkVersion 30
 
     defaultConfig {
         applicationId "ch.karimattia.workoutpixel"
         minSdkVersion 26
         targetSdkVersion 30
-        versionCode 1
+        versionCode 2
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -36,6 +42,14 @@ android {
                 arguments += ["room.schemaLocation": "$projectDir/schemas".toString()]
             }
         }
+        vectorDrawables {
+            useSupportLibrary true
+        }
+    }
+
+    buildFeatures {
+        // Enables Jetpack Compose for this module
+        compose true
     }
 
     buildTypes {
@@ -56,6 +70,21 @@ android {
             }
         }
     }
+
+    dependenciesInfo {
+        includeInApk true
+        includeInBundle true
+    }
+
+    kotlinOptions {
+        jvmTarget = "1.8"
+        useIR = true
+    }
+
+    composeOptions {
+        kotlinCompilerExtensionVersion '1.0.0-beta07'
+        kotlinCompilerVersion '1.4.32'
+    }
 }
 
 //noinspection SpellCheckingInspection,SpellCheckingInspection,SpellCheckingInspection
@@ -67,8 +96,25 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
     implementation "androidx.fragment:fragment:1.3.5"
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation 'com.google.android.material:material:1.3.0'
+    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.3.1'
+    implementation "androidx.compose.ui:ui:$compose_version"
+    implementation "androidx.compose.material:material:$compose_version"
+    implementation "androidx.compose.ui:ui-tooling:$compose_version"
+    implementation 'androidx.activity:activity-compose:1.3.0-beta02'
     testImplementation 'junit:junit:4.13.2'
-    testImplementation 'org.testng:testng:6.9.6'
+    testImplementation 'org.testng:testng:7.3.0'
+
+    // Lifecycle components
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$rootProject.lifecycleVersion"
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:$rootProject.lifecycleVersion"
+    implementation "androidx.lifecycle:lifecycle-common-java8:$rootProject.lifecycleVersion"
+
+    // Kotlin components
+    // implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    api "org.jetbrains.kotlinx:kotlinx-coroutines-core:$rootProject.coroutines"
+    api "org.jetbrains.kotlinx:kotlinx-coroutines-android:$rootProject.coroutines"
+
 
     // Carousel View: https://github.com/sayyam/carouselview
     // implementation 'com.synnapps:carouselview:0.1.5'
@@ -81,18 +127,20 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
     androidTestImplementation 'androidx.test:rules:1.3.0'
     androidTestImplementation 'androidx.test:runner:1.3.0'
+    androidTestImplementation "androidx.compose.ui:ui-test-junit4:$compose_version"
 
     def room_version = "2.3.0"
-
-    implementation "androidx.room:room-runtime:$room_version"
-    annotationProcessor "androidx.room:room-compiler:$room_version"
+    // Room components
+    implementation "androidx.room:room-ktx:$room_version"
+    kapt "androidx.room:room-compiler:$room_version"
+    androidTestImplementation "androidx.room:room-testing:$room_version"
 
 
     def nav_version = "2.3.5"
 
     // Java language implementation
-    implementation "androidx.navigation:navigation-fragment:$nav_version"
-    implementation "androidx.navigation:navigation-ui:$nav_version"
+    implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"
+    implementation "androidx.navigation:navigation-ui-ktx:$nav_version"
 
     // Feature module Support
     implementation "androidx.navigation:navigation-dynamic-features-fragment:$nav_version"
@@ -102,6 +150,31 @@ dependencies {
 
     // Jetpack Compose Integration
     implementation "androidx.navigation:navigation-compose:2.4.0-alpha03"
+
+
+    //Jetpack Compose UI
+    dependencies {
+        implementation 'androidx.compose.ui:ui:1.0.0-beta09'
+        // Tooling support (Previews, etc.)
+        implementation 'androidx.compose.ui:ui-tooling:1.0.0-beta09'
+        // Foundation (Border, Background, Box, Image, Scroll, shapes, animations, etc.)
+        implementation 'androidx.compose.foundation:foundation:1.0.0-beta09'
+        // Material Design
+        implementation 'androidx.compose.material:material:1.0.0-beta09'
+        // Material design icons
+        implementation 'androidx.compose.material:material-icons-core:1.0.0-beta09'
+        implementation 'androidx.compose.material:material-icons-extended:1.0.0-beta09'
+        // Integration with activities
+        implementation 'androidx.activity:activity-compose:1.3.0-beta02'
+        // Integration with ViewModels
+        implementation 'androidx.lifecycle:lifecycle-viewmodel-compose:1.0.0-alpha07'
+        // Integration with observables
+        implementation 'androidx.compose.runtime:runtime-livedata:1.0.0-beta09'
+        implementation 'androidx.compose.runtime:runtime-rxjava2:1.0.0-beta09'
+
+        // UI Tests
+        androidTestImplementation 'androidx.compose.ui:ui-test-junit4:1.0.0-beta09'
+    }
 }
 
 repositories {

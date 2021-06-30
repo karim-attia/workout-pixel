@@ -15,7 +15,7 @@ import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
 import ch.karimattia.workoutpixel.R;
-import ch.karimattia.workoutpixel.database.InteractWithGoalInDb;
+import ch.karimattia.workoutpixel.database.GoalViewModel;
 import ch.karimattia.workoutpixel.database.InteractWithPastWorkout;
 
 @Entity(tableName = "goals")
@@ -168,7 +168,7 @@ public class Goal {
         InteractWithPastWorkout.insertClickedWorkout(context, uid, lastWorkout);
 
         // Update the widget data in the db
-        InteractWithGoalInDb.updateGoal(context, this);
+        GoalViewModel.updateGoal(context, this);
 
         Log.d(TAG, "ACTION_DONE_EXERCISE " + debugString() + "complete\n------------------------------------------------------------------------");
     }
@@ -179,7 +179,7 @@ public class Goal {
 
         // Update the widget data in the db (only) when there is a new status.
         if (setNewStatus()) {
-            InteractWithGoalInDb.updateGoal(context, this);
+            GoalViewModel.updateGoal(context, this);
         }
 
         // Instruct the widget manager to update the widget with the latest widget data

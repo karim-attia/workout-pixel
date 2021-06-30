@@ -4,22 +4,29 @@ import android.app.Application;
 import android.content.Context;
 import android.util.Log;
 
-import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
-
-import ch.karimattia.workoutpixel.core.Goal;
 
 import java.util.List;
 
 import ch.karimattia.workoutpixel.core.CommonFunctions;
+import ch.karimattia.workoutpixel.core.Goal;
 
-public class InteractWithGoalInDb extends AndroidViewModel {
+public class GoalViewModel extends AndroidViewModel {
     private static final String TAG = "InteractWithWidgetInDb";
 
-    public InteractWithGoalInDb(@NonNull Application application) {
+    private final LiveData<List<Goal>> allGoals;
+
+    public GoalViewModel(Application application) {
         super(application);
+        GoalRepository repository = new GoalRepository(application);
+        allGoals = repository.getAllGoals();
     }
+
+    public LiveData<List<Goal>> getAllGoals() { return allGoals; }
+
+    // public void insert(Goal goal) { repository.insert(goal); }
+
 
     public static void updateGoal(Context context, Goal goal) {
         Log.d(TAG, "executorService updateWidget " + goal.debugString());
@@ -88,8 +95,8 @@ public class InteractWithGoalInDb extends AndroidViewModel {
         return workoutDao(context).getCountOfGoals();
     }
 
-    public static WorkoutDao workoutDao(Context context) {
+    public static GoalDao workoutDao(Context context) {
         AppDatabase db = AppDatabase.getDatabase(context);
-        return db.workoutDao();
+        return db.goalDao();
     }
 }

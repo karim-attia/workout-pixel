@@ -8,9 +8,9 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 
-import ch.karimattia.workoutpixel.core.CommonFunctions;
-
 import java.util.List;
+
+import ch.karimattia.workoutpixel.core.CommonFunctions;
 
 @SuppressWarnings("unused")
 public class InteractWithPastWorkout extends AndroidViewModel {
@@ -42,8 +42,8 @@ public class InteractWithPastWorkout extends AndroidViewModel {
         // CommonFunctions.executorService.shutdown();
     }
 
-    public static WorkoutDao workoutDao(Context context) {
+    public static GoalDao workoutDao(Context context) {
         AppDatabase db = AppDatabase.getDatabase(context);
-        return db.workoutDao();
+        return db.goalDao();
     }
 }

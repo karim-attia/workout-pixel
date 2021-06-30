@@ -33,7 +33,8 @@ public abstract class AppDatabase extends RoomDatabase {
                 .build();
     }
 
-    public abstract WorkoutDao workoutDao();
+    public abstract GoalDao goalDao();
+    public abstract GoalDaoKotlin workoutDaoKotlin();
 
 // --Commented out by Inspection START (23.06.21, 20:29):
 //    static final Migration MIGRATION_1_2 = new Migration(1, 2) {

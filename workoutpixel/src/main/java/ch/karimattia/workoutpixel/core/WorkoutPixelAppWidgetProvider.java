@@ -7,7 +7,7 @@ import android.content.Intent;
 import android.util.Log;
 
 import ch.karimattia.workoutpixel.configure.ConfigureActivity;
-import ch.karimattia.workoutpixel.database.InteractWithGoalInDb;
+import ch.karimattia.workoutpixel.database.GoalViewModel;
 
 import java.util.List;
 
@@ -34,14 +34,14 @@ public class WorkoutPixelAppWidgetProvider extends AppWidgetProvider {
         if (ACTION_DONE_EXERCISE.equals(intent.getAction())) {
             // TODO: widgetUid -> goalUid
             int uid = intent.getIntExtra("widgetUid", 0);
-            Goal goal = InteractWithGoalInDb.loadGoalByUid(context, uid);
+            Goal goal = GoalViewModel.loadGoalByUid(context, uid);
             goal.updateAfterClick(context);
         }
 
         // Do this when the alarm hits
         if (ACTION_ALARM_UPDATE.equals(intent.getAction())) {
             CommonFunctions.saveTimeWithStringToSharedPreferences(context, "Last Alarm");
-            List<Goal> goalList = InteractWithGoalInDb.loadAllGoals(context);
+            List<Goal> goalList = GoalViewModel.loadAllGoals(context);
             for (Goal goal : goalList) {
                 goal.updateWidgetBasedOnStatus(context);
             }
@@ -64,7 +64,7 @@ public class WorkoutPixelAppWidgetProvider extends AppWidgetProvider {
         // TODO: Understand
         // TODO: Replaced iteration through appWidgetIds with data from DB. Insert check that this is the same and fix if not. Maybe before it only iterated through some widgets. But I don't think it matters.
         // TODO: Could check with CommonFunctions.widgetsWithValidAppWidgetId whether they are the same and at least log if not.
-        List<Goal> goalList = InteractWithGoalInDb.loadGoalsWithValidAppWidgetId(context);
+        List<Goal> goalList = GoalViewModel.loadGoalsWithValidAppWidgetId(context);
         for (Goal goal : goalList) {
             // Tell the AppWidgetManager to perform an update on the current app widget
             Log.d(TAG, "ON_UPDATE: " + goal.debugString());
@@ -83,7 +83,7 @@ public class WorkoutPixelAppWidgetProvider extends AppWidgetProvider {
 
         // TODO: This is also called if the configuration is aborted. Then, this database call is useless.
         for (int appWidgetId : appWidgetIds) {
-            InteractWithGoalInDb.setAppWidgetIdToNullByAppwidgetId(context, appWidgetId);
+            GoalViewModel.setAppWidgetIdToNullByAppwidgetId(context, appWidgetId);
         }
 
     }

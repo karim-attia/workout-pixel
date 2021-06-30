@@ -6,14 +6,22 @@
 
     <application
         android:allowBackup="false"
+        android:fullBackupContent="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme"
-        android:fullBackupContent="false"
+        android:theme="@style/AppTheme">
+        <activity
+            android:name=".TopActivity"
+            android:exported="true"
+            android:label="@string/title_activity_top"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".ComposeActivity"
+            android:exported="true"
+            android:label="@string/title_activity_compose"
+            android:theme="@style/AppTheme.NoActionBar" />
 
-        >
-
-        <receiver android:name="ch.karimattia.workoutpixel.core.WorkoutPixelAppWidgetProvider">
+        <receiver android:name=".core.WorkoutPixelAppWidgetProvider">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
@@ -26,19 +34,20 @@
                 android:resource="@xml/workout_pixel_info" />
         </receiver>
 
-        <activity android:name="ch.karimattia.workoutpixel.main.MainActivity"
+        <activity
+            android:name=".main.MainActivity"
             android:label="Workout Pixel">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <activity android:name="ch.karimattia.workoutpixel.configure.ConfigureActivity"
+        <activity
+            android:name=".configure.ConfigureActivity"
             android:label="Add a widget for your goal"
-            android:parentActivityName="ch.karimattia.workoutpixel.main.MainActivity"
-            android:theme="@style/ConfigureTheme"
-            >
+            android:parentActivityName=".main.MainActivity"
+            android:theme="@style/ConfigureTheme">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
             </intent-filter>
@@ -46,6 +55,6 @@
                 <action android:name="APPWIDGET_RECONFIGURE" />
             </intent-filter>
         </activity>
-
     </application>
+
 </manifest>

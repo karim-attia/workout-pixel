@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 import ch.karimattia.workoutpixel.R;
 import ch.karimattia.workoutpixel.core.CommonFunctions;
 import ch.karimattia.workoutpixel.core.Goal;
-import ch.karimattia.workoutpixel.database.InteractWithGoalInDb;
+import ch.karimattia.workoutpixel.database.GoalViewModel;
 import ch.karimattia.workoutpixel.database.InteractWithPastWorkout;
 import ch.karimattia.workoutpixel.database.PastWorkout;
 
@@ -83,7 +83,7 @@ public class PastWorkoutsRecyclerViewAdapter extends RecyclerView.Adapter<PastWo
 
             // If this change causes a new last workout time, do all the necessary updates.
             if(goal.setNewLastWorkout(lastWorkoutBasedOnActiveWorkouts())) {
-                InteractWithGoalInDb.updateGoal(context, goal);
+                GoalViewModel.updateGoal(context, goal);
                 goal.runUpdate(context, false);
             }
         });

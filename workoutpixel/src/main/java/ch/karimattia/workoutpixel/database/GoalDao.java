@@ -8,12 +8,12 @@ import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 import androidx.room.Update;
 
-import ch.karimattia.workoutpixel.core.Goal;
-
 import java.util.List;
 
+import ch.karimattia.workoutpixel.core.Goal;
+
 @Dao
-public interface WorkoutDao {
+public interface GoalDao {
     // Past Workouts
     // Return all workouts by appWidgetId
     @Query("SELECT * FROM pastWorkouts WHERE widgetUid=:widgetUid ORDER BY workoutTime DESC")
