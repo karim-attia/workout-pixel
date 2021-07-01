@@ -1,10 +1,13 @@
 package ch.karimattia.workoutpixel
 
 import android.os.Bundle
+import android.util.Log
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -27,7 +30,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModelProvider
@@ -39,36 +41,47 @@ import ch.karimattia.workoutpixel.ui.theme.WorkoutPixelTheme
 import java.util.*
 
 class ComposeActivity : ComponentActivity() {
+	private val TAG = "ComposeActivity"
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 		val goalViewModel = ViewModelProvider(this).get(GoalViewModel::class.java)
-		// goalsViewModel.allGoals.observe(this, { goals ->
 		setContent {
 			MyApp {
 				// MyScreenContent(goals)
-				// GoalListWithViewModel(goalViewModel = goalViewModel)
 				val goals: List<Goal> by goalViewModel.allGoals.observeAsState(listOf())
-				GoalListWithList(goals)
+				GoalListWithList(
+					goals,
+					updateAfterClick = {
+						Log.d(TAG, "updateAfterClick")
+					}
+				)
 			}
 		}
-		// })
 	}
 }
 
 @Composable
-fun GoalListWithList(goals: List<Goal>) {
+//    onAddItem: (TodoItem) -> Unit, ?
+fun GoalListWithList(
+	goals: List<Goal>,
+	updateAfterClick: () -> Unit,
+) {
 	// We save the scrolling position with this state that can also
 	// be used to programmatically scroll the list
 	val scrollState = rememberLazyListState()
 
 	// We save the coroutine scope where our animated scroll will be executed
 	val coroutineScope = rememberCoroutineScope()
-
-	LazyColumn(state = scrollState) {
+	Text(
+		"LALALALA",
+		Modifier.clickable { updateAfterClick })
+	LazyColumn(
+		state = scrollState,
+		contentPadding = PaddingValues(top = 6.dp, bottom = 40.dp),
+	) {
 		items(items = goals) { goal ->
 			GoalCard(goal = goal)
-			Divider(color = Color.Gray)
 		}
 	}
 }
@@ -87,23 +100,32 @@ fun GoalListWithViewModel(modifier: Modifier = Modifier, goalViewModel: GoalView
 	LazyColumn(modifier = modifier, state = scrollState) {
 		items(items = goals) { goal ->
 			GoalCard(goal = goal)
-			Divider(color = Color.Gray)
 		}
 	}
 }
 
 @Composable
 fun GoalCard(modifier: Modifier = Modifier, goal: Goal) {
-	// Preview and rest
-	Row {
-		GoalPreview(goal)
-		// Rest
-		Column(modifier = Modifier.padding(start = 4.dp))
-		{
-			GoalTitle(goal)
-			Row(modifier = Modifier.padding(top = 1.dp)) {
-				IntervalIconAndText(goal)
-				LastDoneIconAndText(goal)
+	Card(
+		backgroundColor = Color.White,
+		elevation = 4.dp,
+		modifier = Modifier
+			.padding(vertical = 4.dp, horizontal = 8.dp)
+			.fillMaxWidth()
+	) {
+		// Preview and rest
+		Row(
+			modifier = Modifier.padding(all = 1.dp),
+		) {
+			GoalPreview(goal)
+			// Rest
+			Column(modifier = Modifier.padding(start = 4.dp))
+			{
+				GoalTitle(goal)
+				Row(modifier = Modifier.padding(top = 1.dp)) {
+					IntervalIconAndText(goal)
+					LastDoneIconAndText(goal)
+				}
 			}
 		}
 	}
@@ -129,11 +151,11 @@ fun GoalPreview(goal: Goal) {
 @Composable
 fun GoalTitle(goal: Goal) {
 	Text(
-		text = goal.title.toUpperCase(Locale.getDefault()),
+		text = goal.title.uppercase(Locale.getDefault()),
 		fontSize = 16.sp,
 		fontWeight = FontWeight.Bold,
 		modifier = Modifier
-			.padding(top = 2.dp, start = 2.dp)
+			.padding(top = 2.dp, start = 2.dp, end = 2.dp)
 	)
 }
 
@@ -249,7 +271,6 @@ fun ItemList(modifier: Modifier = Modifier, goals: List<Goal>) {
 	LazyColumn(modifier = modifier, state = scrollState) {
 		items(items = goals) { goal ->
 			Greeting(name = goal.title)
-			Divider(color = Color.Black)
 		}
 	}
 }
@@ -271,6 +292,7 @@ fun Counter(count: Int, updateCount: (Int) -> Unit) {
 	}
 }
 
+/*
 @Preview("MyScreen preview")
 @Composable
 fun DefaultPreview() {
@@ -278,3 +300,4 @@ fun DefaultPreview() {
 		GoalListWithList(CommonFunctions.testData())
 	}
 }
+*/

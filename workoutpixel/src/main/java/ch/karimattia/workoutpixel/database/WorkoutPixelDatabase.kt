@@ -72,7 +72,7 @@ abstract class WorkoutPixelDatabase : RoomDatabase() {
                 super.onCreate(db)
                 // If you want to keep the data through app restarts,
                 // comment out the following line.
-                INSTANCE?.let { database ->
+                INSTANCE?.let {
                     scope.launch(Dispatchers.IO) {
                     }
                 }
