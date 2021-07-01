@@ -30,6 +30,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModelProvider
@@ -37,6 +38,7 @@ import ch.karimattia.workoutpixel.core.CommonFunctions
 import ch.karimattia.workoutpixel.core.CommonFunctions.getColorFromStatus
 import ch.karimattia.workoutpixel.core.Goal
 import ch.karimattia.workoutpixel.database.GoalViewModel
+import ch.karimattia.workoutpixel.database.InteractWithPastWorkout
 import ch.karimattia.workoutpixel.ui.theme.WorkoutPixelTheme
 import java.util.*
 
@@ -53,8 +55,9 @@ class ComposeActivity : ComponentActivity() {
 				GoalListWithList(
 					goals,
 					updateAfterClick = {
+						Toast.makeText(this, "It worked :)", Toast.LENGTH_SHORT).show()
 						Log.d(TAG, "updateAfterClick")
-					}
+					},
 				)
 			}
 		}
@@ -62,7 +65,6 @@ class ComposeActivity : ComponentActivity() {
 }
 
 @Composable
-//    onAddItem: (TodoItem) -> Unit, ?
 fun GoalListWithList(
 	goals: List<Goal>,
 	updateAfterClick: () -> Unit,
@@ -73,19 +75,23 @@ fun GoalListWithList(
 
 	// We save the coroutine scope where our animated scroll will be executed
 	val coroutineScope = rememberCoroutineScope()
-	Text(
-		"LALALALA",
-		Modifier.clickable { updateAfterClick })
+
 	LazyColumn(
 		state = scrollState,
-		contentPadding = PaddingValues(top = 6.dp, bottom = 40.dp),
+		contentPadding = PaddingValues(top = 6.dp, bottom = 40.dp)
 	) {
-		items(items = goals) { goal ->
-			GoalCard(goal = goal)
+		items(
+			items = goals,
+		) { goal ->
+			GoalCard(
+				goal = goal,
+				updateAfterClick = updateAfterClick
+			)
 		}
 	}
 }
 
+/*
 @Composable
 fun GoalListWithViewModel(modifier: Modifier = Modifier, goalViewModel: GoalViewModel) {
 	val goals: List<Goal> by goalViewModel.allGoals.observeAsState(listOf())
@@ -99,13 +105,19 @@ fun GoalListWithViewModel(modifier: Modifier = Modifier, goalViewModel: GoalView
 
 	LazyColumn(modifier = modifier, state = scrollState) {
 		items(items = goals) { goal ->
-			GoalCard(goal = goal)
+			GoalCard(goal = goal, 				updateAfterClick = updateAfterClick
+			)
 		}
 	}
 }
+*/
 
 @Composable
-fun GoalCard(modifier: Modifier = Modifier, goal: Goal) {
+fun GoalCard(
+	modifier: Modifier = Modifier,
+	goal: Goal,
+	updateAfterClick: () -> Unit,
+) {
 	Card(
 		backgroundColor = Color.White,
 		elevation = 4.dp,
@@ -117,7 +129,9 @@ fun GoalCard(modifier: Modifier = Modifier, goal: Goal) {
 		Row(
 			modifier = Modifier.padding(all = 1.dp),
 		) {
-			GoalPreview(goal)
+			GoalPreview(
+				goal = goal, updateAfterClick = updateAfterClick
+			)
 			// Rest
 			Column(modifier = Modifier.padding(start = 4.dp))
 			{
@@ -132,7 +146,9 @@ fun GoalCard(modifier: Modifier = Modifier, goal: Goal) {
 }
 
 @Composable
-fun GoalPreview(goal: Goal) {
+fun GoalPreview(
+	goal: Goal, updateAfterClick: () -> Unit,
+) {
 	Text(
 		text = goal.widgetText(),
 		textAlign = TextAlign.Center,
@@ -145,6 +161,7 @@ fun GoalPreview(goal: Goal) {
 			.clip(shape = RoundedCornerShape(4.dp))
 			.background(Color(getColorFromStatus(goal.status)))
 			.wrapContentSize(Alignment.Center)
+			.clickable { updateAfterClick() }
 	)
 }
 
@@ -292,12 +309,10 @@ fun Counter(count: Int, updateCount: (Int) -> Unit) {
 	}
 }
 
-/*
 @Preview("MyScreen preview")
 @Composable
 fun DefaultPreview() {
 	MyApp {
-		GoalListWithList(CommonFunctions.testData())
+		GoalListWithList(CommonFunctions.testData(), { })
 	}
 }
-*/
