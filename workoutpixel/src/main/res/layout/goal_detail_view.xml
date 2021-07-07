@@ -46,7 +46,6 @@
                     app:layout_constraintTop_toTopOf="parent"
                     />
 
-
                 <TextView
                     android:id="@+id/widget_preview"
                     style="@style/WorkoutPixelPreview"

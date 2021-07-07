@@ -95,12 +95,12 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
     implementation "androidx.fragment:fragment:1.3.5"
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    implementation 'com.google.android.material:material:1.3.0'
+    implementation 'com.google.android.material:material:1.4.0'
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.3.1'
     implementation "androidx.compose.ui:ui:$compose_version"
     implementation "androidx.compose.material:material:$compose_version"
     implementation "androidx.compose.ui:ui-tooling:$compose_version"
-    implementation 'androidx.activity:activity-compose:1.3.0-beta02'
+    implementation 'androidx.activity:activity-compose:1.3.0-rc01'
     testImplementation 'junit:junit:4.13.2'
     testImplementation 'org.testng:testng:7.3.0'
 
@@ -122,10 +122,10 @@ dependencies {
     // debugImplementation because LeakCanary should only run in debug builds.
     // debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.7'
 
-    androidTestImplementation 'androidx.test.ext:junit:1.1.2'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
-    androidTestImplementation 'androidx.test:rules:1.3.0'
-    androidTestImplementation 'androidx.test:runner:1.3.0'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+    androidTestImplementation 'androidx.test:rules:1.4.0'
+    androidTestImplementation 'androidx.test:runner:1.4.0'
     androidTestImplementation "androidx.compose.ui:ui-test-junit4:$compose_version"
 
     def room_version = "2.3.0"
@@ -137,7 +137,7 @@ dependencies {
 
     def nav_version = "2.3.5"
 
-    // Java language implementation
+    // Navigation
     implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"
     implementation "androidx.navigation:navigation-ui-ktx:$nav_version"
 
@@ -148,31 +148,31 @@ dependencies {
     androidTestImplementation "androidx.navigation:navigation-testing:$nav_version"
 
     // Jetpack Compose Integration
-    implementation "androidx.navigation:navigation-compose:2.4.0-alpha03"
+    implementation "androidx.navigation:navigation-compose:2.4.0-alpha04"
 
 
     //Jetpack Compose UI
     dependencies {
-        implementation 'androidx.compose.ui:ui:1.0.0-beta09'
+        implementation 'androidx.compose.ui:ui:1.0.0-rc01'
         // Tooling support (Previews, etc.)
-        implementation 'androidx.compose.ui:ui-tooling:1.0.0-beta09'
+        implementation 'androidx.compose.ui:ui-tooling:1.0.0-rc01'
         // Foundation (Border, Background, Box, Image, Scroll, shapes, animations, etc.)
-        implementation 'androidx.compose.foundation:foundation:1.0.0-beta09'
+        implementation 'androidx.compose.foundation:foundation:1.0.0-rc01'
         // Material Design
-        implementation 'androidx.compose.material:material:1.0.0-beta09'
+        implementation 'androidx.compose.material:material:1.0.0-rc01'
         // Material design icons
-        implementation 'androidx.compose.material:material-icons-core:1.0.0-beta09'
-        implementation 'androidx.compose.material:material-icons-extended:1.0.0-beta09'
+        implementation 'androidx.compose.material:material-icons-core:1.0.0-rc01'
+        implementation 'androidx.compose.material:material-icons-extended:1.0.0-rc01'
         // Integration with activities
-        implementation 'androidx.activity:activity-compose:1.3.0-beta02'
+        implementation 'androidx.activity:activity-compose:1.3.0-rc01'
         // Integration with ViewModels
         implementation 'androidx.lifecycle:lifecycle-viewmodel-compose:1.0.0-alpha07'
         // Integration with observables
-        implementation 'androidx.compose.runtime:runtime-livedata:1.0.0-beta09'
-        implementation 'androidx.compose.runtime:runtime-rxjava2:1.0.0-beta09'
+        implementation 'androidx.compose.runtime:runtime-livedata:1.0.0-rc01'
+        implementation 'androidx.compose.runtime:runtime-rxjava2:1.0.0-rc01'
 
         // UI Tests
-        androidTestImplementation 'androidx.compose.ui:ui-test-junit4:1.0.0-beta09'
+        androidTestImplementation 'androidx.compose.ui:ui-test-junit4:1.0.0-rc01'
     }
 }
 

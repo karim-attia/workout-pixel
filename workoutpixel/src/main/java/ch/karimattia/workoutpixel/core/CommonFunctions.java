@@ -252,6 +252,9 @@ public class CommonFunctions {
         testData.add(new Goal(null, "Visualize your day", today3Am()+Math.round(intervalInMilliseconds(1)*0.259), 1,2, false, true, STATUS_GREEN));
         testData.add(new Goal(null, "Morning walk", today3Am(), 1,2, false, false, STATUS_GREEN));
         testData.add(new Goal(null, "Water plants", today3Am()-intervalInMilliseconds(7), 7,2, true, false, STATUS_BLUE));
+        for (Goal goal : testData) {
+            goal.setUid(testData.indexOf(goal)+1);
+        }
         return testData;
     }
 
