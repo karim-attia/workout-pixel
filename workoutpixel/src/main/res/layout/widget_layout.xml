@@ -1,6 +1,8 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:id="@+id/widget_container"
+    >
 
     <TextView
         android:id="@+id/appwidget_text"
@@ -11,4 +13,4 @@
         android:text="@string/standard_widget_text"
         />
 
-</RelativeLayout>
+</LinearLayout>

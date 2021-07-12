@@ -11,6 +11,7 @@ import androidx.room.Update;
 import java.util.List;
 
 import ch.karimattia.workoutpixel.core.Goal;
+import kotlinx.coroutines.flow.Flow;
 
 @Dao
 public interface GoalDao {
@@ -31,11 +32,9 @@ public interface GoalDao {
 
     // Widgets
 
-// --Commented out by Inspection START (24.06.21, 12:21):
-//    // Get widget by appWidgetId
-//    @Query("SELECT * FROM goals WHERE appWidgetId=:appWidgetId")
-//    Goal loadGoalByAppWidgetId(int appWidgetId);
-// --Commented out by Inspection STOP (24.06.21, 12:21)
+    // Get widget by appWidgetId
+    @Query("SELECT * FROM goals WHERE appWidgetId=:appWidgetId")
+    Goal loadGoalByAppWidgetId(int appWidgetId);
 
     @Query("SELECT * FROM goals WHERE uid=:uid")
     Goal loadGoalByUid(int uid);
@@ -50,6 +49,10 @@ public interface GoalDao {
     // Get all widgets
     @Query("SELECT * FROM goals")
     List<Goal> loadAllGoals();
+
+    // Get all widgets
+    @Query("SELECT * FROM goals")
+    Flow<List<Goal>> loadAllGoalsFlow();
 
     @Insert(onConflict = OnConflictStrategy.REPLACE, entity = Goal.class)
     long insertGoal(Goal goal);

@@ -4,12 +4,13 @@ import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.util.Log;
+
+import java.util.List;
 
 import ch.karimattia.workoutpixel.configure.ConfigureActivity;
 import ch.karimattia.workoutpixel.database.GoalViewModel;
-
-import java.util.List;
 
 /**
  * Implementation of App Widget functionality.
@@ -32,8 +33,7 @@ public class WorkoutPixelAppWidgetProvider extends AppWidgetProvider {
 
         // Do this if the widget has been clicked
         if (ACTION_DONE_EXERCISE.equals(intent.getAction())) {
-            // TODO: widgetUid -> goalUid
-            int uid = intent.getIntExtra("widgetUid", 0);
+            int uid = intent.getIntExtra("goalUid", 0);
             Goal goal = GoalViewModel.loadGoalByUid(context, uid);
             goal.updateAfterClick(context);
         }
@@ -57,9 +57,7 @@ public class WorkoutPixelAppWidgetProvider extends AppWidgetProvider {
             // There may be multiple widgets active, so update all of them
         Log.d(TAG, "ON_UPDATE\n------------------------------------------------------------------------");
         // Start alarm
-        Log.v(TAG, "START_ALARM");
         WidgetAlarm.startAlarm(context);
-        Log.v(TAG, "ALARM_STARTED");
 
         // TODO: Understand
         // TODO: Replaced iteration through appWidgetIds with data from DB. Insert check that this is the same and fix if not. Maybe before it only iterated through some widgets. But I don't think it matters.
@@ -111,6 +109,13 @@ public class WorkoutPixelAppWidgetProvider extends AppWidgetProvider {
             WidgetAlarm.stopAlarm(context);
             Log.v(TAG, "STOPPED_ALARM");
         }
+    }
+
+    // Entry point
+    @Override
+    public void onAppWidgetOptionsChanged(Context context, AppWidgetManager appWidgetManager, int appWidgetId, Bundle bundle) {
+        Goal goal = GoalViewModel.loadGoalByAppWidgetId(context, appWidgetId);
+        goal.runUpdate(context, false);
     }
 }
 

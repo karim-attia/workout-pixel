@@ -4,16 +4,17 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.runtime.*
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.*
+import ch.karimattia.workoutpixel.core.CommonFunctions
 import ch.karimattia.workoutpixel.core.Goal
 import ch.karimattia.workoutpixel.database.GoalViewModel
 import ch.karimattia.workoutpixel.ui.theme.WorkoutPixelTheme
@@ -23,24 +24,29 @@ class ComposeActivity : ComponentActivity() {
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 		val goalViewModel by viewModels<GoalViewModel>()
-
-		setContent {
-			WorkoutPixelApp(
-				goalViewModel = goalViewModel,
-				updateAfterClick = { it.updateAfterClick(this) }
-			)
-
-		}
+		goalViewModel.allGoals.observe(this, {
+			//  goalsRecyclerViewAdapter.setData(testData());
+			setContent {
+				WorkoutPixelApp(
+					goals = it,
+					// goalViewModel = goalViewModel,
+					updateAfterClick = { it.updateAfterClick(this) },
+				)
+			}
+		})
 	}
 }
 
 @Composable
 fun WorkoutPixelApp(
-	goalViewModel: GoalViewModel,
+	goals: List<Goal>,
+	// goalViewModel: GoalViewModel,
 	updateAfterClick: (Goal) -> Unit,
 ) {
 
-	WorkoutPixelTheme(darkTheme = false) {
+	WorkoutPixelTheme(
+		darkTheme = false,
+	) {
 		val allScreens = WorkoutPixelScreen.values().toList()
 		val navController = rememberNavController()
 		val backstackEntry = navController.currentBackStackEntryAsState()
@@ -48,13 +54,11 @@ fun WorkoutPixelApp(
 		val currentScreen = WorkoutPixelScreen.fromRoute(
 			backstackEntry.value?.destination?.route
 		)
-		var appBarTitle by remember { mutableStateOf("WorkoutPixel") }
-
+		var appBarTitle: String by remember { mutableStateOf("Workout Pixel") }
 		// TODO: Always have current goal available. Set to 0 if screen for all goals?
 		// TODO: App bar based on screens instead of content.
-		var currentGoal = 0
-
-		var navigateTo:String = WorkoutPixelScreen.EditGoalView.name + "/1"
+		// TODO: Current goal part of viewModel?
+		var currentGoal: Goal? by remember { mutableStateOf(CommonFunctions.testData()[0]) }
 
 		Scaffold(
 			topBar = {
@@ -67,11 +71,10 @@ fun WorkoutPixelApp(
 								Icon(Icons.Filled.ArrowBack, "Back")
 							}
 						}
-					}
-					else null,
+					} else null,
 					actions = {
 						if (currentScreen.showEditIcon) {
-							IconButton(onClick = { navController.navigate(navigateTo) }) {
+							IconButton(onClick = { navController.navigate(WorkoutPixelScreen.EditGoalView.name + "/" + (currentGoal?.uid)) }) {
 								Icon(Icons.Filled.Edit, contentDescription = "Edit goal")
 							}
 						}
@@ -93,19 +96,20 @@ fun WorkoutPixelApp(
 					}
 				}
 			}
-		) {
+		) { innerPadding ->
 			WorkoutPixelNavHost(
 				navController = navController,
-				goalViewModel = goalViewModel,
+				goals = goals,
+				// goalViewModel = goalViewModel,
 				updateAfterClick = updateAfterClick,
-				navigateTo = { destination: String ->
+				navigateTo = { destination: String, goal: Goal? ->
 					navController.navigate(destination)
+					currentGoal = goal
 				},
 				setAppBarTitle = { appBarText: String ->
 					appBarTitle = appBarText
-				}
-
-				// modifier = Modifier.padding(innerPadding)
+				},
+				modifier = Modifier.padding(innerPadding)
 			)
 		}
 	}
@@ -114,13 +118,14 @@ fun WorkoutPixelApp(
 @Composable
 fun WorkoutPixelNavHost(
 	navController: NavHostController,
-	goalViewModel: GoalViewModel,
+	goals: List<Goal>,
+	// goalViewModel: GoalViewModel,
 	updateAfterClick: (Goal) -> Unit,
-	navigateTo: (destination: String) -> Unit,
+	navigateTo: (destination: String, goal: Goal?) -> Unit,
 	setAppBarTitle: (appBarText: String) -> Unit,
 	modifier: Modifier = Modifier
 ) {
-	val goals: List<Goal> by goalViewModel.allGoals.observeAsState(listOf())
+	// val goals: List<Goal> by goalViewModel.allGoals.observeAsState(initial = listOf())
 
 	NavHost(
 		navController = navController,

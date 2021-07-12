@@ -4,7 +4,6 @@ import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.util.Log;
 
 import java.time.Instant;
@@ -23,6 +22,7 @@ import java.util.stream.Collectors;
 
 import ch.karimattia.workoutpixel.R;
 import ch.karimattia.workoutpixel.database.GoalViewModel;
+import ch.karimattia.workoutpixel.ui.theme.ColorKt;
 
 public class CommonFunctions {
     private static final String TAG = "WORKOUT_PIXEL COMMON FUNCTIONS";
@@ -135,13 +135,13 @@ public class CommonFunctions {
     public static int getColorFromStatus(String status) {
         switch (status) {
             case STATUS_GREEN:
-                return Color.rgb( 56,142,60);
+                return ColorKt.Green;
             case STATUS_BLUE:
-                return Color.rgb(25,118,210);
+                return ColorKt.Blue;
             case STATUS_RED:
-                return Color.rgb( 211,47,47);
+                return ColorKt.Red;
             case STATUS_NONE:
-                return Color.rgb( 123,31,162);
+                return ColorKt.Purple;
             default:
                 Log.d(TAG, "getColorFromStatus: status not correctly assigned.");
                 return 0;

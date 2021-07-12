@@ -54,15 +54,23 @@ public class Goal {
         this.status = status;
     }
 
-    public int getUid() {return uid;}
-    public void setUid(int uid) {this.uid = uid;}
+    public int getUid() {
+        return uid;
+    }
+
+    public void setUid(int uid) {
+        this.uid = uid;
+    }
+
     @Nullable
     public Integer getAppWidgetId() {
         return appWidgetId;
     }
+
     public void setAppWidgetId(@Nullable Integer appWidgetId) {
         this.appWidgetId = appWidgetId;
     }
+
     public String getTitle() {
         if (title != null) {
             return title;
@@ -70,33 +78,42 @@ public class Goal {
             return "";
         }
     }
+
     public void setTitle(String title) {
         this.title = title;
     }
+
     public long getLastWorkout() {
         return lastWorkout;
     }
+
     public void setLastWorkout(long lastWorkout) {
         this.lastWorkout = lastWorkout;
     }
+
     public boolean setNewLastWorkout(long lastWorkout) {
-        if(this.lastWorkout == lastWorkout) {return false;}
-        else {
+        if (this.lastWorkout == lastWorkout) {
+            return false;
+        } else {
             this.lastWorkout = lastWorkout;
             setNewStatus();
             return true;
         }
     }
+
     public int getIntervalBlue() {
         return intervalBlue;
     }
+
     public void setIntervalBlue(int intervalBlue) {
         this.intervalBlue = intervalBlue;
     }
+
     public int getIntervalRed() {
         return intervalRed;
     }
-// --Commented out by Inspection START (23.06.21, 20:29):
+
+    // --Commented out by Inspection START (23.06.21, 20:29):
 //    public void setIntervalRed(int intervalRed) {
 //        this.intervalRed = intervalRed;
 //    }
@@ -104,27 +121,37 @@ public class Goal {
     public boolean getShowDate() {
         return showDate;
     }
+
     public void setShowDate(boolean showDate) {
         this.showDate = showDate;
     }
+
     public boolean getShowTime() {
         return showTime;
     }
+
     public void setShowTime(boolean showTime) {
         this.showTime = showTime;
     }
-    public String getStatus() { return status;}
+
+    public String getStatus() {
+        return status;
+    }
+
     public void setStatus(String status) {
         this.status = status;
     }
+
     public boolean setNewStatus() {
         String newStatus = CommonFunctions.getNewStatus(lastWorkout, intervalBlue);
-        if(this.status.equals(newStatus)) {return false;}
-        else {
+        if (this.status.equals(newStatus)) {
+            return false;
+        } else {
             status = newStatus;
             return true;
         }
     }
+
     public boolean hasValidAppWidgetId() {
         boolean hasValidAppWidgetId = !(appWidgetId == null);
         Log.v(TAG, "hasValidAppWidgetId: " + hasValidAppWidgetId);
@@ -175,7 +202,7 @@ public class Goal {
 
     // Can also be called on widget with invalid AppWidgetId
     public void updateWidgetBasedOnStatus(Context context) {
-        Log.d(TAG, "updateBasedOnStatus: " + debugString() + "\n------------------------------------------------------------------------");
+        Log.v(TAG, "updateBasedOnStatus: " + debugString() + "\n------------------------------------------------------------------------");
 
         // Update the widget data in the db (only) when there is a new status.
         if (setNewStatus()) {
@@ -189,17 +216,34 @@ public class Goal {
     // Can also be called on widget with invalid AppWidgetId
     public void runUpdate(Context context, boolean setOnClickListener) {
         // Make sure to always set both the text and the background of the widget because otherwise it gets updated to some random old version.
-        if(appWidgetId != null) {AppWidgetManager.getInstance(context).updateAppWidget(appWidgetId, widgetView(context, setOnClickListener));}
-        else {Log.d(TAG, "runUpdate: appWidgetId == null");}
+        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
+        if (appWidgetId != null) {
+            appWidgetManager.updateAppWidget(appWidgetId, widgetView(context, setOnClickListener, appWidgetManager));
+        } else {
+            Log.d(TAG, "runUpdate: appWidgetId == null " + debugString());
+        }
     }
 
-    RemoteViews widgetView(Context context, boolean setOnClickListener) {
+    RemoteViews widgetView(Context context, boolean setOnClickListener, AppWidgetManager appWidgetManager) {
         RemoteViews widgetView = new RemoteViews(context.getPackageName(), R.layout.widget_layout);
         // Set an onClickListener for every widget: https://stackoverflow.com/questions/30174386/multiple-instances-of-widget-with-separated-working-clickable-imageview
-        if(setOnClickListener) {widgetView.setOnClickPendingIntent(R.id.appwidget_text, widgetPendingIntent(context));}
+        if (setOnClickListener) {
+            widgetView.setOnClickPendingIntent(R.id.appwidget_text, widgetPendingIntent(context));
+        }
         // Before updating a widget, the text and background of the view need to be set. Otherwise, the existing not updated properties of the widgetView will be passed.
         widgetView.setTextViewText(R.id.appwidget_text, widgetText());
         widgetView.setInt(R.id.appwidget_text, "setBackgroundResource", CommonFunctions.getDrawableIntFromStatus(status));
+        // Set size if available
+        // https://stackoverflow.com/questions/25153604/get-the-size-of-my-homescreen-widget
+        if (appWidgetId != null) {
+            int height = appWidgetManager.getAppWidgetOptions(appWidgetId).getInt(AppWidgetManager.OPTION_APPWIDGET_MAX_HEIGHT, 44);
+            int padding_in_dp = (height - 44);
+            int padding_in_px = (int) (padding_in_dp * context.getResources().getDisplayMetrics().density + 0.5f);
+            int paddigTopInPx = (int) Math.ceil(padding_in_px / 4.0);
+            int paddigBottomInPx = (int) Math.floor(padding_in_px / 4.0 * 3.0);
+            widgetView.setViewPadding(R.id.widget_container, 0, paddigTopInPx, 0, paddigBottomInPx);
+        }
+
         return widgetView;
     }
 
@@ -220,11 +264,11 @@ public class Goal {
         Intent intent = new Intent(context, WorkoutPixelAppWidgetProvider.class);
         intent.setAction(WorkoutPixelAppWidgetProvider.ACTION_DONE_EXERCISE);
         // put the appWidgetId as an extra to the update intent
-        if(appWidgetId == null) {
+        if (appWidgetId == null) {
             Log.d(TAG, "widgetPendingIntent: appWidgetId is null where it shouldn't be.");
             return null;
         }
-        intent.putExtra("widgetUid", uid);
+        intent.putExtra("goalUid", uid);
         return PendingIntent.getBroadcast(context, appWidgetId, intent, PendingIntent.FLAG_UPDATE_CURRENT);
     }
 }

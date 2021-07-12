@@ -13,7 +13,7 @@ import ch.karimattia.workoutpixel.core.CommonFunctions;
 import ch.karimattia.workoutpixel.core.Goal;
 
 public class GoalViewModel extends AndroidViewModel {
-    private static final String TAG = "InteractWithWidgetInDb";
+    private static final String TAG = "GoalViewModel";
 
     private final LiveData<List<Goal>> allGoals;
 
@@ -38,12 +38,10 @@ public class GoalViewModel extends AndroidViewModel {
         return ((int) workoutDao(context).insertGoal(goal));
     }
 
-// --Commented out by Inspection START (23.06.21, 20:47):
-//    public static Goal loadGoalByAppWidgetId(Context context, Integer appWidgetId) {
-//        Log.d(TAG, "getPastWorkoutsFromDbByAppWidgetId" + appWidgetId);
-//        return workoutDao(context).loadGoalByAppWidgetId(appWidgetId);
-//    }
-// --Commented out by Inspection STOP (23.06.21, 20:47)
+    public static Goal loadGoalByAppWidgetId(Context context, Integer appWidgetId) {
+        Log.d(TAG, "getPastWorkoutsFromDbByAppWidgetId" + appWidgetId);
+        return workoutDao(context).loadGoalByAppWidgetId(appWidgetId);
+    }
 
     public static Goal loadGoalByUid(Context context, int uid) {
         Log.d(TAG, "loadGoalByUid " + uid);

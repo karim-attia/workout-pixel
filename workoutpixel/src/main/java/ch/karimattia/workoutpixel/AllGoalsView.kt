@@ -32,7 +32,7 @@ import java.util.*
 fun AllGoals(
 	goals: List<Goal>,
 	updateAfterClick: (Goal) -> Unit,
-	navigateTo: (destination:String) -> Unit,
+	navigateTo: (destination: String, goal:Goal?) -> Unit,
 	setAppBarTitle: (appBarText:String) -> Unit,
 	) {
 
@@ -50,7 +50,7 @@ fun AllGoals(
 fun GoalList(
 	goals: List<Goal>,
 	updateAfterClick: (Goal) -> Unit,
-	navigateTo: (destination:String) -> Unit,
+	navigateTo: (destination: String, goal:Goal?) -> Unit,
 ) {
 	// We save the scrolling position with this state that can also
 	// be used to programmatically scroll the list
@@ -82,7 +82,7 @@ fun GoalCard(
 	modifier: Modifier = Modifier,
 	goal: Goal,
 	updateAfterClick: () -> Unit,
-	navigateTo: (destination:String) -> Unit,
+	navigateTo: (destination: String, goal:Goal?) -> Unit,
 ) {
 	Card(
 		backgroundColor = Color.White,
@@ -91,7 +91,7 @@ fun GoalCard(
 			.padding(vertical = 4.dp, horizontal = 8.dp)
 			.fillMaxWidth()
 			.clickable {
-				navigateTo("${WorkoutPixelScreen.GoalDetailView.name}/${goal.uid}")
+				navigateTo("${WorkoutPixelScreen.GoalDetailView.name}/${goal.uid}", goal)
 			}
 	) {
 		// Preview and rest
@@ -166,7 +166,7 @@ fun LastDoneIconAndText(goal: Goal) {
 fun IconAndText(icon: ImageVector, size: Int, iconPaddingLeft: Int, text: String) {
 	Row(verticalAlignment = Alignment.CenterVertically) {
 		Icon(
-			icon, contentDescription = null,
+			imageVector = icon, contentDescription = null,
 			Modifier
 				.padding(end = iconPaddingLeft.dp)
 				.height(size.dp)
@@ -188,7 +188,7 @@ fun AllGoalsPreview() {
 	AllGoals(
 		goals = CommonFunctions.testData(),
 		updateAfterClick = {},
-		navigateTo = {},
+		navigateTo = {_, _ -> },
 		setAppBarTitle = {}
 	)
 }
