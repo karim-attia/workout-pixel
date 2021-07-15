@@ -161,7 +161,10 @@ fun WorkoutPixelNavHost(
 				goal = goal,
 				updateAfterClick = { updateAfterClick(goal) },
 				// TODO
-				deleteGoal = {},
+				deleteGoal = {goalToBeDeleted ->
+					navController.navigateUp()
+
+							 },
 				setAppBarTitle = setAppBarTitle,
 			)
 		}

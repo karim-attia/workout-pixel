@@ -11,11 +11,11 @@
     <string name="add_widget">Add widget</string>
     <string name="add_widget_reconfigure">Update goal</string>
     <string name="ReconfigureWidgetActivityLabel">Edit your goal</string>
-    <string name="show_time_in_the_widget">Show time in the widget</string>
-    <string name="show_date_in_the_widget">Show date in the widget</string>
+    <string name="show_time_in_the_widget">Show time</string>
+    <string name="show_date_in_the_widget">Show date</string>
     <string name="connect_widget_instructions">You have defined goals that currently don\'t have a widget. You can connect the widget to one of those goals. This takes over all its data including the history.</string>
     <string name="connect">Connect</string>
-    <string name="date_time_instructions">Do you want to show when you reached your goal the last time?</string>
+    <string name="date_time_instructions">Should the widget show when you reached your goal the last time?</string>
     <string name="preview">Preview</string>
     <string name="connect_widget_main_activity">There is no widget for this goal on your homescreen. Add a new widget and connect it to this goal to keep the data.</string>
     <string name="standard_widget_text">Your goal</string>

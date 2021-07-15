@@ -40,12 +40,11 @@ public class WorkoutPixelAppWidgetProvider extends AppWidgetProvider {
 
         // Do this when the alarm hits
         if (ACTION_ALARM_UPDATE.equals(intent.getAction())) {
-            CommonFunctions.saveTimeWithStringToSharedPreferences(context, "Last Alarm");
+            CommonFunctions.saveTimeWithStringToSharedPreferences(context, "Last ACTION_ALARM_UPDATE " + CommonFunctions.dateTimeBeautiful(System.currentTimeMillis()));
             List<Goal> goalList = GoalViewModel.loadAllGoals(context);
             for (Goal goal : goalList) {
                 goal.updateWidgetBasedOnStatus(context);
             }
-            // TODO: Also update status of goals without widget in DB.
         }
     }
 

@@ -245,6 +245,13 @@ public class CommonFunctions {
         else return "INVALID NUMBER OF TIMES";
     }
 
+    public static String days (int days) {
+        if (days == 0) {return "days.";}
+        else if (days == 1) {return "day.";}
+        else if (days > 1) {return "days.";}
+        else return "INVALID NUMBER OF DAYS";
+    }
+
     public static List<Goal> testData() {
         List<Goal> testData = new ArrayList<>();
         testData.add(new Goal(null, "Push ups", today3Am()-intervalInMilliseconds(1), 2,2, false, false, STATUS_GREEN));

@@ -3,10 +3,10 @@ package ch.karimattia.workoutpixel
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Card
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
@@ -32,9 +32,9 @@ import java.util.*
 fun AllGoals(
 	goals: List<Goal>,
 	updateAfterClick: (Goal) -> Unit,
-	navigateTo: (destination: String, goal:Goal?) -> Unit,
-	setAppBarTitle: (appBarText:String) -> Unit,
-	) {
+	navigateTo: (destination: String, goal: Goal?) -> Unit,
+	setAppBarTitle: (appBarText: String) -> Unit,
+) {
 
 	setAppBarTitle("Workout Pixel")
 	// TODO: Move to Instructions if no goals
@@ -50,20 +50,42 @@ fun AllGoals(
 fun GoalList(
 	goals: List<Goal>,
 	updateAfterClick: (Goal) -> Unit,
-	navigateTo: (destination: String, goal:Goal?) -> Unit,
+	navigateTo: (destination: String, goal: Goal?) -> Unit,
 ) {
+	val numberOfGoals = goals.size
+	// TODO: Else show card that links to Instructions
+	if (numberOfGoals > 0) {
+		Column(
+			modifier = Modifier
+				.verticalScroll(rememberScrollState())
+		) {
+			Spacer(modifier = Modifier.height(6.dp))
+			for (i in 0 until numberOfGoals) {
+				// contentPadding = PaddingValues(top = 6.dp, bottom = 40.dp),
+				GoalCard(
+					goal = goals[i],
+					updateAfterClick = { updateAfterClick(goals[i]) },
+					navigateTo = navigateTo
+				)
+			}
+			Spacer(modifier = Modifier.height(40.dp))
+		}
+	}
+
+/*
 	// We save the scrolling position with this state that can also
 	// be used to programmatically scroll the list
 	val scrollState = rememberLazyListState()
+*/
 
 /*
 	// We save the coroutine scope where our animated scroll will be executed
 	val coroutineScope = rememberCoroutineScope()
 */
 
-	LazyColumn(
+/*  LazyColumn(
 		state = scrollState,
-		contentPadding = PaddingValues(top = 6.dp, bottom = 40.dp)
+		contentPadding = PaddingValues(top = 6.dp, bottom = 40.dp),
 	) {
 		items(
 			items = goals,
@@ -75,14 +97,14 @@ fun GoalList(
 			)
 		}
 	}
+	*/
 }
 
 @Composable
 fun GoalCard(
-	modifier: Modifier = Modifier,
 	goal: Goal,
 	updateAfterClick: () -> Unit,
-	navigateTo: (destination: String, goal:Goal?) -> Unit,
+	navigateTo: (destination: String, goal: Goal?) -> Unit,
 ) {
 	Card(
 		backgroundColor = Color.White,
@@ -96,10 +118,11 @@ fun GoalCard(
 	) {
 		// Preview and rest
 		Row(
+			verticalAlignment = Alignment.Top,
 			modifier = Modifier.padding(all = 1.dp),
 		) {
 			GoalPreview(
-				goal = goal, updateAfterClick = updateAfterClick, modifier = Modifier.padding(4.dp)
+				goal = goal, updateAfterClick = updateAfterClick, modifier = Modifier.padding(all = 4.dp)
 			)
 			// Rest
 			Column(modifier = Modifier.padding(start = 4.dp))
@@ -116,7 +139,9 @@ fun GoalCard(
 
 @Composable
 fun GoalPreview(
-	goal: Goal, updateAfterClick: () -> Unit, modifier: Modifier = Modifier
+	goal: Goal,
+	updateAfterClick: () -> Unit = {},
+	modifier: Modifier = Modifier
 ) {
 	Text(
 		text = goal.widgetText(),
@@ -188,7 +213,7 @@ fun AllGoalsPreview() {
 	AllGoals(
 		goals = CommonFunctions.testData(),
 		updateAfterClick = {},
-		navigateTo = {_, _ -> },
+		navigateTo = { _, _ -> },
 		setAppBarTitle = {}
 	)
 }

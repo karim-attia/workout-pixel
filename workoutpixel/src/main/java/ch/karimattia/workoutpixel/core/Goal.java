@@ -113,11 +113,12 @@ public class Goal {
         return intervalRed;
     }
 
-    // --Commented out by Inspection START (23.06.21, 20:29):
+// --Commented out by Inspection START (23.06.21, 20:29):
 //    public void setIntervalRed(int intervalRed) {
 //        this.intervalRed = intervalRed;
 //    }
 // --Commented out by Inspection STOP (23.06.21, 20:29)
+
     public boolean getShowDate() {
         return showDate;
     }

@@ -181,13 +181,14 @@
             android:text="@string/show_time_in_the_widget" />
 
         <TextView
-            style="@style/configureActivityMainItem"
+            style="@style/Title"
+            android:layout_marginTop="20dp"
             android:text="@string/preview" />
 
         <TextView
             android:id="@+id/widget_preview"
             style="@style/WorkoutPixelPreview"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="12dp"
             android:background="#7b1fa2" />
 
         <View

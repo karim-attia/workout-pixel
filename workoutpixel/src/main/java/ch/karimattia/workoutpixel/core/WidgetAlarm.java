@@ -18,7 +18,7 @@ public class WidgetAlarm {
     private static final String TAG = "WORKOUT_PIXEL ALARM";
 
     public static void startAlarm(Context context) {
-        saveTimeWithStringToSharedPreferences(context, "WidgetAlarm startAlarm");
+        saveTimeWithStringToSharedPreferences(context, "WidgetAlarm startAlarm " + CommonFunctions.dateTimeBeautiful(System.currentTimeMillis()));
 
         // RTC does not wake the device up
         alarmManager(context).setInexactRepeating(AlarmManager.RTC, next3Am(), AlarmManager.INTERVAL_DAY, pendingIntent(context));
@@ -26,7 +26,7 @@ public class WidgetAlarm {
     }
 
     public static void stopAlarm(Context context) {
-        saveTimeWithStringToSharedPreferences(context, "WidgetAlarm stopAlarm");
+        saveTimeWithStringToSharedPreferences(context, "WidgetAlarm stopAlarm " + CommonFunctions.dateTimeBeautiful(System.currentTimeMillis()));
         alarmManager(context).cancel(pendingIntent(context));
         Log.d(TAG, "ALARM STOPPED");
     }

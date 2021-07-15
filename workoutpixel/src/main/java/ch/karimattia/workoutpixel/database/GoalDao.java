@@ -17,12 +17,15 @@ import kotlinx.coroutines.flow.Flow;
 public interface GoalDao {
     // Past Workouts
     // Return all workouts by appWidgetId
-    @Query("SELECT * FROM pastWorkouts WHERE widgetUid=:widgetUid ORDER BY workoutTime DESC")
-    LiveData<List<PastWorkout>> loadAllPastWorkouts(int widgetUid);
+    @Query("SELECT * FROM pastWorkouts WHERE widgetUid=:goalUid ORDER BY workoutTime DESC")
+    LiveData<List<PastWorkout>> loadAllPastWorkouts(int goalUid);
+
+    @Query("SELECT * FROM pastWorkouts WHERE widgetUid=:goalUid ORDER BY workoutTime DESC")
+    Flow<List<PastWorkout>> loadAllPastWorkoutsFlow(int goalUid);
 
     // Return number of active workouts by appWidgetId
-    @Query("SELECT COUNT() FROM pastWorkouts WHERE widgetUid=:widgetUid AND active='1'")
-    int getCountOfActivePastWorkouts(int widgetUid);
+    @Query("SELECT COUNT() FROM pastWorkouts WHERE widgetUid=:goalUid AND active='1'")
+    int getCountOfActivePastWorkouts(int goalUid);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE, entity = PastWorkout.class)
     void insertPastWorkout(PastWorkout pastWorkout);
