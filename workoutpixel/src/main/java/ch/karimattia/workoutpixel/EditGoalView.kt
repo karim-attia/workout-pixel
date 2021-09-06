@@ -51,18 +51,9 @@ fun EditGoalView(
 	// This original goal is then also shown if the back button is clicked.
 	// This doesn't happen if the reflected data is saved via the update button.
 	// Copying the goal values fixes this...
-	val initialGoalCopy = Goal(
-		initialGoal.appWidgetId,
-		initialGoal.title,
-		initialGoal.lastWorkout,
-		initialGoal.intervalBlue,
-		initialGoal.intervalRed,
-		initialGoal.showDate,
-		initialGoal.showTime,
-		initialGoal.status,
-	)
-	initialGoalCopy.setUid(initialGoal.uid)
-	val (editGoalViewGoal, setValueEditGoalViewGoal) = remember { mutableStateOf(initialGoalCopy) }
+
+	// https://stackoverflow.com/questions/63956058/jetpack-compose-state-modify-class-property (Last answer for policy)
+	val (editGoalViewGoal, setValueEditGoalViewGoal) = remember { mutableStateOf(value = initialGoal.copy(), policy = neverEqualPolicy()) }
 
 	Log.d(
 		"EDIT GOAL VIEW",
@@ -85,29 +76,12 @@ fun EditGoalView(
 			)
 		}
 		SetUpYourWidget(
-			externalSetUpYourWidgetGoal = editGoalViewGoal,
+			setUpYourWidgetGoal = editGoalViewGoal,
 			setUpYourWidgetGoalChange = { changedGoal ->
-				// Extract copy to CommonFunctions or Goal
-				// https://stackoverflow.com/questions/63956058/jetpack-compose-state-modify-class-property
-				val changedGoalCopy = Goal(
-					changedGoal.appWidgetId,
-					changedGoal.title,
-					changedGoal.lastWorkout,
-					changedGoal.intervalBlue,
-					changedGoal.intervalRed,
-					changedGoal.showDate,
-					changedGoal.showTime,
-					changedGoal.status,
-				)
-				changedGoalCopy.setUid(changedGoal.uid)
+				// Copying goal or policy required: https://stackoverflow.com/questions/63956058/jetpack-compose-state-modify-class-property
+				// setValueEditGoalViewGoal(changedGoal.copy())
 
-				setValueEditGoalViewGoal(changedGoalCopy)
-
-				Log.d(
-					"EDIT GOAL VIEW",
-					"SetUpYourWidget goalChange" + editGoalViewGoal.intervalBlue.toString()
-				)
-
+				setValueEditGoalViewGoal(changedGoal)
 			},
 			modifier = modifier,
 		)
@@ -117,13 +91,7 @@ fun EditGoalView(
 		)
 		AddUpdateWidgetButton(
 			isFirstConfigure = isFirstConfigure,
-			addUpdateWidget = {
-				Log.d(
-					"EDIT GOAL VIEW",
-					"AddWidgetButton addUpdateWidget" + editGoalViewGoal.intervalBlue.toString()
-				)
-				addUpdateWidget(editGoalViewGoal)
-			},
+			addUpdateWidget = {				addUpdateWidget(editGoalViewGoal)			},
 			modifier = Modifier
 				.padding(top = 24.dp)
 				.align(Alignment.End),
@@ -170,9 +138,6 @@ fun ConnectAnExistingGoal(
 ) {
 	// TODO: Expando
 	FreeStandingTitle(text = "Connect an existing goal")
-	/*FormattedCard(
-		paddingOutsideOfCard = PaddingValues(vertical = 8.dp, horizontal = 0.dp)
-	) {*/
 	Infobox(
 		text = stringResource(R.string.connect_widget_instructions),
 		modifier = modifier,
@@ -284,24 +249,22 @@ fun ConnectButton(
 
 @Composable
 fun SetUpYourWidget(
-	externalSetUpYourWidgetGoal: Goal,
+	setUpYourWidgetGoal: Goal,
 	setUpYourWidgetGoalChange: (Goal) -> Unit,
 	modifier: Modifier = Modifier,
 ) {
 	// TODO: Text based on firstConfigure.
 	FreeStandingTitle(text = "Set up your widget")
 
-	val (internalSetUpYourWidgetGoal) = remember { mutableStateOf(externalSetUpYourWidgetGoal) }
-
 	/*Text(
 		text = stringResource(id = R.string.widgetTitle),
 		modifier = modifier,
 	)*/
 	OutlinedTextField(
-		value = internalSetUpYourWidgetGoal.title,
+		value = setUpYourWidgetGoal.title,
 		onValueChange = {
-			internalSetUpYourWidgetGoal.title = it
-			setUpYourWidgetGoalChange(internalSetUpYourWidgetGoal)
+			setUpYourWidgetGoal.title = it
+			setUpYourWidgetGoalChange(setUpYourWidgetGoal)
 		},
 		label = { Text(stringResource(id = R.string.widgetTitle)) },
 		keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences),
@@ -324,11 +287,11 @@ fun SetUpYourWidget(
 			.padding(end = 12.dp)
 		Button(
 			onClick = {
-				internalSetUpYourWidgetGoal.intervalBlue--
-				Log.d("EDIT GOAL VIEW", "--" + internalSetUpYourWidgetGoal.intervalBlue.toString())
-				setUpYourWidgetGoalChange(internalSetUpYourWidgetGoal)
+				setUpYourWidgetGoal.intervalBlue--
+				Log.d("EDIT GOAL VIEW", "--" + setUpYourWidgetGoal.intervalBlue.toString())
+				setUpYourWidgetGoalChange(setUpYourWidgetGoal)
 			},
-			enabled = internalSetUpYourWidgetGoal.intervalBlue >= 2,
+			enabled = setUpYourWidgetGoal.intervalBlue >= 2,
 			contentPadding = PaddingValues(0.dp),
 			modifier = buttonModifier,
 		) {
@@ -338,14 +301,14 @@ fun SetUpYourWidget(
 			)
 		}
 		Text(
-			text = internalSetUpYourWidgetGoal.intervalBlue.toString(),
+			text = setUpYourWidgetGoal.intervalBlue.toString(),
 			modifier = textModifier
 		)
 		Button(
 			onClick = {
-				internalSetUpYourWidgetGoal.intervalBlue++
-				Log.d("EDIT GOAL VIEW", "++" + internalSetUpYourWidgetGoal.intervalBlue.toString())
-				setUpYourWidgetGoalChange(internalSetUpYourWidgetGoal)
+				setUpYourWidgetGoal.intervalBlue++
+				Log.d("EDIT GOAL VIEW", "++" + setUpYourWidgetGoal.intervalBlue.toString())
+				setUpYourWidgetGoalChange(setUpYourWidgetGoal)
 			},
 			contentPadding = PaddingValues(0.dp),
 			modifier = buttonModifier,
@@ -356,7 +319,7 @@ fun SetUpYourWidget(
 			)
 		}
 		Text(
-			text = CommonFunctions.days(internalSetUpYourWidgetGoal.intervalBlue),
+			text = CommonFunctions.days(setUpYourWidgetGoal.intervalBlue),
 			modifier = textModifier,
 		)
 	}
@@ -366,19 +329,19 @@ fun SetUpYourWidget(
 	)
 	CheckboxWithText(
 		description = stringResource(id = R.string.show_date_in_the_widget),
-		checked = internalSetUpYourWidgetGoal.showDate,
+		checked = setUpYourWidgetGoal.showDate,
 		onCheckedChange = {
-			internalSetUpYourWidgetGoal.showDate = it
-			setUpYourWidgetGoalChange(internalSetUpYourWidgetGoal)
+			setUpYourWidgetGoal.showDate = it
+			setUpYourWidgetGoalChange(setUpYourWidgetGoal)
 		},
 		modifier = modifier,
 	)
 	CheckboxWithText(
 		description = stringResource(id = R.string.show_time_in_the_widget),
-		checked = internalSetUpYourWidgetGoal.showTime,
+		checked = setUpYourWidgetGoal.showTime,
 		onCheckedChange = {
-			internalSetUpYourWidgetGoal.showTime = it
-			setUpYourWidgetGoalChange(internalSetUpYourWidgetGoal)
+			setUpYourWidgetGoal.showTime = it
+			setUpYourWidgetGoalChange(setUpYourWidgetGoal)
 		},
 		modifier = Modifier.padding(top = 4.dp),
 	)

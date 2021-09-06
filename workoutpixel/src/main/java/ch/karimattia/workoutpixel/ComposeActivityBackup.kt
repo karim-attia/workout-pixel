@@ -35,12 +35,12 @@ class ComposeActivityBackup : ComponentActivity() {
 			)
 
 			setContent {
-				WorkoutPixelApp(
+				WorkoutPixelAppBackup(
 					kotlinGoalViewModel = kotlinGoalViewModel,
 					goals = goals,
 					updateAfterClick = { it.updateAfterClick(this) },
 					// TODO: Proper viewModel stuff
-					updateGoal = { goal ->
+					goalChange = { goal ->
 						Log.d(
 							"ComposeActivity",
 							"setContent goalChange" + goal.intervalBlue.toString()
@@ -135,7 +135,7 @@ fun WorkoutPixelAppBackup(
 				"innerPadding ${goals[10]}"
 			)
 
-			WorkoutPixelNavHost(
+			WorkoutPixelNavHostBackup(
 				navController = navController,
 				goals = goals,
 				kotlinGoalViewModel = kotlinGoalViewModel,
@@ -151,7 +151,7 @@ fun WorkoutPixelAppBackup(
 				setAppBarTitle = { appBarText: String ->
 					appBarTitle = appBarText
 				},
-				updateGoal = { goal: Goal, navigateUp: Boolean ->
+				goalChange = { goal: Goal, navigateUp: Boolean ->
 					goalChange(goal)
 					Log.d(
 						"ComposeActivity",

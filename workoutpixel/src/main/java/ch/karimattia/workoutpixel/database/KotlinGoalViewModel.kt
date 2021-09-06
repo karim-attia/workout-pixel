@@ -44,6 +44,11 @@ class KotlinGoalViewModel(application: Application) : AndroidViewModel(applicati
 		Log.d("KotlinGoalViewModel: updateGoal: ", "$goal")
 	}
 
+	fun deleteGoal(goal: Goal) = viewModelScope.launch {
+		repository.deleteGoal(goal)
+		Log.d("KotlinGoalViewModel: deleteGoal: ", "$goal")
+	}
+
 	fun insertGoal(goal: Goal) = viewModelScope.launch {
 		repository.insertGoal(goal)
 	}

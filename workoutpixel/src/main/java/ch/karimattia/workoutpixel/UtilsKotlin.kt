@@ -18,6 +18,7 @@ fun goalFromGoalsByUid (goalUid: Int?, goals: List<Goal>) : Goal? {
 	}
 }
 
+// TODO: Crashes if no goal found
 fun goalFromGoalsByUid (goalUid: Int, goals: List<Goal>) : Goal {
 	return goals.first { it.uid == goalUid }
 }

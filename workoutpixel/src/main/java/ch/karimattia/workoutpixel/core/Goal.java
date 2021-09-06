@@ -272,4 +272,19 @@ public class Goal {
         intent.putExtra("goalUid", uid);
         return PendingIntent.getBroadcast(context, appWidgetId, intent, PendingIntent.FLAG_UPDATE_CURRENT);
     }
+
+    public Goal copy() {
+        Goal goalCopy = new Goal(
+                appWidgetId,
+                title,
+                lastWorkout,
+                intervalBlue,
+                intervalRed,
+                showDate,
+                showTime,
+                status
+        );
+        goalCopy.setUid(uid);
+        return goalCopy;
+    }
 }

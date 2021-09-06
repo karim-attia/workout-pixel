@@ -17,6 +17,10 @@ class KotlinGoalRepository(application: Application?) {
 		goalDao.updateGoal(goal)
 	}
 
+	suspend fun deleteGoal(goal: Goal) {
+		goalDao.deleteGoal(goal)
+	}
+
 	suspend fun insertGoal(goal: Goal) {
 		goalDao.insertGoal(goal)
 	}
