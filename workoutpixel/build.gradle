@@ -26,12 +26,12 @@ android {
         }
     }
 
-    compileSdkVersion 30
+    compileSdkVersion 31
 
     defaultConfig {
         applicationId "ch.karimattia.workoutpixel"
         minSdkVersion 26
-        targetSdkVersion 30
+        targetSdkVersion 31
         versionCode 5
         versionName "1.0"
 
@@ -89,18 +89,18 @@ android {
 //noinspection SpellCheckingInspection,SpellCheckingInspection,SpellCheckingInspection
 dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
-    implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.0'
     implementation 'androidx.recyclerview:recyclerview:1.2.1'
     implementation "androidx.cardview:cardview:1.0.0"
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
-    implementation "androidx.fragment:fragment:1.3.5"
+    implementation "androidx.fragment:fragment:1.3.6"
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'com.google.android.material:material:1.4.0'
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.3.1'
     implementation "androidx.compose.ui:ui:$compose_version"
     implementation "androidx.compose.material:material:$compose_version"
     implementation "androidx.compose.ui:ui-tooling:$compose_version"
-    implementation 'androidx.activity:activity-compose:1.3.0-rc01'
+    implementation 'androidx.activity:activity-compose:1.4.0-alpha01'
     testImplementation 'junit:junit:4.13.2'
     testImplementation 'org.testng:testng:7.3.0'
 
@@ -148,34 +148,34 @@ dependencies {
     androidTestImplementation "androidx.navigation:navigation-testing:$nav_version"
 
     // Jetpack Compose Integration
-    implementation "androidx.navigation:navigation-compose:2.4.0-alpha04"
+    implementation "androidx.navigation:navigation-compose:2.4.0-alpha08"
 
 
     //Jetpack Compose UI
     dependencies {
-        implementation 'androidx.compose.ui:ui:1.0.0-rc01'
+        implementation 'androidx.compose.ui:ui:1.1.0-alpha03'
         // Tooling support (Previews, etc.)
-        implementation 'androidx.compose.ui:ui-tooling:1.0.0-rc01'
+        implementation 'androidx.compose.ui:ui-tooling:1.1.0-alpha03'
         // Foundation (Border, Background, Box, Image, Scroll, shapes, animations, etc.)
-        implementation 'androidx.compose.foundation:foundation:1.0.0-rc01'
+        implementation 'androidx.compose.foundation:foundation:1.1.0-alpha03'
         // Material Design
-        implementation 'androidx.compose.material:material:1.0.0-rc01'
+        implementation 'androidx.compose.material:material:1.1.0-alpha03'
         // Material design icons
-        implementation 'androidx.compose.material:material-icons-core:1.0.0-rc01'
-        implementation 'androidx.compose.material:material-icons-extended:1.0.0-rc01'
+        implementation 'androidx.compose.material:material-icons-core:1.1.0-alpha03'
+        implementation 'androidx.compose.material:material-icons-extended:1.1.0-alpha03'
         // Integration with activities
-        implementation 'androidx.activity:activity-compose:1.3.0-rc01'
+        implementation 'androidx.activity:activity-compose:1.4.0-alpha01'
         // Integration with ViewModels
         implementation 'androidx.lifecycle:lifecycle-viewmodel-compose:1.0.0-alpha07'
         // Integration with observables
-        implementation 'androidx.compose.runtime:runtime-livedata:1.0.0-rc01'
-        implementation 'androidx.compose.runtime:runtime-rxjava2:1.0.0-rc01'
+        implementation 'androidx.compose.runtime:runtime-livedata:1.1.0-alpha03'
+        implementation 'androidx.compose.runtime:runtime-rxjava2:1.1.0-alpha03'
 
         // LiveData
-        implementation 'androidx.compose.runtime:runtime-livedata:1.0.0-rc01'
+        implementation 'androidx.compose.runtime:runtime-livedata:1.1.0-alpha03'
 
         // UI Tests
-        androidTestImplementation 'androidx.compose.ui:ui-test-junit4:1.0.0-rc01'
+        androidTestImplementation 'androidx.compose.ui:ui-test-junit4:1.1.0-alpha03'
     }
 }
 

@@ -1,9 +1,11 @@
 package ch.karimattia.workoutpixel
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
+import androidx.compose.material.Checkbox
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
@@ -70,11 +72,12 @@ fun CardTitle(
 
 @Composable
 fun Infobox(
-	text: String
+	text: String,
+	modifier: Modifier = Modifier
 ) {
 	Row(
 		verticalAlignment = Alignment.CenterVertically,
-		modifier = Modifier
+		modifier = modifier
 			.clip(shape = RoundedCornerShape(4.dp))
 			.background(Color(InfoColor))
 			.padding(4.dp)
@@ -89,6 +92,32 @@ fun Infobox(
 			text = text,
 			fontSize = 14.sp,
 			modifier = Modifier.padding(start = 4.dp)
+		)
+	}
+}
+
+
+@Composable
+fun CheckboxWithText(
+	description: String,
+	checked: Boolean,
+	onCheckedChange: (Boolean) -> Unit,
+	modifier: Modifier = Modifier
+	) {
+	Row (
+		verticalAlignment = Alignment.CenterVertically,
+		modifier = modifier
+			//.padding(top = 4.dp)
+			.fillMaxWidth()
+			.clickable { onCheckedChange(!checked) }
+			) {
+		Checkbox(
+			checked = checked,
+			onCheckedChange = { onCheckedChange(it) }
+		)
+		Text(
+			text = description,
+			modifier = Modifier.padding(start = 8.dp),
 		)
 	}
 }

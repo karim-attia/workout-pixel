@@ -15,15 +15,13 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.rememberNavController
+import androidx.navigation.NavType
+import androidx.navigation.compose.*
 import ch.karimattia.workoutpixel.core.Goal
 import ch.karimattia.workoutpixel.database.KotlinGoalViewModel
 import ch.karimattia.workoutpixel.ui.theme.WorkoutPixelTheme
 
-class ComposeActivity : ComponentActivity() {
+class ComposeActivityBackup : ComponentActivity() {
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
@@ -33,7 +31,7 @@ class ComposeActivity : ComponentActivity() {
 		kotlinGoalViewModel.allGoals.observe(this, { goals ->
 			Log.d(
 				"ComposeActivity",
-				"observe ${goals[10]}"
+				"observation ${goals[10]}"
 			)
 
 			setContent {
@@ -42,12 +40,12 @@ class ComposeActivity : ComponentActivity() {
 					goals = goals,
 					updateAfterClick = { it.updateAfterClick(this) },
 					// TODO: Proper viewModel stuff
-					updateGoal = { updatedGoal ->
+					updateGoal = { goal ->
 						Log.d(
 							"ComposeActivity",
-							"setContent updateGoal" + updatedGoal.intervalBlue.toString()
+							"setContent goalChange" + goal.intervalBlue.toString()
 						)
-						kotlinGoalViewModel.updateGoal(updatedGoal)
+						kotlinGoalViewModel.updateGoal(goal)
 					}
 				)
 			}
@@ -58,11 +56,11 @@ class ComposeActivity : ComponentActivity() {
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun WorkoutPixelApp(
+fun WorkoutPixelAppBackup(
 	kotlinGoalViewModel: KotlinGoalViewModel,
 	goals: List<Goal>,
 	updateAfterClick: (Goal) -> Unit,
-	updateGoal: (Goal) -> Unit,
+	goalChange: (Goal) -> Unit,
 ) {
 	WorkoutPixelTheme(
 		darkTheme = false,
@@ -70,17 +68,29 @@ fun WorkoutPixelApp(
 		val allScreens = WorkoutPixelScreen.values().toList()
 		val navController = rememberNavController()
 		val backstackEntry = navController.currentBackStackEntryAsState()
+		// var currentScreen by rememberSaveable { mutableStateOf(WorkoutPixelScreen.GoalsList) }
 		val currentScreen = WorkoutPixelScreen.fromRoute(
 			backstackEntry.value?.destination?.route
 		)
-		// TODO: appBarTitle part of viewModel?
-		var appBarTitle: String by remember { mutableStateOf("Workout Pixel") }
-		val currentGoalUid: Int? by kotlinGoalViewModel.currentGoalUid.observeAsState()
+		// TODO: Current goal part of viewModel?
 
-		Log.d("ComposeActivity", "currentGoal: Uid: $currentGoalUid")
+		var appBarTitle: String by remember { mutableStateOf("Workout Pixel") }
+		// TODO: Always have current goal available. Set to 0 if screen for all goals?
+		val currentGoalUid:Int? by kotlinGoalViewModel.currentGoalUid.observeAsState()
+ 
 		Log.d(
 			"ComposeActivity",
-			"currentGoal: ${goalFromGoalsByUid(goals = goals, goalUid = currentGoalUid)}"
+			"currentGoal: Uid: $currentGoalUid"
+		)
+
+		Log.d(
+			"ComposeActivity",
+			"currentGoal: Interval: ${goalFromGoalsByUid(goals = goals, goalUid = currentGoalUid)}"
+		)
+
+		Log.d(
+			"ComposeActivity",
+			"WorkoutPixelTheme ${goals[10]}"
 		)
 
 		Scaffold(
@@ -97,7 +107,7 @@ fun WorkoutPixelApp(
 					} else null,
 					actions = {
 						if (currentScreen.showEditIcon) {
-							IconButton(onClick = { navController.navigate(WorkoutPixelScreen.EditGoalView.name) }) {
+							IconButton(onClick = { navController.navigate(WorkoutPixelScreen.EditGoalView.name + "/" + currentGoalUid) }) {
 								Icon(Icons.Filled.Edit, contentDescription = "Edit goal")
 							}
 						}
@@ -141,19 +151,18 @@ fun WorkoutPixelApp(
 				setAppBarTitle = { appBarText: String ->
 					appBarTitle = appBarText
 				},
-				updateGoal = { updatedGoal: Goal, navigateUp: Boolean ->
-					updateGoal(updatedGoal)
+				updateGoal = { goal: Goal, navigateUp: Boolean ->
+					goalChange(goal)
 					Log.d(
 						"ComposeActivity",
-						"WorkoutPixelNavHost changeCurrentGoal" + updatedGoal.intervalBlue.toString()
+						"WorkoutPixelNavHost goalChange" + goal.intervalBlue.toString()
 					)
-
+/*
 					if (navigateUp) {
-						// Why did I have this?
-						// kotlinGoalViewModel.changeCurrentGoal(updatedGoal)
+						currentGoalUid = goal.uid
 						navController.navigateUp()
 					}
-
+*/
 				},
 				currentGoal = goalFromGoalsByUid(goalUid = currentGoalUid, goals = goals),
 				modifier = Modifier.padding(innerPadding),
@@ -164,14 +173,14 @@ fun WorkoutPixelApp(
 
 @ExperimentalComposeUiApi
 @Composable
-fun WorkoutPixelNavHost(
+fun WorkoutPixelNavHostBackup(
 	navController: NavHostController,
 	goals: List<Goal>,
 	kotlinGoalViewModel: KotlinGoalViewModel,
 	updateAfterClick: (Goal) -> Unit,
 	navigateTo: (destination: String, goal: Goal?) -> Unit,
 	setAppBarTitle: (appBarText: String) -> Unit,
-	updateGoal: (updatedGoal: Goal, navigateUp: Boolean) -> Unit,
+	goalChange: (goal: Goal, navigateUp: Boolean) -> Unit,
 	currentGoal: Goal?,
 	modifier: Modifier = Modifier,
 ) {
@@ -200,10 +209,28 @@ fun WorkoutPixelNavHost(
 		}
 		// Goal Detail
 		composable(
-			route = WorkoutPixelScreen.GoalDetailView.name,
-		) {
-			Log.d("ComposeActivity", "Goal Detail Navigation $currentGoal")
-			Log.d("ComposeActivity", "Goal Detail Navigation ${goals[10]}")
+			route = WorkoutPixelScreen.GoalDetailView.name + "/{uid}",
+			arguments = listOf(
+				navArgument("uid") {
+					// Make argument type safe
+					type = NavType.IntType
+				}
+			)
+		) { entry -> // Look up "uid" in NavBackStackEntry's arguments
+			val goalUid: Int? = entry.arguments?.getInt("uid", 0)
+			// TODO: Use Utils
+			// val goal: Goal = goalFromGoalsByUid(goals = goals, goalUid = goalUid)
+			val goal: Goal = goals.first { it.uid == goalUid }
+
+			Log.d(
+				"ComposeActivity",
+				"Goal Detail Navigation $currentGoal"
+			)
+
+			Log.d(
+				"ComposeActivity",
+				"Goal Detail Navigation ${goals[10]}"
+			)
 
 			if (currentGoal != null) {
 				GoalDetailView(
@@ -216,26 +243,40 @@ fun WorkoutPixelNavHost(
 					},
 					setAppBarTitle = setAppBarTitle,
 				)
-			} else (
+			}
+			else (
 					Text("currentGoal = null")
 					)
 		}
 		// Edit goal
 		composable(
-			route = WorkoutPixelScreen.EditGoalView.name,
-		) {
-			Log.d("ComposeActivity", "Edit goal Navigation $currentGoal")
+			route = WorkoutPixelScreen.EditGoalView.name + "/{uid}",
+			arguments = listOf(
+				navArgument("uid") {
+					// Make argument type safe
+					type = NavType.IntType
+				}
+			)
+		) { entry -> // Look up "uid" in NavBackStackEntry's arguments
+			val goalUid = entry.arguments?.getInt("uid", 0)
+			// TODO: Use Utils
+			val goal: Goal = goals.first { it.uid == goalUid }
+
+			Log.d(
+				"ComposeActivity",
+				"Edit goal Navigation $currentGoal"
+			)
 
 			if (currentGoal != null) {
 				EditGoalView(
 					initialGoal = currentGoal,
 					setAppBarTitle,
-					isFirstConfigure = false,
-					addUpdateWidget = { updateGoal(it, true) }
+					addUpdateWidget = {goalChange(it, true)}
 				)
-			} else (
+			}
+			else (
 					Text("currentGoal = null")
-					)
+			)
 		}
 	}
 }

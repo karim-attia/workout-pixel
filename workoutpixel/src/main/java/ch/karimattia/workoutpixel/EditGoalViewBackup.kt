@@ -34,35 +34,23 @@ import java.util.*
 
 @ExperimentalComposeUiApi
 @Composable
-fun EditGoalView(
-	initialGoal: Goal,
+fun EditGoalViewBackup(
+	goal: Goal,
 	setAppBarTitle: (appBarText: String) -> Unit,
 	isFirstConfigure: Boolean = true,
 	addUpdateWidget: (Goal) -> Unit,
 ) {
-	Log.d("EDIT GOAL VIEW", "initialGoal: " + initialGoal.intervalBlue.toString())
-
-	// Should the title be updated when the text field is updated? I think no.
-	setAppBarTitle(initialGoal.title)
-
 	// For some reason, any change in the goal recomposes this page
-	// It even updates the initialGoal
-	// For some weird reason, only the first ever change is reflected in this original goal. -> Doesn't happen if internal goal is used.
+	// It even updates the original goal
+	// For some weird reason, only the first ever change is reflected in this original goal.
 	// This original goal is then also shown if the back button is clicked.
 	// This doesn't happen if the reflected data is saved via the update button.
-	// Copying the goal values fixes this...
-	val initialGoalCopy = Goal(
-		initialGoal.appWidgetId,
-		initialGoal.title,
-		initialGoal.lastWorkout,
-		initialGoal.intervalBlue,
-		initialGoal.intervalRed,
-		initialGoal.showDate,
-		initialGoal.showTime,
-		initialGoal.status,
-	)
-	initialGoalCopy.setUid(initialGoal.uid)
-	val (editGoalViewGoal, setValueEditGoalViewGoal) = remember { mutableStateOf(initialGoalCopy) }
+
+	Log.d("EDIT GOAL VIEW", "original goal: " + goal.intervalBlue.toString())
+
+	// Should the title be updated when the text field is updated? I think no.
+	setAppBarTitle(goal.title)
+	val (editGoalViewGoal, setValueEditGoalViewGoal) = remember { mutableStateOf(goal) }
 
 	Log.d(
 		"EDIT GOAL VIEW",
@@ -75,7 +63,6 @@ fun EditGoalView(
 			.padding(start = 8.dp, end = 8.dp, bottom = 20.dp)
 	) {
 		val modifier = Modifier.padding(top = 8.dp)
-
 		Hints(
 			modifier = modifier,
 		)
@@ -84,30 +71,30 @@ fun EditGoalView(
 				modifier = modifier,
 			)
 		}
-		SetUpYourWidget(
-			externalSetUpYourWidgetGoal = editGoalViewGoal,
-			setUpYourWidgetGoalChange = { changedGoal ->
+		SetUpYourWidgetBackup(
+			setUpYourWidgetGoal = editGoalViewGoal,
+			goalChange = { goalChangeGoal ->
 				// Extract copy to CommonFunctions or Goal
 				// https://stackoverflow.com/questions/63956058/jetpack-compose-state-modify-class-property
-				val changedGoalCopy = Goal(
-					changedGoal.appWidgetId,
-					changedGoal.title,
-					changedGoal.lastWorkout,
-					changedGoal.intervalBlue,
-					changedGoal.intervalRed,
-					changedGoal.showDate,
-					changedGoal.showTime,
-					changedGoal.status,
+				val goalLocal: Goal = Goal(
+					goalChangeGoal.appWidgetId,
+					goalChangeGoal.title,
+					goalChangeGoal.lastWorkout,
+					goalChangeGoal.intervalBlue,
+					goalChangeGoal.intervalRed,
+					goalChangeGoal.showDate,
+					goalChangeGoal.showTime,
+					goalChangeGoal.status,
 				)
-				changedGoalCopy.setUid(changedGoal.uid)
+				goalLocal.setUid(goalChangeGoal.uid)
 
-				setValueEditGoalViewGoal(changedGoalCopy)
-
+				setValueEditGoalViewGoal(
+					goalLocal
+				)
 				Log.d(
 					"EDIT GOAL VIEW",
 					"SetUpYourWidget goalChange" + editGoalViewGoal.intervalBlue.toString()
 				)
-
 			},
 			modifier = modifier,
 		)
@@ -116,7 +103,6 @@ fun EditGoalView(
 			modifier = modifier,
 		)
 		AddUpdateWidgetButton(
-			isFirstConfigure = isFirstConfigure,
 			addUpdateWidget = {
 				Log.d(
 					"EDIT GOAL VIEW",
@@ -132,7 +118,7 @@ fun EditGoalView(
 }
 
 @Composable
-fun Hints(
+fun HintsBackup(
 	modifier: Modifier = Modifier
 ) {
 	FreeStandingTitle(text = "Hints")
@@ -165,7 +151,7 @@ fun Hints(
 
 @ExperimentalComposeUiApi
 @Composable
-fun ConnectAnExistingGoal(
+fun ConnectAnExistingGoalBackup(
 	modifier: Modifier = Modifier
 ) {
 	// TODO: Expando
@@ -192,7 +178,7 @@ fun ConnectAnExistingGoal(
 
 @ExperimentalComposeUiApi
 @Composable
-fun ConnectDropdown(
+fun ConnectDropdownBackup(
 	goalsWithoutWidget: List<Goal>,
 	modifier: Modifier = Modifier,
 ) {
@@ -222,8 +208,8 @@ fun ConnectDropdown(
 			singleLine = true,
 			modifier = modifier
 				.fillMaxWidth()
-			//.clickable(onClick = { expanded = !expanded })
-			.focusRequester(focusRequester)
+				//.clickable(onClick = { expanded = !expanded })
+				.focusRequester(focusRequester)
 			// .background(Color.Gray)
 		)
 		if (!expanded) {
@@ -265,7 +251,7 @@ fun ConnectDropdown(
 }
 
 @Composable
-fun ConnectButton(
+fun ConnectButtonBackup(
 	connectWidget: () -> Unit,
 	modifier: Modifier = Modifier
 ) {
@@ -283,25 +269,23 @@ fun ConnectButton(
 
 
 @Composable
-fun SetUpYourWidget(
-	externalSetUpYourWidgetGoal: Goal,
-	setUpYourWidgetGoalChange: (Goal) -> Unit,
+fun SetUpYourWidgetBackup(
+	setUpYourWidgetGoal: Goal,
+	goalChange: (Goal) -> Unit,
 	modifier: Modifier = Modifier,
 ) {
 	// TODO: Text based on firstConfigure.
 	FreeStandingTitle(text = "Set up your widget")
-
-	val (internalSetUpYourWidgetGoal) = remember { mutableStateOf(externalSetUpYourWidgetGoal) }
 
 	/*Text(
 		text = stringResource(id = R.string.widgetTitle),
 		modifier = modifier,
 	)*/
 	OutlinedTextField(
-		value = internalSetUpYourWidgetGoal.title,
+		value = setUpYourWidgetGoal.title,
 		onValueChange = {
-			internalSetUpYourWidgetGoal.title = it
-			setUpYourWidgetGoalChange(internalSetUpYourWidgetGoal)
+			setUpYourWidgetGoal.title = it
+			goalChange(setUpYourWidgetGoal)
 		},
 		label = { Text(stringResource(id = R.string.widgetTitle)) },
 		keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences),
@@ -324,11 +308,11 @@ fun SetUpYourWidget(
 			.padding(end = 12.dp)
 		Button(
 			onClick = {
-				internalSetUpYourWidgetGoal.intervalBlue--
-				Log.d("EDIT GOAL VIEW", "--" + internalSetUpYourWidgetGoal.intervalBlue.toString())
-				setUpYourWidgetGoalChange(internalSetUpYourWidgetGoal)
+				setUpYourWidgetGoal.intervalBlue--
+				Log.d("EDIT GOAL VIEW", "--" + setUpYourWidgetGoal.intervalBlue.toString())
+				goalChange(setUpYourWidgetGoal)
 			},
-			enabled = internalSetUpYourWidgetGoal.intervalBlue >= 2,
+			enabled = setUpYourWidgetGoal.intervalBlue >= 2,
 			contentPadding = PaddingValues(0.dp),
 			modifier = buttonModifier,
 		) {
@@ -338,14 +322,14 @@ fun SetUpYourWidget(
 			)
 		}
 		Text(
-			text = internalSetUpYourWidgetGoal.intervalBlue.toString(),
+			text = setUpYourWidgetGoal.intervalBlue.toString(),
 			modifier = textModifier
 		)
 		Button(
 			onClick = {
-				internalSetUpYourWidgetGoal.intervalBlue++
-				Log.d("EDIT GOAL VIEW", "++" + internalSetUpYourWidgetGoal.intervalBlue.toString())
-				setUpYourWidgetGoalChange(internalSetUpYourWidgetGoal)
+				setUpYourWidgetGoal.intervalBlue++
+				Log.d("EDIT GOAL VIEW", "++" + setUpYourWidgetGoal.intervalBlue.toString())
+				goalChange(setUpYourWidgetGoal)
 			},
 			contentPadding = PaddingValues(0.dp),
 			modifier = buttonModifier,
@@ -356,7 +340,7 @@ fun SetUpYourWidget(
 			)
 		}
 		Text(
-			text = CommonFunctions.days(internalSetUpYourWidgetGoal.intervalBlue),
+			text = CommonFunctions.days(setUpYourWidgetGoal.intervalBlue),
 			modifier = textModifier,
 		)
 	}
@@ -366,38 +350,38 @@ fun SetUpYourWidget(
 	)
 	CheckboxWithText(
 		description = stringResource(id = R.string.show_date_in_the_widget),
-		checked = internalSetUpYourWidgetGoal.showDate,
+		checked = setUpYourWidgetGoal.showDate,
 		onCheckedChange = {
-			internalSetUpYourWidgetGoal.showDate = it
-			setUpYourWidgetGoalChange(internalSetUpYourWidgetGoal)
+			setUpYourWidgetGoal.showDate = it
+			goalChange(setUpYourWidgetGoal)
 		},
 		modifier = modifier,
 	)
 	CheckboxWithText(
 		description = stringResource(id = R.string.show_time_in_the_widget),
-		checked = internalSetUpYourWidgetGoal.showTime,
+		checked = setUpYourWidgetGoal.showTime,
 		onCheckedChange = {
-			internalSetUpYourWidgetGoal.showTime = it
-			setUpYourWidgetGoalChange(internalSetUpYourWidgetGoal)
+			setUpYourWidgetGoal.showTime = it
+			goalChange(setUpYourWidgetGoal)
 		},
 		modifier = Modifier.padding(top = 4.dp),
 	)
 }
 
 @Composable
-fun WidgetConfigurationPreview(
-	editGoalViewGoal: Goal,
+fun WidgetConfigurationPreviewBackup(
+	goal: Goal,
 	modifier: Modifier = Modifier,
 ) {
 	FreeStandingTitle(text = "Preview")
 	GoalPreview(
-		goal = editGoalViewGoal,
+		goal = goal,
 		modifier = modifier,
 	)
 }
 
 @Composable
-fun FreeStandingTitle(
+fun FreeStandingTitleBackup(
 	text: String
 ) {
 	Text(
@@ -409,8 +393,7 @@ fun FreeStandingTitle(
 }
 
 @Composable
-fun AddUpdateWidgetButton(
-	isFirstConfigure: Boolean = true,
+fun AddWidgetButtonBackup(
 	addUpdateWidget: () -> Unit,
 	modifier: Modifier = Modifier,
 ) {
@@ -422,7 +405,7 @@ fun AddUpdateWidgetButton(
 			.fillMaxWidth(),
 	) {
 		Text(
-			text = if(isFirstConfigure) {"Add widget"} else {"Update widget"},
+			text = "Add widget",
 			modifier = Modifier.padding(end = 16.dp)
 		)
 		Icon(
@@ -432,10 +415,17 @@ fun AddUpdateWidgetButton(
 	}
 }
 
+/*@Composable
+fun ConfigureScreenContent(
+	content: @Composable () -> Unit,
+) {
+	content()
+}*/
+
 @ExperimentalComposeUiApi
 @Preview("EditGoalView preview")
 @Composable
-fun EditGoalViewPreview() {
+fun EditGoalViewPreviewBackup() {
 	EditGoalView(
 		initialGoal = CommonFunctions.testData()[0],
 		setAppBarTitle = { },

@@ -3,6 +3,7 @@ package ch.karimattia.workoutpixel
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -28,7 +29,7 @@ import ch.karimattia.workoutpixel.core.Goal
 import java.util.*
 
 @Composable
-fun AllGoals(
+fun AllGoalsBackup(
 	goals: List<Goal>,
 	updateAfterClick: (Goal) -> Unit,
 	navigateTo: (destination: String, goal: Goal?) -> Unit,
@@ -46,7 +47,7 @@ fun AllGoals(
 }
 
 @Composable
-fun GoalList(
+fun GoalListBackup(
 	goals: List<Goal>,
 	updateAfterClick: (Goal) -> Unit,
 	navigateTo: (destination: String, goal: Goal?) -> Unit,
@@ -70,10 +71,37 @@ fun GoalList(
 			Spacer(modifier = Modifier.height(40.dp))
 		}
 	}
+
+/*
+	// We save the scrolling position with this state that can also
+	// be used to programmatically scroll the list
+	val scrollState = rememberLazyListState()
+*/
+
+/*
+	// We save the coroutine scope where our animated scroll will be executed
+	val coroutineScope = rememberCoroutineScope()
+*/
+
+/*  LazyColumn(
+		state = scrollState,
+		contentPadding = PaddingValues(top = 6.dp, bottom = 40.dp),
+	) {
+		items(
+			items = goals,
+		) { goal ->
+			GoalCard(
+				goal = goal,
+				updateAfterClick = { updateAfterClick(goal) },
+				navigateTo = navigateTo
+			)
+		}
+	}
+	*/
 }
 
 @Composable
-fun GoalCard(
+fun GoalCardBackup(
 	goal: Goal,
 	updateAfterClick: () -> Unit,
 	navigateTo: (destination: String, goal: Goal?) -> Unit,
@@ -85,7 +113,7 @@ fun GoalCard(
 			.padding(vertical = 4.dp, horizontal = 8.dp)
 			.fillMaxWidth()
 			.clickable {
-				navigateTo(WorkoutPixelScreen.GoalDetailView.name, goal)
+				navigateTo("${WorkoutPixelScreen.GoalDetailView.name}/${goal.uid}", goal)
 			}
 	) {
 		// Preview and rest
@@ -94,9 +122,7 @@ fun GoalCard(
 			modifier = Modifier.padding(all = 1.dp),
 		) {
 			GoalPreview(
-				goal = goal,
-				updateAfterClick = updateAfterClick,
-				modifier = Modifier.padding(all = 4.dp)
+				goal = goal, updateAfterClick = updateAfterClick, modifier = Modifier.padding(all = 4.dp)
 			)
 			// Rest
 			Column(modifier = Modifier.padding(start = 4.dp))
@@ -112,10 +138,10 @@ fun GoalCard(
 }
 
 @Composable
-fun GoalPreview(
+fun GoalPreviewBackup(
 	goal: Goal,
-	modifier: Modifier = Modifier,
 	updateAfterClick: () -> Unit = {},
+	modifier: Modifier = Modifier
 ) {
 	Text(
 		text = goal.widgetText(),
@@ -133,7 +159,7 @@ fun GoalPreview(
 }
 
 @Composable
-fun GoalTitle(goal: Goal) {
+fun GoalTitleBackup(goal: Goal) {
 	Text(
 		text = goal.title.uppercase(Locale.getDefault()),
 		fontSize = 16.sp,
@@ -144,7 +170,7 @@ fun GoalTitle(goal: Goal) {
 }
 
 @Composable
-fun IntervalIconAndText(goal: Goal) {
+fun IntervalIconAndTextBackup(goal: Goal) {
 	IconAndText(
 		Icons.Filled.DateRange,
 		20, 2,
@@ -153,7 +179,7 @@ fun IntervalIconAndText(goal: Goal) {
 }
 
 @Composable
-fun LastDoneIconAndText(goal: Goal) {
+fun LastDoneIconAndTextBackup(goal: Goal) {
 	IconAndText(
 		Icons.Filled.Done,
 		22, 0,
@@ -162,7 +188,7 @@ fun LastDoneIconAndText(goal: Goal) {
 }
 
 @Composable
-fun IconAndText(icon: ImageVector, size: Int, iconPaddingLeft: Int, text: String) {
+fun IconAndTextBackup(icon: ImageVector, size: Int, iconPaddingLeft: Int, text: String) {
 	Row(verticalAlignment = Alignment.CenterVertically) {
 		Icon(
 			imageVector = icon, contentDescription = null,
@@ -183,7 +209,7 @@ fun IconAndText(icon: ImageVector, size: Int, iconPaddingLeft: Int, text: String
 
 @Preview(name = "MyScreen preview")
 @Composable
-fun AllGoalsPreview() {
+fun AllGoalsPreviewBackup() {
 	AllGoals(
 		goals = CommonFunctions.testData(),
 		updateAfterClick = {},

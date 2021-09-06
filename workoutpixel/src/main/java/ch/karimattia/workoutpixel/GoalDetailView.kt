@@ -152,24 +152,6 @@ fun PastClickList(
 		)
 	}
 	Spacer(modifier = Modifier.padding(end = 6.dp))
-
-/*	val scrollState = rememberLazyListState()
-	LazyColumn(
-		// state = scrollState,
-		contentPadding = PaddingValues(top = 0.dp, bottom = 6.dp)
-	) {
-		items(
-			items = pastClicks,
-		) { pastClick ->
-			PastClickEntry(
-				pastClick = pastClick,
-				togglePastClick = {
-					pastClickViewModel.updatePastClick(it)
-				}
-			)
-			Divider(color = Color(TextBlack), thickness = 0.5.dp)
-		}
-	}*/
 }
 
 @Composable

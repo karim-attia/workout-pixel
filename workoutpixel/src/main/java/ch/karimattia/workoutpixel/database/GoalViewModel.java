@@ -16,10 +16,11 @@ public class GoalViewModel extends AndroidViewModel {
     private static final String TAG = "GoalViewModel";
 
     private final LiveData<List<Goal>> allGoals;
+    GoalRepository repository;
 
     public GoalViewModel(Application application) {
         super(application);
-        GoalRepository repository = new GoalRepository(application);
+        repository = new GoalRepository(application);
         allGoals = repository.getAllGoals();
     }
 
@@ -30,6 +31,7 @@ public class GoalViewModel extends AndroidViewModel {
 
     public static void updateGoal(Context context, Goal goal) {
         Log.d(TAG, "executorService updateWidget " + goal.debugString());
+        Log.d(TAG, "executorService updateWidget getIntervalBlue " + goal.getIntervalBlue());
         CommonFunctions.executorService.execute(() -> workoutDao(context).updateGoal(goal));
     }
 

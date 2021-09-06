@@ -16,7 +16,8 @@
             android:label="@string/title_activity_compose"
             android:theme="@style/AppTheme.NoActionBar" />
 
-        <receiver android:name=".core.WorkoutPixelAppWidgetProvider">
+        <receiver android:name=".core.WorkoutPixelAppWidgetProvider"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
@@ -31,7 +32,8 @@
 
         <activity
             android:name=".main.MainActivity"
-            android:label="Workout Pixel">
+            android:label="Workout Pixel"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -42,7 +44,8 @@
             android:name=".configure.ConfigureActivity"
             android:label="Add a widget for your goal"
             android:parentActivityName=".main.MainActivity"
-            android:theme="@style/ConfigureTheme">
+            android:theme="@style/ConfigureTheme"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
             </intent-filter>
