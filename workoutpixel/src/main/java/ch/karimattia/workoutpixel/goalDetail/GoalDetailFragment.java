@@ -83,6 +83,7 @@ public class GoalDetailFragment extends Fragment {
     @SuppressLint("NonConstantResourceId")
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        // Icon in app bar that navigates to GoalEditView
         //noinspection SwitchStatementWithTooFewBranches
         switch (item.getItemId()) {
             case R.id.edit_goal:

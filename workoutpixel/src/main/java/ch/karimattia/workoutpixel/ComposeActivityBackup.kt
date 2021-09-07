@@ -242,6 +242,7 @@ fun WorkoutPixelNavHostBackup(
 						navController.navigateUp()
 					},
 					setAppBarTitle = setAppBarTitle,
+					updateGoal = {_, _ -> }
 				)
 			}
 			else (

@@ -43,9 +43,13 @@ class ComposeActivity : ComponentActivity() {
 				WorkoutPixelApp(
 					kotlinGoalViewModel = kotlinGoalViewModel,
 					goals = goals,
-					updateAfterClick = { it.updateAfterClick(this) },
+					updateAfterClick = { it.updateAfterClick(this) }, // contains updateGoal
 					// TODO: Proper viewModel stuff
-					updateGoal = { kotlinGoalViewModel.updateGoal(it) },
+					// TODO: runUpdate
+					updateGoal = {
+						kotlinGoalViewModel.updateGoal(it)
+						it.runUpdate(this, false);
+								 },
 					deleteGoal = { kotlinGoalViewModel.deleteGoal(it) },
 				)
 			}
@@ -57,24 +61,6 @@ class ComposeActivity : ComponentActivity() {
 			}
 		})
 	}
-}
-
-fun oneTimeSetup(goals: List<Goal>, context: Context) {
-	Log.d("ComposeActivity", "oneTimeSetup")
-
-	// Update all goals
-	for (goal in goals) {
-		// Sometimes the onClickListener in the widgets stop working. This is a super stupid way to regularly reset the onClickListener when you open the main app.
-		if (goal.hasValidAppWidgetId()) {
-			goal.updateWidgetBasedOnStatus(context)
-		}
-	}
-
-	// Remove appWidgetId if it is not valid anymore. Run only once.
-	CommonFunctions.cleanGoals(context, goals)
-
-	// Every time the app starts, set the alarm to update everything at 3:00. In case something breaks.
-	WidgetAlarm.startAlarm(context)
 }
 
 @OptIn(ExperimentalComposeUiApi::class)
@@ -226,6 +212,7 @@ fun WorkoutPixelNavHost(
 					// TODO
 					deleteGoal = { deleteGoal(it, true) },
 					setAppBarTitle = setAppBarTitle,
+					updateGoal = updateGoal,
 				)
 			} else (
 					Text("currentGoal = null")
@@ -249,4 +236,22 @@ fun WorkoutPixelNavHost(
 					)
 		}
 	}
+}
+
+fun oneTimeSetup(goals: List<Goal>, context: Context) {
+	Log.d("ComposeActivity", "oneTimeSetup")
+
+	// Update all goals
+	for (goal in goals) {
+		// Sometimes the onClickListener in the widgets stop working. This is a super stupid way to regularly reset the onClickListener when you open the main app.
+		if (goal.hasValidAppWidgetId()) {
+			goal.updateWidgetBasedOnStatus(context)
+		}
+	}
+
+	// Remove appWidgetId if it is not valid anymore. Run only once.
+	CommonFunctions.cleanGoals(context, goals)
+
+	// Every time the app starts, set the alarm to update everything at 3:00. In case something breaks.
+	WidgetAlarm.startAlarm(context)
 }

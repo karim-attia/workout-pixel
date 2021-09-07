@@ -1,5 +1,6 @@
 package ch.karimattia.workoutpixel
 
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -33,6 +34,7 @@ import ch.karimattia.workoutpixel.database.MyViewModelFactory
 import ch.karimattia.workoutpixel.database.PastClickViewModel
 import ch.karimattia.workoutpixel.database.PastWorkout
 import ch.karimattia.workoutpixel.ui.theme.TextBlack
+import java.util.stream.Collectors
 
 @Composable
 fun GoalDetailView(
@@ -40,6 +42,7 @@ fun GoalDetailView(
 	updateAfterClick: () -> Unit,
 	deleteGoal: (Goal) -> Unit,
 	setAppBarTitle: (appBarText: String) -> Unit,
+	updateGoal: (updatedGoal: Goal, navigateUp: Boolean) -> Unit,
 ) {
 	setAppBarTitle(goal.title)
 	Column(
@@ -57,7 +60,7 @@ fun GoalDetailView(
 			GoalDetailNoWidgetCard(goal = goal, deleteGoal = deleteGoal)
 		}
 		// CardWithTitle(title = "erfeferf") {Text(text = " koerjfiojrefioerjfoierjfoierjkfiorejfoierjfioerjfioerjfiorejfoierjfioerjfioerjf koerjfiojrefioerjfoierjfoierjkfiorejfoierjfioerjfioerjfiorejfoierjfioerjfioerjf koerjfiojrefioerjfoierjfoierjkfiorejfoierjfioerjfioerjfiorejfoierjfioerjfioerjf koerjfiojrefioerjfoierjfoierjkfiorejfoierjfioerjfioerjfiorejfoierjfioerjfioerjf koerjfiojrefioerjfoierjfoierjkfiorejfoierjfioerjfioerjfiorejfoierjfioerjfioerjf koerjfiojrefioerjfoierjfoierjkfiorejfoierjfioerjfioerjfiorejfoierjfioerjfioerjf ") }
-		PastClicks(goal = goal)
+		PastClicks(goal = goal, updateGoal = updateGoal)
 		// CardWithTitle(title = "erfeferf") {Text(text = " koerjfiojrefioerjfoierjfoierjkfiorejfoierjfioerjfioerjfiorejfoierjfioerjfioerjf koerjfiojrefioerjfoierjfoierjkfiorejfoierjfioerjfioerjfiorejfoierjfioerjfioerjf koerjfiojrefioerjfoierjfoierjkfiorejfoierjfioerjfioerjfiorejfoierjfioerjfioerjf koerjfiojrefioerjfoierjfoierjkfiorejfoierjfioerjfioerjfiorejfoierjfioerjfioerjf koerjfiojrefioerjfoierjfoierjkfiorejfoierjfioerjfioerjfiorejfoierjfioerjfioerjf koerjfiojrefioerjfoierjfoierjkfiorejfoierjfioerjfioerjfiorejfoierjfioerjfioerjf ") }
 		Spacer(modifier = Modifier.height(40.dp))
 	}
@@ -111,18 +114,20 @@ fun GoalDetailNoWidgetCard(
 @Composable
 fun PastClicks(
 	goal: Goal,
+	updateGoal: (updatedGoal: Goal, navigateUp: Boolean) -> Unit,
 ) {
 	CardWithTitle(
 		// TODO: If numberOfPastClicks > 50, declare it. Or implement some paging.
 		title = "Past clicks",
 	) {
-		PastClickList(goal = goal)
+		PastClickList(goal = goal, updateGoal = updateGoal)
 	}
 }
 
 @Composable
 fun PastClickList(
 	goal: Goal,
+	updateGoal: (updatedGoal: Goal, navigateUp: Boolean) -> Unit,
 ) {
 	val pastClickViewModel: PastClickViewModel =
 		viewModel(factory = MyViewModelFactory(null, goal.uid))
@@ -139,13 +144,16 @@ fun PastClickList(
 					pastClick = pastClicks[i],
 					togglePastClick = {
 						pastClickViewModel.updatePastClick(it)
+						// If this change causes a new last workout time, do all the necessary updates.
+						if (goal.setNewLastWorkout(lastWorkoutBasedOnActiveWorkouts(pastClicks))) {
+							updateGoal(goal, false)
+						}
 					}
 				)
 				Divider(color = Color(TextBlack), thickness = 0.5.dp)
 			}
 		}
-	}
-	else {
+	} else {
 		Text(
 			text = stringResource(R.string.you_have_never_completed_this_goal_as_soon_as_you_click_on_the_widget_the_click_will_show_up_here),
 			fontSize = 14.sp
@@ -229,6 +237,29 @@ fun PastClickEntry(
 	}
 }
 
+fun lastWorkoutBasedOnActiveWorkouts(pastClicks: List<PastWorkout>): Long {
+	val activeWorkoutsOrderedByWorkoutTime = pastClicks.stream()
+		.filter { clickedWorkout: PastWorkout -> clickedWorkout.active }.collect(
+			Collectors.toList()
+		)
+
+	// If there still is an active past workout, take the latest one to set the last workout time
+	return if (activeWorkoutsOrderedByWorkoutTime.isNotEmpty()) {
+		Log.v(
+			"lastWorkoutBasedOnActiveWorkouts",
+			"Size: " + activeWorkoutsOrderedByWorkoutTime.size
+		)
+		activeWorkoutsOrderedByWorkoutTime[0].getWorkoutTime()
+	}
+	// Otherwise, set it to 0.
+	else {
+		Log.v(
+			"lastWorkoutBasedOnActiveWorkouts",
+			"Size: " + activeWorkoutsOrderedByWorkoutTime.size + ", no remaining workout"
+		)
+		0L
+	}
+}
 
 @Preview("GoalDetailViewPreview")
 @Composable
@@ -238,5 +269,6 @@ fun GoalDetailViewPreview() {
 		updateAfterClick = {},
 		deleteGoal = {},
 		setAppBarTitle = {},
+		updateGoal = { _, _ -> },
 	)
 }
