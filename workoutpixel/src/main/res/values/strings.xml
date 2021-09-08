@@ -44,6 +44,6 @@
     <string name="instructions">Instructions</string>
     <string name="configuration_connect_hint_title">Connect an existing goal</string>
     <string name="configuration_widget_setup_title_new_goal">Set up a new goal</string>
-    <string name="title_activity_compose">ComposeActivity</string>
+    <string name="title_activity_compose">MainActivity</string>
     <string name="title_activity_top">TopActivity</string>
 </resources>

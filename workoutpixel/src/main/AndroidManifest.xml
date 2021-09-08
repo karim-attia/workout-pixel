@@ -11,9 +11,9 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".ComposeActivity"
+            android:name=".main.MainActivityOld"
             android:exported="true"
-            android:label="@string/title_activity_compose"
+            android:label="Workout Pixel"
             android:theme="@style/AppTheme.NoActionBar" />
 
         <receiver android:name=".core.WorkoutPixelAppWidgetProvider"
@@ -31,7 +31,7 @@
         </receiver>
 
         <activity
-            android:name=".main.MainActivity"
+            android:name=".MainActivity"
             android:label="Workout Pixel"
             android:exported="true">
             <intent-filter>
@@ -43,7 +43,7 @@
         <activity
             android:name=".configure.ConfigureActivity"
             android:label="Add a widget for your goal"
-            android:parentActivityName=".main.MainActivity"
+            android:parentActivityName=".main.MainActivityOld"
             android:theme="@style/ConfigureTheme"
             android:exported="true">
             <intent-filter>

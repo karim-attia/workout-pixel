@@ -37,7 +37,7 @@ public class MainActivityTest {
     static final String TAG = "MainActivityTest";
 
     @Rule
-    public ActivityScenarioRule<MainActivity> activityScenarioRule = new ActivityScenarioRule<>(MainActivity.class);
+    public ActivityScenarioRule<MainActivityOld> activityScenarioRule = new ActivityScenarioRule<>(MainActivityOld.class);
 
     @Test
     public void recyclerViewCheck() {

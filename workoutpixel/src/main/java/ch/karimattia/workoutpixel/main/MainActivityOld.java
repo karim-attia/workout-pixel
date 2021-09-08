@@ -15,14 +15,14 @@ import ch.karimattia.workoutpixel.R;
 import ch.karimattia.workoutpixel.core.WidgetAlarm;
 import ch.karimattia.workoutpixel.database.GoalViewModel;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivityOld extends AppCompatActivity {
     private static final String TAG = "WORKOUT_PIXEL MainActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.d(TAG, "onCreate ");
         super.onCreate(savedInstanceState);
-        final Context context = MainActivity.this;
+        final Context context = MainActivityOld.this;
 
         setContentView(R.layout.fragment_activity);
 
