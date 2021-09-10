@@ -1,11 +1,14 @@
 package ch.karimattia.workoutpixel
 
+import android.annotation.SuppressLint
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.ZeroCornerSize
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
@@ -13,7 +16,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.ArrowDropUp
 import androidx.compose.material.icons.filled.Cable
-import androidx.compose.material.icons.filled.Done
+import androidx.compose.material.icons.filled.Save
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -21,10 +24,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.*
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -32,18 +41,18 @@ import ch.karimattia.workoutpixel.core.CommonFunctions
 import ch.karimattia.workoutpixel.core.Goal
 import java.util.*
 
+private const val TAG: String = "EditGoalView"
+
 @ExperimentalComposeUiApi
 @Composable
 fun EditGoalView(
 	initialGoal: Goal,
-	setAppBarTitle: (appBarText: String) -> Unit,
-	isFirstConfigure: Boolean = true,
+	isFirstConfigure: Boolean,
+	goalsWithoutWidget: List<Goal> = ArrayList<Goal>(),
 	addUpdateWidget: (Goal) -> Unit,
+	connectGoal: (Goal) -> Unit = {},
 ) {
-	Log.d("EDIT GOAL VIEW", "initialGoal: " + initialGoal.intervalBlue.toString())
-
-	// Should the title be updated when the text field is updated? I think no.
-	setAppBarTitle(initialGoal.title)
+	Log.d(TAG, "initialGoal: " + initialGoal.intervalBlue.toString())
 
 	// For some reason, any change in the goal recomposes this page
 	// It even updates the initialGoal
@@ -53,25 +62,32 @@ fun EditGoalView(
 	// Copying the goal values fixes this...
 
 	// https://stackoverflow.com/questions/63956058/jetpack-compose-state-modify-class-property (Last answer for policy)
-	val (editGoalViewGoal, setValueEditGoalViewGoal) = remember { mutableStateOf(value = initialGoal.copy(), policy = neverEqualPolicy()) }
-
-	Log.d(
-		"EDIT GOAL VIEW",
-		"editGoalViewGoal, setValueEditGoalViewGoal: " + editGoalViewGoal.intervalBlue.toString()
-	)
+	val (editGoalViewGoal, setValueEditGoalViewGoal) = remember {
+		mutableStateOf(
+			value = initialGoal.copy(),
+			policy = neverEqualPolicy()
+		)
+	}
 
 	Column(
 		modifier = Modifier
+			.fillMaxHeight()
 			.verticalScroll(rememberScrollState())
-			.padding(start = 8.dp, end = 8.dp, bottom = 20.dp)
+			.padding(start = 8.dp, end = 8.dp, bottom = 12.dp)
 	) {
 		val modifier = Modifier.padding(top = 8.dp)
 
 		Hints(
 			modifier = modifier,
 		)
-		if (isFirstConfigure) {
+		Log.d(TAG, "goalsWithoutWidget size: ${goalsWithoutWidget.size}")
+		if (isFirstConfigure && goalsWithoutWidget.isNotEmpty()) {
 			ConnectAnExistingGoal(
+				goalsWithoutWidget = goalsWithoutWidget,
+				connectGoal = {
+					it.appWidgetId = initialGoal.appWidgetId
+					connectGoal(it)
+				},
 				modifier = modifier,
 			)
 		}
@@ -83,15 +99,23 @@ fun EditGoalView(
 
 				setValueEditGoalViewGoal(changedGoal)
 			},
+			isFirstConfigure = isFirstConfigure,
 			modifier = modifier,
 		)
 		WidgetConfigurationPreview(
 			editGoalViewGoal = editGoalViewGoal,
+			isFirstConfigure = isFirstConfigure,
 			modifier = modifier,
+		)
+		Spacer(
+			modifier = Modifier
+				.height(10.dp)
+				.weight(weight = 1f, fill = true)
+				.background(Color.Blue)
 		)
 		AddUpdateWidgetButton(
 			isFirstConfigure = isFirstConfigure,
-			addUpdateWidget = {				addUpdateWidget(editGoalViewGoal)			},
+			addUpdateWidget = { addUpdateWidget(editGoalViewGoal) },
 			modifier = Modifier
 				.padding(top = 24.dp)
 				.align(Alignment.End),
@@ -103,37 +127,35 @@ fun EditGoalView(
 fun Hints(
 	modifier: Modifier = Modifier
 ) {
-	FreeStandingTitle(text = "Hints")
-	val text: AnnotatedString = buildAnnotatedString {
+	FreeStandingTitle(text = "Hints", modifier = Modifier.padding(top = 8.dp))
+	val paragraphs = arrayListOf(
+		buildAnnotatedString {
+			withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) { append("Start small. ") }
+			append("Start doing it every 2-3 days instead of every day.")
+		},
+		buildAnnotatedString {
+			withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) { append("Have fun reaching your goal. ") }
+			append("Feel a sense of accomplishment when clicking the widget.")
+		},
+		buildAnnotatedString {
+			withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) { append("Build a habit. ") }
+			append("Remind yourself that you have reached your goals whenever you look at your homescreen.")
+		})
 
-		withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-			append("Start small. ")
-		}
-		append("Start doing it every 2-3 days instead of every day. ")
-		withStyle(style = ParagraphStyle(lineHeight = 8.sp)) { "\n" }
-
-		withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-			append("Have fun reaching your goal. ")
-		}
-		append("Feel a sense of accomplishment when clicking the widget.")
-		withStyle(style = ParagraphStyle(lineHeight = 8.sp)) { "\n" }
-
-		withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-			append("Build a habit. ")
-		}
-		append("Remind yourself that you have reached your goals whenever you look at your homescreen.")
+	for (paragraph in paragraphs) {
+		Text(
+			text = paragraph,
+			fontSize = 14.sp,
+			modifier = modifier
+		)
 	}
-
-	Text(
-		text = text,
-		fontSize = 14.sp,
-		modifier = modifier
-	)
 }
 
 @ExperimentalComposeUiApi
 @Composable
 fun ConnectAnExistingGoal(
+	goalsWithoutWidget: List<Goal>,
+	connectGoal: (Goal) -> Unit,
 	modifier: Modifier = Modifier
 ) {
 	// TODO: Expando
@@ -143,12 +165,19 @@ fun ConnectAnExistingGoal(
 		modifier = modifier,
 	)
 	// Row {
+	var selectedIndex: Int by remember { mutableStateOf(0) }
 	ConnectDropdown(
-		goalsWithoutWidget = CommonFunctions.testData(),
+		goalsWithoutWidget = goalsWithoutWidget,
+		selectedIndex = selectedIndex,
+		changeSelectedIndex = { selectedIndex = it },
 		modifier = modifier,
 	)
 	ConnectButton(
-		connectWidget = { /*TODO*/ },
+		connectWidget = {
+			// Need to check if it is null and if it is, make the selection red?
+			// connectSpinner.setBackgroundColor(Color.RED)
+			connectGoal(goalsWithoutWidget[selectedIndex])
+		},
 		modifier = modifier,
 	)
 	// }
@@ -159,10 +188,11 @@ fun ConnectAnExistingGoal(
 @Composable
 fun ConnectDropdown(
 	goalsWithoutWidget: List<Goal>,
+	selectedIndex: Int,
+	changeSelectedIndex: (Int) -> Unit,
 	modifier: Modifier = Modifier,
 ) {
 	var expanded: Boolean by remember { mutableStateOf(false) }
-	var selectedIndex: Int by remember { mutableStateOf(0) }
 	val icon = if (expanded) Icons.Filled.ArrowDropUp else Icons.Filled.ArrowDropDown
 
 	Box {
@@ -187,8 +217,8 @@ fun ConnectDropdown(
 			singleLine = true,
 			modifier = modifier
 				.fillMaxWidth()
-			//.clickable(onClick = { expanded = !expanded })
-			.focusRequester(focusRequester)
+				//.clickable(onClick = { expanded = !expanded })
+				.focusRequester(focusRequester)
 			// .background(Color.Gray)
 		)
 		if (!expanded) {
@@ -218,7 +248,7 @@ fun ConnectDropdown(
 			) {
 				goalsWithoutWidget.forEachIndexed { index, goalWithoutWidget ->
 					DropdownMenuItem(onClick = {
-						selectedIndex = index
+						changeSelectedIndex(index)
 						expanded = false
 					}) {
 						Text(text = goalWithoutWidget.toString())
@@ -238,7 +268,7 @@ fun ConnectButton(
 		onClick = { connectWidget() },
 		modifier = modifier
 	) {
-		Text(text = "Connect widget")
+		Text(text = "Connect widget".uppercase())
 		Icon(
 			imageVector = Icons.Filled.Cable,
 			contentDescription = null
@@ -247,29 +277,51 @@ fun ConnectButton(
 }
 
 
+@ExperimentalComposeUiApi
 @Composable
 fun SetUpYourWidget(
 	setUpYourWidgetGoal: Goal,
 	setUpYourWidgetGoalChange: (Goal) -> Unit,
+	isFirstConfigure: Boolean,
 	modifier: Modifier = Modifier,
 ) {
-	// TODO: Text based on firstConfigure.
-	FreeStandingTitle(text = "Set up your widget")
+/*
+		// TODO: Different Set up your widget text if there is a reconnect
+		val configuration_widget_setup_title =
+		findViewById<TextView>(R.id.configuration_widget_setup_title)
+		configuration_widget_setup_title.setText(R.string.configuration_widget_setup_title_new_goal)
+*/
 
-	/*Text(
+	FreeStandingTitle(text = if(isFirstConfigure) {
+		stringResource(id = R.string.configuration_title)} else {stringResource(id = R.string.configuration_widget_setup_title_new_goal)})
+
+	Text(
 		text = stringResource(id = R.string.widgetTitle),
-		modifier = modifier,
-	)*/
-	OutlinedTextField(
+		fontSize = 14.sp,
+		modifier = modifier
+	)
+	val keyboardController = LocalSoftwareKeyboardController.current
+	TextField(
 		value = setUpYourWidgetGoal.title,
 		onValueChange = {
 			setUpYourWidgetGoal.title = it
 			setUpYourWidgetGoalChange(setUpYourWidgetGoal)
 		},
-		label = { Text(stringResource(id = R.string.widgetTitle)) },
-		keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences),
+		textStyle = TextStyle(fontSize = 18.sp),
+		shape = MaterialTheme.shapes.small.copy(
+			bottomEnd = ZeroCornerSize,
+			bottomStart = ZeroCornerSize,
+			topEnd = ZeroCornerSize,
+			topStart = ZeroCornerSize
+		),
+		singleLine = true,
+		keyboardOptions = KeyboardOptions(
+			capitalization = KeyboardCapitalization.Sentences,
+			imeAction = ImeAction.Done
+		),
+		keyboardActions = KeyboardActions(onDone = { keyboardController?.hide() }),
 		modifier = modifier
-			.fillMaxWidth(),
+			.fillMaxWidth()
 	)
 	Text(
 		text = stringResource(id = R.string.interval),
@@ -281,14 +333,13 @@ fun SetUpYourWidget(
 	) {
 		val buttonModifier: Modifier = Modifier
 			.padding(end = 12.dp)
-			.width(32.dp)
-			.height(32.dp)
+			.width(28.dp)
+			.height(28.dp)
 		val textModifier: Modifier = Modifier
 			.padding(end = 12.dp)
 		Button(
 			onClick = {
 				setUpYourWidgetGoal.intervalBlue--
-				Log.d("EDIT GOAL VIEW", "--" + setUpYourWidgetGoal.intervalBlue.toString())
 				setUpYourWidgetGoalChange(setUpYourWidgetGoal)
 			},
 			enabled = setUpYourWidgetGoal.intervalBlue >= 2,
@@ -296,8 +347,8 @@ fun SetUpYourWidget(
 			modifier = buttonModifier,
 		) {
 			Text(
-				text = "–",
-				fontSize = 24.sp,
+				text = "－",
+				fontSize = 20.sp,
 			)
 		}
 		Text(
@@ -307,15 +358,15 @@ fun SetUpYourWidget(
 		Button(
 			onClick = {
 				setUpYourWidgetGoal.intervalBlue++
-				Log.d("EDIT GOAL VIEW", "++" + setUpYourWidgetGoal.intervalBlue.toString())
 				setUpYourWidgetGoalChange(setUpYourWidgetGoal)
 			},
-			contentPadding = PaddingValues(0.dp),
+			contentPadding = PaddingValues(bottom = 4.dp),
 			modifier = buttonModifier,
 		) {
 			Text(
-				text = "+",
-				fontSize = 24.sp,
+				text = "＋",
+				fontSize = 20.sp,
+				fontWeight = FontWeight.Bold,
 			)
 		}
 		Text(
@@ -350,30 +401,37 @@ fun SetUpYourWidget(
 @Composable
 fun WidgetConfigurationPreview(
 	editGoalViewGoal: Goal,
+	isFirstConfigure: Boolean,
 	modifier: Modifier = Modifier,
 ) {
+	val previewGoal = editGoalViewGoal.copy()
+	if(isFirstConfigure) {
+		previewGoal.status = CommonFunctions.STATUS_GREEN
+		previewGoal.lastWorkout = remember { System.currentTimeMillis() }
+	}
 	FreeStandingTitle(text = "Preview")
 	GoalPreview(
-		goal = editGoalViewGoal,
+		goal = previewGoal,
 		modifier = modifier,
 	)
 }
 
 @Composable
 fun FreeStandingTitle(
-	text: String
+	text: String,
+	@SuppressLint("ModifierParameter") modifier: Modifier = Modifier.padding(top = 16.dp)
 ) {
 	Text(
 		text = text.uppercase(Locale.getDefault()),
 		fontSize = 16.sp,
 		fontWeight = FontWeight.Bold,
-		modifier = Modifier.padding(top = 12.dp)
+		modifier = modifier
 	)
 }
 
 @Composable
 fun AddUpdateWidgetButton(
-	isFirstConfigure: Boolean = true,
+	isFirstConfigure: Boolean,
 	addUpdateWidget: () -> Unit,
 	modifier: Modifier = Modifier,
 ) {
@@ -385,11 +443,15 @@ fun AddUpdateWidgetButton(
 			.fillMaxWidth(),
 	) {
 		Text(
-			text = if(isFirstConfigure) {"Add widget"} else {"Update widget"},
+			text = if (isFirstConfigure) {
+				"Add widget".uppercase()
+			} else {
+				"Update goal".uppercase()
+			},
 			modifier = Modifier.padding(end = 16.dp)
 		)
 		Icon(
-			imageVector = Icons.Filled.Done,
+			imageVector = Icons.Filled.Save,
 			contentDescription = null
 		)
 	}
@@ -401,7 +463,7 @@ fun AddUpdateWidgetButton(
 fun EditGoalViewPreview() {
 	EditGoalView(
 		initialGoal = CommonFunctions.testData()[0],
-		setAppBarTitle = { },
+		isFirstConfigure = false,
 		addUpdateWidget = { },
 	)
 }

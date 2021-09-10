@@ -194,8 +194,19 @@ public class CommonFunctions {
         return AppWidgetManager.getInstance(context).getAppWidgetIds(thisAppWidget);
     }
 
-    public static List<Goal> goalsWithoutValidAppWidgetId(Context context, List<Goal> goals) {
-        return goals.stream().filter(widget -> Arrays.stream(appWidgetIds(context)).noneMatch(i -> widget.getAppWidgetId() == null || i == widget.getAppWidgetId())).collect(Collectors.toList());
+    public static List<Goal> goalsWithInvalidAppWidgetId(Context context, List<Goal> goals) {
+        return goals.stream().filter(goal -> Arrays.stream(appWidgetIds(context)).noneMatch(appWidgetId -> goal.getAppWidgetId() == null || appWidgetId == goal.getAppWidgetId())).collect(Collectors.toList());
+    }
+    public static List<Goal> goalsWithInvalidOrNullAppWidgetId(Context context, List<Goal> goals) {
+        Log.d(TAG, "goals size: " + goals.size());
+        Log.d(TAG, "goals: " + goals);
+
+        Log.d(TAG, "appWidgetIds size: " + appWidgetIds(context).length);
+        Log.d(TAG, "appWidgetIds: " + Arrays.toString(appWidgetIds(context)));
+
+        Log.d(TAG, "goalsWithInvalidOrNullAppWidgetId size: " + goals.stream().filter(widget -> Arrays.stream(appWidgetIds(context)).noneMatch(i -> widget.getAppWidgetId() != null && i == widget.getAppWidgetId())).collect(Collectors.toList()).size());
+        Log.d(TAG, "goalsWithInvalidOrNullAppWidgetId: " + goals.stream().filter(widget -> Arrays.stream(appWidgetIds(context)).noneMatch(i -> widget.getAppWidgetId() != null && i == widget.getAppWidgetId())).collect(Collectors.toList()));
+        return goals.stream().filter(widget -> Arrays.stream(appWidgetIds(context)).noneMatch(i -> widget.getAppWidgetId() != null && i == widget.getAppWidgetId())).collect(Collectors.toList());
     }
 
 // --Commented out by Inspection START (23.06.21, 20:28):
@@ -228,7 +239,7 @@ public class CommonFunctions {
 
     // Sets all appWidgetIds of goals that are not valid to null. Maybe later even reassign some to unassigned widgets.
     public static void cleanGoals(Context context, List<Goal> goals) {
-        for (Goal goal: goalsWithoutValidAppWidgetId(context, goals)) {
+        for (Goal goal: goalsWithInvalidAppWidgetId(context, goals)) {
             if(goal.hasValidAppWidgetId()) {
                 GoalViewModel.setAppWidgetIdToNullByUid(context, goal.getUid());
             }

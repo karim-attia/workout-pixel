@@ -12,10 +12,12 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -26,32 +28,36 @@ import ch.karimattia.workoutpixel.core.Goal
 import ch.karimattia.workoutpixel.core.WidgetAlarm
 import ch.karimattia.workoutpixel.database.KotlinGoalViewModel
 import ch.karimattia.workoutpixel.ui.theme.WorkoutPixelTheme
+import coil.annotation.ExperimentalCoilApi
 import com.google.accompanist.pager.ExperimentalPagerApi
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+
+private const val TAG: String = "MainActivity"
 
 class MainActivity : ComponentActivity() {
 
+	@ExperimentalComposeUiApi
+	@ExperimentalCoilApi
 	@ExperimentalAnimationGraphicsApi
 	@ExperimentalPagerApi
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 		val kotlinGoalViewModel by viewModels<KotlinGoalViewModel>()
 		var alreadySetUp = false
+		val context: Context = this
 
 		kotlinGoalViewModel.allGoals.observe(this, { goals ->
-			Log.d(
-				"ComposeActivity",
-				"observe ${goals[10]}"
-			)
+			Log.d(TAG, "___________observe___________")
 
 			setContent {
 				WorkoutPixelApp(
 					kotlinGoalViewModel = kotlinGoalViewModel,
 					goals = goals,
-					updateAfterClick = { it.updateAfterClick(this) }, // contains updateGoal
-					// TODO: Proper viewModel stuff
+					updateAfterClick = { it.updateAfterClick(context) }, // contains updateGoal
 					updateGoal = {
 						kotlinGoalViewModel.updateGoal(it)
-						it.runUpdate(this, false)
+						it.runUpdate(context, false)
 					},
 					deleteGoal = { kotlinGoalViewModel.deleteGoal(it) },
 				)
@@ -59,16 +65,19 @@ class MainActivity : ComponentActivity() {
 
 			// Run oneTimeSetup once after the goals are loaded.
 			if (!alreadySetUp && goals != null) {
-				oneTimeSetup(goals, this)
+				lifecycleScope.launch(context = Dispatchers.Default) {
+					oneTimeSetup(goals, context)
+				}
 				alreadySetUp = true
 			}
 		})
 	}
 }
 
+@ExperimentalCoilApi
 @ExperimentalAnimationGraphicsApi
 @ExperimentalPagerApi
-@OptIn(ExperimentalComposeUiApi::class)
+@ExperimentalComposeUiApi
 @Composable
 fun WorkoutPixelApp(
 	kotlinGoalViewModel: KotlinGoalViewModel,
@@ -83,19 +92,21 @@ fun WorkoutPixelApp(
 		val allScreens = WorkoutPixelScreen.values().toList()
 		val navController = rememberNavController()
 		val backstackEntry = navController.currentBackStackEntryAsState()
-		val currentScreen = WorkoutPixelScreen.fromRoute(
-			backstackEntry.value?.destination?.route
-		)
-		// TODO: appBarTitle part of viewModel?
-		var appBarTitle: String by remember { mutableStateOf("Workout Pixel") }
+		val currentScreen = WorkoutPixelScreen.fromRoute(backstackEntry.value?.destination?.route)
+		//val appBarTitle: String? by kotlinGoalViewModel.appBarTitle.observeAsState()
 		val currentGoalUid: Int? by kotlinGoalViewModel.currentGoalUid.observeAsState()
-
-		Log.d("ComposeActivity", "currentGoal: Uid: $currentGoalUid")
+		//val currentGoal: Goal? by kotlinGoalViewModel.currentGoal.observeAsState()
+		val currentGoal: Goal? = goalFromGoalsByUid(goalUid = currentGoalUid, goals = goals)
 
 		Scaffold(
 			topBar = {
 				TopAppBar(
-					title = { Text(text = appBarTitle) },
+					title = {
+						Text(
+							text =
+							currentScreen.displayName ?: (currentGoal?.title ?: "")
+						)
+					},
 					navigationIcon =
 					if (currentScreen.showBackNavigation) {
 						{
@@ -118,11 +129,19 @@ fun WorkoutPixelApp(
 					// Only show entries that have bottomNavigation == true.
 					allScreens.filter { it.bottomNavigation }.forEach { screen ->
 						BottomNavigationItem(
-							icon = { Icon(screen.icon, contentDescription = null) },
-							label = { Text(screen.name) },
+							icon = { screen.icon?.let { Icon(it, contentDescription = null) } },
+							label = { Text(text = screen.displayName ?: "") },
 							selected = currentScreen == screen,
 							onClick = {
-								navController.navigate(screen.name)
+								navController.navigate(screen.name) {
+									if (screen == WorkoutPixelScreen.GoalsList) {
+										popUpTo(WorkoutPixelScreen.GoalsList.name) {
+											inclusive = true
+										}
+									} else {
+										popUpTo(WorkoutPixelScreen.GoalsList.name)
+									}
+								}
 							}
 						)
 					}
@@ -133,18 +152,15 @@ fun WorkoutPixelApp(
 			WorkoutPixelNavHost(
 				navController = navController,
 				goals = goals,
-				kotlinGoalViewModel = kotlinGoalViewModel,
 				updateAfterClick = updateAfterClick,
 				navigateTo = { destination: String, goal: Goal? ->
-					Log.d(
-						"ComposeActivity",
-						"navigateTo $goal"
-					)
-					kotlinGoalViewModel.changeCurrentGoal(goal)
+					Log.d(TAG, "navigateTo $goal")
+					kotlinGoalViewModel.changeCurrentGoalUid(goal)
+					//kotlinGoalViewModel.changeCurrentGoal(goal, goals)
 					navController.navigate(destination)
 				},
-				setAppBarTitle = { appBarText: String ->
-					appBarTitle = appBarText
+				setAppBarTitle = { appBarTitle: String ->
+					kotlinGoalViewModel.changeAppBarTitle(appBarTitle)
 				},
 				updateGoal = { updatedGoal: Goal, navigateUp: Boolean ->
 					updateGoal(updatedGoal)
@@ -159,18 +175,21 @@ fun WorkoutPixelApp(
 					deleteGoal(deletedGoal)
 					if (navigateUp) {
 						// The goal uid of the deleted goal doesn't exist anymore. Removing it from the current goal removes sources of errors.
-						kotlinGoalViewModel.changeCurrentGoal(null)
+						kotlinGoalViewModel.changeCurrentGoalUid(null)
+						//kotlinGoalViewModel.changeCurrentGoal(null, goals)
 						navController.navigateUp()
 					}
 
 				},
-				currentGoal = goalFromGoalsByUid(goalUid = currentGoalUid, goals = goals),
+				currentGoal = currentGoal,
+				//currentGoal = goalFromGoalsByUid(goalUid = currentGoalUid, goals = goals),
 				modifier = Modifier.padding(innerPadding),
 			)
 		}
 	}
 }
 
+@ExperimentalCoilApi
 @ExperimentalAnimationGraphicsApi
 @ExperimentalPagerApi
 @ExperimentalComposeUiApi
@@ -178,7 +197,6 @@ fun WorkoutPixelApp(
 fun WorkoutPixelNavHost(
 	navController: NavHostController,
 	goals: List<Goal>,
-	kotlinGoalViewModel: KotlinGoalViewModel,
 	updateAfterClick: (Goal) -> Unit,
 	navigateTo: (destination: String, goal: Goal?) -> Unit,
 	setAppBarTitle: (appBarText: String) -> Unit,
@@ -187,53 +205,95 @@ fun WorkoutPixelNavHost(
 	currentGoal: Goal?,
 	modifier: Modifier = Modifier,
 ) {
-	// val goals: List<Goal> by goalViewModel.allGoals.observeAsState(initial = listOf())
-
 	NavHost(
 		navController = navController,
-		startDestination = WorkoutPixelScreen.GoalsList.name,
+		startDestination = if (goals.isNotEmpty()) {WorkoutPixelScreen.GoalsList.name} else {WorkoutPixelScreen.Instructions.name},
 		modifier = modifier
 	) {
 		composable(route = WorkoutPixelScreen.GoalsList.name) {
+			Log.d(TAG, "------------GoalsList------------")
 			AllGoals(
 				goals = goals,
 				updateAfterClick = updateAfterClick,
 				navigateTo = navigateTo,
-				setAppBarTitle = setAppBarTitle,
 			)
+/*
+			var alreadySetTitle: Boolean by remember { mutableStateOf(false) }
+			if (!alreadySetTitle) {
+				setAppBarTitle("Workout Pixel")
+				Log.d(
+					"Navigation: AllGoals",
+					"setAppBarTitle: Workout Pixel, alreadySetTitle: $alreadySetTitle"
+				)
+				alreadySetTitle = true
+			}
+*/
 		}
 		composable(route = WorkoutPixelScreen.Instructions.name) {
-			Instructions(
-				setAppBarTitle = setAppBarTitle,
-			)
+			Log.d(TAG, "------------Instructions------------")
+			Instructions()
+/*
+			var alreadySetTitle: Boolean by remember { mutableStateOf(false) }
+			if (!alreadySetTitle) {
+				setAppBarTitle("Instructions")
+				Log.d(
+					"Navigation: Instructions",
+					"setAppBarTitle: Instructions, alreadySetTitle: $alreadySetTitle"
+				)
+				alreadySetTitle = true
+			} else {
+				Log.d("Navigation: Instructions", "alreadySetTitle: $alreadySetTitle")
+			}
+*/
 		}
-		// Goal Detail
+		// GoalDetailView
 		composable(route = WorkoutPixelScreen.GoalDetailView.name) {
-			Log.d("ComposeActivity", "Goal Detail Navigation $currentGoal")
-
+			Log.d(TAG, "------------GoalDetail $currentGoal------------")
 			if (currentGoal != null) {
 				GoalDetailView(
 					goal = currentGoal,
 					updateAfterClick = { updateAfterClick(currentGoal) },
 					deleteGoal = { deleteGoal(it, true) },
-					setAppBarTitle = setAppBarTitle,
 					updateGoal = updateGoal,
 				)
+
+/*
+				var alreadySetTitle: Boolean by remember { mutableStateOf(false) }
+				if (!alreadySetTitle) {
+					setAppBarTitle(currentGoal.title)
+					Log.d(
+						"Navigation: GoalDetailView",
+						"setAppBarTitle: $currentGoal.title, alreadySetTitle: $alreadySetTitle"
+					)
+					alreadySetTitle = true
+				}
+*/
+
 			} else (Text("currentGoal = null"))
 		}
 		// Edit goal
 		composable(
 			route = WorkoutPixelScreen.EditGoalView.name,
 		) {
-			Log.d("ComposeActivity", "Edit goal Navigation $currentGoal")
-
+			Log.d(TAG, "------------EditGoal $currentGoal------------")
 			if (currentGoal != null) {
 				EditGoalView(
 					initialGoal = currentGoal,
-					setAppBarTitle,
 					isFirstConfigure = false,
 					addUpdateWidget = { updateGoal(it, true) }
 				)
+/*
+				// Should the title be updated when the text field is updated? I think no.
+				var alreadySetTitle: Boolean by remember { mutableStateOf(false) }
+				if (!alreadySetTitle) {
+					setAppBarTitle(currentGoal.title)
+					Log.d(
+						"Navigation: EditGoalView",
+						"setAppBarTitle: $currentGoal.title, alreadySetTitle: $alreadySetTitle"
+					)
+					alreadySetTitle = true
+				}
+*/
 			} else (
 					Text("currentGoal = null")
 					)
@@ -242,7 +302,7 @@ fun WorkoutPixelNavHost(
 }
 
 fun oneTimeSetup(goals: List<Goal>, context: Context) {
-	Log.d("ComposeActivity", "oneTimeSetup")
+	Log.d(TAG, "oneTimeSetup")
 
 	// Update all goals
 	for (goal in goals) {

@@ -2,42 +2,52 @@ package ch.karimattia.workoutpixel.database
 
 import android.app.Application
 import android.util.Log
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.*
 import ch.karimattia.workoutpixel.core.Goal
-import ch.karimattia.workoutpixel.database.PastWorkout
-import ch.karimattia.workoutpixel.database.PastClickRepository
+import ch.karimattia.workoutpixel.goalFromGoalsByUid
 import kotlinx.coroutines.launch
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 
 
 class KotlinGoalViewModel(application: Application) : AndroidViewModel(application) {
 	private val repository: KotlinGoalRepository = KotlinGoalRepository(application)
 	val allGoals: LiveData<List<Goal>> = repository.allGoals.asLiveData()
+	//val goalsWithInvalidOrNullAppWidgetId: LiveData<List<Goal>> = repository.goalsWithInvalidOrNullAppWidgetId.asLiveData()
 
-	private val internalGoalUid = MutableLiveData(-1)
-	val currentGoalUid: LiveData<Int> = internalGoalUid
-
-	fun changeCurrentGoal(goal: Goal?) {
+	private val _currentGoalUid = MutableLiveData(-1)
+	val currentGoalUid: LiveData<Int> = _currentGoalUid
+	fun changeCurrentGoalUid(goal: Goal?) {
 		if (goal != null) {
-			internalGoalUid.value = goal.uid
+			_currentGoalUid.value = goal.uid
+		} else {
+			_currentGoalUid.value = -1
 		}
-		else {internalGoalUid.value = -1}
 	}
 
+	private val _currentGoal = MutableLiveData<Goal?>()
+	val currentGoal: LiveData<Goal?> = _currentGoal
+	fun changeCurrentGoal(goal: Goal?, goals: List<Goal>) {
+		_currentGoal.value = goalFromGoalsByUid(goalUid = goal?.uid, goals = goals)
 /*
-	fun changeCurrentGoal2(goal: Goal) {
-		currentGoalUid = allGoals.value?.indexOf(goal)
+		if (goal != null) {
+			_currentGoal.value = goalFromGoalsByUid(goalUid = goal.uid, goals = goals)
+		} else {
+			_currentGoal.value = null
+		}
+		*/
 	}
 
-	val currentGoal:Goal?
-		get() = allGoals.getOrNull(currentGoalUid)
+	private val _appBarTitle = MutableLiveData("")
+	val appBarTitle: LiveData<String> = _appBarTitle
 
-	fun currentGoal(goalUid: Int): LiveData<Goal> = repository.allGoals
- */
+	fun changeAppBarTitle(appBarTitle: String?) {
+		if (appBarTitle != null) {
+			_appBarTitle.value = appBarTitle
+		} else {
+			_appBarTitle.value = ""
+		}
+		Log.d("kotlinGoalViewModel.changeAppBarTitle: ", appBarTitle.toString())
+	}
+
 
 	fun updateGoal(goal: Goal) = viewModelScope.launch {
 		repository.updateGoal(goal)
@@ -50,7 +60,7 @@ class KotlinGoalViewModel(application: Application) : AndroidViewModel(applicati
 	}
 
 	fun insertGoal(goal: Goal) = viewModelScope.launch {
-		repository.insertGoal(goal)
+		goal.uid = repository.insertGoal(goal).toInt()
+		goal.runUpdate(getApplication<Application>().applicationContext, true)
 	}
-
 }

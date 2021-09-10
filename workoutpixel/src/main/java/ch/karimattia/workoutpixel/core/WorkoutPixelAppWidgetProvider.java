@@ -9,12 +9,12 @@ import android.util.Log;
 
 import java.util.List;
 
-import ch.karimattia.workoutpixel.configure.ConfigureActivity;
+import ch.karimattia.workoutpixel.configure.ConfigureActivityOld;
 import ch.karimattia.workoutpixel.database.GoalViewModel;
 
 /**
  * Implementation of App Widget functionality.
- * App Widget Configuration implemented in {@link ConfigureActivity WorkoutPixelConfigureActivity}
+ * App Widget Configuration implemented in {@link ConfigureActivityOld WorkoutPixelConfigureActivity}
  */
 
 public class WorkoutPixelAppWidgetProvider extends AppWidgetProvider {

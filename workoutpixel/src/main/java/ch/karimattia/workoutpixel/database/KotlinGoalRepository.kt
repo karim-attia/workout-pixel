@@ -12,6 +12,7 @@ class KotlinGoalRepository(application: Application?) {
 	// Observed Flow will notify the observer when the data has changed.
 
 	val allGoals: Flow<List<Goal>> = goalDao.loadAllGoalsFlow()
+	//val goalsWithInvalidOrNullAppWidgetId: Flow<List<Goal>> = goalDao.loadGoalsWithInvalidOrNullAppWidgetId()
 
 	suspend fun updateGoal(goal: Goal) {
 		goalDao.updateGoal(goal)
@@ -21,8 +22,8 @@ class KotlinGoalRepository(application: Application?) {
 		goalDao.deleteGoal(goal)
 	}
 
-	suspend fun insertGoal(goal: Goal) {
-		goalDao.insertGoal(goal)
+	suspend fun insertGoal(goal: Goal): Long {
+		return goalDao.insertGoal(goal)
 	}
 
 }

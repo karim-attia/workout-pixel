@@ -10,28 +10,27 @@ import androidx.compose.ui.graphics.vector.ImageVector
  * Screen metadata for WorkoutPixel.
  */
 enum class WorkoutPixelScreen(
-	val icon: ImageVector,
-	val bottomNavigation: Boolean,
+	val icon: ImageVector? = null,
+	val bottomNavigation: Boolean = false,
+	val displayName: String? = null,
 	val showBackNavigation: Boolean = false,
 	val showEditIcon: Boolean = false,
 ) {
 	Instructions(
 		icon = Icons.Filled.Info,
 		bottomNavigation = true,
+		displayName = "Instructions"
 	),
 	GoalsList(
 		icon = Icons.Filled.Done,
 		bottomNavigation = true,
+		displayName = "Your goals"
 	),
 	GoalDetailView(
-		icon = Icons.Filled.Info,
-		bottomNavigation = false,
 		showBackNavigation = true,
 		showEditIcon = true,
 	),
 	EditGoalView(
-		icon = Icons.Filled.Info,
-		bottomNavigation = false,
 		showBackNavigation = true,
 	)
 	;

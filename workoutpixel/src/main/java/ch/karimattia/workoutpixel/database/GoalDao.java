@@ -35,27 +35,32 @@ public interface GoalDao {
 
     // Widgets
 
-    // Get widget by appWidgetId
+    // Get goal by appWidgetId
     @Query("SELECT * FROM goals WHERE appWidgetId=:appWidgetId")
     Goal loadGoalByAppWidgetId(int appWidgetId);
 
+    // Get goal by uid
     @Query("SELECT * FROM goals WHERE uid=:uid")
     Goal loadGoalByUid(int uid);
 
     @Query("SELECT * FROM goals WHERE uid=:uid")
     LiveData<Goal> liveDataGoalByUid(int uid);
 
-    // Get all widgets
+    // Get all goals
     @Query("SELECT * FROM goals")
     LiveData<List<Goal>> loadAllGoalsLiveData();
 
-    // Get all widgets
+    // Get all goals
     @Query("SELECT * FROM goals")
     List<Goal> loadAllGoals();
 
-    // Get all widgets
+    // Get all goals
     @Query("SELECT * FROM goals")
     Flow<List<Goal>> loadAllGoalsFlow();
+
+/*    // Get all goals with invalid appWidgetId
+    @Query("SELECT * FROM goals WHERE appWidgetId IS NULL OR appWidgetId=0")
+    Flow<List<Goal>> loadGoalsWithInvalidOrNullAppWidgetId();*/
 
     @Insert(onConflict = OnConflictStrategy.REPLACE, entity = Goal.class)
     long insertGoal(Goal goal);

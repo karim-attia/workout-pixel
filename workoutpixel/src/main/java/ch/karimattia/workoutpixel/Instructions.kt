@@ -9,7 +9,6 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -35,18 +34,15 @@ import com.google.accompanist.pager.HorizontalPagerIndicator
 import com.google.accompanist.pager.rememberPagerState
 import java.util.*
 
+private const val TAG: String = "Instructions"
+
 @ExperimentalCoilApi
 @ExperimentalAnimationGraphicsApi
 @ExperimentalPagerApi
 @Composable
-fun Instructions(
-	setAppBarTitle: (appBarText: String) -> Unit,
-) {
-
-	setAppBarTitle("Instructions")
+fun Instructions() {
 
 	val instructions = arrayListOf(
-
 		Instruction(
 			stringResource(R.string.instructions_intro_title),
 			R.string.instructions_pitch,
@@ -161,14 +157,13 @@ fun Instructions(
 }
 
 
+@ExperimentalCoilApi
 @ExperimentalAnimationGraphicsApi
 @ExperimentalPagerApi
 @Preview(name = "Instructions preview")
 @Composable
 fun InstructionsPreview() {
-	Instructions(
-		setAppBarTitle = {}
-	)
+	Instructions()
 }
 
 class Instruction internal constructor(

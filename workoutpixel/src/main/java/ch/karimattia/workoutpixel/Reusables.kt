@@ -23,10 +23,12 @@ import ch.karimattia.workoutpixel.ui.theme.InfoColor
 @Composable
 fun CardWithTitle(
 	title: String,
+	onClick: () -> Unit = {},
 	content: @Composable () -> Unit,
 ) {
 	FormattedCard(
-		paddingOutsideOfCard = PaddingValues(vertical = 4.dp, horizontal = 8.dp)
+		paddingOutsideOfCard = PaddingValues(vertical = 4.dp, horizontal = 8.dp),
+		onClick = onClick,
 	) {
 		CardTitle(
 			text = title
@@ -39,6 +41,7 @@ fun CardWithTitle(
 fun FormattedCard(
 	paddingBetweenCardAndContent: PaddingValues = PaddingValues(all = 8.dp),
 	paddingOutsideOfCard: PaddingValues = PaddingValues(vertical = 4.dp, horizontal = 8.dp),
+	onClick: () -> Unit = {},
 	content: @Composable () -> Unit,
 ) {
 	Card(
@@ -47,6 +50,7 @@ fun FormattedCard(
 		modifier = Modifier
 			.fillMaxWidth()
 			.padding(paddingOutsideOfCard)
+			.clickable{ onClick() }
 	) {
 		Column(
 			modifier = Modifier
@@ -103,21 +107,21 @@ fun CheckboxWithText(
 	checked: Boolean,
 	onCheckedChange: (Boolean) -> Unit,
 	modifier: Modifier = Modifier
-	) {
-	Row (
+) {
+	Row(
 		verticalAlignment = Alignment.CenterVertically,
 		modifier = modifier
 			//.padding(top = 4.dp)
 			.fillMaxWidth()
 			.clickable { onCheckedChange(!checked) }
-			) {
+	) {
 		Checkbox(
 			checked = checked,
 			onCheckedChange = { onCheckedChange(it) }
 		)
 		Text(
 			text = description,
-			modifier = Modifier.padding(start = 8.dp),
+			modifier = Modifier.padding(start = 6.dp),
 		)
 	}
 }

@@ -36,15 +36,16 @@ import ch.karimattia.workoutpixel.database.PastWorkout
 import ch.karimattia.workoutpixel.ui.theme.TextBlack
 import java.util.stream.Collectors
 
+private const val TAG: String = "GoalDetailView"
+
 @Composable
 fun GoalDetailView(
 	goal: Goal,
 	updateAfterClick: () -> Unit,
 	deleteGoal: (Goal) -> Unit,
-	setAppBarTitle: (appBarText: String) -> Unit,
 	updateGoal: (updatedGoal: Goal, navigateUp: Boolean) -> Unit,
 ) {
-	setAppBarTitle(goal.title)
+
 	Column(
 		modifier = Modifier
 			//.padding(PaddingValues(top = 6.dp, bottom = 40.dp))
@@ -245,18 +246,12 @@ fun lastWorkoutBasedOnActiveWorkouts(pastClicks: List<PastWorkout>): Long {
 
 	// If there still is an active past workout, take the latest one to set the last workout time
 	return if (activeWorkoutsOrderedByWorkoutTime.isNotEmpty()) {
-		Log.v(
-			"lastWorkoutBasedOnActiveWorkouts",
-			"Size: " + activeWorkoutsOrderedByWorkoutTime.size
-		)
+		Log.v(TAG, "Size: " + activeWorkoutsOrderedByWorkoutTime.size)
 		activeWorkoutsOrderedByWorkoutTime[0].getWorkoutTime()
 	}
 	// Otherwise, set it to 0.
 	else {
-		Log.v(
-			"lastWorkoutBasedOnActiveWorkouts",
-			"Size: " + activeWorkoutsOrderedByWorkoutTime.size + ", no remaining workout"
-		)
+		Log.v(TAG, "Size: " + activeWorkoutsOrderedByWorkoutTime.size + ", no remaining workout")
 		0L
 	}
 }
@@ -268,7 +263,6 @@ fun GoalDetailViewPreview() {
 		goal = CommonFunctions.testData()[0],
 		updateAfterClick = {},
 		deleteGoal = {},
-		setAppBarTitle = {},
 		updateGoal = { _, _ -> },
 	)
 }

@@ -43,7 +43,7 @@
         <activity
             android:name=".configure.ConfigureActivity"
             android:label="Add a widget for your goal"
-            android:parentActivityName=".main.MainActivityOld"
+            android:parentActivityName=".MainActivity"
             android:theme="@style/ConfigureTheme"
             android:exported="true">
             <intent-filter>

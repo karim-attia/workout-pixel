@@ -38,9 +38,9 @@ import ch.karimattia.workoutpixel.database.GoalViewModel;
 /**
  * The configuration screen for the {@link WorkoutPixelAppWidgetProvider WidgetFunctions} AppWidget.
  */
-public class ConfigureActivity extends AppCompatActivity {
+public class ConfigureActivityOld extends AppCompatActivity {
     private static final String TAG = "WORKOUT_PIXEL CONFIGURE ACTIVITY";
-    final Context context = ConfigureActivity.this;
+    final Context context = ConfigureActivityOld.this;
 
     boolean isFirstConfigure = true;
 
@@ -54,7 +54,7 @@ public class ConfigureActivity extends AppCompatActivity {
 
     Goal goal = new Goal(AppWidgetManager.INVALID_APPWIDGET_ID, "", 0, intervalInDays, 2, false, false, STATUS_NONE);
 
-    public ConfigureActivity() {
+    public ConfigureActivityOld() {
         super();
     }
 

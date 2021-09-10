@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -27,17 +28,14 @@ import ch.karimattia.workoutpixel.core.CommonFunctions
 import ch.karimattia.workoutpixel.core.Goal
 import java.util.*
 
+private const val TAG: String = "AllGoals"
+
 @Composable
 fun AllGoals(
 	goals: List<Goal>,
 	updateAfterClick: (Goal) -> Unit,
 	navigateTo: (destination: String, goal: Goal?) -> Unit,
-	setAppBarTitle: (appBarText: String) -> Unit,
 ) {
-
-	setAppBarTitle("Workout Pixel")
-	// TODO: Move to Instructions if no goals
-
 	GoalList(
 		goals = goals,
 		updateAfterClick = updateAfterClick,
@@ -51,15 +49,13 @@ fun GoalList(
 	updateAfterClick: (Goal) -> Unit,
 	navigateTo: (destination: String, goal: Goal?) -> Unit,
 ) {
-	val numberOfGoals = goals.size
-	// TODO: Else show card that links to Instructions
-	if (numberOfGoals > 0) {
-		Column(
-			modifier = Modifier
-				.verticalScroll(rememberScrollState())
-		) {
-			Spacer(modifier = Modifier.height(6.dp))
-			for (i in 0 until numberOfGoals) {
+	Column(
+		modifier = Modifier
+			.verticalScroll(rememberScrollState())
+			.padding(top = 6.dp, bottom = 40.dp)
+	) {
+		if (goals.isNotEmpty()) {
+			for (i in goals.indices) {
 				// contentPadding = PaddingValues(top = 6.dp, bottom = 40.dp),
 				GoalCard(
 					goal = goals[i],
@@ -67,8 +63,10 @@ fun GoalList(
 					navigateTo = navigateTo
 				)
 			}
-			Spacer(modifier = Modifier.height(40.dp))
+		} else {
+			InstructionsCard(navigateTo = { navigateTo(WorkoutPixelScreen.Instructions.name, null) })
 		}
+
 	}
 }
 
@@ -181,6 +179,18 @@ fun IconAndText(icon: ImageVector, size: Int, iconPaddingLeft: Int, text: String
 	}
 }
 
+@Composable
+fun InstructionsCard(
+	navigateTo: () -> Unit
+) {
+	CardWithTitle(
+		title = stringResource(id = R.string.no_goals_defined_yet),
+		onClick = navigateTo,
+	) {
+		Text(text = stringResource(id = R.string.go_to_instructions_tab))
+	}
+}
+
 @Preview(name = "MyScreen preview")
 @Composable
 fun AllGoalsPreview() {
@@ -188,6 +198,5 @@ fun AllGoalsPreview() {
 		goals = CommonFunctions.testData(),
 		updateAfterClick = {},
 		navigateTo = { _, _ -> },
-		setAppBarTitle = {}
 	)
 }

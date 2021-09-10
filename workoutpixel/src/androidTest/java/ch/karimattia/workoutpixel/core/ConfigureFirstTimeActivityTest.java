@@ -1,5 +1,13 @@
 package ch.karimattia.workoutpixel.core;
 
+import static androidx.test.espresso.Espresso.onView;
+import static androidx.test.espresso.action.ViewActions.click;
+import static androidx.test.espresso.action.ViewActions.scrollTo;
+import static androidx.test.espresso.action.ViewActions.typeText;
+import static androidx.test.espresso.assertion.ViewAssertions.matches;
+import static androidx.test.espresso.matcher.ViewMatchers.withId;
+import static androidx.test.espresso.matcher.ViewMatchers.withText;
+
 import android.app.Activity;
 import android.appwidget.AppWidgetManager;
 import android.content.Intent;
@@ -15,21 +23,13 @@ import org.junit.Test;
 
 import ch.karimattia.workoutpixel.R;
 import ch.karimattia.workoutpixel.TestUtils;
-import ch.karimattia.workoutpixel.configure.ConfigureActivity;
-
-import static androidx.test.espresso.Espresso.onView;
-import static androidx.test.espresso.action.ViewActions.click;
-import static androidx.test.espresso.action.ViewActions.scrollTo;
-import static androidx.test.espresso.action.ViewActions.typeText;
-import static androidx.test.espresso.assertion.ViewAssertions.matches;
-import static androidx.test.espresso.matcher.ViewMatchers.withId;
-import static androidx.test.espresso.matcher.ViewMatchers.withText;
+import ch.karimattia.workoutpixel.configure.ConfigureActivityOld;
 
 public class ConfigureFirstTimeActivityTest {
 
     static final Intent intent;
     static {
-        intent = new Intent(ApplicationProvider.getApplicationContext(), ConfigureActivity.class);
+        intent = new Intent(ApplicationProvider.getApplicationContext(), ConfigureActivityOld.class);
         Bundle bundle = new Bundle();
         bundle.putInt(AppWidgetManager.EXTRA_APPWIDGET_ID, 2);
         intent.putExtras(bundle);
