@@ -156,11 +156,7 @@ fun WorkoutPixelApp(
 				navigateTo = { destination: String, goal: Goal? ->
 					Log.d(TAG, "navigateTo $goal")
 					kotlinGoalViewModel.changeCurrentGoalUid(goal)
-					//kotlinGoalViewModel.changeCurrentGoal(goal, goals)
 					navController.navigate(destination)
-				},
-				setAppBarTitle = { appBarTitle: String ->
-					kotlinGoalViewModel.changeAppBarTitle(appBarTitle)
 				},
 				updateGoal = { updatedGoal: Goal, navigateUp: Boolean ->
 					updateGoal(updatedGoal)
@@ -199,7 +195,6 @@ fun WorkoutPixelNavHost(
 	goals: List<Goal>,
 	updateAfterClick: (Goal) -> Unit,
 	navigateTo: (destination: String, goal: Goal?) -> Unit,
-	setAppBarTitle: (appBarText: String) -> Unit,
 	updateGoal: (updatedGoal: Goal, navigateUp: Boolean) -> Unit,
 	deleteGoal: (updatedGoal: Goal, navigateUp: Boolean) -> Unit,
 	currentGoal: Goal?,

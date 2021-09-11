@@ -4,7 +4,6 @@ import android.app.Application
 import android.util.Log
 import androidx.lifecycle.*
 import ch.karimattia.workoutpixel.core.Goal
-import ch.karimattia.workoutpixel.goalFromGoalsByUid
 import kotlinx.coroutines.launch
 
 
@@ -23,19 +22,21 @@ class KotlinGoalViewModel(application: Application) : AndroidViewModel(applicati
 		}
 	}
 
-	private val _currentGoal = MutableLiveData<Goal?>()
+
+/*	private val _currentGoal = MutableLiveData<Goal?>()
 	val currentGoal: LiveData<Goal?> = _currentGoal
 	fun changeCurrentGoal(goal: Goal?, goals: List<Goal>) {
 		_currentGoal.value = goalFromGoalsByUid(goalUid = goal?.uid, goals = goals)
-/*
+*//*
 		if (goal != null) {
 			_currentGoal.value = goalFromGoalsByUid(goalUid = goal.uid, goals = goals)
 		} else {
 			_currentGoal.value = null
 		}
-		*/
-	}
+		*//*
+	}*/
 
+/*
 	private val _appBarTitle = MutableLiveData("")
 	val appBarTitle: LiveData<String> = _appBarTitle
 
@@ -47,7 +48,7 @@ class KotlinGoalViewModel(application: Application) : AndroidViewModel(applicati
 		}
 		Log.d("kotlinGoalViewModel.changeAppBarTitle: ", appBarTitle.toString())
 	}
-
+*/
 
 	fun updateGoal(goal: Goal) = viewModelScope.launch {
 		repository.updateGoal(goal)

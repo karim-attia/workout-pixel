@@ -34,7 +34,7 @@ onSurface = Color.Black,
 @Composable
 fun WorkoutPixelTheme(
 	darkTheme: Boolean = isSystemInDarkTheme(),
-	content: @Composable() () -> Unit
+	content: @Composable () -> Unit
 ) {
 	val colors = if (darkTheme) {
 		DarkColorPalette

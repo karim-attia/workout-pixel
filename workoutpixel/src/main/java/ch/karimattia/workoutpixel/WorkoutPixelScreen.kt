@@ -2,7 +2,6 @@ package ch.karimattia.workoutpixel
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Done
-import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.ui.graphics.vector.ImageVector
 
@@ -15,16 +14,18 @@ enum class WorkoutPixelScreen(
 	val displayName: String? = null,
 	val showBackNavigation: Boolean = false,
 	val showEditIcon: Boolean = false,
+	val showSettingsIcon: Boolean = false,
 ) {
 	Instructions(
 		icon = Icons.Filled.Info,
 		bottomNavigation = true,
-		displayName = "Instructions"
+		displayName = "Instructions",
 	),
 	GoalsList(
 		icon = Icons.Filled.Done,
 		bottomNavigation = true,
-		displayName = "Your goals"
+		displayName = "Your goals",
+		showSettingsIcon = true,
 	),
 	GoalDetailView(
 		showBackNavigation = true,
@@ -46,14 +47,4 @@ enum class WorkoutPixelScreen(
 				else -> throw IllegalArgumentException("Route $route is not recognized.")
 			}
 	}
-}
-
-enum class AppBarAction(
-	val icon: ImageVector,
-	val bottomNavigation: Boolean,
-) {
-	EditGoal(
-		icon = Icons.Filled.Edit,
-		bottomNavigation = true
-	),
 }

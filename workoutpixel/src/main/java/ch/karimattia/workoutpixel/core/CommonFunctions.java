@@ -204,7 +204,7 @@ public class CommonFunctions {
         Log.d(TAG, "appWidgetIds size: " + appWidgetIds(context).length);
         Log.d(TAG, "appWidgetIds: " + Arrays.toString(appWidgetIds(context)));
 
-        Log.d(TAG, "goalsWithInvalidOrNullAppWidgetId size: " + goals.stream().filter(widget -> Arrays.stream(appWidgetIds(context)).noneMatch(i -> widget.getAppWidgetId() != null && i == widget.getAppWidgetId())).collect(Collectors.toList()).size());
+        Log.d(TAG, "goalsWithInvalidOrNullAppWidgetId size: " + (int) goals.stream().filter(widget -> Arrays.stream(appWidgetIds(context)).noneMatch(i -> widget.getAppWidgetId() != null && i == widget.getAppWidgetId())).count());
         Log.d(TAG, "goalsWithInvalidOrNullAppWidgetId: " + goals.stream().filter(widget -> Arrays.stream(appWidgetIds(context)).noneMatch(i -> widget.getAppWidgetId() != null && i == widget.getAppWidgetId())).collect(Collectors.toList()));
         return goals.stream().filter(widget -> Arrays.stream(appWidgetIds(context)).noneMatch(i -> widget.getAppWidgetId() != null && i == widget.getAppWidgetId())).collect(Collectors.toList());
     }

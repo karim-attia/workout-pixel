@@ -24,7 +24,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
@@ -285,15 +284,13 @@ fun SetUpYourWidget(
 	isFirstConfigure: Boolean,
 	modifier: Modifier = Modifier,
 ) {
-/*
-		// TODO: Different Set up your widget text if there is a reconnect
-		val configuration_widget_setup_title =
-		findViewById<TextView>(R.id.configuration_widget_setup_title)
-		configuration_widget_setup_title.setText(R.string.configuration_widget_setup_title_new_goal)
-*/
-
-	FreeStandingTitle(text = if(isFirstConfigure) {
-		stringResource(id = R.string.configuration_title)} else {stringResource(id = R.string.configuration_widget_setup_title_new_goal)})
+	FreeStandingTitle(
+		text = if (isFirstConfigure) {
+			stringResource(id = R.string.configuration_title)
+		} else {
+			stringResource(id = R.string.configuration_widget_setup_title_new_goal)
+		}
+	)
 
 	Text(
 		text = stringResource(id = R.string.widgetTitle),
@@ -405,7 +402,7 @@ fun WidgetConfigurationPreview(
 	modifier: Modifier = Modifier,
 ) {
 	val previewGoal = editGoalViewGoal.copy()
-	if(isFirstConfigure) {
+	if (isFirstConfigure) {
 		previewGoal.status = CommonFunctions.STATUS_GREEN
 		previewGoal.lastWorkout = remember { System.currentTimeMillis() }
 	}
