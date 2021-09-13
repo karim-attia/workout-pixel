@@ -110,27 +110,6 @@ fun GoalCard(
 }
 
 @Composable
-fun GoalPreview(
-	goal: Goal,
-	modifier: Modifier = Modifier,
-	updateAfterClick: () -> Unit = {},
-) {
-	Text(
-		text = goal.widgetText(),
-		textAlign = TextAlign.Center,
-		fontSize = 12.sp,
-		color = Color.White,
-		modifier = modifier
-			.clickable { updateAfterClick() }
-			.width(66.dp)
-			.height(44.dp)
-			.clip(shape = RoundedCornerShape(4.dp))
-			.background(Color(CommonFunctions.getColorFromStatus(goal.status)))
-			.wrapContentSize(Alignment.Center)
-	)
-}
-
-@Composable
 fun GoalTitle(goal: Goal) {
 	Text(
 		text = goal.title.uppercase(Locale.getDefault()),

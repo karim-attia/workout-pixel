@@ -33,7 +33,11 @@ enum class WorkoutPixelScreen(
 	),
 	EditGoalView(
 		showBackNavigation = true,
-	)
+	),
+	Settings(
+		showBackNavigation = true,
+		displayName = "Workout Pixel settings",
+	),
 	;
 
 	companion object {
@@ -43,6 +47,7 @@ enum class WorkoutPixelScreen(
 				Instructions.name -> Instructions
 				GoalDetailView.name -> GoalDetailView
 				EditGoalView.name -> EditGoalView
+				Settings.name -> Settings
 				null -> GoalsList
 				else -> throw IllegalArgumentException("Route $route is not recognized.")
 			}

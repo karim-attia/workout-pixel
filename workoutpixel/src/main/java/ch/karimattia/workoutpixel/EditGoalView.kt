@@ -13,10 +13,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.material.icons.filled.ArrowDropUp
-import androidx.compose.material.icons.filled.Cable
-import androidx.compose.material.icons.filled.Save
+import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -340,12 +337,12 @@ fun SetUpYourWidget(
 				setUpYourWidgetGoalChange(setUpYourWidgetGoal)
 			},
 			enabled = setUpYourWidgetGoal.intervalBlue >= 2,
-			contentPadding = PaddingValues(0.dp),
+			contentPadding = PaddingValues(all = 0.dp),
 			modifier = buttonModifier,
 		) {
-			Text(
-				text = "－",
-				fontSize = 20.sp,
+			Icon(
+				imageVector = Icons.Filled.Remove,
+				contentDescription = null,
 			)
 		}
 		Text(
@@ -357,14 +354,13 @@ fun SetUpYourWidget(
 				setUpYourWidgetGoal.intervalBlue++
 				setUpYourWidgetGoalChange(setUpYourWidgetGoal)
 			},
-			contentPadding = PaddingValues(bottom = 4.dp),
+			contentPadding = PaddingValues(all = 0.dp),
 			modifier = buttonModifier,
 		) {
-			Text(
-				text = "＋",
-				fontSize = 20.sp,
-				fontWeight = FontWeight.Bold,
-			)
+			Icon(
+				imageVector = Icons.Filled.Add,
+				contentDescription = null,
+						)
 		}
 		Text(
 			text = CommonFunctions.days(setUpYourWidgetGoal.intervalBlue),

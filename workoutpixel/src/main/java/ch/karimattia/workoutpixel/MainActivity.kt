@@ -12,6 +12,7 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -27,7 +28,7 @@ import ch.karimattia.workoutpixel.core.CommonFunctions
 import ch.karimattia.workoutpixel.core.Goal
 import ch.karimattia.workoutpixel.core.WidgetAlarm
 import ch.karimattia.workoutpixel.database.KotlinGoalViewModel
-import ch.karimattia.workoutpixel.ui.theme.WorkoutPixelTheme
+import ch.karimattia.workoutpixel.ui.theme.*
 import coil.annotation.ExperimentalCoilApi
 import com.google.accompanist.pager.ExperimentalPagerApi
 import kotlinx.coroutines.Dispatchers
@@ -121,6 +122,11 @@ fun WorkoutPixelApp(
 								Icon(Icons.Filled.Edit, contentDescription = "Edit goal")
 							}
 						}
+						if (currentScreen.showSettingsIcon) {
+							IconButton(onClick = { navController.navigate(WorkoutPixelScreen.Settings.name) }) {
+								Icon(Icons.Filled.Settings, contentDescription = "Settings")
+							}
+						}
 					}
 				)
 			},
@@ -202,7 +208,11 @@ fun WorkoutPixelNavHost(
 ) {
 	NavHost(
 		navController = navController,
-		startDestination = if (goals.isNotEmpty()) {WorkoutPixelScreen.GoalsList.name} else {WorkoutPixelScreen.Instructions.name},
+		startDestination = if (goals.isNotEmpty()) {
+			WorkoutPixelScreen.GoalsList.name
+		} else {
+			WorkoutPixelScreen.Instructions.name
+		},
 		modifier = modifier
 	) {
 		composable(route = WorkoutPixelScreen.GoalsList.name) {
@@ -212,34 +222,10 @@ fun WorkoutPixelNavHost(
 				updateAfterClick = updateAfterClick,
 				navigateTo = navigateTo,
 			)
-/*
-			var alreadySetTitle: Boolean by remember { mutableStateOf(false) }
-			if (!alreadySetTitle) {
-				setAppBarTitle("Workout Pixel")
-				Log.d(
-					"Navigation: AllGoals",
-					"setAppBarTitle: Workout Pixel, alreadySetTitle: $alreadySetTitle"
-				)
-				alreadySetTitle = true
-			}
-*/
 		}
 		composable(route = WorkoutPixelScreen.Instructions.name) {
 			Log.d(TAG, "------------Instructions------------")
 			Instructions()
-/*
-			var alreadySetTitle: Boolean by remember { mutableStateOf(false) }
-			if (!alreadySetTitle) {
-				setAppBarTitle("Instructions")
-				Log.d(
-					"Navigation: Instructions",
-					"setAppBarTitle: Instructions, alreadySetTitle: $alreadySetTitle"
-				)
-				alreadySetTitle = true
-			} else {
-				Log.d("Navigation: Instructions", "alreadySetTitle: $alreadySetTitle")
-			}
-*/
 		}
 		// GoalDetailView
 		composable(route = WorkoutPixelScreen.GoalDetailView.name) {
@@ -251,19 +237,6 @@ fun WorkoutPixelNavHost(
 					deleteGoal = { deleteGoal(it, true) },
 					updateGoal = updateGoal,
 				)
-
-/*
-				var alreadySetTitle: Boolean by remember { mutableStateOf(false) }
-				if (!alreadySetTitle) {
-					setAppBarTitle(currentGoal.title)
-					Log.d(
-						"Navigation: GoalDetailView",
-						"setAppBarTitle: $currentGoal.title, alreadySetTitle: $alreadySetTitle"
-					)
-					alreadySetTitle = true
-				}
-*/
-
 			} else (Text("currentGoal = null"))
 		}
 		// Edit goal
@@ -277,22 +250,19 @@ fun WorkoutPixelNavHost(
 					isFirstConfigure = false,
 					addUpdateWidget = { updateGoal(it, true) }
 				)
-/*
-				// Should the title be updated when the text field is updated? I think no.
-				var alreadySetTitle: Boolean by remember { mutableStateOf(false) }
-				if (!alreadySetTitle) {
-					setAppBarTitle(currentGoal.title)
-					Log.d(
-						"Navigation: EditGoalView",
-						"setAppBarTitle: $currentGoal.title, alreadySetTitle: $alreadySetTitle"
-					)
-					alreadySetTitle = true
-				}
-*/
 			} else (
 					Text("currentGoal = null")
 					)
 		}
+		// Settings
+		composable(
+			route = WorkoutPixelScreen.Settings.name,
+		) {
+			Log.d(TAG, "------------Settings------------")
+			// TODO: Get from datamodel
+			Settings(settingsData = SettingsData(Green = Green, Blue = Blue, Red = Red, Purple = Purple, ))
+		}
+
 	}
 }
 

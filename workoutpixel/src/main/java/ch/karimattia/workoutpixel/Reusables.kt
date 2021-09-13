@@ -16,9 +16,48 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import ch.karimattia.workoutpixel.core.CommonFunctions
+import ch.karimattia.workoutpixel.core.Goal
 import ch.karimattia.workoutpixel.ui.theme.InfoColor
+
+@Composable
+fun GoalPreview(
+	goal: Goal,
+	modifier: Modifier = Modifier,
+	updateAfterClick: () -> Unit = {},
+) {
+	GoalPreviewWithColor(
+		goal = goal,
+		color = CommonFunctions.getColorFromStatus(goal.status),
+		modifier = modifier,
+		updateAfterClick = updateAfterClick,
+	)
+}
+
+@Composable
+fun GoalPreviewWithColor(
+	goal: Goal,
+	color: Int,
+	modifier: Modifier = Modifier,
+	updateAfterClick: () -> Unit = {},
+) {
+	Text(
+		text = goal.widgetText(),
+		textAlign = TextAlign.Center,
+		fontSize = 12.sp,
+		color = Color.White,
+		modifier = modifier
+			.clickable { updateAfterClick() }
+			.width(66.dp)
+			.height(44.dp)
+			.clip(shape = RoundedCornerShape(4.dp))
+			.background(Color(color))
+			.wrapContentSize(Alignment.Center)
+	)
+}
 
 @Composable
 fun CardWithTitle(
@@ -50,7 +89,7 @@ fun FormattedCard(
 		modifier = Modifier
 			.fillMaxWidth()
 			.padding(paddingOutsideOfCard)
-			.clickable{ onClick() }
+			.clickable { onClick() }
 	) {
 		Column(
 			modifier = Modifier
