@@ -146,6 +146,7 @@ fun PastClickList(
 					togglePastClick = {
 						pastClickViewModel.updatePastClick(it)
 						// If this change causes a new last workout time, do all the necessary updates.
+						// setNewLastWorkout not needed because this is done in updateGoal. Instead, lastWorkout could be set directly.
 						if (goal.setNewLastWorkout(lastWorkoutBasedOnActiveWorkouts(pastClicks))) {
 							updateGoal(goal, false)
 						}

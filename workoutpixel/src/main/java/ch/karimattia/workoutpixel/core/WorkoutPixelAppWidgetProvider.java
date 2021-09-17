@@ -91,6 +91,13 @@ public class WorkoutPixelAppWidgetProvider extends AppWidgetProvider {
         Log.d(TAG, "ON_ENABLED");
         super.onEnabled(context);
 
+        List<Goal> goalList = GoalViewModel.loadGoalsWithValidAppWidgetId(context);
+        for (Goal goal : goalList) {
+            // Tell the AppWidgetManager to perform an update on the current app widget
+            Log.d(TAG, "ON_ENABLED: " + goal.debugString());
+            goal.updateWidgetBasedOnStatus(context);
+        }
+
         // Start alarm
         Log.v(TAG, "START_ALARM");
         WidgetAlarm.startAlarm(context);

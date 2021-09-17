@@ -58,7 +58,7 @@ class MainActivity : ComponentActivity() {
 					updateAfterClick = { it.updateAfterClick(context) }, // contains updateGoal
 					updateGoal = {
 						kotlinGoalViewModel.updateGoal(it)
-						it.runUpdate(context, false)
+						it.updateWidgetBasedOnStatus(context)
 					},
 					deleteGoal = { kotlinGoalViewModel.deleteGoal(it) },
 				)

@@ -10,7 +10,7 @@
     <string name="plural">s</string>
     <string name="add_widget">Add widget</string>
     <string name="add_widget_reconfigure">Update goal</string>
-    <string name="ReconfigureWidgetActivityLabel">Edit your goal</string>
+    <string name="reconfigureWidgetActivityLabel">Edit your goal</string>
     <string name="show_time_in_the_widget">Show time</string>
     <string name="show_date_in_the_widget">Show date</string>
     <string name="connect_widget_instructions">You have defined goals that currently don\'t have a widget. You can connect the widget to one of those goals. This takes over all its data including the history.</string>

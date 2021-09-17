@@ -113,7 +113,7 @@ public class ConfigureActivityOld extends AppCompatActivity {
                 return;
             }
             // Change the activity title in the app bar
-            setTitle(R.string.ReconfigureWidgetActivityLabel);
+            setTitle(R.string.reconfigureWidgetActivityLabel);
         }
 
         setContentView(R.layout.configuration);

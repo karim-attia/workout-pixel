@@ -77,8 +77,9 @@ fun EditGoalView(
 			modifier = modifier,
 		)
 		Log.d(TAG, "goalsWithoutWidget size: ${goalsWithoutWidget.size}")
+		var connectExistingGoal by remember { mutableStateOf(false) }
 		if (isFirstConfigure && goalsWithoutWidget.isNotEmpty()) {
-			ConnectAnExistingGoal(
+			ConnectExistingGoal(
 				goalsWithoutWidget = goalsWithoutWidget,
 				connectGoal = {
 					it.appWidgetId = initialGoal.appWidgetId
@@ -86,6 +87,9 @@ fun EditGoalView(
 				},
 				modifier = modifier,
 			)
+			connectExistingGoal = true
+		} else {
+			connectExistingGoal = false
 		}
 		SetUpYourWidget(
 			setUpYourWidgetGoal = editGoalViewGoal,
@@ -96,6 +100,7 @@ fun EditGoalView(
 				setValueEditGoalViewGoal(changedGoal)
 			},
 			isFirstConfigure = isFirstConfigure,
+			connectExistingGoal = connectExistingGoal,
 			modifier = modifier,
 		)
 		WidgetConfigurationPreview(
@@ -149,7 +154,7 @@ fun Hints(
 
 @ExperimentalComposeUiApi
 @Composable
-fun ConnectAnExistingGoal(
+fun ConnectExistingGoal(
 	goalsWithoutWidget: List<Goal>,
 	connectGoal: (Goal) -> Unit,
 	modifier: Modifier = Modifier
@@ -280,9 +285,12 @@ fun SetUpYourWidget(
 	setUpYourWidgetGoalChange: (Goal) -> Unit,
 	isFirstConfigure: Boolean,
 	modifier: Modifier = Modifier,
+	connectExistingGoal: Boolean = false,
 ) {
 	FreeStandingTitle(
-		text = if (isFirstConfigure) {
+		text = if (!isFirstConfigure) {
+			stringResource(id = R.string.reconfigureWidgetActivityLabel)
+		} else if (!connectExistingGoal) {
 			stringResource(id = R.string.configuration_title)
 		} else {
 			stringResource(id = R.string.configuration_widget_setup_title_new_goal)
@@ -360,7 +368,7 @@ fun SetUpYourWidget(
 			Icon(
 				imageVector = Icons.Filled.Add,
 				contentDescription = null,
-						)
+			)
 		}
 		Text(
 			text = CommonFunctions.days(setUpYourWidgetGoal.intervalBlue),
