@@ -24,19 +24,26 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import ch.karimattia.workoutpixel.core.CommonFunctions
-import ch.karimattia.workoutpixel.core.Goal
-import ch.karimattia.workoutpixel.core.WidgetAlarm
+import ch.karimattia.workoutpixel.core.*
 import ch.karimattia.workoutpixel.database.KotlinGoalViewModel
-import ch.karimattia.workoutpixel.ui.theme.*
+import ch.karimattia.workoutpixel.ui.theme.WorkoutPixelTheme
 import coil.annotation.ExperimentalCoilApi
 import com.google.accompanist.pager.ExperimentalPagerApi
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 private const val TAG: String = "MainActivity"
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
+	@Inject
+	lateinit var goalSaveActionsFactory: GoalSaveActions.Factory
+	private fun goalSaveActions(goal: Goal): GoalSaveActions {
+		return goalSaveActionsFactory.create(goal)
+	}
 
 	@ExperimentalComposeUiApi
 	@ExperimentalCoilApi
@@ -45,8 +52,10 @@ class MainActivity : ComponentActivity() {
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 		val kotlinGoalViewModel by viewModels<KotlinGoalViewModel>()
+
 		var alreadySetUp = false
 		val context: Context = this
+
 
 		kotlinGoalViewModel.allGoals.observe(this, { goals ->
 			Log.d(TAG, "___________observe___________")
@@ -55,10 +64,13 @@ class MainActivity : ComponentActivity() {
 				WorkoutPixelApp(
 					kotlinGoalViewModel = kotlinGoalViewModel,
 					goals = goals,
-					updateAfterClick = { it.updateAfterClick(context) }, // contains updateGoal
+					updateAfterClick = {
+						// contains updateGoal
+						goalSaveActions(it).updateAfterClick()
+					},
 					updateGoal = {
 						kotlinGoalViewModel.updateGoal(it)
-						it.updateWidgetBasedOnStatus(context)
+						goalSaveActions(it).updateWidgetBasedOnStatus()
 					},
 					deleteGoal = { kotlinGoalViewModel.deleteGoal(it) },
 				)
@@ -72,6 +84,24 @@ class MainActivity : ComponentActivity() {
 				alreadySetUp = true
 			}
 		})
+	}
+
+	fun oneTimeSetup(goals: List<Goal>, context: Context) {
+		Log.d(TAG, "oneTimeSetup")
+
+		// Update all goals
+		for (goal in goals) {
+			// Sometimes the onClickListener in the widgets stop working. This is a super stupid way to regularly reset the onClickListener when you open the main app.
+			if (goal.hasValidAppWidgetId()) {
+				goalSaveActions(goal).updateWidgetBasedOnStatus()
+			}
+		}
+
+		// Remove appWidgetId if it is not valid anymore. Run only once.
+		CommonFunctions.cleanGoals(context, goals)
+
+		// Every time the app starts, set the alarm to update everything at 3:00. In case something breaks.
+		WidgetAlarm.startAlarm(context)
 	}
 }
 
@@ -260,26 +290,9 @@ fun WorkoutPixelNavHost(
 		) {
 			Log.d(TAG, "------------Settings------------")
 			// TODO: Get from datamodel
-			Settings(settingsData = SettingsData(Green = Green, Blue = Blue, Red = Red, Purple = Purple, ))
+			Settings() //settingsData = SettingsData(Green = Color(Green), Blue = Color(Blue), Red = Color(Red), Purple = Color(Purple), ))
 		}
 
 	}
 }
 
-fun oneTimeSetup(goals: List<Goal>, context: Context) {
-	Log.d(TAG, "oneTimeSetup")
-
-	// Update all goals
-	for (goal in goals) {
-		// Sometimes the onClickListener in the widgets stop working. This is a super stupid way to regularly reset the onClickListener when you open the main app.
-		if (goal.hasValidAppWidgetId()) {
-			goal.updateWidgetBasedOnStatus(context)
-		}
-	}
-
-	// Remove appWidgetId if it is not valid anymore. Run only once.
-	CommonFunctions.cleanGoals(context, goals)
-
-	// Every time the app starts, set the alarm to update everything at 3:00. In case something breaks.
-	WidgetAlarm.startAlarm(context)
-}

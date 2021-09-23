@@ -17,12 +17,22 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import ch.karimattia.workoutpixel.EditGoalView
 import ch.karimattia.workoutpixel.core.CommonFunctions
 import ch.karimattia.workoutpixel.core.Goal
+import ch.karimattia.workoutpixel.core.GoalSaveActions
 import ch.karimattia.workoutpixel.database.KotlinGoalViewModel
 import ch.karimattia.workoutpixel.ui.theme.WorkoutPixelTheme
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 private const val TAG: String = "ConfigureCompose"
 
+@AndroidEntryPoint
 class ConfigureActivity : ComponentActivity() {
+
+	@Inject
+	lateinit var goalSaveActionsFactory: GoalSaveActions.Factory
+	private fun goalSaveActions(goal: Goal): GoalSaveActions {
+		return goalSaveActionsFactory.create(goal)
+	}
 
 	@ExperimentalComposeUiApi
 	override fun onCreate(savedInstanceState: Bundle?) {
@@ -84,14 +94,14 @@ class ConfigureActivity : ComponentActivity() {
 					},
 					connectGoal = {
 						// Not necessarely needed since we always update all goals regardless of whether they are connected. But it doesn't hurt to set the status here.
+						goal.setNewStatus()
 						it.setNewStatus()
 						kotlinGoalViewModel.updateGoal(it)
-						it.runUpdate(context, true)
+						goalSaveActions(it).runUpdate(true)
 						setWidgetAndFinish(goal = it, context = this)
 					},
 				)
 			}
-
 		})
 	}
 

@@ -1,5 +1,6 @@
 package ch.karimattia.workoutpixel
 
+import android.app.Application
 import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -20,6 +21,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -30,10 +32,14 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import ch.karimattia.workoutpixel.core.CommonFunctions
 import ch.karimattia.workoutpixel.core.Goal
-import ch.karimattia.workoutpixel.database.MyViewModelFactory
+import ch.karimattia.workoutpixel.database.PastClickViewModelFactory
 import ch.karimattia.workoutpixel.database.PastClickViewModel
 import ch.karimattia.workoutpixel.database.PastWorkout
 import ch.karimattia.workoutpixel.ui.theme.TextBlack
+import com.vanpra.composematerialdialogs.MaterialDialog
+import com.vanpra.composematerialdialogs.message
+import com.vanpra.composematerialdialogs.rememberMaterialDialogState
+import com.vanpra.composematerialdialogs.title
 import java.util.stream.Collectors
 
 private const val TAG: String = "GoalDetailView"
@@ -79,7 +85,7 @@ fun GoalOverviewView(
 		// Preview and rest
 		Row(verticalAlignment = Alignment.CenterVertically) {
 			GoalPreview(
-				goal = goal, updateAfterClick = updateAfterClick
+				goal = goal, onClick = updateAfterClick
 			)
 			// Rest
 			Column(
@@ -101,13 +107,22 @@ fun GoalDetailNoWidgetCard(
 	CardWithTitle(
 		title = "No widget for this goal"
 	) {
+		val dialogState = rememberMaterialDialogState()
+
 		Infobox(text = "There is no widget for this goal on your homescreen. Add a new widget and connect it to this goal to keep the data.")
 		Button(
-			onClick = { deleteGoal(goal) },
+			onClick = { dialogState.show() },
 			modifier = Modifier.padding(top = 8.dp)
 		) {
 			Text(text = "Delete goal", modifier = Modifier.padding(end = 16.dp))
 			Icon(imageVector = Icons.Filled.Backspace, contentDescription = null)
+		}
+		MaterialDialog(dialogState = dialogState, buttons = {
+			positiveButton(text = "Confirm", onClick = { deleteGoal(goal) })
+			negativeButton(text = "Cancel")
+		}) {
+			title(text = "Do you really want to delete this goal?")
+			message(text = "This will irreversibly remove the goal including all its data like past clicks.")
 		}
 	}
 }
@@ -131,7 +146,11 @@ fun PastClickList(
 	updateGoal: (updatedGoal: Goal, navigateUp: Boolean) -> Unit,
 ) {
 	val pastClickViewModel: PastClickViewModel =
-		viewModel(factory = MyViewModelFactory(null, goal.uid))
+		viewModel(factory = PastClickViewModelFactory(
+			LocalContext.current.applicationContext as Application,
+			goal.uid
+		)
+		)
 	val pastClicks by pastClickViewModel.pastClicks.observeAsState(initial = listOf())
 
 	val numberOfPastClicks = pastClicks.size

@@ -27,22 +27,22 @@ import ch.karimattia.workoutpixel.ui.theme.InfoColor
 fun GoalPreview(
 	goal: Goal,
 	modifier: Modifier = Modifier,
-	updateAfterClick: () -> Unit = {},
+	onClick: () -> Unit = {},
 ) {
 	GoalPreviewWithColor(
 		goal = goal,
-		color = CommonFunctions.getColorFromStatus(goal.status),
+		color = Color(CommonFunctions.getColorFromStatus(goal.status)),
 		modifier = modifier,
-		updateAfterClick = updateAfterClick,
+		onClick = onClick,
 	)
 }
 
 @Composable
 fun GoalPreviewWithColor(
 	goal: Goal,
-	color: Int,
+	color: Color,
 	modifier: Modifier = Modifier,
-	updateAfterClick: () -> Unit = {},
+	onClick: () -> Unit = {},
 ) {
 	Text(
 		text = goal.widgetText(),
@@ -50,11 +50,11 @@ fun GoalPreviewWithColor(
 		fontSize = 12.sp,
 		color = Color.White,
 		modifier = modifier
-			.clickable { updateAfterClick() }
+			.clickable { onClick() }
 			.width(66.dp)
 			.height(44.dp)
 			.clip(shape = RoundedCornerShape(4.dp))
-			.background(Color(color))
+			.background(color)
 			.wrapContentSize(Alignment.Center)
 	)
 }

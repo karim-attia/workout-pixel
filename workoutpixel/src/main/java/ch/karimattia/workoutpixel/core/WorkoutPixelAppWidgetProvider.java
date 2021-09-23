@@ -9,14 +9,18 @@ import android.util.Log;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import ch.karimattia.workoutpixel.configure.ConfigureActivityOld;
 import ch.karimattia.workoutpixel.database.GoalViewModel;
+import dagger.hilt.android.AndroidEntryPoint;
 
 /**
  * Implementation of App Widget functionality.
  * App Widget Configuration implemented in {@link ConfigureActivityOld WorkoutPixelConfigureActivity}
  */
 
+@AndroidEntryPoint
 public class WorkoutPixelAppWidgetProvider extends AppWidgetProvider {
 
     public static final String ACTION_ALARM_UPDATE = "ALARM_UPDATE";
@@ -24,6 +28,11 @@ public class WorkoutPixelAppWidgetProvider extends AppWidgetProvider {
     public static final String ACTION_DONE_EXERCISE = "DONE_EXERCISE";
     private static final String TAG = "WorkoutPixelAppWidgetProvider";
 
+    @Inject
+    GoalSaveActions.Factory goalSaveActionsFactory;
+    private GoalSaveActions goalSaveActions(Goal goal) {
+        return goalSaveActionsFactory.create(goal);
+    }
 
     // Entry point
     @Override
@@ -35,7 +44,7 @@ public class WorkoutPixelAppWidgetProvider extends AppWidgetProvider {
         if (ACTION_DONE_EXERCISE.equals(intent.getAction())) {
             int uid = intent.getIntExtra("goalUid", 0);
             Goal goal = GoalViewModel.loadGoalByUid(context, uid);
-            goal.updateAfterClick(context);
+            goalSaveActions(goal).updateAfterClick();
         }
 
         // Do this when the alarm hits
@@ -43,7 +52,7 @@ public class WorkoutPixelAppWidgetProvider extends AppWidgetProvider {
             CommonFunctions.saveTimeWithStringToSharedPreferences(context, "Last ACTION_ALARM_UPDATE " + CommonFunctions.dateTimeBeautiful(System.currentTimeMillis()));
             List<Goal> goalList = GoalViewModel.loadAllGoals(context);
             for (Goal goal : goalList) {
-                goal.updateWidgetBasedOnStatus(context);
+                goalSaveActions(goal).updateWidgetBasedOnStatus();
             }
         }
     }
@@ -53,7 +62,6 @@ public class WorkoutPixelAppWidgetProvider extends AppWidgetProvider {
 
         //CommonFunctions.executorService.execute(() -> {
 
-            // There may be multiple widgets active, so update all of them
         Log.d(TAG, "ON_UPDATE\n------------------------------------------------------------------------");
         // Start alarm
         WidgetAlarm.startAlarm(context);
@@ -65,7 +73,7 @@ public class WorkoutPixelAppWidgetProvider extends AppWidgetProvider {
         for (Goal goal : goalList) {
             // Tell the AppWidgetManager to perform an update on the current app widget
             Log.d(TAG, "ON_UPDATE: " + goal.debugString());
-            goal.updateWidgetBasedOnStatus(context);
+            goalSaveActions(goal).updateWidgetBasedOnStatus();
         }
 
         // CommonFunctions.executorService.shutdown();
@@ -95,7 +103,7 @@ public class WorkoutPixelAppWidgetProvider extends AppWidgetProvider {
         for (Goal goal : goalList) {
             // Tell the AppWidgetManager to perform an update on the current app widget
             Log.d(TAG, "ON_ENABLED: " + goal.debugString());
-            goal.updateWidgetBasedOnStatus(context);
+            goalSaveActions(goal).updateWidgetBasedOnStatus();
         }
 
         // Start alarm
@@ -121,7 +129,7 @@ public class WorkoutPixelAppWidgetProvider extends AppWidgetProvider {
     @Override
     public void onAppWidgetOptionsChanged(Context context, AppWidgetManager appWidgetManager, int appWidgetId, Bundle bundle) {
         Goal goal = GoalViewModel.loadGoalByAppWidgetId(context, appWidgetId);
-        goal.runUpdate(context, false);
+        goalSaveActions(goal).runUpdate(false);
     }
 }
 

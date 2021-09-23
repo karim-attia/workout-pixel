@@ -259,7 +259,8 @@ public class ConfigureActivityOld extends AppCompatActivity {
     private void setWidgetAndFinish() {
         // It is the responsibility of the configuration activity to update the app widget
         if(goal.hasValidAppWidgetId()) {
-            goal.updateWidgetBasedOnStatus(context);}
+            // new GoalSaveActions(context, goal).updateWidgetBasedOnStatus();
+        }
 
         // Make sure we pass back the original appWidgetId.
         // Reconfiguration does not need this.

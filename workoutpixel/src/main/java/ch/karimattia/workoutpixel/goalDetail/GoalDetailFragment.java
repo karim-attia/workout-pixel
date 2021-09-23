@@ -216,7 +216,7 @@ public class GoalDetailFragment extends Fragment {
         widgetPreview.setText(goal.widgetText());
         widgetPreview.setOnClickListener(v -> {
             // Update the widget the same way as a click on the widget would.
-            goal.updateAfterClick(context);
+            // new GoalSaveActions(context, goal).updateAfterClick();
             goal.setLastWorkout(System.currentTimeMillis());
             goal.setStatus(CommonFunctions.STATUS_GREEN);
             LinearLayout pastWorkoutsList = view.findViewById(R.id.card_view_past_workout);

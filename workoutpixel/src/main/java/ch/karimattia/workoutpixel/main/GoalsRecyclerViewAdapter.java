@@ -39,7 +39,7 @@ public class GoalsRecyclerViewAdapter extends RecyclerView.Adapter<GoalsRecycler
             for (Goal goal : goals) {
                 // Sometimes the onClickListener in the widgets stop working. This is a super stupid way to regularly reset the onClickListener when you open the main app.
                 if (goal.hasValidAppWidgetId()) {
-                    goal.updateWidgetBasedOnStatus(context);
+                    // new GoalSaveActions(context, goal).updateWidgetBasedOnStatus();
                 }
             }
         }
@@ -69,7 +69,7 @@ public class GoalsRecyclerViewAdapter extends RecyclerView.Adapter<GoalsRecycler
         widgetViewHolder.widgetPreview.setText(goals.get(i).widgetText());
         widgetViewHolder.widgetPreview.setOnClickListener(v -> {
             // Update the widget the same way as a click on the widget would.
-            goals.get(i).updateAfterClick(context);
+            // new GoalSaveActions(context, goals.get(i)).updateAfterClick();
             goals.get(i).setLastWorkout(System.currentTimeMillis());
             goals.get(i).setStatus(CommonFunctions.STATUS_GREEN);
 

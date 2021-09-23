@@ -84,7 +84,7 @@ public class PastWorkoutsRecyclerViewAdapter extends RecyclerView.Adapter<PastWo
             // If this change causes a new last workout time, do all the necessary updates.
             if(goal.setNewLastWorkout(lastWorkoutBasedOnActiveWorkouts())) {
                 GoalViewModel.updateGoal(context, goal);
-                goal.runUpdate(context, false);
+                // new GoalSaveActions(context, goal).runUpdate(false);
             }
         });
     }

@@ -1,5 +1,8 @@
 package ch.karimattia.workoutpixel.configure;
 
+import static android.app.Activity.RESULT_CANCELED;
+import static android.app.Activity.RESULT_OK;
+
 import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
@@ -37,13 +40,43 @@ import ch.karimattia.workoutpixel.core.CommonFunctions;
 import ch.karimattia.workoutpixel.core.Goal;
 import ch.karimattia.workoutpixel.database.GoalViewModel;
 
-import static android.app.Activity.RESULT_CANCELED;
-import static android.app.Activity.RESULT_OK;
-
 public class ConfigureFragment extends Fragment {
     private static final String TAG = "WORKOUT_PIXEL CONFIGURE FRAGMENT";
+    boolean isFirstConfigure = true;
+    TextView goalIntervalTextView;
+    TextView goalIntervalPluralTextView;
+    int intervalInDays = 2;
+    EditText widgetTitle;
+    CheckBox showDateCheckbox;
+    CheckBox showTimeCheckbox;
+    Goal goal = new Goal(AppWidgetManager.INVALID_APPWIDGET_ID, "", 0, intervalInDays, 2, false, false, CommonFunctions.STATUS_NONE);
     private Context context;
     private View view;
+    // OnClickListener for button
+    final View.OnClickListener updateWidgetOnClickListener = new View.OnClickListener() {
+        public void onClick(View v) {
+
+            // When the button is clicked, store the string locally
+            String widgetText = widgetTitle.getText().toString();
+            boolean showDate = showDateCheckbox.isChecked();
+            boolean showTime = showTimeCheckbox.isChecked();
+
+            // Create widget object. Save it in the preferences.
+            goal.setTitle(widgetText);
+            goal.setIntervalBlue(intervalInDays);
+            goal.setShowDate(showDate);
+            goal.setShowTime(showTime);
+            // If the status is updated based on the new interval, doing it here saves a DB interaction in updateWidgetBasedOnNewStatus.
+            goal.setNewStatus();
+
+            // Store the goal in the DB
+            // Save the new goal to the db and store the generated uid to the widget so that the onClickListener can be generated with a valid uid later.
+            if (isFirstConfigure) goal.setUid(GoalViewModel.saveDuringInitialize(context, goal));
+            else GoalViewModel.updateGoal(context, goal);
+
+            setWidgetAndFinish();
+        }
+    };
 
     @Override
     public void onAttach(@NotNull Context context) {
@@ -56,18 +89,6 @@ public class ConfigureFragment extends Fragment {
         super.onDetach();
         this.context = null;
     }
-
-    boolean isFirstConfigure = true;
-
-    TextView goalIntervalTextView;
-    TextView goalIntervalPluralTextView;
-    int intervalInDays = 2;
-
-    EditText widgetTitle;
-    CheckBox showDateCheckbox;
-    CheckBox showTimeCheckbox;
-
-    Goal goal = new Goal(AppWidgetManager.INVALID_APPWIDGET_ID, "", 0, intervalInDays, 2, false, false, CommonFunctions.STATUS_NONE);
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -100,7 +121,7 @@ public class ConfigureFragment extends Fragment {
             requireActivity().setResult(RESULT_CANCELED);
 
             // if (getArguments().getInt("appWidgetId") != null) {
-                goal.setAppWidgetId(getArguments().getInt("appWidgetId"));
+            goal.setAppWidgetId(getArguments().getInt("appWidgetId"));
             // else {Log.d(TAG, "extras = null");}
 
             // If this activity was started with an intent without an app widget ID, finish with an error.
@@ -121,7 +142,7 @@ public class ConfigureFragment extends Fragment {
         else {
             // Get the Uid of the goal that should be configured
             // if (getArguments().getInt("widgetUid") != null) {
-                goal.setUid(getArguments().getInt("goalUid"));
+            goal.setUid(getArguments().getInt("goalUid"));
             // } else {Log.d(TAG, "extras = null");}
 
             if (goal.getUid() == 0) {
@@ -170,20 +191,29 @@ public class ConfigureFragment extends Fragment {
 
         // Make plus and minus button work
         minusButtonInterval.setOnClickListener(v -> {
-            if (intervalInDays > 1) {intervalInDays--;}
+            if (intervalInDays > 1) {
+                intervalInDays--;
+            }
             goalIntervalTextView.setText(String.valueOf(intervalInDays));
-            if (intervalInDays < 2) {goalIntervalPluralTextView.setVisibility(View.GONE);}
+            if (intervalInDays < 2) {
+                goalIntervalPluralTextView.setVisibility(View.GONE);
+            }
         });
 
         plusButtonInterval.setOnClickListener(v -> {
-            if (intervalInDays < 366) {intervalInDays++;}
+            if (intervalInDays < 366) {
+                intervalInDays++;
+            }
             goalIntervalTextView.setText(String.valueOf(intervalInDays));
-            if (intervalInDays > 1) {goalIntervalPluralTextView.setVisibility(View.VISIBLE);}
+            if (intervalInDays > 1) {
+                goalIntervalPluralTextView.setVisibility(View.VISIBLE);
+            }
         });
 
         // Preview
         if (isFirstConfigure) preview.setBackgroundResource(R.drawable.rounded_corner_green);
-        else preview.setBackgroundResource(CommonFunctions.getDrawableIntFromStatus(goal.getStatus()));
+        else
+            preview.setBackgroundResource(CommonFunctions.getDrawableIntFromStatus(goal.getStatus()));
 
         setPreview(preview);
         CompoundButton.OnCheckedChangeListener onCheckedChangeListener = (buttonView, isChecked) -> setPreview(preview);
@@ -246,45 +276,27 @@ public class ConfigureFragment extends Fragment {
         String widgetText = widgetTitle.getText().toString();
         long previewDateTime;
         // For the initial screen, show now, otherwise load the last workout
-        if (isFirstConfigure) {previewDateTime = System.currentTimeMillis();}
-        else {previewDateTime = goal.getLastWorkout();}
+        if (isFirstConfigure) {
+            previewDateTime = System.currentTimeMillis();
+        } else {
+            previewDateTime = goal.getLastWorkout();
+        }
 
-        if (showDateCheckbox.isChecked()) {widgetText += "\n" + CommonFunctions.dateBeautiful(previewDateTime);}
-        if (showTimeCheckbox.isChecked()) {widgetText += "\n" + CommonFunctions.timeBeautiful(previewDateTime);}
+        if (showDateCheckbox.isChecked()) {
+            widgetText += "\n" + CommonFunctions.dateBeautiful(previewDateTime);
+        }
+        if (showTimeCheckbox.isChecked()) {
+            widgetText += "\n" + CommonFunctions.timeBeautiful(previewDateTime);
+        }
 
         preview.setText(widgetText);
     }
 
-    // OnClickListener for button
-    final View.OnClickListener updateWidgetOnClickListener = new View.OnClickListener() {
-        public void onClick(View v) {
-
-            // When the button is clicked, store the string locally
-            String widgetText = widgetTitle.getText().toString();
-            boolean showDate = showDateCheckbox.isChecked();
-            boolean showTime = showTimeCheckbox.isChecked();
-
-            // Create widget object. Save it in the preferences.
-            goal.setTitle(widgetText);
-            goal.setIntervalBlue(intervalInDays);
-            goal.setShowDate(showDate);
-            goal.setShowTime(showTime);
-            // If the status is updated based on the new interval, doing it here saves a DB interaction in updateWidgetBasedOnNewStatus.
-            goal.setNewStatus();
-
-            // Store the goal in the DB
-            // Save the new goal to the db and store the generated uid to the widget so that the onClickListener can be generated with a valid uid later.
-            if (isFirstConfigure) goal.setUid(GoalViewModel.saveDuringInitialize(context, goal));
-            else GoalViewModel.updateGoal(context, goal);
-
-            setWidgetAndFinish();
-        }
-    };
-
     private void setWidgetAndFinish() {
         // It is the responsibility of the configuration activity to update the app widget
-        if(goal.hasValidAppWidgetId()) {
-            goal.updateWidgetBasedOnStatus(context);}
+        if (goal.hasValidAppWidgetId()) {
+            // new GoalSaveActions(context, goal).updateWidgetBasedOnStatus();
+        }
 
         // Make sure we pass back the original appWidgetId.
         // Reconfiguration does not need this.
