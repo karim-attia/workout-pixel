@@ -1,9 +1,11 @@
 package ch.karimattia.workoutpixel.database
 
+import android.content.Context
 import android.util.Log
 import androidx.lifecycle.*
 import ch.karimattia.workoutpixel.core.Goal
 import ch.karimattia.workoutpixel.core.GoalSaveActions
+import ch.karimattia.workoutpixel.core.GoalWidgetActions
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -66,6 +68,6 @@ class KotlinGoalViewModel @Inject constructor(
 
 	fun insertGoal(goal: Goal) = viewModelScope.launch {
 		goal.uid = repository.insertGoal(goal).toInt()
-		GoalSaveActions(goal = goal).runUpdate(true)
+		GoalWidgetActions(context = viewModelScope.coroutineContext as Context,goal = goal).runUpdate(true)
 	}
 }

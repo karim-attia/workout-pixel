@@ -129,7 +129,7 @@ public class WorkoutPixelAppWidgetProvider extends AppWidgetProvider {
     @Override
     public void onAppWidgetOptionsChanged(Context context, AppWidgetManager appWidgetManager, int appWidgetId, Bundle bundle) {
         Goal goal = GoalViewModel.loadGoalByAppWidgetId(context, appWidgetId);
-        goalSaveActions(goal).runUpdate(false);
+        new GoalWidgetActions(context, goal).runUpdate(false);
     }
 }
 

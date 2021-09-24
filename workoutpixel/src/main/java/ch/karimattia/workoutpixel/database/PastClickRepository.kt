@@ -1,6 +1,8 @@
 package ch.karimattia.workoutpixel.database
 
 import android.app.Application
+import android.content.Context
+import ch.karimattia.workoutpixel.core.CommonFunctions
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
@@ -28,7 +30,16 @@ class PastClickRepository @Inject constructor(
 
 	fun allPastClicks(goalUid: Int): Flow<List<PastWorkout>> = goalDao.loadAllPastWorkoutsFlow(goalUid)
 
-	suspend fun updatePastWorkout(pastWorkout: PastWorkout) {
+	fun updatePastWorkout(pastWorkout: PastWorkout) {
 		goalDao.updatePastWorkout(pastWorkout)
+	}
+
+	fun getCountOfActivePastWorkouts(goalUid: Int): Int {
+		return goalDao.getCountOfActivePastWorkouts(goalUid)
+	}
+
+	fun insertClickedWorkout(widgetUid: Int, thisWorkoutTime: Long) {
+		goalDao.insertPastWorkout(PastWorkout(widgetUid, thisWorkoutTime))
+		// CommonFunctions.executorService.execute { goalDao.insertPastWorkout(clickedWorkout) }
 	}
 }

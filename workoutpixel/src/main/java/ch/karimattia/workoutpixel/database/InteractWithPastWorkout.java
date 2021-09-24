@@ -22,24 +22,24 @@ public class InteractWithPastWorkout extends AndroidViewModel {
 
     public static LiveData<List<PastWorkout>> getPastWorkouts(Context context, int widgetUid) {
         Log.v(TAG, "getPastWorkoutsFromDb");
-        return workoutDao(context).loadAllPastWorkouts(widgetUid);
+        return goalDao(context).loadAllPastWorkouts(widgetUid);
     }
 
     public static int getCountOfActivePastWorkouts(Context context, int widgetUid) {
         Log.v(TAG, "getCountOfActivePastWorkouts ");
-        return workoutDao(context).getCountOfActivePastWorkouts(widgetUid);
+        return goalDao(context).getCountOfActivePastWorkouts(widgetUid);
     }
 
     public static void updatePastWorkout(Context context, PastWorkout clickedWorkout) {
-        CommonFunctions.executorService.execute(() -> workoutDao(context).updatePastWorkout(clickedWorkout));
+        CommonFunctions.executorService.execute(() -> goalDao(context).updatePastWorkout(clickedWorkout));
     }
 
     public static void insertClickedWorkout(Context context, int widgetUid, long thisWorkoutTime) {
         PastWorkout clickedWorkout = new PastWorkout(widgetUid, thisWorkoutTime);
-        CommonFunctions.executorService.execute(() -> workoutDao(context).insertPastWorkout(clickedWorkout));
+        CommonFunctions.executorService.execute(() -> goalDao(context).insertPastWorkout(clickedWorkout));
     }
 
-    public static GoalDao workoutDao(Context context) {
+    public static GoalDao goalDao(Context context) {
         AppDatabase db = AppDatabase.getDatabase(context);
         return db.goalDao();
     }

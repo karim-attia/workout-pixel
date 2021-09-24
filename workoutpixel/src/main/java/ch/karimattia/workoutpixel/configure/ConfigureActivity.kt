@@ -18,6 +18,7 @@ import ch.karimattia.workoutpixel.EditGoalView
 import ch.karimattia.workoutpixel.core.CommonFunctions
 import ch.karimattia.workoutpixel.core.Goal
 import ch.karimattia.workoutpixel.core.GoalSaveActions
+import ch.karimattia.workoutpixel.core.GoalWidgetActions
 import ch.karimattia.workoutpixel.database.KotlinGoalViewModel
 import ch.karimattia.workoutpixel.ui.theme.WorkoutPixelTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -97,7 +98,7 @@ class ConfigureActivity : ComponentActivity() {
 						goal.setNewStatus()
 						it.setNewStatus()
 						kotlinGoalViewModel.updateGoal(it)
-						goalSaveActions(it).runUpdate(true)
+						GoalWidgetActions(context, it).runUpdate(true)
 						setWidgetAndFinish(goal = it, context = this)
 					},
 				)
