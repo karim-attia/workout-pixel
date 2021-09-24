@@ -24,8 +24,12 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import ch.karimattia.workoutpixel.core.*
+import ch.karimattia.workoutpixel.core.CommonFunctions
+import ch.karimattia.workoutpixel.core.Goal
+import ch.karimattia.workoutpixel.core.GoalSaveActions
+import ch.karimattia.workoutpixel.core.WidgetAlarm
 import ch.karimattia.workoutpixel.database.KotlinGoalViewModel
+import ch.karimattia.workoutpixel.database.PastClickViewModel
 import ch.karimattia.workoutpixel.ui.theme.WorkoutPixelTheme
 import coil.annotation.ExperimentalCoilApi
 import com.google.accompanist.pager.ExperimentalPagerApi
@@ -45,13 +49,16 @@ class MainActivity : ComponentActivity() {
 		return goalSaveActionsFactory.create(goal)
 	}
 
+
 	@ExperimentalComposeUiApi
 	@ExperimentalCoilApi
 	@ExperimentalAnimationGraphicsApi
 	@ExperimentalPagerApi
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
-		val kotlinGoalViewModel by viewModels<KotlinGoalViewModel>()
+		val kotlinGoalViewModel: KotlinGoalViewModel by viewModels()
+		//val pastClickViewModelExperiment by viewModels<PastClickViewModelExperiment>()
+		val pastClickViewModel: PastClickViewModel by viewModels()
 
 		var alreadySetUp = false
 		val context: Context = this
@@ -63,6 +70,7 @@ class MainActivity : ComponentActivity() {
 			setContent {
 				WorkoutPixelApp(
 					kotlinGoalViewModel = kotlinGoalViewModel,
+					pastClickViewModel = pastClickViewModel,
 					goals = goals,
 					updateAfterClick = {
 						// contains updateGoal
@@ -86,7 +94,7 @@ class MainActivity : ComponentActivity() {
 		})
 	}
 
-	fun oneTimeSetup(goals: List<Goal>, context: Context) {
+	private fun oneTimeSetup(goals: List<Goal>, context: Context) {
 		Log.d(TAG, "oneTimeSetup")
 
 		// Update all goals
@@ -112,6 +120,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun WorkoutPixelApp(
 	kotlinGoalViewModel: KotlinGoalViewModel,
+	pastClickViewModel: PastClickViewModel,
 	goals: List<Goal>,
 	updateAfterClick: (Goal) -> Unit,
 	updateGoal: (Goal) -> Unit,
@@ -215,6 +224,7 @@ fun WorkoutPixelApp(
 				},
 				currentGoal = currentGoal,
 				//currentGoal = goalFromGoalsByUid(goalUid = currentGoalUid, goals = goals),
+				pastClickViewModel = pastClickViewModel,
 				modifier = Modifier.padding(innerPadding),
 			)
 		}
@@ -234,6 +244,7 @@ fun WorkoutPixelNavHost(
 	updateGoal: (updatedGoal: Goal, navigateUp: Boolean) -> Unit,
 	deleteGoal: (updatedGoal: Goal, navigateUp: Boolean) -> Unit,
 	currentGoal: Goal?,
+	pastClickViewModel: PastClickViewModel,
 	modifier: Modifier = Modifier,
 ) {
 	NavHost(
@@ -266,6 +277,7 @@ fun WorkoutPixelNavHost(
 					updateAfterClick = { updateAfterClick(currentGoal) },
 					deleteGoal = { deleteGoal(it, true) },
 					updateGoal = updateGoal,
+					pastClickViewModel = pastClickViewModel,
 				)
 			} else (Text("currentGoal = null"))
 		}

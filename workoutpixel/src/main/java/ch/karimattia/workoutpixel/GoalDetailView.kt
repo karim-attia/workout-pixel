@@ -2,6 +2,7 @@ package ch.karimattia.workoutpixel
 
 import android.app.Application
 import android.util.Log
+import androidx.activity.viewModels
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -32,14 +33,14 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import ch.karimattia.workoutpixel.core.CommonFunctions
 import ch.karimattia.workoutpixel.core.Goal
-import ch.karimattia.workoutpixel.database.PastClickViewModelFactory
-import ch.karimattia.workoutpixel.database.PastClickViewModel
-import ch.karimattia.workoutpixel.database.PastWorkout
+import ch.karimattia.workoutpixel.database.*
 import ch.karimattia.workoutpixel.ui.theme.TextBlack
 import com.vanpra.composematerialdialogs.MaterialDialog
 import com.vanpra.composematerialdialogs.message
 import com.vanpra.composematerialdialogs.rememberMaterialDialogState
 import com.vanpra.composematerialdialogs.title
+import dagger.hilt.EntryPoint
+import dagger.hilt.android.AndroidEntryPoint
 import java.util.stream.Collectors
 
 private const val TAG: String = "GoalDetailView"
@@ -50,7 +51,9 @@ fun GoalDetailView(
 	updateAfterClick: () -> Unit,
 	deleteGoal: (Goal) -> Unit,
 	updateGoal: (updatedGoal: Goal, navigateUp: Boolean) -> Unit,
+	pastClickViewModel: PastClickViewModel,
 ) {
+	val pastClicks by pastClickViewModel.pastClicks(goal.uid).observeAsState(initial = listOf())
 
 	Column(
 		modifier = Modifier
@@ -66,9 +69,12 @@ fun GoalDetailView(
 		if (!goal.hasValidAppWidgetId()) {
 			GoalDetailNoWidgetCard(goal = goal, deleteGoal = deleteGoal)
 		}
-		// CardWithTitle(title = "erfeferf") {Text(text = " koerjfiojrefioerjfoierjfoierjkfiorejfoierjfioerjfioerjfiorejfoierjfioerjfioerjf koerjfiojrefioerjfoierjfoierjkfiorejfoierjfioerjfioerjfiorejfoierjfioerjfioerjf koerjfiojrefioerjfoierjfoierjkfiorejfoierjfioerjfioerjfiorejfoierjfioerjfioerjf koerjfiojrefioerjfoierjfoierjkfiorejfoierjfioerjfioerjfiorejfoierjfioerjfioerjf koerjfiojrefioerjfoierjfoierjkfiorejfoierjfioerjfioerjfiorejfoierjfioerjfioerjf koerjfiojrefioerjfoierjfoierjkfiorejfoierjfioerjfioerjfiorejfoierjfioerjfioerjf ") }
-		PastClicks(goal = goal, updateGoal = updateGoal)
-		// CardWithTitle(title = "erfeferf") {Text(text = " koerjfiojrefioerjfoierjfoierjkfiorejfoierjfioerjfioerjfiorejfoierjfioerjfioerjf koerjfiojrefioerjfoierjfoierjkfiorejfoierjfioerjfioerjfiorejfoierjfioerjfioerjf koerjfiojrefioerjfoierjfoierjkfiorejfoierjfioerjfioerjfiorejfoierjfioerjfioerjf koerjfiojrefioerjfoierjfoierjkfiorejfoierjfioerjfioerjfiorejfoierjfioerjfioerjf koerjfiojrefioerjfoierjfoierjkfiorejfoierjfioerjfioerjfiorejfoierjfioerjfioerjf koerjfiojrefioerjfoierjfoierjkfiorejfoierjfioerjfioerjfiorejfoierjfioerjfioerjf ") }
+		PastClicks(
+			goal = goal,
+			updateGoal = updateGoal,
+			updatePastClick = { pastClickViewModel.updatePastClick(it) },
+			pastClicks = pastClicks
+		)
 		Spacer(modifier = Modifier.height(40.dp))
 	}
 }
@@ -131,12 +137,19 @@ fun GoalDetailNoWidgetCard(
 fun PastClicks(
 	goal: Goal,
 	updateGoal: (updatedGoal: Goal, navigateUp: Boolean) -> Unit,
+	updatePastClick: (PastWorkout) -> Unit,
+	pastClicks: List<PastWorkout>
 ) {
 	CardWithTitle(
 		// TODO: If numberOfPastClicks > 50, declare it. Or implement some paging.
 		title = "Past clicks",
 	) {
-		PastClickList(goal = goal, updateGoal = updateGoal)
+		PastClickList(
+			goal = goal,
+			updateGoal = updateGoal,
+			updatePastClick = updatePastClick,
+			pastClicks = pastClicks
+		)
 	}
 }
 
@@ -144,15 +157,9 @@ fun PastClicks(
 fun PastClickList(
 	goal: Goal,
 	updateGoal: (updatedGoal: Goal, navigateUp: Boolean) -> Unit,
+	updatePastClick: (PastWorkout) -> Unit,
+	pastClicks: List<PastWorkout>
 ) {
-	val pastClickViewModel: PastClickViewModel =
-		viewModel(factory = PastClickViewModelFactory(
-			LocalContext.current.applicationContext as Application,
-			goal.uid
-		)
-		)
-	val pastClicks by pastClickViewModel.pastClicks.observeAsState(initial = listOf())
-
 	val numberOfPastClicks = pastClicks.size
 	if (numberOfPastClicks > 0) {
 		Column {
@@ -163,7 +170,7 @@ fun PastClickList(
 				PastClickEntry(
 					pastClick = pastClicks[i],
 					togglePastClick = {
-						pastClickViewModel.updatePastClick(it)
+						updatePastClick(it)
 						// If this change causes a new last workout time, do all the necessary updates.
 						// setNewLastWorkout not needed because this is done in updateGoal. Instead, lastWorkout could be set directly.
 						if (goal.setNewLastWorkout(lastWorkoutBasedOnActiveWorkouts(pastClicks))) {
@@ -284,5 +291,6 @@ fun GoalDetailViewPreview() {
 		updateAfterClick = {},
 		deleteGoal = {},
 		updateGoal = { _, _ -> },
+		pastClickViewModel = viewModel()
 	)
 }

@@ -8,8 +8,6 @@ import android.util.Log
 import android.widget.RemoteViews
 import android.widget.Toast
 import ch.karimattia.workoutpixel.R
-import ch.karimattia.workoutpixel.database.GoalDao
-import ch.karimattia.workoutpixel.database.GoalViewModel
 import ch.karimattia.workoutpixel.database.InteractWithPastWorkout
 import ch.karimattia.workoutpixel.database.KotlinGoalRepository
 import dagger.assisted.Assisted
@@ -88,7 +86,7 @@ class GoalSaveActions @AssistedInject constructor(
 			widgetView.setOnClickPendingIntent(R.id.appwidget_text, widgetPendingIntent(context))
 		}
 		// Before updating a widget, the text and background of the view need to be set. Otherwise, the existing not updated properties of the widgetView will be passed.
-		widgetView.setTextViewText(R.id.appwidget_text, widgetText())
+		widgetView.setTextViewText(R.id.appwidget_text, goal.widgetText())
 		widgetView.setInt(R.id.appwidget_text, "setBackgroundResource", CommonFunctions.getDrawableIntFromStatus(goal.status))
 		// Set size if available
 		// https://stackoverflow.com/questions/25153604/get-the-size-of-my-homescreen-widget
@@ -101,18 +99,6 @@ class GoalSaveActions @AssistedInject constructor(
 			widgetView.setViewPadding(R.id.widget_container, 0, paddigTopInPx, 0, paddigBottomInPx)
 		}
 		return widgetView
-	}
-
-	// widgetText returns the text of the whole widget based on a Widget object.
-	private fun widgetText(): String {
-		var widgetText = goal.title
-		if (goal.showDate and (goal.status != CommonFunctions.STATUS_NONE)) {
-			widgetText += CommonFunctions.dateBeautiful(goal.lastWorkout)
-		}
-		if (goal.showTime and (goal.status != CommonFunctions.STATUS_NONE)) {
-			widgetText += CommonFunctions.timeBeautiful(goal.lastWorkout)
-		}
-		return widgetText
 	}
 
 	// Create an Intent to set the action DONE_EXERCISE. This will be received in onReceive.
