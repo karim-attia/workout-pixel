@@ -1,4 +1,4 @@
-package ch.karimattia.workoutpixel.main;
+package ch.karimattia.workoutpixel.old;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -20,14 +20,14 @@ import ch.karimattia.workoutpixel.core.CommonFunctions;
 import ch.karimattia.workoutpixel.core.Goal;
 
 // RecyclerViewAdapter fills the card view in the MainActivity.
-public class GoalsRecyclerViewAdapter extends RecyclerView.Adapter<GoalsRecyclerViewAdapter.WidgetViewHolder> {
+public class OldGoalsRecyclerViewAdapter extends RecyclerView.Adapter<OldGoalsRecyclerViewAdapter.WidgetViewHolder> {
     @SuppressWarnings("unused")
     private static final String TAG = "WORKOUT_PIXEL GoalsFragment RVAdapter";
     final Context context;
     List<Goal> goals = new ArrayList<>();
     boolean notSetupYet = true;
 
-    GoalsRecyclerViewAdapter(Context context) {
+    OldGoalsRecyclerViewAdapter(Context context) {
         this.context = context;
     }
 

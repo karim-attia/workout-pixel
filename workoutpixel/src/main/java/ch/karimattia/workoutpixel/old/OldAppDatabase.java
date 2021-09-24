@@ -1,4 +1,4 @@
-package ch.karimattia.workoutpixel.database;
+package ch.karimattia.workoutpixel.old;
 
 import android.content.Context;
 
@@ -7,14 +7,16 @@ import androidx.room.Room;
 import androidx.room.RoomDatabase;
 
 import ch.karimattia.workoutpixel.core.Goal;
+import ch.karimattia.workoutpixel.data.GoalDao;
+import ch.karimattia.workoutpixel.data.PastWorkout;
 
 @Database(entities = {PastWorkout.class, Goal.class}, version = 2)
-public abstract class AppDatabase extends RoomDatabase {
+public abstract class OldAppDatabase extends RoomDatabase {
     // private static final Object sLock = new Object();
-    private static AppDatabase workoutPixelDb;
+    private static OldAppDatabase workoutPixelDb;
 
     // Return database - if there already exists one, return this one, otherwise create one.
-    public static AppDatabase getDatabase(Context context) {
+    public static OldAppDatabase getDatabase(Context context) {
         // synchronized (sLock) {
             if (null == workoutPixelDb) {
                 workoutPixelDb = buildDatabaseInstance(context);
@@ -23,9 +25,9 @@ public abstract class AppDatabase extends RoomDatabase {
         }
     // }
 
-    private static AppDatabase buildDatabaseInstance(Context context) {
+    private static OldAppDatabase buildDatabaseInstance(Context context) {
         return Room.databaseBuilder(context,
-                AppDatabase.class,
+                OldAppDatabase.class,
                 "WorkoutPixelDatabase")
                 .allowMainThreadQueries()
                 //.addMigrations(MIGRATION_1_2)

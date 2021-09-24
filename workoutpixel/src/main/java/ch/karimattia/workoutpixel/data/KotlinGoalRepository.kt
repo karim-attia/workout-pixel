@@ -1,4 +1,4 @@
-package ch.karimattia.workoutpixel.database
+package ch.karimattia.workoutpixel.data
 
 import ch.karimattia.workoutpixel.core.Goal
 import kotlinx.coroutines.flow.Flow

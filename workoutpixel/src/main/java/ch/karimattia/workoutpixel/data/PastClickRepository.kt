@@ -1,11 +1,9 @@
-package ch.karimattia.workoutpixel.database
+package ch.karimattia.workoutpixel.data
 
-import android.app.Application
-import android.content.Context
-import ch.karimattia.workoutpixel.core.CommonFunctions
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
+/*
 class PastClickRepositoryOld(application: Application?, goalUid: Int) {
 	val db: AppDatabase = AppDatabase.getDatabase(application)
 	private val goalDao: GoalDao = db.goalDao()
@@ -18,6 +16,7 @@ class PastClickRepositoryOld(application: Application?, goalUid: Int) {
 		goalDao.updatePastWorkout(pastWorkout)
 	}
 }
+*/
 
 class PastClickRepository @Inject constructor(
 	private val goalDao: GoalDao

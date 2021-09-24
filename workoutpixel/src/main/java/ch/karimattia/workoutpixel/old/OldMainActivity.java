@@ -1,4 +1,4 @@
-package ch.karimattia.workoutpixel.main;
+package ch.karimattia.workoutpixel.old;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -13,16 +13,15 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import ch.karimattia.workoutpixel.R;
 import ch.karimattia.workoutpixel.core.WidgetAlarm;
-import ch.karimattia.workoutpixel.database.GoalViewModel;
 
-public class MainActivityOld extends AppCompatActivity {
+public class OldMainActivity extends AppCompatActivity {
     private static final String TAG = "WORKOUT_PIXEL MainActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.d(TAG, "onCreate ");
         super.onCreate(savedInstanceState);
-        final Context context = MainActivityOld.this;
+        final Context context = OldMainActivity.this;
 
         setContentView(R.layout.fragment_activity);
 
@@ -37,8 +36,8 @@ public class MainActivityOld extends AppCompatActivity {
         NavigationUI.setupWithNavController(bottomNavigationView, navController);
 
         // Move to GoalsFragment and hide controls and make it full screen.
-        if (GoalViewModel.getCountOfGoals(context) == 0) {
-            navController.navigate(GoalsFragmentDirections.actionGoalsFragmentToInstructionsFragment());
+        if (OldGoalViewModel.getCountOfGoals(context) == 0) {
+            navController.navigate(OldGoalsFragmentDirections.actionGoalsFragmentToInstructionsFragment());
         }
 
 /*

@@ -23,13 +23,13 @@ import org.junit.Test;
 
 import ch.karimattia.workoutpixel.R;
 import ch.karimattia.workoutpixel.TestUtils;
-import ch.karimattia.workoutpixel.configure.ConfigureActivityOld;
+import ch.karimattia.workoutpixel.old.OldConfigureActivity;
 
 public class ConfigureFirstTimeActivityTest {
 
     static final Intent intent;
     static {
-        intent = new Intent(ApplicationProvider.getApplicationContext(), ConfigureActivityOld.class);
+        intent = new Intent(ApplicationProvider.getApplicationContext(), OldConfigureActivity.class);
         Bundle bundle = new Bundle();
         bundle.putInt(AppWidgetManager.EXTRA_APPWIDGET_ID, 2);
         intent.putExtras(bundle);

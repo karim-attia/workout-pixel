@@ -1,4 +1,4 @@
-package ch.karimattia.workoutpixel.database;
+package ch.karimattia.workoutpixel.data;
 
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;

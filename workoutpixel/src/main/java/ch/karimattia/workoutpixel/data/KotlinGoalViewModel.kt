@@ -1,10 +1,9 @@
-package ch.karimattia.workoutpixel.database
+package ch.karimattia.workoutpixel.data
 
 import android.content.Context
 import android.util.Log
 import androidx.lifecycle.*
 import ch.karimattia.workoutpixel.core.Goal
-import ch.karimattia.workoutpixel.core.GoalSaveActions
 import ch.karimattia.workoutpixel.core.GoalWidgetActions
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch

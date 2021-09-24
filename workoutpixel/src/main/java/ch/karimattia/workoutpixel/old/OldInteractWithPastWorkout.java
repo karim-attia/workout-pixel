@@ -1,4 +1,4 @@
-package ch.karimattia.workoutpixel.database;
+package ch.karimattia.workoutpixel.old;
 
 import android.app.Application;
 import android.content.Context;
@@ -11,12 +11,14 @@ import androidx.lifecycle.LiveData;
 import java.util.List;
 
 import ch.karimattia.workoutpixel.core.CommonFunctions;
+import ch.karimattia.workoutpixel.data.GoalDao;
+import ch.karimattia.workoutpixel.data.PastWorkout;
 
 @SuppressWarnings("unused")
-public class InteractWithPastWorkout extends AndroidViewModel {
+public class OldInteractWithPastWorkout extends AndroidViewModel {
     private static final String TAG = "WORKOUT_PIXEL InteractWithClickedWorkouts";
 
-    public InteractWithPastWorkout(@NonNull Application application) {
+    public OldInteractWithPastWorkout(@NonNull Application application) {
         super(application);
     }
 
@@ -40,7 +42,7 @@ public class InteractWithPastWorkout extends AndroidViewModel {
     }
 
     public static GoalDao goalDao(Context context) {
-        AppDatabase db = AppDatabase.getDatabase(context);
+        OldAppDatabase db = OldAppDatabase.getDatabase(context);
         return db.goalDao();
     }
 }

@@ -1,4 +1,4 @@
-package ch.karimattia.workoutpixel.main;
+package ch.karimattia.workoutpixel.old;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -25,19 +25,18 @@ import java.util.Objects;
 import ch.karimattia.workoutpixel.R;
 import ch.karimattia.workoutpixel.core.CommonFunctions;
 import ch.karimattia.workoutpixel.core.Goal;
-import ch.karimattia.workoutpixel.database.GoalViewModel;
 
-public class GoalsFragment extends Fragment {
+public class OldGoalsFragment extends Fragment {
     private static final String TAG = "WORKOUT_PIXEL GoalsFragment";
-    GoalsRecyclerViewAdapter goalsRecyclerViewAdapter;
+    OldGoalsRecyclerViewAdapter oldGoalsRecyclerViewAdapter;
     private Context context;
-    private GoalViewModel goalViewModel;
+    private OldGoalViewModel goalViewModel;
 
     @Override
     public void onAttach(@NotNull Context context) {
         super.onAttach(context);
         this.context = context;
-        goalsRecyclerViewAdapter = new GoalsRecyclerViewAdapter(context);
+        oldGoalsRecyclerViewAdapter = new OldGoalsRecyclerViewAdapter(context);
     }
 
     @Override
@@ -76,14 +75,14 @@ public class GoalsFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
         recyclerView.setHasFixedSize(true);
         recyclerView.setNestedScrollingEnabled(false);
-        recyclerView.setAdapter(goalsRecyclerViewAdapter);
-        goalViewModel = new ViewModelProvider(this).get(GoalViewModel.class);
+        recyclerView.setAdapter(oldGoalsRecyclerViewAdapter);
+        goalViewModel = new ViewModelProvider(this).get(OldGoalViewModel.class);
 
         // Create the observer which updates the UI.
         // Observe the LiveData, passing this activity as the LifecycleOwner and the observer.
         goalViewModel.getAllGoals().observe(getViewLifecycleOwner(), goals -> {
             //  goalsRecyclerViewAdapter.setData(testData());
-            goalsRecyclerViewAdapter.setData(goals);
+            oldGoalsRecyclerViewAdapter.setData(goals);
             recyclerView.setItemAnimator(null);
             goalViewModel.getAllGoals().removeObservers(this);
             executeAfterRecyclerViewWasPopulated(goals, view);
@@ -106,7 +105,7 @@ public class GoalsFragment extends Fragment {
             CardView noGoalsInstructions = view.findViewById(R.id.no_goals_instructions);
             noGoalsInstructions.setVisibility(View.VISIBLE);
             noGoalsInstructions.setOnClickListener(v ->
-                    Navigation.findNavController(view).navigate(GoalsFragmentDirections.actionGoalsFragmentToInstructionsFragment())
+                    Navigation.findNavController(view).navigate(OldGoalsFragmentDirections.actionGoalsFragmentToInstructionsFragment())
             );
         }
         // TODO: Move to activity?

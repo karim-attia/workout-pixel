@@ -7,14 +7,14 @@
 
     <fragment
         android:id="@+id/instructionsFragment"
-        android:name="ch.karimattia.workoutpixel.main.InstructionsFragment"
+        android:name="ch.karimattia.workoutpixel.old.OldInstructionsFragment"
         android:label="InstructionsFragment"
         tools:layout="@layout/carousel_instructions"
         >
     </fragment>
     <fragment
         android:id="@+id/goalsFragment"
-        android:name="ch.karimattia.workoutpixel.main.GoalsFragment"
+        android:name="ch.karimattia.workoutpixel.old.OldGoalsFragment"
         android:label="GoalsFragment"
         tools:layout="@layout/goals"
         >
@@ -39,7 +39,7 @@
     </fragment>
     <fragment
         android:id="@+id/configureFragment"
-        android:name="ch.karimattia.workoutpixel.configure.ConfigureFragment"
+        android:name="ch.karimattia.workoutpixel.old.OldConfigureFragment"
         android:label="ConfigureFragment"
         tools:layout="@layout/configuration"
         >
@@ -58,7 +58,7 @@
     </fragment>
     <fragment
         android:id="@+id/goalDetailFragment"
-        android:name="ch.karimattia.workoutpixel.goalDetail.GoalDetailFragment"
+        android:name="ch.karimattia.workoutpixel.old.OldGoalDetailFragment"
         android:label="GoalDetailFragment"
         tools:layout="@layout/goal_detail_view"
         >

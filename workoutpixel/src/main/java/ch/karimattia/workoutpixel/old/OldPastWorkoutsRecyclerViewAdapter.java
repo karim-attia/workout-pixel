@@ -1,4 +1,4 @@
-package ch.karimattia.workoutpixel.goalDetail;
+package ch.karimattia.workoutpixel.old;
 
 import android.content.Context;
 import android.graphics.Paint;
@@ -19,12 +19,10 @@ import java.util.stream.Collectors;
 import ch.karimattia.workoutpixel.R;
 import ch.karimattia.workoutpixel.core.CommonFunctions;
 import ch.karimattia.workoutpixel.core.Goal;
-import ch.karimattia.workoutpixel.database.GoalViewModel;
-import ch.karimattia.workoutpixel.database.InteractWithPastWorkout;
-import ch.karimattia.workoutpixel.database.PastWorkout;
+import ch.karimattia.workoutpixel.data.PastWorkout;
 
 // RecyclerViewAdapter fills the card view in the MainActivity.
-public class PastWorkoutsRecyclerViewAdapter extends RecyclerView.Adapter<PastWorkoutsRecyclerViewAdapter.PastWorkoutsViewHolder> {
+public class OldPastWorkoutsRecyclerViewAdapter extends RecyclerView.Adapter<OldPastWorkoutsRecyclerViewAdapter.PastWorkoutsViewHolder> {
     private static final String TAG = "WORKOUT_PIXEL Past Workouts RVAdapter";
 
     final Context context;
@@ -32,7 +30,7 @@ public class PastWorkoutsRecyclerViewAdapter extends RecyclerView.Adapter<PastWo
     List<PastWorkout> activeWorkoutsOrderedByWorkoutTime = new ArrayList<>();
     final Goal goal;
 
-    PastWorkoutsRecyclerViewAdapter(Context context, Goal goal) {
+    OldPastWorkoutsRecyclerViewAdapter(Context context, Goal goal) {
         this.context = context;
         this.goal = goal;
     }
@@ -76,14 +74,14 @@ public class PastWorkoutsRecyclerViewAdapter extends RecyclerView.Adapter<PastWo
         pastWorkoutsViewHolder.delete.setOnClickListener(v -> {
             // isActive is true if the workout has been active before the click of the delete button.
             pastWorkouts.get(i).setActive(!isActive);
-            InteractWithPastWorkout.updatePastWorkout(context, pastWorkouts.get(i));
+            OldInteractWithPastWorkout.updatePastWorkout(context, pastWorkouts.get(i));
 
             // Update the data in the recycler view
             notifyItemChanged(i);
 
             // If this change causes a new last workout time, do all the necessary updates.
             if(goal.setNewLastWorkout(lastWorkoutBasedOnActiveWorkouts())) {
-                GoalViewModel.updateGoal(context, goal);
+                OldGoalViewModel.updateGoal(context, goal);
                 // new GoalSaveActions(context, goal).runUpdate(false);
             }
         });

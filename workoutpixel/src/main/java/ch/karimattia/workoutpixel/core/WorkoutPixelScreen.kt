@@ -1,4 +1,4 @@
-package ch.karimattia.workoutpixel
+package ch.karimattia.workoutpixel.core
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Done

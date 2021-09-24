@@ -21,7 +21,7 @@ import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 import ch.karimattia.workoutpixel.R;
-import ch.karimattia.workoutpixel.database.GoalViewModel;
+import ch.karimattia.workoutpixel.old.OldGoalViewModel;
 import ch.karimattia.workoutpixel.ui.theme.ColorKt;
 
 public class CommonFunctions {
@@ -241,7 +241,7 @@ public class CommonFunctions {
     public static void cleanGoals(Context context, List<Goal> goals) {
         for (Goal goal: goalsWithInvalidAppWidgetId(context, goals)) {
             if(goal.hasValidAppWidgetId()) {
-                GoalViewModel.setAppWidgetIdToNullByUid(context, goal.getUid());
+                OldGoalViewModel.setAppWidgetIdToNullByUid(context, goal.getUid());
             }
         }
     }

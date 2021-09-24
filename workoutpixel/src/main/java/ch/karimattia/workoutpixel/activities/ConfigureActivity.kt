@@ -1,4 +1,4 @@
-package ch.karimattia.workoutpixel.configure
+package ch.karimattia.workoutpixel.activities
 
 import android.appwidget.AppWidgetManager
 import android.content.Context
@@ -19,7 +19,7 @@ import ch.karimattia.workoutpixel.core.CommonFunctions
 import ch.karimattia.workoutpixel.core.Goal
 import ch.karimattia.workoutpixel.core.GoalSaveActions
 import ch.karimattia.workoutpixel.core.GoalWidgetActions
-import ch.karimattia.workoutpixel.database.KotlinGoalViewModel
+import ch.karimattia.workoutpixel.data.KotlinGoalViewModel
 import ch.karimattia.workoutpixel.ui.theme.WorkoutPixelTheme
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject

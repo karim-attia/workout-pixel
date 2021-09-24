@@ -19,6 +19,7 @@ import java.util.Iterator;
 import ch.karimattia.workoutpixel.R;
 import ch.karimattia.workoutpixel.RecyclerViewMatcher;
 import ch.karimattia.workoutpixel.TestUtils;
+import ch.karimattia.workoutpixel.old.OldMainActivity;
 
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.clearText;
@@ -37,7 +38,7 @@ public class MainActivityTest {
     static final String TAG = "MainActivityTest";
 
     @Rule
-    public ActivityScenarioRule<MainActivityOld> activityScenarioRule = new ActivityScenarioRule<>(MainActivityOld.class);
+    public ActivityScenarioRule<OldMainActivity> activityScenarioRule = new ActivityScenarioRule<>(OldMainActivity.class);
 
     @Test
     public void recyclerViewCheck() {

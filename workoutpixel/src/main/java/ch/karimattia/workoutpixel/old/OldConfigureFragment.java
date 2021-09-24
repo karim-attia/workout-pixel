@@ -1,4 +1,4 @@
-package ch.karimattia.workoutpixel.configure;
+package ch.karimattia.workoutpixel.old;
 
 import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
@@ -38,9 +38,8 @@ import java.util.Objects;
 import ch.karimattia.workoutpixel.R;
 import ch.karimattia.workoutpixel.core.CommonFunctions;
 import ch.karimattia.workoutpixel.core.Goal;
-import ch.karimattia.workoutpixel.database.GoalViewModel;
 
-public class ConfigureFragment extends Fragment {
+public class OldConfigureFragment extends Fragment {
     private static final String TAG = "WORKOUT_PIXEL CONFIGURE FRAGMENT";
     boolean isFirstConfigure = true;
     TextView goalIntervalTextView;
@@ -71,8 +70,8 @@ public class ConfigureFragment extends Fragment {
 
             // Store the goal in the DB
             // Save the new goal to the db and store the generated uid to the widget so that the onClickListener can be generated with a valid uid later.
-            if (isFirstConfigure) goal.setUid(GoalViewModel.saveDuringInitialize(context, goal));
-            else GoalViewModel.updateGoal(context, goal);
+            if (isFirstConfigure) goal.setUid(OldGoalViewModel.saveDuringInitialize(context, goal));
+            else OldGoalViewModel.updateGoal(context, goal);
 
             setWidgetAndFinish();
         }
@@ -178,7 +177,7 @@ public class ConfigureFragment extends Fragment {
             // Don't show the initial text if the user edits the widget.
             introTitle.setVisibility(View.GONE);
             introText.setVisibility(View.GONE);
-            goal = GoalViewModel.loadGoalByUid(context, goal.getUid());
+            goal = OldGoalViewModel.loadGoalByUid(context, goal.getUid());
             widgetTitle.setText(goal.getTitle());
             intervalInDays = goal.getIntervalBlue();
             showDateCheckbox.setChecked(goal.getShowDate());
@@ -239,7 +238,7 @@ public class ConfigureFragment extends Fragment {
         // Setup reconnect widget card
         if (isFirstConfigure) {
             CommonFunctions.executorService.execute(() -> {
-                List<Goal> widgetsWithoutValidAppwidgetId = GoalViewModel.loadGoalsWithoutValidAppWidgetId(context);
+                List<Goal> widgetsWithoutValidAppwidgetId = OldGoalViewModel.loadGoalsWithoutValidAppWidgetId(context);
                 if (widgetsWithoutValidAppwidgetId.size() > 0) {
                     TextView configurationConnectHintTitle = view.findViewById(R.id.configuration_connect_hint_title);
                     configurationConnectHintTitle.setVisibility(View.VISIBLE);
@@ -256,7 +255,7 @@ public class ConfigureFragment extends Fragment {
                         goal = (Goal) connectSpinner.getSelectedItem();
                         if (goal != null) {
                             goal.setAppWidgetId(appWidgetId);
-                            GoalViewModel.updateGoal(context, goal);
+                            OldGoalViewModel.updateGoal(context, goal);
                             setWidgetAndFinish();
                         } else {
                             connectSpinner.setBackgroundColor(Color.RED);

@@ -1,10 +1,6 @@
-package ch.karimattia.workoutpixel.database
+package ch.karimattia.workoutpixel.data
 
-import android.app.Application
 import androidx.lifecycle.*
-import dagger.assisted.Assisted
-import dagger.assisted.AssistedFactory
-import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject

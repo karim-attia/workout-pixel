@@ -1,4 +1,4 @@
-package ch.karimattia.workoutpixel.database;
+package ch.karimattia.workoutpixel.data;
 
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;

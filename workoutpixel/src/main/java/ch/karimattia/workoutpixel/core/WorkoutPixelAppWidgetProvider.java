@@ -11,13 +11,13 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import ch.karimattia.workoutpixel.configure.ConfigureActivityOld;
-import ch.karimattia.workoutpixel.database.GoalViewModel;
+import ch.karimattia.workoutpixel.activities.ConfigureActivity;
+import ch.karimattia.workoutpixel.old.OldGoalViewModel;
 import dagger.hilt.android.AndroidEntryPoint;
 
 /**
  * Implementation of App Widget functionality.
- * App Widget Configuration implemented in {@link ConfigureActivityOld WorkoutPixelConfigureActivity}
+ * App Widget Configuration implemented in {@link ConfigureActivity WorkoutPixelConfigureActivity}
  */
 
 @AndroidEntryPoint
@@ -43,14 +43,14 @@ public class WorkoutPixelAppWidgetProvider extends AppWidgetProvider {
         // Do this if the widget has been clicked
         if (ACTION_DONE_EXERCISE.equals(intent.getAction())) {
             int uid = intent.getIntExtra("goalUid", 0);
-            Goal goal = GoalViewModel.loadGoalByUid(context, uid);
+            Goal goal = OldGoalViewModel.loadGoalByUid(context, uid);
             goalSaveActions(goal).updateAfterClick();
         }
 
         // Do this when the alarm hits
         if (ACTION_ALARM_UPDATE.equals(intent.getAction())) {
             CommonFunctions.saveTimeWithStringToSharedPreferences(context, "Last ACTION_ALARM_UPDATE " + CommonFunctions.dateTimeBeautiful(System.currentTimeMillis()));
-            List<Goal> goalList = GoalViewModel.loadAllGoals(context);
+            List<Goal> goalList = OldGoalViewModel.loadAllGoals(context);
             for (Goal goal : goalList) {
                 goalSaveActions(goal).updateWidgetBasedOnStatus();
             }
@@ -69,7 +69,7 @@ public class WorkoutPixelAppWidgetProvider extends AppWidgetProvider {
         // TODO: Understand
         // TODO: Replaced iteration through appWidgetIds with data from DB. Insert check that this is the same and fix if not. Maybe before it only iterated through some widgets. But I don't think it matters.
         // TODO: Could check with CommonFunctions.widgetsWithValidAppWidgetId whether they are the same and at least log if not.
-        List<Goal> goalList = GoalViewModel.loadGoalsWithValidAppWidgetId(context);
+        List<Goal> goalList = OldGoalViewModel.loadGoalsWithValidAppWidgetId(context);
         for (Goal goal : goalList) {
             // Tell the AppWidgetManager to perform an update on the current app widget
             Log.d(TAG, "ON_UPDATE: " + goal.debugString());
@@ -88,7 +88,7 @@ public class WorkoutPixelAppWidgetProvider extends AppWidgetProvider {
 
         // TODO: This is also called if the configuration is aborted. Then, this database call is useless.
         for (int appWidgetId : appWidgetIds) {
-            GoalViewModel.setAppWidgetIdToNullByAppwidgetId(context, appWidgetId);
+            OldGoalViewModel.setAppWidgetIdToNullByAppwidgetId(context, appWidgetId);
         }
 
     }
@@ -99,7 +99,7 @@ public class WorkoutPixelAppWidgetProvider extends AppWidgetProvider {
         Log.d(TAG, "ON_ENABLED");
         super.onEnabled(context);
 
-        List<Goal> goalList = GoalViewModel.loadGoalsWithValidAppWidgetId(context);
+        List<Goal> goalList = OldGoalViewModel.loadGoalsWithValidAppWidgetId(context);
         for (Goal goal : goalList) {
             // Tell the AppWidgetManager to perform an update on the current app widget
             Log.d(TAG, "ON_ENABLED: " + goal.debugString());
@@ -128,7 +128,7 @@ public class WorkoutPixelAppWidgetProvider extends AppWidgetProvider {
     // Entry point
     @Override
     public void onAppWidgetOptionsChanged(Context context, AppWidgetManager appWidgetManager, int appWidgetId, Bundle bundle) {
-        Goal goal = GoalViewModel.loadGoalByAppWidgetId(context, appWidgetId);
+        Goal goal = OldGoalViewModel.loadGoalByAppWidgetId(context, appWidgetId);
         new GoalWidgetActions(context, goal).runUpdate(false);
     }
 }

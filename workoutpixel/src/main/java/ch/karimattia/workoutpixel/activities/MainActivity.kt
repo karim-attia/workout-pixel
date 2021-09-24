@@ -1,4 +1,4 @@
-package ch.karimattia.workoutpixel
+package ch.karimattia.workoutpixel.activities
 
 import android.content.Context
 import android.os.Bundle
@@ -24,12 +24,13 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import ch.karimattia.workoutpixel.core.CommonFunctions
-import ch.karimattia.workoutpixel.core.Goal
-import ch.karimattia.workoutpixel.core.GoalSaveActions
-import ch.karimattia.workoutpixel.core.WidgetAlarm
-import ch.karimattia.workoutpixel.database.KotlinGoalViewModel
-import ch.karimattia.workoutpixel.database.PastClickViewModel
+import ch.karimattia.workoutpixel.*
+import ch.karimattia.workoutpixel.composables.GoalDetailView
+import ch.karimattia.workoutpixel.composables.Instructions
+import ch.karimattia.workoutpixel.composables.Settings
+import ch.karimattia.workoutpixel.core.*
+import ch.karimattia.workoutpixel.data.KotlinGoalViewModel
+import ch.karimattia.workoutpixel.data.PastClickViewModel
 import ch.karimattia.workoutpixel.ui.theme.WorkoutPixelTheme
 import coil.annotation.ExperimentalCoilApi
 import com.google.accompanist.pager.ExperimentalPagerApi

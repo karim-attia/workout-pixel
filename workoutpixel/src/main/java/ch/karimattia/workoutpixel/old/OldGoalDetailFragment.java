@@ -1,4 +1,4 @@
-package ch.karimattia.workoutpixel.goalDetail;
+package ch.karimattia.workoutpixel.old;
 
 import static android.widget.LinearLayout.VERTICAL;
 
@@ -37,20 +37,18 @@ import java.util.Objects;
 import ch.karimattia.workoutpixel.R;
 import ch.karimattia.workoutpixel.core.CommonFunctions;
 import ch.karimattia.workoutpixel.core.Goal;
-import ch.karimattia.workoutpixel.database.GoalViewModel;
-import ch.karimattia.workoutpixel.database.InteractWithPastWorkout;
-import ch.karimattia.workoutpixel.database.PastWorkout;
+import ch.karimattia.workoutpixel.data.PastWorkout;
 
-public class GoalDetailFragment extends Fragment {
+public class OldGoalDetailFragment extends Fragment {
     private static final String TAG = "WORKOUT_PIXEL GoalDetailFragment";
     View view;
     int uid;
     Goal goal;
     TextView pastWorkoutsDescription;
-    PastWorkoutsRecyclerViewAdapter pastWorkoutsRecyclerViewAdapter;
+    OldPastWorkoutsRecyclerViewAdapter oldPastWorkoutsRecyclerViewAdapter;
     private Context context;
 
-    public GoalDetailFragment() {
+    public OldGoalDetailFragment() {
         super();
     }
 
@@ -115,8 +113,8 @@ public class GoalDetailFragment extends Fragment {
             return view;
         }
 
-        goal = GoalViewModel.loadGoalByUid(context, uid);
-        LiveData<Goal> goalLiveData = GoalViewModel.liveDataGoalByUid(context, uid);
+        goal = OldGoalViewModel.loadGoalByUid(context, uid);
+        LiveData<Goal> goalLiveData = OldGoalViewModel.liveDataGoalByUid(context, uid);
 
         // Toolbar
         requireActivity().setTitle(goal.getTitle());
@@ -148,19 +146,19 @@ public class GoalDetailFragment extends Fragment {
         RecyclerView recyclerView = view.findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
 
-        pastWorkoutsRecyclerViewAdapter = new PastWorkoutsRecyclerViewAdapter(context, goal);
+        oldPastWorkoutsRecyclerViewAdapter = new OldPastWorkoutsRecyclerViewAdapter(context, goal);
         recyclerView.setHasFixedSize(true);
         recyclerView.setNestedScrollingEnabled(false);
         recyclerView.addItemDecoration(new DividerItemDecoration(context, VERTICAL), 0);
         recyclerView.addItemDecoration(new DividerItemDecoration(context, VERTICAL));
-        recyclerView.setAdapter(pastWorkoutsRecyclerViewAdapter);
+        recyclerView.setAdapter(oldPastWorkoutsRecyclerViewAdapter);
 
         // Create the observer which updates the UI.
         // Observe the LiveData, passing in this activity as the LifecycleOwner and the observer.
-        LiveData<List<PastWorkout>> liveData = InteractWithPastWorkout.getPastWorkouts(context.getApplicationContext(), goal.uid);
+        LiveData<List<PastWorkout>> liveData = OldInteractWithPastWorkout.getPastWorkouts(context.getApplicationContext(), goal.uid);
         liveData.observe(getViewLifecycleOwner(), pastWorkouts -> {
             if (pastWorkouts.size() > 0) {
-                pastWorkoutsRecyclerViewAdapter.setData(pastWorkouts);
+                oldPastWorkoutsRecyclerViewAdapter.setData(pastWorkouts);
                 pastWorkoutsDescription.setVisibility(View.GONE);
             } else {
                 LinearLayout pastWorkoutsList = view.findViewById(R.id.card_view_past_workout);
@@ -181,7 +179,7 @@ public class GoalDetailFragment extends Fragment {
             Button deleteGoal = view.findViewById(R.id.delete_goal);
             deleteGoal.setOnClickListener(v -> {
                 // TODO: Confirmation dialog?
-                GoalViewModel.deleteGoal(context, goal);
+                OldGoalViewModel.deleteGoal(context, goal);
                 Navigation.findNavController(view).navigateUp();
             });
         } else {
@@ -234,7 +232,7 @@ public class GoalDetailFragment extends Fragment {
 */
 
             // Update the data in the recycler view
-            pastWorkoutsRecyclerViewAdapter.notifyDataSetChanged();
+            oldPastWorkoutsRecyclerViewAdapter.notifyDataSetChanged();
         });
 
     }

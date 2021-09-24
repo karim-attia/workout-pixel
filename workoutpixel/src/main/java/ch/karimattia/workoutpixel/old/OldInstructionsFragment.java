@@ -1,4 +1,4 @@
-package ch.karimattia.workoutpixel.main;
+package ch.karimattia.workoutpixel.old;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -30,7 +30,7 @@ import java.util.Objects;
 
 import ch.karimattia.workoutpixel.R;
 
-public class InstructionsFragment extends Fragment {
+public class OldInstructionsFragment extends Fragment {
     private static final String TAG = "WORKOUT_PIXEL InstructionsFragment";
     final List<Instruction> instructions = new ArrayList<>();
 

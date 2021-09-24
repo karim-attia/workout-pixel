@@ -1,11 +1,10 @@
-package ch.karimattia.workoutpixel.database
+package ch.karimattia.workoutpixel.data
 
 import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import ch.karimattia.workoutpixel.core.Goal
-import ch.karimattia.workoutpixel.database.AppDatabaseKotlin
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

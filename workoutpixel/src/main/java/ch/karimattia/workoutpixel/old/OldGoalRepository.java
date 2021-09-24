@@ -1,4 +1,4 @@
-package ch.karimattia.workoutpixel.database;
+package ch.karimattia.workoutpixel.old;
 
 import android.app.Application;
 
@@ -7,8 +7,9 @@ import androidx.lifecycle.LiveData;
 import java.util.List;
 
 import ch.karimattia.workoutpixel.core.Goal;
+import ch.karimattia.workoutpixel.data.GoalDao;
 
-class GoalRepository {
+class OldGoalRepository {
 
     private GoalDao goalDao;
     private LiveData<List<Goal>> allGoals;
@@ -17,8 +18,8 @@ class GoalRepository {
     // dependency. This adds complexity and much more code, and this sample is not about testing.
     // See the BasicSample in the android-architecture-components repository at
     // https://github.com/googlesamples
-    GoalRepository(Application application) {
-        AppDatabase db = AppDatabase.getDatabase(application);
+    OldGoalRepository(Application application) {
+        OldAppDatabase db = OldAppDatabase.getDatabase(application);
         goalDao = db.goalDao();
         allGoals = goalDao.loadAllGoalsLiveData();
     }

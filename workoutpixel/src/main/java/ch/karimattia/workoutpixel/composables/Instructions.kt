@@ -1,4 +1,4 @@
-package ch.karimattia.workoutpixel
+package ch.karimattia.workoutpixel.composables
 
 import android.os.Build.VERSION.SDK_INT
 import androidx.compose.animation.graphics.ExperimentalAnimationGraphicsApi
@@ -33,6 +33,8 @@ import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.HorizontalPagerIndicator
 import com.google.accompanist.pager.rememberPagerState
 import java.util.*
+import ch.karimattia.workoutpixel.*
+import ch.karimattia.workoutpixel.R
 
 private const val TAG: String = "Instructions"
 
@@ -42,6 +44,7 @@ private const val TAG: String = "Instructions"
 @Composable
 fun Instructions() {
 
+	// remember: https://stackoverflow.com/questions/65889035/how-to-use-string-resources-in-android-jetpack-compose
 	val instructions = arrayListOf(
 		Instruction(
 			stringResource(R.string.instructions_intro_title),

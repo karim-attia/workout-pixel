@@ -43,6 +43,12 @@ abstract class SettingsRepository {
 
 
     }
-
-
 }
+
+class SettingsData internal constructor(
+    var Green: Color,
+    val Blue: Color,
+    val Red: Color,
+    val Purple: Color,
+)
+

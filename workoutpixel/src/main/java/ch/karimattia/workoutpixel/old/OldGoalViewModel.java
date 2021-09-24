@@ -1,4 +1,4 @@
-package ch.karimattia.workoutpixel.database;
+package ch.karimattia.workoutpixel.old;
 
 import android.app.Application;
 import android.content.Context;
@@ -11,16 +11,17 @@ import java.util.List;
 
 import ch.karimattia.workoutpixel.core.CommonFunctions;
 import ch.karimattia.workoutpixel.core.Goal;
+import ch.karimattia.workoutpixel.data.GoalDao;
 
-public class GoalViewModel extends AndroidViewModel {
+public class OldGoalViewModel extends AndroidViewModel {
     private static final String TAG = "GoalViewModel";
 
     private final LiveData<List<Goal>> allGoals;
-    GoalRepository repository;
+    OldGoalRepository repository;
 
-    public GoalViewModel(Application application) {
+    public OldGoalViewModel(Application application) {
         super(application);
-        repository = new GoalRepository(application);
+        repository = new OldGoalRepository(application);
         allGoals = repository.getAllGoals();
     }
 
@@ -96,7 +97,7 @@ public class GoalViewModel extends AndroidViewModel {
     }
 
     public static GoalDao workoutDao(Context context) {
-        AppDatabase db = AppDatabase.getDatabase(context);
+        OldAppDatabase db = OldAppDatabase.getDatabase(context);
         return db.goalDao();
     }
 }

@@ -3,8 +3,8 @@ package ch.karimattia.workoutpixel.core
 import android.content.Context
 import android.util.Log
 import android.widget.Toast
-import ch.karimattia.workoutpixel.database.KotlinGoalRepository
-import ch.karimattia.workoutpixel.database.PastClickRepository
+import ch.karimattia.workoutpixel.data.KotlinGoalRepository
+import ch.karimattia.workoutpixel.data.PastClickRepository
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject

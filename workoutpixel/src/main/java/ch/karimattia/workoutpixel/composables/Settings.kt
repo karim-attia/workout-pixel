@@ -1,4 +1,4 @@
-package ch.karimattia.workoutpixel
+package ch.karimattia.workoutpixel.composables
 
 import android.R
 import android.appwidget.AppWidgetManager
@@ -15,6 +15,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import ch.karimattia.workoutpixel.FreeStandingTitle
+import ch.karimattia.workoutpixel.GoalPreviewWithColor
+import ch.karimattia.workoutpixel.SettingsData
 import ch.karimattia.workoutpixel.core.CommonFunctions
 import ch.karimattia.workoutpixel.core.Goal
 import ch.karimattia.workoutpixel.ui.theme.*
@@ -111,11 +114,4 @@ fun SettingsPreview() {
         //settingsData = SettingsData(Green = Color(Green), Blue = Color(Blue), Red = Color(Red), Purple = Color(Purple))
     )
 }
-
-class SettingsData internal constructor(
-    var Green: Color,
-    val Blue: Color,
-    val Red: Color,
-    val Purple: Color,
-)
 

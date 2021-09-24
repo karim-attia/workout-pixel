@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import ch.karimattia.workoutpixel.core.CommonFunctions
 import ch.karimattia.workoutpixel.core.Goal
+import ch.karimattia.workoutpixel.core.WorkoutPixelScreen
 import java.util.*
 
 private const val TAG: String = "AllGoals"
