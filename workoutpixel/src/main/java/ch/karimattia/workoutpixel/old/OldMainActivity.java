@@ -12,7 +12,6 @@ import androidx.navigation.ui.NavigationUI;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import ch.karimattia.workoutpixel.R;
-import ch.karimattia.workoutpixel.core.WidgetAlarm;
 
 public class OldMainActivity extends AppCompatActivity {
     private static final String TAG = "WORKOUT_PIXEL MainActivity";
@@ -61,6 +60,6 @@ public class OldMainActivity extends AppCompatActivity {
 
 
 
-        WidgetAlarm.startAlarm(context);
+        OldWidgetAlarm.startAlarm(context);
     }
 }

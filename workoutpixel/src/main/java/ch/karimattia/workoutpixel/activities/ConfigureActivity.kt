@@ -19,7 +19,7 @@ import ch.karimattia.workoutpixel.core.CommonFunctions
 import ch.karimattia.workoutpixel.core.Goal
 import ch.karimattia.workoutpixel.core.GoalSaveActions
 import ch.karimattia.workoutpixel.core.GoalWidgetActions
-import ch.karimattia.workoutpixel.data.KotlinGoalViewModel
+import ch.karimattia.workoutpixel.data.GoalViewModel
 import ch.karimattia.workoutpixel.ui.theme.WorkoutPixelTheme
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -38,7 +38,7 @@ class ConfigureActivity : ComponentActivity() {
 	@ExperimentalComposeUiApi
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
-		val kotlinGoalViewModel by viewModels<KotlinGoalViewModel>()
+		val kotlinGoalViewModel by viewModels<GoalViewModel>()
 		val context: Context = this
 
 		val goal = Goal(

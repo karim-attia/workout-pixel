@@ -4,7 +4,7 @@ import ch.karimattia.workoutpixel.core.Goal
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
-class KotlinGoalRepository @Inject constructor(
+class GoalRepository @Inject constructor(
 	// application: Application,
 	private val goalDao: GoalDao
 ) {

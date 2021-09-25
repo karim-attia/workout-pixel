@@ -237,6 +237,7 @@ public class CommonFunctions {
 //    }
 // --Commented out by Inspection STOP (23.06.21, 20:27)
 
+    // TODO: Inject repository
     // Sets all appWidgetIds of goals that are not valid to null. Maybe later even reassign some to unassigned widgets.
     public static void cleanGoals(Context context, List<Goal> goals) {
         for (Goal goal: goalsWithInvalidAppWidgetId(context, goals)) {

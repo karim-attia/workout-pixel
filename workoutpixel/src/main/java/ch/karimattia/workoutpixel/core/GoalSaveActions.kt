@@ -3,7 +3,7 @@ package ch.karimattia.workoutpixel.core
 import android.content.Context
 import android.util.Log
 import android.widget.Toast
-import ch.karimattia.workoutpixel.data.KotlinGoalRepository
+import ch.karimattia.workoutpixel.data.GoalRepository
 import ch.karimattia.workoutpixel.data.PastClickRepository
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -12,7 +12,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 
 class GoalSaveActions @AssistedInject constructor(
 	@ApplicationContext val context: Context,
-	private val kotlinGoalRepository: KotlinGoalRepository,
+	private val goalRepository: GoalRepository,
 	private val pastClickRepository: PastClickRepository,
 	@Assisted var goal: Goal,
 ) {
@@ -41,7 +41,7 @@ class GoalSaveActions @AssistedInject constructor(
 		pastClickRepository.insertClickedWorkout(goal.getUid(), goal.lastWorkout)
 
 		// Update the widget data in the db
-		kotlinGoalRepository.updateGoal(goal)
+		goalRepository.updateGoal(goal)
 
 		Log.d(TAG, "ACTION_DONE_EXERCISE ${goal.debugString()}complete    --------------------------------------------")
 	}
@@ -52,7 +52,7 @@ class GoalSaveActions @AssistedInject constructor(
 
 		// Update the widget data in the db (only) when there is a new status.
 		if (goal.setNewStatus()) {
-			kotlinGoalRepository.updateGoal(goal)
+			goalRepository.updateGoal(goal)
 		}
 
 		// Instruct the widget manager to update the widget with the latest widget data

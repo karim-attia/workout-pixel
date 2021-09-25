@@ -10,9 +10,9 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class KotlinGoalViewModel @Inject constructor(
+class GoalViewModel @Inject constructor(
 	// private val application: Application,
-	private val repository: KotlinGoalRepository
+	private val repository: GoalRepository
 ) : ViewModel() {
 
 	val allGoals: LiveData<List<Goal>> = repository.allGoals.asLiveData()

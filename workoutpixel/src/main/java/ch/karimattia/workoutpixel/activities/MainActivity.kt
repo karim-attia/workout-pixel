@@ -16,6 +16,7 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.lifecycleScope
@@ -24,13 +25,15 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import ch.karimattia.workoutpixel.*
+import ch.karimattia.workoutpixel.AllGoals
+import ch.karimattia.workoutpixel.EditGoalView
 import ch.karimattia.workoutpixel.composables.GoalDetailView
 import ch.karimattia.workoutpixel.composables.Instructions
 import ch.karimattia.workoutpixel.composables.Settings
 import ch.karimattia.workoutpixel.core.*
-import ch.karimattia.workoutpixel.data.KotlinGoalViewModel
+import ch.karimattia.workoutpixel.data.GoalViewModel
 import ch.karimattia.workoutpixel.data.PastClickViewModel
+import ch.karimattia.workoutpixel.goalFromGoalsByUid
 import ch.karimattia.workoutpixel.ui.theme.WorkoutPixelTheme
 import coil.annotation.ExperimentalCoilApi
 import com.google.accompanist.pager.ExperimentalPagerApi
@@ -44,12 +47,14 @@ private const val TAG: String = "MainActivity"
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
+	// Create a class that has those two and extend it (also in AppWidgetProvider, ConfigureActivity)?
+	// Or inject via constructor? At least the second one.
 	@Inject
 	lateinit var goalSaveActionsFactory: GoalSaveActions.Factory
 	private fun goalSaveActions(goal: Goal): GoalSaveActions {
 		return goalSaveActionsFactory.create(goal)
 	}
-
+	@Inject	lateinit var widgetAlarm: WidgetAlarm
 
 	@ExperimentalComposeUiApi
 	@ExperimentalCoilApi
@@ -57,20 +62,17 @@ class MainActivity : ComponentActivity() {
 	@ExperimentalPagerApi
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
-		val kotlinGoalViewModel: KotlinGoalViewModel by viewModels()
-		//val pastClickViewModelExperiment by viewModels<PastClickViewModelExperiment>()
+		val goalViewModel: GoalViewModel by viewModels()
 		val pastClickViewModel: PastClickViewModel by viewModels()
-
 		var alreadySetUp = false
 		val context: Context = this
 
-
-		kotlinGoalViewModel.allGoals.observe(this, { goals ->
+		goalViewModel.allGoals.observe(this, { goals ->
 			Log.d(TAG, "___________observe___________")
 
 			setContent {
 				WorkoutPixelApp(
-					kotlinGoalViewModel = kotlinGoalViewModel,
+					goalViewModel = goalViewModel,
 					pastClickViewModel = pastClickViewModel,
 					goals = goals,
 					updateAfterClick = {
@@ -78,16 +80,16 @@ class MainActivity : ComponentActivity() {
 						goalSaveActions(it).updateAfterClick()
 					},
 					updateGoal = {
-						kotlinGoalViewModel.updateGoal(it)
+						goalViewModel.updateGoal(it)
 						goalSaveActions(it).updateWidgetBasedOnStatus()
 					},
-					deleteGoal = { kotlinGoalViewModel.deleteGoal(it) },
+					deleteGoal = { goalViewModel.deleteGoal(it) },
 				)
 			}
 
 			// Run oneTimeSetup once after the goals are loaded.
 			if (!alreadySetUp && goals != null) {
-				lifecycleScope.launch(context = Dispatchers.Default) {
+				lifecycleScope.launch {
 					oneTimeSetup(goals, context)
 				}
 				alreadySetUp = true
@@ -110,7 +112,7 @@ class MainActivity : ComponentActivity() {
 		CommonFunctions.cleanGoals(context, goals)
 
 		// Every time the app starts, set the alarm to update everything at 3:00. In case something breaks.
-		WidgetAlarm.startAlarm(context)
+		widgetAlarm.startAlarm()
 	}
 }
 
@@ -120,7 +122,7 @@ class MainActivity : ComponentActivity() {
 @ExperimentalComposeUiApi
 @Composable
 fun WorkoutPixelApp(
-	kotlinGoalViewModel: KotlinGoalViewModel,
+	goalViewModel: GoalViewModel,
 	pastClickViewModel: PastClickViewModel,
 	goals: List<Goal>,
 	updateAfterClick: (Goal) -> Unit,
@@ -135,7 +137,7 @@ fun WorkoutPixelApp(
 		val backstackEntry = navController.currentBackStackEntryAsState()
 		val currentScreen = WorkoutPixelScreen.fromRoute(backstackEntry.value?.destination?.route)
 		//val appBarTitle: String? by kotlinGoalViewModel.appBarTitle.observeAsState()
-		val currentGoalUid: Int? by kotlinGoalViewModel.currentGoalUid.observeAsState()
+		val currentGoalUid: Int? by goalViewModel.currentGoalUid.observeAsState()
 		//val currentGoal: Goal? by kotlinGoalViewModel.currentGoal.observeAsState()
 		val currentGoal: Goal? = goalFromGoalsByUid(goalUid = currentGoalUid, goals = goals)
 
@@ -201,7 +203,7 @@ fun WorkoutPixelApp(
 				updateAfterClick = updateAfterClick,
 				navigateTo = { destination: String, goal: Goal? ->
 					Log.d(TAG, "navigateTo $goal")
-					kotlinGoalViewModel.changeCurrentGoalUid(goal)
+					goalViewModel.changeCurrentGoalUid(goal)
 					navController.navigate(destination)
 				},
 				updateGoal = { updatedGoal: Goal, navigateUp: Boolean ->
@@ -217,7 +219,7 @@ fun WorkoutPixelApp(
 					deleteGoal(deletedGoal)
 					if (navigateUp) {
 						// The goal uid of the deleted goal doesn't exist anymore. Removing it from the current goal removes sources of errors.
-						kotlinGoalViewModel.changeCurrentGoalUid(null)
+						goalViewModel.changeCurrentGoalUid(null)
 						//kotlinGoalViewModel.changeCurrentGoal(null, goals)
 						navController.navigateUp()
 					}
@@ -278,7 +280,7 @@ fun WorkoutPixelNavHost(
 					updateAfterClick = { updateAfterClick(currentGoal) },
 					deleteGoal = { deleteGoal(it, true) },
 					updateGoal = updateGoal,
-					pastClickViewModel = pastClickViewModel,
+					pastClickViewModel = remember { pastClickViewModel },
 				)
 			} else (Text("currentGoal = null"))
 		}

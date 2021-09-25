@@ -33,6 +33,7 @@ public class WorkoutPixelAppWidgetProvider extends AppWidgetProvider {
     private GoalSaveActions goalSaveActions(Goal goal) {
         return goalSaveActionsFactory.create(goal);
     }
+    @Inject WidgetAlarm widgetAlarm;
 
     // Entry point
     @Override
@@ -64,7 +65,7 @@ public class WorkoutPixelAppWidgetProvider extends AppWidgetProvider {
 
         Log.d(TAG, "ON_UPDATE\n------------------------------------------------------------------------");
         // Start alarm
-        WidgetAlarm.startAlarm(context);
+        widgetAlarm.startAlarm();
 
         // TODO: Understand
         // TODO: Replaced iteration through appWidgetIds with data from DB. Insert check that this is the same and fix if not. Maybe before it only iterated through some widgets. But I don't think it matters.
@@ -108,7 +109,7 @@ public class WorkoutPixelAppWidgetProvider extends AppWidgetProvider {
 
         // Start alarm
         Log.v(TAG, "START_ALARM");
-        WidgetAlarm.startAlarm(context);
+        widgetAlarm.startAlarm();
         Log.v(TAG, "ALARM_STARTED");
     }
 
@@ -120,7 +121,7 @@ public class WorkoutPixelAppWidgetProvider extends AppWidgetProvider {
         if (CommonFunctions.appWidgetIds(context).length == 0) {
             // stop alarm
             Log.v(TAG, "STOP_ALARM");
-            WidgetAlarm.stopAlarm(context);
+            widgetAlarm.stopAlarm();
             Log.v(TAG, "STOPPED_ALARM");
         }
     }

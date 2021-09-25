@@ -13,8 +13,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Backspace
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Undo
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -50,7 +49,43 @@ fun GoalDetailView(
 	updateGoal: (updatedGoal: Goal, navigateUp: Boolean) -> Unit,
 	pastClickViewModel: PastClickViewModel,
 ) {
+
 	val pastClicks by pastClickViewModel.pastClicks(goal.uid).observeAsState(initial = listOf())
+	Log.d(TAG, "Recomposition Top, goalUid: $goal.uid")
+	Log.d(TAG, "Recomposition Top, pastClickViewModel: $pastClickViewModel")
+
+	if (pastClicks.isNotEmpty()) {
+		Log.d(TAG, "Recomposition Top, pastClicks: ${pastClicks[0]}, workoutTime: ${pastClicks[0].workoutTime}")
+	}
+
+
+	GoalDetailView(
+		goal = goal,
+		updateAfterClick = updateAfterClick,
+		deleteGoal = deleteGoal,
+		updateGoal = updateGoal,
+		updatePastClick = { pastClickViewModel.updatePastClick(it) },
+		// pastClicks = pastClicks,
+		)
+	/*
+	var connectExistingGoal by remember { mutableStateOf(0) }
+	connectExistingGoal += 1
+	Log.d(TAG, "Number of recompositions: $connectExistingGoal")
+*/
+
+}
+
+@Composable
+fun GoalDetailView(
+	goal: Goal,
+	updateAfterClick: () -> Unit,
+	deleteGoal: (Goal) -> Unit,
+	updateGoal: (updatedGoal: Goal, navigateUp: Boolean) -> Unit,
+	updatePastClick: (PastWorkout) -> Unit,
+	// pastClicks: List<PastWorkout>
+) {
+
+	Log.d(TAG, "Recomposition Bottom")
 
 	Column(
 		modifier = Modifier
@@ -66,12 +101,14 @@ fun GoalDetailView(
 		if (!goal.hasValidAppWidgetId()) {
 			GoalDetailNoWidgetCard(goal = goal, deleteGoal = deleteGoal)
 		}
-		PastClicks(
+
+/*		PastClicks(
 			goal = goal,
 			updateGoal = updateGoal,
-			updatePastClick = { pastClickViewModel.updatePastClick(it) },
+			updatePastClick = updatePastClick,
 			pastClicks = pastClicks
-		)
+		)*/
+
 		Spacer(modifier = Modifier.height(40.dp))
 	}
 }
