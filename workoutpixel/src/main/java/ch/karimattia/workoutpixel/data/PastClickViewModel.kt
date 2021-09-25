@@ -1,9 +1,10 @@
 package ch.karimattia.workoutpixel.data
 
 import androidx.lifecycle.*
-import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 /*
 @HiltViewModel
@@ -38,7 +39,8 @@ class PastClickViewModelOld (
 	}
 }*/
 
-@HiltViewModel
+// Works with goal as variable
+/*@HiltViewModel
 class PastClickViewModel @Inject constructor(
 	private val repository: PastClickRepository
 ) : ViewModel() {
@@ -46,7 +48,7 @@ class PastClickViewModel @Inject constructor(
 	fun updatePastClick(pastClick: PastWorkout) = viewModelScope.launch {
 		repository.updatePastWorkout(pastClick)
 	}
-}
+}*/
 
 /*class PastClickViewModelFactory(private val application: Application, private val goalUid: Int) : ViewModelProvider.Factory {
 	@Suppress("UNCHECKED_CAST")
@@ -55,20 +57,29 @@ class PastClickViewModel @Inject constructor(
 	}
 }*/
 
-/*
+// @HiltViewModel: https://stackoverflow.com/questions/68649447/viewmodel-constructor-should-be-annotated-with-inject-instead-of-assistedinjec
+class PastClickViewModel @AssistedInject constructor(
+	private val repository: PastClickRepository,
+	@Assisted var goalUid: Int,
+) : ViewModel() {
+	fun pastClicks(): LiveData<List<PastWorkout>> = repository.pastClicksByGoalUid(goalUid = goalUid).asLiveData()
+	fun updatePastClick(pastClick: PastWorkout) = viewModelScope.launch {
+		repository.updatePastWorkout(pastClick)
+	}
+}
+
 @AssistedFactory
 interface PastClickViewModelAssistedFactory {
 	fun create(goalUid: Int): PastClickViewModel
-	fun provideFactory(
-		assistedFactory: PastClickViewModelAssistedFactory, // 1
-		goalUid: Int,
-	): ViewModelProvider.Factory =
-		object : ViewModelProvider.Factory {
-			@Suppress("UNCHECKED_CAST")
-			override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-				return assistedFactory.create(goalUid) as T // 2
-			}
-		}
 }
 
-*/
+fun provideFactory(
+	assistedFactory: PastClickViewModelAssistedFactory,
+	goalUid: Int,
+): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
+	@Suppress("UNCHECKED_CAST")
+	override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+		return assistedFactory.create(goalUid) as T
+	}
+}
+

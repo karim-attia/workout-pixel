@@ -1,4 +1,4 @@
-package ch.karimattia.workoutpixel
+package ch.karimattia.workoutpixel.composables
 
 import android.annotation.SuppressLint
 import android.util.Log
@@ -33,8 +33,14 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import ch.karimattia.workoutpixel.core.CommonFunctions
-import ch.karimattia.workoutpixel.core.Goal
+import ch.karimattia.workoutpixel.CheckboxWithText
+import ch.karimattia.workoutpixel.GoalPreview
+import ch.karimattia.workoutpixel.Infobox
+import ch.karimattia.workoutpixel.R
+import ch.karimattia.workoutpixel.core.Constants.STATUS_GREEN
+import ch.karimattia.workoutpixel.data.Goal
+import ch.karimattia.workoutpixel.core.days
+import ch.karimattia.workoutpixel.core.testData
 import java.util.*
 
 private const val TAG: String = "EditGoalView"
@@ -371,7 +377,7 @@ fun SetUpYourWidget(
 			)
 		}
 		Text(
-			text = CommonFunctions.days(setUpYourWidgetGoal.intervalBlue),
+			text = days(setUpYourWidgetGoal.intervalBlue),
 			modifier = textModifier,
 		)
 	}
@@ -407,7 +413,7 @@ fun WidgetConfigurationPreview(
 ) {
 	val previewGoal = editGoalViewGoal.copy()
 	if (isFirstConfigure) {
-		previewGoal.status = CommonFunctions.STATUS_GREEN
+		previewGoal.status = STATUS_GREEN
 		previewGoal.lastWorkout = remember { System.currentTimeMillis() }
 	}
 	FreeStandingTitle(text = "Preview")
@@ -463,7 +469,7 @@ fun AddUpdateWidgetButton(
 @Composable
 fun EditGoalViewPreview() {
 	EditGoalView(
-		initialGoal = CommonFunctions.testData()[0],
+		initialGoal = testData()[0],
 		isFirstConfigure = false,
 		addUpdateWidget = { },
 	)

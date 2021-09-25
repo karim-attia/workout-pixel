@@ -21,6 +21,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import ch.karimattia.workoutpixel.R
 import ch.karimattia.workoutpixel.ui.theme.GrayBackground
 import coil.ImageLoader
 import coil.annotation.ExperimentalCoilApi
@@ -33,8 +34,6 @@ import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.HorizontalPagerIndicator
 import com.google.accompanist.pager.rememberPagerState
 import java.util.*
-import ch.karimattia.workoutpixel.*
-import ch.karimattia.workoutpixel.R
 
 private const val TAG: String = "Instructions"
 

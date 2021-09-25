@@ -36,8 +36,7 @@ import java.util.List;
 import java.util.Objects;
 
 import ch.karimattia.workoutpixel.R;
-import ch.karimattia.workoutpixel.core.CommonFunctions;
-import ch.karimattia.workoutpixel.core.Goal;
+import ch.karimattia.workoutpixel.data.Goal;
 
 public class OldConfigureFragment extends Fragment {
     private static final String TAG = "WORKOUT_PIXEL CONFIGURE FRAGMENT";
@@ -48,7 +47,7 @@ public class OldConfigureFragment extends Fragment {
     EditText widgetTitle;
     CheckBox showDateCheckbox;
     CheckBox showTimeCheckbox;
-    Goal goal = new Goal(AppWidgetManager.INVALID_APPWIDGET_ID, "", 0, intervalInDays, 2, false, false, CommonFunctions.STATUS_NONE);
+    Goal goal = new Goal(0,AppWidgetManager.INVALID_APPWIDGET_ID, "", 0, intervalInDays, 2, false, false, OldCommonFunctions.STATUS_NONE);
     private Context context;
     private View view;
     // OnClickListener for button
@@ -212,7 +211,7 @@ public class OldConfigureFragment extends Fragment {
         // Preview
         if (isFirstConfigure) preview.setBackgroundResource(R.drawable.rounded_corner_green);
         else
-            preview.setBackgroundResource(CommonFunctions.getDrawableIntFromStatus(goal.getStatus()));
+            preview.setBackgroundResource(OldCommonFunctions.getDrawableIntFromStatus(goal.getStatus()));
 
         setPreview(preview);
         CompoundButton.OnCheckedChangeListener onCheckedChangeListener = (buttonView, isChecked) -> setPreview(preview);
@@ -237,7 +236,7 @@ public class OldConfigureFragment extends Fragment {
 
         // Setup reconnect widget card
         if (isFirstConfigure) {
-            CommonFunctions.executorService.execute(() -> {
+            OldCommonFunctions.executorService.execute(() -> {
                 List<Goal> widgetsWithoutValidAppwidgetId = OldGoalViewModel.loadGoalsWithoutValidAppWidgetId(context);
                 if (widgetsWithoutValidAppwidgetId.size() > 0) {
                     TextView configurationConnectHintTitle = view.findViewById(R.id.configuration_connect_hint_title);
@@ -282,10 +281,10 @@ public class OldConfigureFragment extends Fragment {
         }
 
         if (showDateCheckbox.isChecked()) {
-            widgetText += "\n" + CommonFunctions.dateBeautiful(previewDateTime);
+            widgetText += "\n" + OldCommonFunctions.dateBeautiful(previewDateTime);
         }
         if (showTimeCheckbox.isChecked()) {
-            widgetText += "\n" + CommonFunctions.timeBeautiful(previewDateTime);
+            widgetText += "\n" + OldCommonFunctions.timeBeautiful(previewDateTime);
         }
 
         preview.setText(widgetText);

@@ -3,6 +3,8 @@ package ch.karimattia.workoutpixel.core
 import android.content.Context
 import android.util.Log
 import android.widget.Toast
+import ch.karimattia.workoutpixel.core.Constants.STATUS_GREEN
+import ch.karimattia.workoutpixel.data.Goal
 import ch.karimattia.workoutpixel.data.GoalRepository
 import ch.karimattia.workoutpixel.data.PastClickRepository
 import dagger.assisted.Assisted
@@ -25,20 +27,20 @@ class GoalSaveActions @AssistedInject constructor(
 
 	fun updateAfterClick() {
 		Log.d(TAG, "ACTION_DONE_EXERCISE " + goal.debugString() + "start")
-		val numberOfPastWorkouts = pastClickRepository.getCountOfActivePastWorkouts(goal.getUid()) + 1
+		val numberOfPastWorkouts = pastClickRepository.getCountOfActivePastWorkouts(goal.uid) + 1
 		Toast.makeText(
-			context, "Oh yeah! Already done this " + CommonFunctions.times(numberOfPastWorkouts) + " :)", Toast.LENGTH_SHORT
+			context, "Oh yeah! Already done this " + times(numberOfPastWorkouts) + " :)", Toast.LENGTH_SHORT
 		).show()
 
 		// Update the widget data with the latest click
-		goal.status = CommonFunctions.STATUS_GREEN
+		goal.status = STATUS_GREEN
 		goal.lastWorkout = System.currentTimeMillis()
 
 		// Instruct the widget manager to update the widget with the latest widget data
 		GoalWidgetActions(context, goal).runUpdate(false)
 
 		// Add the workout to the database. Technicalities are taken care of in PastWorkoutsViewModel.
-		pastClickRepository.insertClickedWorkout(goal.getUid(), goal.lastWorkout)
+		pastClickRepository.insertClickedWorkout(goal.uid, goal.lastWorkout)
 
 		// Update the widget data in the db
 		goalRepository.updateGoal(goal)

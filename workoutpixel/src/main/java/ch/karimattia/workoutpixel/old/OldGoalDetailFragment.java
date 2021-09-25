@@ -35,15 +35,12 @@ import java.util.List;
 import java.util.Objects;
 
 import ch.karimattia.workoutpixel.R;
-import ch.karimattia.workoutpixel.core.CommonFunctions;
-import ch.karimattia.workoutpixel.core.Goal;
-import ch.karimattia.workoutpixel.data.PastWorkout;
 
 public class OldGoalDetailFragment extends Fragment {
     private static final String TAG = "WORKOUT_PIXEL GoalDetailFragment";
     View view;
     int uid;
-    Goal goal;
+    OldGoal goal;
     TextView pastWorkoutsDescription;
     OldPastWorkoutsRecyclerViewAdapter oldPastWorkoutsRecyclerViewAdapter;
     private Context context;
@@ -114,7 +111,7 @@ public class OldGoalDetailFragment extends Fragment {
         }
 
         goal = OldGoalViewModel.loadGoalByUid(context, uid);
-        LiveData<Goal> goalLiveData = OldGoalViewModel.liveDataGoalByUid(context, uid);
+        LiveData<OldGoal> goalLiveData = OldGoalViewModel.liveDataGoalByUid(context, uid);
 
         // Toolbar
         requireActivity().setTitle(goal.getTitle());
@@ -155,7 +152,7 @@ public class OldGoalDetailFragment extends Fragment {
 
         // Create the observer which updates the UI.
         // Observe the LiveData, passing in this activity as the LifecycleOwner and the observer.
-        LiveData<List<PastWorkout>> liveData = OldInteractWithPastWorkout.getPastWorkouts(context.getApplicationContext(), goal.uid);
+        LiveData<List<OldPastWorkout>> liveData = OldInteractWithPastWorkout.getPastWorkouts(context.getApplicationContext(), goal.getUid());
         liveData.observe(getViewLifecycleOwner(), pastWorkouts -> {
             if (pastWorkouts.size() > 0) {
                 oldPastWorkoutsRecyclerViewAdapter.setData(pastWorkouts);
@@ -203,20 +200,20 @@ public class OldGoalDetailFragment extends Fragment {
             }
         }
     */
-    public void setGoalOverview(Goal goal) {
+    public void setGoalOverview(OldGoal goal) {
         // goalCardView.setVisibility(View.VISIBLE);
         TextView widgetLastWorkout = view.findViewById(R.id.widget_last_workout);
         TextView widgetIntervalBlue = view.findViewById(R.id.widget_interval);
         TextView widgetPreview = view.findViewById(R.id.widget_preview);
-        widgetLastWorkout.setText(CommonFunctions.dateBeautiful(goal.getLastWorkout()));
+        widgetLastWorkout.setText(OldCommonFunctions.dateBeautiful(goal.getLastWorkout()));
         widgetIntervalBlue.setText(goal.everyWording());
-        widgetPreview.setBackgroundResource(CommonFunctions.getDrawableIntFromStatus(goal.getStatus()));
+        widgetPreview.setBackgroundResource(OldCommonFunctions.getDrawableIntFromStatus(goal.getStatus()));
         widgetPreview.setText(goal.widgetText());
         widgetPreview.setOnClickListener(v -> {
             // Update the widget the same way as a click on the widget would.
             // new GoalSaveActions(context, goal).updateAfterClick();
             goal.setLastWorkout(System.currentTimeMillis());
-            goal.setStatus(CommonFunctions.STATUS_GREEN);
+            goal.setStatus(OldCommonFunctions.STATUS_GREEN);
             LinearLayout pastWorkoutsList = view.findViewById(R.id.card_view_past_workout);
             pastWorkoutsList.setVisibility(View.VISIBLE);
             View pastWorkoutsDivider = view.findViewById(R.id.past_workouts_divider);

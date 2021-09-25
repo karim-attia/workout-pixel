@@ -23,8 +23,7 @@ import java.util.List;
 import java.util.Objects;
 
 import ch.karimattia.workoutpixel.R;
-import ch.karimattia.workoutpixel.core.CommonFunctions;
-import ch.karimattia.workoutpixel.core.Goal;
+import ch.karimattia.workoutpixel.data.Goal;
 
 public class OldGoalsFragment extends Fragment {
     private static final String TAG = "WORKOUT_PIXEL GoalsFragment";
@@ -109,7 +108,7 @@ public class OldGoalsFragment extends Fragment {
             );
         }
         // TODO: Move to activity?
-        CommonFunctions.cleanGoals(context, goals);
+        OldCommonFunctions.cleanGoals(context, goals);
         // TODO Update all goals?
     }
 

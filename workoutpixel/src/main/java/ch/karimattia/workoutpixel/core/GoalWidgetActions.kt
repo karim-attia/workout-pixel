@@ -7,6 +7,7 @@ import android.content.Intent
 import android.util.Log
 import android.widget.RemoteViews
 import ch.karimattia.workoutpixel.R
+import ch.karimattia.workoutpixel.data.Goal
 import kotlin.math.ceil
 import kotlin.math.floor
 
@@ -38,7 +39,7 @@ class GoalWidgetActions(
 		}
 		// Before updating a widget, the text and background of the view need to be set. Otherwise, the existing not updated properties of the widgetView will be passed.
 		widgetView.setTextViewText(R.id.appwidget_text, goal.widgetText())
-		widgetView.setInt(R.id.appwidget_text, "setBackgroundResource", CommonFunctions.getDrawableIntFromStatus(goal.status))
+		widgetView.setInt(R.id.appwidget_text, "setBackgroundResource", getDrawableIntFromStatus(goal.status))
 		// Set size if available
 		// https://stackoverflow.com/questions/25153604/get-the-size-of-my-homescreen-widget
 		if (goal.appWidgetId != null) {
@@ -55,7 +56,7 @@ class GoalWidgetActions(
 	// Create an Intent to set the action DONE_EXERCISE. This will be received in onReceive.
 	private fun widgetPendingIntent(context: Context): PendingIntent? {
 		val intent = Intent(context, WorkoutPixelAppWidgetProvider::class.java)
-		intent.action = WorkoutPixelAppWidgetProvider.ACTION_DONE_EXERCISE
+		intent.action = Constants.ACTION_DONE_EXERCISE
 		// put the appWidgetId as an extra to the update intent
 		if (goal.appWidgetId == null) {
 			Log.d(TAG, "widgetPendingIntent: appWidgetId is null where it shouldn't be.")

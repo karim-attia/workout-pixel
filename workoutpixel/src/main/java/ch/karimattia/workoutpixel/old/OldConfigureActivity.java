@@ -1,9 +1,9 @@
 package ch.karimattia.workoutpixel.old;
 
-import static ch.karimattia.workoutpixel.core.CommonFunctions.STATUS_NONE;
-import static ch.karimattia.workoutpixel.core.CommonFunctions.dateBeautiful;
-import static ch.karimattia.workoutpixel.core.CommonFunctions.getDrawableIntFromStatus;
-import static ch.karimattia.workoutpixel.core.CommonFunctions.timeBeautiful;
+import static ch.karimattia.workoutpixel.old.OldCommonFunctions.STATUS_NONE;
+import static ch.karimattia.workoutpixel.old.OldCommonFunctions.dateBeautiful;
+import static ch.karimattia.workoutpixel.old.OldCommonFunctions.getDrawableIntFromStatus;
+import static ch.karimattia.workoutpixel.old.OldCommonFunctions.timeBeautiful;
 
 import android.appwidget.AppWidgetManager;
 import android.content.Context;
@@ -30,8 +30,7 @@ import java.util.List;
 import java.util.Objects;
 
 import ch.karimattia.workoutpixel.R;
-import ch.karimattia.workoutpixel.core.CommonFunctions;
-import ch.karimattia.workoutpixel.core.Goal;
+import ch.karimattia.workoutpixel.data.Goal;
 import ch.karimattia.workoutpixel.core.WorkoutPixelAppWidgetProvider;
 
 /**
@@ -51,7 +50,32 @@ public class OldConfigureActivity extends AppCompatActivity {
     CheckBox showDateCheckbox;
     CheckBox showTimeCheckbox;
 
-    Goal goal = new Goal(AppWidgetManager.INVALID_APPWIDGET_ID, "", 0, intervalInDays, 2, false, false, STATUS_NONE);
+    Goal goal = new Goal(0,AppWidgetManager.INVALID_APPWIDGET_ID, "", 0, intervalInDays, 2, false, false, STATUS_NONE);
+    // OnClickListener for button
+    final View.OnClickListener updateWidgetOnClickListener = new View.OnClickListener() {
+        public void onClick(View v) {
+
+            // When the button is clicked, store the string locally
+            String widgetText = widgetTitle.getText().toString();
+            boolean showDate = showDateCheckbox.isChecked();
+            boolean showTime = showTimeCheckbox.isChecked();
+
+            // Create widget object. Save it in the preferences.
+            goal.setTitle(widgetText);
+            goal.setIntervalBlue(intervalInDays);
+            goal.setShowDate(showDate);
+            goal.setShowTime(showTime);
+            // If the status is updated based on the new interval, doing it here saves a DB interaction in updateWidgetBasedOnNewStatus.
+            goal.setNewStatus();
+
+            // Store the goal in the DB
+            // Save the new goal to the db and store the generated uid to the widget so that the onClickListener can be generated with a valid uid later.
+            if (isFirstConfigure) goal.setUid(OldGoalViewModel.saveDuringInitialize(context, goal));
+            else OldGoalViewModel.updateGoal(context, goal);
+
+            setWidgetAndFinish();
+        }
+    };
 
     public OldConfigureActivity() {
         super();
@@ -67,10 +91,9 @@ public class OldConfigureActivity extends AppCompatActivity {
         Bundle extras = intent.getExtras();
 
         // Check form the intent whether this goal gets configured for the first time or gets reconfigured.
-        if(intent.getAction() != null && intent.getAction().equals("APPWIDGET_RECONFIGURE")) {
+        if (intent.getAction() != null && intent.getAction().equals("APPWIDGET_RECONFIGURE")) {
             isFirstConfigure = false;
-        }
-        else {
+        } else {
             isFirstConfigure = true;
             Log.d(TAG, "No action set");
         }
@@ -83,7 +106,9 @@ public class OldConfigureActivity extends AppCompatActivity {
 
             if (extras != null) {
                 goal.setAppWidgetId(extras.getInt(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID));
-            } else {Log.d(TAG, "extras = null");}
+            } else {
+                Log.d(TAG, "extras = null");
+            }
 
             // If this activity was started with an intent without an app widget ID, finish with an error.
             if (goal.getAppWidgetId() == null || goal.getAppWidgetId() == AppWidgetManager.INVALID_APPWIDGET_ID) {
@@ -104,7 +129,9 @@ public class OldConfigureActivity extends AppCompatActivity {
         if (!isFirstConfigure) {
             if (extras != null) {
                 goal.setUid(extras.getInt("widgetUid", 0));
-            } else {Log.d(TAG, "extras = null");}
+            } else {
+                Log.d(TAG, "extras = null");
+            }
 
             if (goal.getUid() == 0) {
                 Log.d(TAG, "widgetUid is invalid.");
@@ -146,15 +173,23 @@ public class OldConfigureActivity extends AppCompatActivity {
 
         // Make plus and minus button work
         minusButtonInterval.setOnClickListener(v -> {
-            if (intervalInDays > 1) {intervalInDays--;}
+            if (intervalInDays > 1) {
+                intervalInDays--;
+            }
             goalIntervalTextView.setText(String.valueOf(intervalInDays));
-            if (intervalInDays < 2) {goalIntervalPluralTextView.setVisibility(View.GONE);}
+            if (intervalInDays < 2) {
+                goalIntervalPluralTextView.setVisibility(View.GONE);
+            }
         });
 
         plusButtonInterval.setOnClickListener(v -> {
-            if (intervalInDays < 366) {intervalInDays++;}
+            if (intervalInDays < 366) {
+                intervalInDays++;
+            }
             goalIntervalTextView.setText(String.valueOf(intervalInDays));
-            if (intervalInDays > 1) {goalIntervalPluralTextView.setVisibility(View.VISIBLE);}
+            if (intervalInDays > 1) {
+                goalIntervalPluralTextView.setVisibility(View.VISIBLE);
+            }
         });
 
         // Preview
@@ -184,7 +219,7 @@ public class OldConfigureActivity extends AppCompatActivity {
 
         // Setup reconnect widget card
         if (isFirstConfigure) {
-            CommonFunctions.executorService.execute(() -> {
+            OldCommonFunctions.executorService.execute(() -> {
                 List<Goal> widgetsWithoutValidAppwidgetId = OldGoalViewModel.loadGoalsWithoutValidAppWidgetId(context);
                 if (widgetsWithoutValidAppwidgetId.size() > 0) {
                     TextView configurationConnectHintTitle = findViewById(R.id.configuration_connect_hint_title);
@@ -220,44 +255,25 @@ public class OldConfigureActivity extends AppCompatActivity {
         String widgetText = widgetTitle.getText().toString();
         long previewDateTime;
         // For the initial screen, show now, otherwise load the last workout
-        if (isFirstConfigure) {previewDateTime = System.currentTimeMillis();}
-        else {previewDateTime = goal.getLastWorkout();}
+        if (isFirstConfigure) {
+            previewDateTime = System.currentTimeMillis();
+        } else {
+            previewDateTime = goal.getLastWorkout();
+        }
 
-        if (showDateCheckbox.isChecked()) {widgetText += "\n" + dateBeautiful(previewDateTime);}
-        if (showTimeCheckbox.isChecked()) {widgetText += "\n" + timeBeautiful(previewDateTime);}
+        if (showDateCheckbox.isChecked()) {
+            widgetText += "\n" + dateBeautiful(previewDateTime);
+        }
+        if (showTimeCheckbox.isChecked()) {
+            widgetText += "\n" + timeBeautiful(previewDateTime);
+        }
 
         preview.setText(widgetText);
     }
 
-    // OnClickListener for button
-    final View.OnClickListener updateWidgetOnClickListener = new View.OnClickListener() {
-        public void onClick(View v) {
-
-            // When the button is clicked, store the string locally
-            String widgetText = widgetTitle.getText().toString();
-            boolean showDate = showDateCheckbox.isChecked();
-            boolean showTime = showTimeCheckbox.isChecked();
-
-            // Create widget object. Save it in the preferences.
-            goal.setTitle(widgetText);
-            goal.setIntervalBlue(intervalInDays);
-            goal.setShowDate(showDate);
-            goal.setShowTime(showTime);
-            // If the status is updated based on the new interval, doing it here saves a DB interaction in updateWidgetBasedOnNewStatus.
-            goal.setNewStatus();
-
-            // Store the goal in the DB
-            // Save the new goal to the db and store the generated uid to the widget so that the onClickListener can be generated with a valid uid later.
-            if (isFirstConfigure) goal.setUid(OldGoalViewModel.saveDuringInitialize(context, goal));
-            else OldGoalViewModel.updateGoal(context, goal);
-
-            setWidgetAndFinish();
-        }
-    };
-
     private void setWidgetAndFinish() {
         // It is the responsibility of the configuration activity to update the app widget
-        if(goal.hasValidAppWidgetId()) {
+        if (goal.hasValidAppWidgetId()) {
             // new GoalSaveActions(context, goal).updateWidgetBasedOnStatus();
         }
 

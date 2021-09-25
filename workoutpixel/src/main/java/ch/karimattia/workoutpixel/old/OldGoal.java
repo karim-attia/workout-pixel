@@ -1,39 +1,36 @@
-package ch.karimattia.workoutpixel.core;
+
+package ch.karimattia.workoutpixel.old;
 
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.room.ColumnInfo;
-import androidx.room.Entity;
-import androidx.room.PrimaryKey;
 
-@Entity(tableName = "goals")
-public class Goal {
+//@Entity(tableName = "OLDgoals")
+public class OldGoal {
     private static final String TAG = "GOAL";
-    @PrimaryKey(autoGenerate = true)
+    //@PrimaryKey(autoGenerate = true)
     public int uid;
-    @Nullable
-    @ColumnInfo(name = "appWidgetId")
+    //@Nullable
+    //@ColumnInfo(name = "appWidgetId")
     private Integer appWidgetId;
-    @ColumnInfo(name = "title")
+    //@ColumnInfo(name = "title")
     private String title;
-    @ColumnInfo(name = "lastWorkout")
+    //@ColumnInfo(name = "lastWorkout")
     private long lastWorkout;
-    @ColumnInfo(name = "intervalBlue")
+    //@ColumnInfo(name = "intervalBlue")
     private int intervalBlue;
     @SuppressWarnings({"FieldMayBeFinal", "CanBeFinal"})
-    @ColumnInfo(name = "intervalRed")
+    //@ColumnInfo(name = "intervalRed")
     private int intervalRed;
-    @ColumnInfo(name = "showDate")
+    //@ColumnInfo(name = "showDate")
     private boolean showDate;
-    @ColumnInfo(name = "showTime")
+    //@ColumnInfo(name = "showTime")
     private boolean showTime;
-    @ColumnInfo(name = "status")
+    //@ColumnInfo(name = "status")
     private String status;
 
-    public Goal(@Nullable Integer appWidgetId, String title, long lastWorkout, int intervalBlue, int intervalRed, boolean showDate, boolean showTime, String status) {
-        // this.context = context;
+    public OldGoal(@Nullable Integer appWidgetId, String title, long lastWorkout, int intervalBlue, int intervalRed, boolean showDate, boolean showTime, String status) {
         this.appWidgetId = appWidgetId;
         this.title = title;
         this.lastWorkout = lastWorkout;
@@ -134,7 +131,7 @@ public class Goal {
     }
 
     public boolean setNewStatus() {
-        String newStatus = CommonFunctions.getNewStatus(lastWorkout, intervalBlue);
+        String newStatus = OldCommonFunctions.getNewStatus(lastWorkout, intervalBlue);
         if (this.status.equals(newStatus)) {
             return false;
         } else {
@@ -172,17 +169,17 @@ public class Goal {
     // widgetText returns the text of the whole widget based on a Widget object.
     public String widgetText() {
         String widgetText = title;
-        if (showDate & !status.equals(CommonFunctions.STATUS_NONE)) {
-            widgetText += "\n" + CommonFunctions.dateBeautiful(lastWorkout);
+        if (showDate & !status.equals(OldCommonFunctions.STATUS_NONE)) {
+            widgetText += "\n" + OldCommonFunctions.dateBeautiful(lastWorkout);
         }
-        if (showTime & !status.equals(CommonFunctions.STATUS_NONE)) {
-            widgetText += "\n" + CommonFunctions.timeBeautiful(lastWorkout);
+        if (showTime & !status.equals(OldCommonFunctions.STATUS_NONE)) {
+            widgetText += "\n" + OldCommonFunctions.timeBeautiful(lastWorkout);
         }
         return widgetText;
     }
 
-    public Goal copy() {
-        Goal goalCopy = new Goal(
+    public OldGoal copy() {
+        OldGoal goalCopy = new OldGoal(
                 appWidgetId,
                 title,
                 lastWorkout,

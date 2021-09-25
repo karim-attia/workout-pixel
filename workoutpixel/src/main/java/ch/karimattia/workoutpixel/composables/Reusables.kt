@@ -19,8 +19,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import ch.karimattia.workoutpixel.core.CommonFunctions
-import ch.karimattia.workoutpixel.core.Goal
+import ch.karimattia.workoutpixel.data.Goal
+import ch.karimattia.workoutpixel.core.getColorFromStatus
 import ch.karimattia.workoutpixel.ui.theme.InfoColor
 
 @Composable
@@ -31,7 +31,7 @@ fun GoalPreview(
 ) {
 	GoalPreviewWithColor(
 		goal = goal,
-		color = Color(CommonFunctions.getColorFromStatus(goal.status)),
+		color = Color(getColorFromStatus(goal.status)),
 		modifier = modifier,
 		onClick = onClick,
 	)

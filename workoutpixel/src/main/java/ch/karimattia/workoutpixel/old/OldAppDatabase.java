@@ -2,15 +2,10 @@ package ch.karimattia.workoutpixel.old;
 
 import android.content.Context;
 
-import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
 
-import ch.karimattia.workoutpixel.core.Goal;
-import ch.karimattia.workoutpixel.data.GoalDao;
-import ch.karimattia.workoutpixel.data.PastWorkout;
-
-@Database(entities = {PastWorkout.class, Goal.class}, version = 2)
+//@Database(entities = {PastWorkout.class, Goal.class}, version = 2)
 public abstract class OldAppDatabase extends RoomDatabase {
     // private static final Object sLock = new Object();
     private static OldAppDatabase workoutPixelDb;
@@ -35,7 +30,7 @@ public abstract class OldAppDatabase extends RoomDatabase {
                 .build();
     }
 
-    public abstract GoalDao goalDao();
+    public abstract OldGoalDao goalDao();
 
 // --Commented out by Inspection START (23.06.21, 20:29):
 //    static final Migration MIGRATION_1_2 = new Migration(1, 2) {

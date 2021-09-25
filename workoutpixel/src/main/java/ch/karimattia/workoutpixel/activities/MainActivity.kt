@@ -14,31 +14,23 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.remember
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import ch.karimattia.workoutpixel.AllGoals
-import ch.karimattia.workoutpixel.EditGoalView
-import ch.karimattia.workoutpixel.composables.GoalDetailView
-import ch.karimattia.workoutpixel.composables.Instructions
-import ch.karimattia.workoutpixel.composables.Settings
+import ch.karimattia.workoutpixel.composables.*
 import ch.karimattia.workoutpixel.core.*
-import ch.karimattia.workoutpixel.data.GoalViewModel
-import ch.karimattia.workoutpixel.data.PastClickViewModel
-import ch.karimattia.workoutpixel.goalFromGoalsByUid
+import ch.karimattia.workoutpixel.data.*
 import ch.karimattia.workoutpixel.ui.theme.WorkoutPixelTheme
 import coil.annotation.ExperimentalCoilApi
 import com.google.accompanist.pager.ExperimentalPagerApi
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -54,7 +46,13 @@ class MainActivity : ComponentActivity() {
 	private fun goalSaveActions(goal: Goal): GoalSaveActions {
 		return goalSaveActionsFactory.create(goal)
 	}
-	@Inject	lateinit var widgetAlarm: WidgetAlarm
+
+	@Inject
+	lateinit var widgetAlarm: WidgetAlarm
+	@Inject
+	lateinit var pastClickViewModelAssistedFactory: PastClickViewModelAssistedFactory
+	@Inject
+	lateinit var databaseInteractions: DatabaseInteractions
 
 	@ExperimentalComposeUiApi
 	@ExperimentalCoilApi
@@ -63,7 +61,8 @@ class MainActivity : ComponentActivity() {
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 		val goalViewModel: GoalViewModel by viewModels()
-		val pastClickViewModel: PastClickViewModel by viewModels()
+		// val currentGoalUid by goalViewModel.currentGoalUid.observe()
+		// val pastClickViewModel: PastClickViewModel by viewModels()
 		var alreadySetUp = false
 		val context: Context = this
 
@@ -73,7 +72,8 @@ class MainActivity : ComponentActivity() {
 			setContent {
 				WorkoutPixelApp(
 					goalViewModel = goalViewModel,
-					pastClickViewModel = pastClickViewModel,
+					pastClickViewModelAssistedFactory = pastClickViewModelAssistedFactory,
+					// pastClickViewModel = pastClickViewModel,
 					goals = goals,
 					updateAfterClick = {
 						// contains updateGoal
@@ -109,7 +109,7 @@ class MainActivity : ComponentActivity() {
 		}
 
 		// Remove appWidgetId if it is not valid anymore. Run only once.
-		CommonFunctions.cleanGoals(context, goals)
+		databaseInteractions.cleanGoals(goals)
 
 		// Every time the app starts, set the alarm to update everything at 3:00. In case something breaks.
 		widgetAlarm.startAlarm()
@@ -122,8 +122,10 @@ class MainActivity : ComponentActivity() {
 @ExperimentalComposeUiApi
 @Composable
 fun WorkoutPixelApp(
-	goalViewModel: GoalViewModel,
-	pastClickViewModel: PastClickViewModel,
+	goalViewModel: GoalViewModel, // = viewModel(),
+	pastClickViewModelAssistedFactory: PastClickViewModelAssistedFactory,
+	currentGoalUid: Int = goalViewModel.currentGoalUid.observeAsState(initial = -1).value,
+	pastClickViewModel: PastClickViewModel = viewModel(factory = provideFactory(pastClickViewModelAssistedFactory, currentGoalUid)), // = viewModel(),
 	goals: List<Goal>,
 	updateAfterClick: (Goal) -> Unit,
 	updateGoal: (Goal) -> Unit,
@@ -137,7 +139,7 @@ fun WorkoutPixelApp(
 		val backstackEntry = navController.currentBackStackEntryAsState()
 		val currentScreen = WorkoutPixelScreen.fromRoute(backstackEntry.value?.destination?.route)
 		//val appBarTitle: String? by kotlinGoalViewModel.appBarTitle.observeAsState()
-		val currentGoalUid: Int? by goalViewModel.currentGoalUid.observeAsState()
+		// val currentGoalUid: Int? by goalViewModel.currentGoalUid.observeAsState()
 		//val currentGoal: Goal? by kotlinGoalViewModel.currentGoal.observeAsState()
 		val currentGoal: Goal? = goalFromGoalsByUid(goalUid = currentGoalUid, goals = goals)
 
@@ -228,6 +230,7 @@ fun WorkoutPixelApp(
 				currentGoal = currentGoal,
 				//currentGoal = goalFromGoalsByUid(goalUid = currentGoalUid, goals = goals),
 				pastClickViewModel = pastClickViewModel,
+				// pastClickViewModelAssistedFactory = pastClickViewModelAssistedFactory,
 				modifier = Modifier.padding(innerPadding),
 			)
 		}
@@ -248,6 +251,7 @@ fun WorkoutPixelNavHost(
 	deleteGoal: (updatedGoal: Goal, navigateUp: Boolean) -> Unit,
 	currentGoal: Goal?,
 	pastClickViewModel: PastClickViewModel,
+	// pastClickViewModelAssistedFactory: PastClickViewModelAssistedFactory,
 	modifier: Modifier = Modifier,
 ) {
 	NavHost(
@@ -280,7 +284,8 @@ fun WorkoutPixelNavHost(
 					updateAfterClick = { updateAfterClick(currentGoal) },
 					deleteGoal = { deleteGoal(it, true) },
 					updateGoal = updateGoal,
-					pastClickViewModel = remember { pastClickViewModel },
+					pastClickViewModel = pastClickViewModel,
+					// pastClickViewModelAssistedFactory = pastClickViewModelAssistedFactory,
 				)
 			} else (Text("currentGoal = null"))
 		}

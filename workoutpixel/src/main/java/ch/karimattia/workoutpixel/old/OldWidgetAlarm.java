@@ -1,7 +1,8 @@
 package ch.karimattia.workoutpixel.old;
 
-import static ch.karimattia.workoutpixel.core.CommonFunctions.next3Am;
-import static ch.karimattia.workoutpixel.core.CommonFunctions.saveTimeWithStringToSharedPreferences;
+import static ch.karimattia.workoutpixel.core.Constants.ACTION_ALARM_UPDATE;
+import static ch.karimattia.workoutpixel.old.OldCommonFunctions.next3Am;
+import static ch.karimattia.workoutpixel.old.OldCommonFunctions.saveTimeWithStringToSharedPreferences;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -11,7 +12,6 @@ import android.util.Log;
 
 import java.text.DateFormat;
 
-import ch.karimattia.workoutpixel.core.CommonFunctions;
 import ch.karimattia.workoutpixel.core.WorkoutPixelAppWidgetProvider;
 
 // Responsible to start and stop the alarm that updates the widget at 3:00 every day.
@@ -21,7 +21,7 @@ public class OldWidgetAlarm {
     private static final String TAG = "WORKOUT_PIXEL ALARM";
 
     public static void startAlarm(Context context) {
-        saveTimeWithStringToSharedPreferences(context, "WidgetAlarm startAlarm " + CommonFunctions.dateTimeBeautiful(System.currentTimeMillis()));
+        saveTimeWithStringToSharedPreferences(context, "WidgetAlarm startAlarm " + OldCommonFunctions.dateTimeBeautiful(System.currentTimeMillis()));
 
         // RTC does not wake the device up
         alarmManager(context).setInexactRepeating(AlarmManager.RTC, next3Am(), AlarmManager.INTERVAL_DAY, pendingIntent(context));
@@ -29,7 +29,7 @@ public class OldWidgetAlarm {
     }
 
     public static void stopAlarm(Context context) {
-        saveTimeWithStringToSharedPreferences(context, "WidgetAlarm stopAlarm " + CommonFunctions.dateTimeBeautiful(System.currentTimeMillis()));
+        saveTimeWithStringToSharedPreferences(context, "WidgetAlarm stopAlarm " + OldCommonFunctions.dateTimeBeautiful(System.currentTimeMillis()));
         alarmManager(context).cancel(pendingIntent(context));
         Log.d(TAG, "ALARM STOPPED");
     }
@@ -45,7 +45,7 @@ public class OldWidgetAlarm {
 
     private static PendingIntent pendingIntent(Context context) {
         Intent alarmIntent = new Intent(context, WorkoutPixelAppWidgetProvider.class);
-        alarmIntent.setAction(WorkoutPixelAppWidgetProvider.ACTION_ALARM_UPDATE);
+        alarmIntent.setAction(ACTION_ALARM_UPDATE);
         return PendingIntent.getBroadcast(context, 0, alarmIntent, PendingIntent.FLAG_CANCEL_CURRENT);
     }
 }

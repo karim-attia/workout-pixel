@@ -1,9 +1,6 @@
 package ch.karimattia.workoutpixel.composables
 
-import android.R
 import android.appwidget.AppWidgetManager
-import android.content.Context
-import android.content.SharedPreferences
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Divider
 import androidx.compose.material.ExperimentalMaterialApi
@@ -15,11 +12,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import ch.karimattia.workoutpixel.FreeStandingTitle
 import ch.karimattia.workoutpixel.GoalPreviewWithColor
 import ch.karimattia.workoutpixel.SettingsData
-import ch.karimattia.workoutpixel.core.CommonFunctions
-import ch.karimattia.workoutpixel.core.Goal
+import ch.karimattia.workoutpixel.core.Constants.STATUS_NONE
+import ch.karimattia.workoutpixel.data.Goal
 import ch.karimattia.workoutpixel.ui.theme.*
 import com.vanpra.composematerialdialogs.MaterialDialog
 import com.vanpra.composematerialdialogs.color.ARGBPickerState
@@ -37,14 +33,15 @@ fun Settings(
     // settingsData: SettingsData
 ) {
     val goal = Goal(
-        AppWidgetManager.INVALID_APPWIDGET_ID,
-        "Select\ncolor",
-        0,
-        2,
-        2,
-        false,
-        false,
-        CommonFunctions.STATUS_NONE
+        uid = 0,
+        appWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID,
+        title = "Select\ncolor",
+        lastWorkout = 0,
+        intervalBlue = 2,
+        intervalRed = 2,
+        showDate = false,
+        showTime = false,
+        status = STATUS_NONE
     )
 
     val settingsData by remember {
@@ -74,11 +71,11 @@ fun Settings(
 
 @Composable
 fun ColorSelection(
-    titleText: String,
-    subtitleText: String,
-    goal: Goal,
-    color: Color,
-    onColorSelected: (Color) -> Unit,
+	titleText: String,
+	subtitleText: String,
+	goal: Goal,
+	color: Color,
+	onColorSelected: (Color) -> Unit,
 ) {
     // Probably higher up and settings object is directly modified.
     // selected color

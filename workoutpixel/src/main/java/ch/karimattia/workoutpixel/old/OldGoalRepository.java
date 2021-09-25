@@ -6,12 +6,11 @@ import androidx.lifecycle.LiveData;
 
 import java.util.List;
 
-import ch.karimattia.workoutpixel.core.Goal;
-import ch.karimattia.workoutpixel.data.GoalDao;
+import ch.karimattia.workoutpixel.data.Goal;
 
 class OldGoalRepository {
 
-    private GoalDao goalDao;
+    private OldGoalDao goalDao;
     private LiveData<List<Goal>> allGoals;
 
     // Note that in order to unit test the WordRepository, you have to remove the Application

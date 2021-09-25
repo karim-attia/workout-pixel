@@ -14,9 +14,10 @@ import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.ExperimentalComposeUiApi
-import ch.karimattia.workoutpixel.EditGoalView
-import ch.karimattia.workoutpixel.core.CommonFunctions
-import ch.karimattia.workoutpixel.core.Goal
+import ch.karimattia.workoutpixel.composables.EditGoalView
+import ch.karimattia.workoutpixel.core.Constants.STATUS_NONE
+import ch.karimattia.workoutpixel.core.ContextFunctions
+import ch.karimattia.workoutpixel.data.Goal
 import ch.karimattia.workoutpixel.core.GoalSaveActions
 import ch.karimattia.workoutpixel.core.GoalWidgetActions
 import ch.karimattia.workoutpixel.data.GoalViewModel
@@ -34,6 +35,7 @@ class ConfigureActivity : ComponentActivity() {
 	private fun goalSaveActions(goal: Goal): GoalSaveActions {
 		return goalSaveActionsFactory.create(goal)
 	}
+	@Inject	lateinit var contextFunctions: ContextFunctions
 
 	@ExperimentalComposeUiApi
 	override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,14 +44,15 @@ class ConfigureActivity : ComponentActivity() {
 		val context: Context = this
 
 		val goal = Goal(
-			AppWidgetManager.INVALID_APPWIDGET_ID,
-			"",
-			0,
-			2,
-			2,
-			false,
-			false,
-			CommonFunctions.STATUS_NONE
+			uid = 0,
+			appWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID,
+			title = "",
+			lastWorkout = 0,
+			intervalBlue = 2,
+			intervalRed = 2,
+			showDate = false,
+			showTime = false,
+			status = STATUS_NONE
 		)
 
 		// Find the widget id  and whether it is a reconfigure activity from the intent.
@@ -79,8 +82,7 @@ class ConfigureActivity : ComponentActivity() {
 		kotlinGoalViewModel.allGoals.observe(this, { goals ->
 			Log.d(TAG, "___________observe___________")
 
-			val goalsWithoutWidget =
-				CommonFunctions.goalsWithInvalidOrNullAppWidgetId(context, goals)
+			val goalsWithoutWidget = contextFunctions.goalsWithInvalidOrNullAppWidgetId(goals)
 
 			setContent {
 				ConfigureActivityCompose(

@@ -136,7 +136,7 @@ dependencies {
     androidTestImplementation "androidx.room:room-testing:$room_version"
 
 
-    def nav_version = "2.3.5"
+    def nav_version = "2.4.0-alpha02"
 
     // Navigation
     implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"

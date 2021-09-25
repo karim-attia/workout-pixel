@@ -26,11 +26,12 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import ch.karimattia.workoutpixel.*
 import ch.karimattia.workoutpixel.R
-import ch.karimattia.workoutpixel.core.CommonFunctions
-import ch.karimattia.workoutpixel.core.Goal
+import ch.karimattia.workoutpixel.data.Goal
+import ch.karimattia.workoutpixel.core.dateBeautiful
+import ch.karimattia.workoutpixel.core.testData
+import ch.karimattia.workoutpixel.core.timeBeautiful
 import ch.karimattia.workoutpixel.data.*
 import ch.karimattia.workoutpixel.ui.theme.TextBlack
 import com.vanpra.composematerialdialogs.MaterialDialog
@@ -48,11 +49,18 @@ fun GoalDetailView(
 	deleteGoal: (Goal) -> Unit,
 	updateGoal: (updatedGoal: Goal, navigateUp: Boolean) -> Unit,
 	pastClickViewModel: PastClickViewModel,
+	// pastClickViewModelAssistedFactory: PastClickViewModelAssistedFactory,
+	// pastClickViewModel: PastClickViewModel = remember { provideFactory(pastClickViewModelAssistedFactory, goal.uid).create(PastClickViewModel::class.java) },
+	// pastClickViewModel: PastClickViewModel = viewModel(factory = provideFactory(pastClickViewModelAssistedFactory, goal.uid)),
+	// <PastClickViewModel>(factory = provideFactory( pastClickViewModelAssistedFactory, goal.uid)),
 ) {
-
-	val pastClicks by pastClickViewModel.pastClicks(goal.uid).observeAsState(initial = listOf())
-	Log.d(TAG, "Recomposition Top, goalUid: $goal.uid")
+	// val pastClickViewModel: PastClickViewModel = remember { provideFactory(pastClickViewModelAssistedFactory, goal.uid).create(PastClickViewModel::class.java) }
+	// val pastClickViewModel3: PastClickViewModel = ViewModelProvider(ViewModelStore(), provideFactory(pastClickViewModelAssistedFactory, goal.uid)).get(PastClickViewModel::class.java)
+	// val pastClicks by remember { mutableStateOf(listOf<PastWorkout>())}
+	val pastClicks by pastClickViewModel.pastClicks().observeAsState(initial = listOf())
+	Log.d(TAG, "Recomposition Top, goalUid: ${goal.uid}")
 	Log.d(TAG, "Recomposition Top, pastClickViewModel: $pastClickViewModel")
+
 
 	if (pastClicks.isNotEmpty()) {
 		Log.d(TAG, "Recomposition Top, pastClicks: ${pastClicks[0]}, workoutTime: ${pastClicks[0].workoutTime}")
@@ -65,7 +73,7 @@ fun GoalDetailView(
 		deleteGoal = deleteGoal,
 		updateGoal = updateGoal,
 		updatePastClick = { pastClickViewModel.updatePastClick(it) },
-		// pastClicks = pastClicks,
+		pastClicks = pastClicks // ViewModel.pastClicks(goal.uid).observeAsState(initial = listOf()).value,
 		)
 	/*
 	var connectExistingGoal by remember { mutableStateOf(0) }
@@ -82,7 +90,7 @@ fun GoalDetailView(
 	deleteGoal: (Goal) -> Unit,
 	updateGoal: (updatedGoal: Goal, navigateUp: Boolean) -> Unit,
 	updatePastClick: (PastWorkout) -> Unit,
-	// pastClicks: List<PastWorkout>
+	pastClicks: List<PastWorkout>
 ) {
 
 	Log.d(TAG, "Recomposition Bottom")
@@ -102,12 +110,12 @@ fun GoalDetailView(
 			GoalDetailNoWidgetCard(goal = goal, deleteGoal = deleteGoal)
 		}
 
-/*		PastClicks(
+		PastClicks(
 			goal = goal,
 			updateGoal = updateGoal,
 			updatePastClick = updatePastClick,
 			pastClicks = pastClicks
-		)*/
+		)
 
 		Spacer(modifier = Modifier.height(40.dp))
 	}
@@ -230,14 +238,14 @@ fun PastClickEntry(
 	togglePastClick: (PastWorkout) -> Unit,
 ) {
 	PastClickEntry(
-		date = CommonFunctions.dateBeautiful(pastClick.workoutTime),
-		time = CommonFunctions.timeBeautiful(pastClick.workoutTime),
-		icon = if (pastClick.active) {
+		date = dateBeautiful(pastClick.workoutTime),
+		time = timeBeautiful(pastClick.workoutTime),
+		icon = if (pastClick.isActive) {
 			Icons.Filled.Delete
 		} else {
 			Icons.Filled.Undo
 		},
-		active = pastClick.active,
+		active = pastClick.isActive,
 		togglePastClick = {
 			pastClick.isActive = !pastClick.isActive
 			togglePastClick(pastClick)
@@ -301,14 +309,14 @@ fun PastClickEntry(
 
 fun lastWorkoutBasedOnActiveWorkouts(pastClicks: List<PastWorkout>): Long {
 	val activeWorkoutsOrderedByWorkoutTime = pastClicks.stream()
-		.filter { clickedWorkout: PastWorkout -> clickedWorkout.active }.collect(
+		.filter { clickedWorkout: PastWorkout -> clickedWorkout.isActive }.collect(
 			Collectors.toList()
 		)
 
 	// If there still is an active past workout, take the latest one to set the last workout time
 	return if (activeWorkoutsOrderedByWorkoutTime.isNotEmpty()) {
 		Log.v(TAG, "Size: " + activeWorkoutsOrderedByWorkoutTime.size)
-		activeWorkoutsOrderedByWorkoutTime[0].getWorkoutTime()
+		activeWorkoutsOrderedByWorkoutTime[0].workoutTime
 	}
 	// Otherwise, set it to 0.
 	else {
@@ -317,14 +325,17 @@ fun lastWorkoutBasedOnActiveWorkouts(pastClicks: List<PastWorkout>): Long {
 	}
 }
 
+
 @Preview("GoalDetailViewPreview")
 @Composable
 fun GoalDetailViewPreview() {
 	GoalDetailView(
-		goal = CommonFunctions.testData()[0],
+		goal = testData()[0],
 		updateAfterClick = {},
 		deleteGoal = {},
 		updateGoal = { _, _ -> },
-		pastClickViewModel = viewModel()
+		updatePastClick = {},
+		pastClicks = listOf(),
 	)
 }
+

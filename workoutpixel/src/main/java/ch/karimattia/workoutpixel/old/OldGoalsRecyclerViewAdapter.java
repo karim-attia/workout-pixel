@@ -16,8 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ch.karimattia.workoutpixel.R;
-import ch.karimattia.workoutpixel.core.CommonFunctions;
-import ch.karimattia.workoutpixel.core.Goal;
+import ch.karimattia.workoutpixel.data.Goal;
 
 // RecyclerViewAdapter fills the card view in the MainActivity.
 public class OldGoalsRecyclerViewAdapter extends RecyclerView.Adapter<OldGoalsRecyclerViewAdapter.WidgetViewHolder> {
@@ -63,15 +62,15 @@ public class OldGoalsRecyclerViewAdapter extends RecyclerView.Adapter<OldGoalsRe
     @Override
     public void onBindViewHolder(final WidgetViewHolder widgetViewHolder, final int i) {
         widgetViewHolder.widgetTitle.setText(goals.get(i).getTitle());
-        widgetViewHolder.widgetLastWorkout.setText(CommonFunctions.dateBeautiful(goals.get(i).getLastWorkout()));
+        widgetViewHolder.widgetLastWorkout.setText(OldCommonFunctions.dateBeautiful(goals.get(i).getLastWorkout()));
         widgetViewHolder.widgetIntervalBlue.setText(goals.get(i).everyWording());
-        widgetViewHolder.widgetPreview.setBackgroundResource(CommonFunctions.getDrawableIntFromStatus(goals.get(i).getStatus()));
+        widgetViewHolder.widgetPreview.setBackgroundResource(OldCommonFunctions.getDrawableIntFromStatus(goals.get(i).getStatus()));
         widgetViewHolder.widgetPreview.setText(goals.get(i).widgetText());
         widgetViewHolder.widgetPreview.setOnClickListener(v -> {
             // Update the widget the same way as a click on the widget would.
             // new GoalSaveActions(context, goals.get(i)).updateAfterClick();
             goals.get(i).setLastWorkout(System.currentTimeMillis());
-            goals.get(i).setStatus(CommonFunctions.STATUS_GREEN);
+            goals.get(i).setStatus(OldCommonFunctions.STATUS_GREEN);
 
             // Update the data in the recycler view
             notifyItemChanged(i);

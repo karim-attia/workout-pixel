@@ -27,18 +27,20 @@ class PastClickRepository @Inject constructor(
 	// Room executes all queries on a separate thread.
 	// Observed Flow will notify the observer when the data has changed.
 
-	fun allPastClicks(goalUid: Int): Flow<List<PastWorkout>> = goalDao.loadAllPastWorkoutsFlow(goalUid)
+	// fun allPastClicks(): Flow<List<PastWorkout>> = goalDao.loadAllPastWorkoutsFlow()
+
+	fun pastClicksByGoalUid(goalUid: Int): Flow<List<PastWorkout>> = goalDao.loadAllPastWorkoutsFlow(goalUid)
 
 	fun updatePastWorkout(pastWorkout: PastWorkout) {
 		goalDao.updatePastWorkout(pastWorkout)
 	}
 
 	fun getCountOfActivePastWorkouts(goalUid: Int): Int {
-		return goalDao.getCountOfActivePastWorkouts(goalUid)
+		return goalDao.getCountOfActivePastWorkouts(goalUid = goalUid)
 	}
 
 	fun insertClickedWorkout(widgetUid: Int, thisWorkoutTime: Long) {
-		goalDao.insertPastWorkout(PastWorkout(widgetUid, thisWorkoutTime))
+		goalDao.insertPastWorkout(PastWorkout(widgetUid = widgetUid, workoutTime = thisWorkoutTime))
 		// CommonFunctions.executorService.execute { goalDao.insertPastWorkout(clickedWorkout) }
 	}
 }

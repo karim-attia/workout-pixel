@@ -17,17 +17,15 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import ch.karimattia.workoutpixel.R;
-import ch.karimattia.workoutpixel.core.CommonFunctions;
-import ch.karimattia.workoutpixel.core.Goal;
-import ch.karimattia.workoutpixel.data.PastWorkout;
+import ch.karimattia.workoutpixel.data.Goal;
 
 // RecyclerViewAdapter fills the card view in the MainActivity.
 public class OldPastWorkoutsRecyclerViewAdapter extends RecyclerView.Adapter<OldPastWorkoutsRecyclerViewAdapter.PastWorkoutsViewHolder> {
     private static final String TAG = "WORKOUT_PIXEL Past Workouts RVAdapter";
 
     final Context context;
-    List<PastWorkout> pastWorkouts = new ArrayList<>();
-    List<PastWorkout> activeWorkoutsOrderedByWorkoutTime = new ArrayList<>();
+    List<OldPastWorkout> pastWorkouts = new ArrayList<>();
+    List<OldPastWorkout> activeWorkoutsOrderedByWorkoutTime = new ArrayList<>();
     final Goal goal;
 
     OldPastWorkoutsRecyclerViewAdapter(Context context, Goal goal) {
@@ -35,7 +33,7 @@ public class OldPastWorkoutsRecyclerViewAdapter extends RecyclerView.Adapter<Old
         this.goal = goal;
     }
 
-    public void setData(List<PastWorkout> pastWorkouts) {
+    public void setData(List<OldPastWorkout> pastWorkouts) {
         this.pastWorkouts = pastWorkouts;
         notifyDataSetChanged();
     }
@@ -56,8 +54,8 @@ public class OldPastWorkoutsRecyclerViewAdapter extends RecyclerView.Adapter<Old
     @Override
     public void onBindViewHolder(final PastWorkoutsViewHolder pastWorkoutsViewHolder, final int i) {
 
-        pastWorkoutsViewHolder.time.setText(CommonFunctions.timeBeautiful(pastWorkouts.get(i).getWorkoutTime()));
-        pastWorkoutsViewHolder.date.setText(CommonFunctions.dateBeautiful(pastWorkouts.get(i).getWorkoutTime()));
+        pastWorkoutsViewHolder.time.setText(OldCommonFunctions.timeBeautiful(pastWorkouts.get(i).getWorkoutTime()));
+        pastWorkoutsViewHolder.date.setText(OldCommonFunctions.dateBeautiful(pastWorkouts.get(i).getWorkoutTime()));
 
         boolean isActive = pastWorkouts.get(i).isActive();
 
@@ -88,7 +86,7 @@ public class OldPastWorkoutsRecyclerViewAdapter extends RecyclerView.Adapter<Old
     }
 
     long lastWorkoutBasedOnActiveWorkouts() {
-        activeWorkoutsOrderedByWorkoutTime = pastWorkouts.stream().filter(clickedWorkout -> clickedWorkout.active).collect(Collectors.toList());
+        activeWorkoutsOrderedByWorkoutTime = pastWorkouts.stream().filter(clickedWorkout -> clickedWorkout.isActive()).collect(Collectors.toList());
         // If there still is an active past workout, take the latest one to set the last workout time
         if (activeWorkoutsOrderedByWorkoutTime.size() > 0) {
             Log.v(TAG, "Size: " + activeWorkoutsOrderedByWorkoutTime.size());

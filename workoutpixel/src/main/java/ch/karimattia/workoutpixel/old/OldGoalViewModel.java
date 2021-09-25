@@ -9,14 +9,10 @@ import androidx.lifecycle.LiveData;
 
 import java.util.List;
 
-import ch.karimattia.workoutpixel.core.CommonFunctions;
-import ch.karimattia.workoutpixel.core.Goal;
-import ch.karimattia.workoutpixel.data.GoalDao;
-
 public class OldGoalViewModel extends AndroidViewModel {
     private static final String TAG = "GoalViewModel";
 
-    private final LiveData<List<Goal>> allGoals;
+    private final LiveData<List<OldGoal>> allGoals;
     OldGoalRepository repository;
 
     public OldGoalViewModel(Application application) {
@@ -25,18 +21,18 @@ public class OldGoalViewModel extends AndroidViewModel {
         allGoals = repository.getAllGoals();
     }
 
-    public LiveData<List<Goal>> getAllGoals() { return allGoals; }
+    public LiveData<List<OldGoal>> getAllGoals() { return allGoals; }
 
     // public void insert(Goal goal) { repository.insert(goal); }
 
 
-    public static void updateGoal(Context context, Goal goal) {
+    public static void updateGoal(Context context, OldGoal goal) {
         Log.d(TAG, "executorService updateWidget " + goal.debugString());
         Log.d(TAG, "executorService updateWidget getIntervalBlue " + goal.getIntervalBlue());
-        CommonFunctions.executorService.execute(() -> workoutDao(context).updateGoal(goal));
+        OldCommonFunctions.executorService.execute(() -> workoutDao(context).updateGoal(goal));
     }
 
-    public static int saveDuringInitialize(Context context, Goal goal) {
+    public static int saveDuringInitialize(Context context, OldGoal goal) {
         Log.d(TAG, "executorService saveDuringInitialize " + goal.debugString());
         return ((int) workoutDao(context).insertGoal(goal));
     }
@@ -51,44 +47,44 @@ public class OldGoalViewModel extends AndroidViewModel {
         return workoutDao(context).loadGoalByUid(uid);
     }
 
-    public static LiveData<Goal> liveDataGoalByUid(Context context, int uid) {
+    public static LiveData<OldGoal> liveDataGoalByUid(Context context, int uid) {
         Log.d(TAG, "getPastWorkoutsFromDbByUid " + uid);
         return workoutDao(context).liveDataGoalByUid(uid);
     }
 
-    public static LiveData<List<Goal>> loadAllGoalsLiveData(Context context) {
+    public static LiveData<List<OldGoal>> loadAllGoalsLiveData(Context context) {
         Log.d(TAG, "loadAllWidgetsLiveData");
         return workoutDao(context).loadAllGoalsLiveData();
     }
 
-    public static List<Goal> loadAllGoals(Context context) {
+    public static List<OldGoal> loadAllGoals(Context context) {
         Log.d(TAG, "loadAllGoals");
         return workoutDao(context).loadAllGoals();
     }
 
     public static void setAppWidgetIdToNullByAppwidgetId(Context context, Integer appWidgetId) {
         Log.d(TAG, "executorService setAppWidgetIdToNullByAppwidgetId" + appWidgetId);
-        CommonFunctions.executorService.execute(() -> workoutDao(context).setAppWidgetIdToNullByAppwidgetId(appWidgetId));
+        OldCommonFunctions.executorService.execute(() -> workoutDao(context).setAppWidgetIdToNullByAppwidgetId(appWidgetId));
     }
 
     public static void setAppWidgetIdToNullByUid(Context context, int uid) {
         Log.d(TAG, "executorService setAppWidgetIdToNullByUid: " + uid);
-        CommonFunctions.executorService.execute(() -> workoutDao(context).setAppWidgetIdToNullByUid(uid));
+        OldCommonFunctions.executorService.execute(() -> workoutDao(context).setAppWidgetIdToNullByUid(uid));
     }
 
-    public static List<Goal> loadGoalsWithoutValidAppWidgetId(Context context) {
+    public static List<OldGoal> loadGoalsWithoutValidAppWidgetId(Context context) {
         Log.d(TAG, "loadGoalsWithoutValidAppWidgetId");
         return workoutDao(context).loadGoalsWithoutValidAppWidgetId();
     }
 
-    public static List<Goal> loadGoalsWithValidAppWidgetId(Context context) {
+    public static List<OldGoal> loadGoalsWithValidAppWidgetId(Context context) {
         Log.d(TAG, "loadGoalsWithValidAppWidgetId");
         return workoutDao(context).loadGoalsWithValidAppWidgetId();
     }
 
-    public static void deleteGoal(Context context, Goal goal) {
+    public static void deleteGoal(Context context, OldGoal goal) {
         Log.d(TAG, "executorService deleteGoal: " + goal.debugString());
-        CommonFunctions.executorService.execute(() -> workoutDao(context).deleteGoal(goal));
+        OldCommonFunctions.executorService.execute(() -> workoutDao(context).deleteGoal(goal));
     }
 
     public static int getCountOfGoals(Context context) {
@@ -96,7 +92,7 @@ public class OldGoalViewModel extends AndroidViewModel {
         return workoutDao(context).getCountOfGoals();
     }
 
-    public static GoalDao workoutDao(Context context) {
+    public static OldGoalDao workoutDao(Context context) {
         OldAppDatabase db = OldAppDatabase.getDatabase(context);
         return db.goalDao();
     }
