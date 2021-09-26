@@ -57,7 +57,7 @@ class PastClickViewModel @Inject constructor(
 	}
 }*/
 
-// @HiltViewModel: https://stackoverflow.com/questions/68649447/viewmodel-constructor-should-be-annotated-with-inject-instead-of-assistedinjec
+// @HiltViewModel //: https://stackoverflow.com/questions/68649447/viewmodel-constructor-should-be-annotated-with-inject-instead-of-assistedinjec
 class PastClickViewModel @AssistedInject constructor(
 	private val repository: PastClickRepository,
 	@Assisted var goalUid: Int,

@@ -26,6 +26,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import ch.karimattia.workoutpixel.R
 import ch.karimattia.workoutpixel.data.Goal
 import ch.karimattia.workoutpixel.core.dateBeautiful
@@ -47,8 +48,8 @@ fun GoalDetailView(
 	updateAfterClick: () -> Unit,
 	deleteGoal: (Goal) -> Unit,
 	updateGoal: (updatedGoal: Goal, navigateUp: Boolean) -> Unit,
-	pastClickViewModel: PastClickViewModel,
-	// pastClickViewModelAssistedFactory: PastClickViewModelAssistedFactory,
+	// pastClickViewModel: PastClickViewModel,
+	pastClickViewModelAssistedFactory: PastClickViewModelAssistedFactory,
 	// pastClickViewModel: PastClickViewModel = remember { provideFactory(pastClickViewModelAssistedFactory, goal.uid).create(PastClickViewModel::class.java) },
 	// pastClickViewModel: PastClickViewModel = viewModel(factory = provideFactory(pastClickViewModelAssistedFactory, goal.uid)),
 	// <PastClickViewModel>(factory = provideFactory( pastClickViewModelAssistedFactory, goal.uid)),
@@ -56,6 +57,8 @@ fun GoalDetailView(
 	// val pastClickViewModel: PastClickViewModel = remember { provideFactory(pastClickViewModelAssistedFactory, goal.uid).create(PastClickViewModel::class.java) }
 	// val pastClickViewModel3: PastClickViewModel = ViewModelProvider(ViewModelStore(), provideFactory(pastClickViewModelAssistedFactory, goal.uid)).get(PastClickViewModel::class.java)
 	// val pastClicks by remember { mutableStateOf(listOf<PastWorkout>())}
+	val pastClickViewModel: PastClickViewModel = viewModel(factory = provideFactory(pastClickViewModelAssistedFactory, goal.uid))
+
 	val pastClicks by pastClickViewModel.pastClicks().observeAsState(initial = listOf())
 	Log.d(TAG, "Recomposition Top, goalUid: ${goal.uid}")
 	Log.d(TAG, "Recomposition Top, pastClickViewModel: $pastClickViewModel")

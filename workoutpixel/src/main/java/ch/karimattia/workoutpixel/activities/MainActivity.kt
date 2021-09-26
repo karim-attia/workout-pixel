@@ -13,6 +13,7 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -98,8 +99,7 @@ class MainActivity : ComponentActivity() {
 	}
 
 	private fun oneTimeSetup(goals: List<Goal>) {
-		Log.d(TAG, "oneTimeSetup")
-
+		Log.v(TAG, "oneTimeSetup")
 		// Update all goals
 		for (goal in goals) {
 			// Sometimes the onClickListener in the widgets stop working. This is a super stupid way to regularly reset the onClickListener when you open the main app.
@@ -107,10 +107,8 @@ class MainActivity : ComponentActivity() {
 				goalSaveActions(goal).updateWidgetBasedOnStatus()
 			}
 		}
-
 		// Remove appWidgetId if it is not valid anymore. Run only once.
 		databaseInteractions.cleanGoals(goals)
-
 		// Every time the app starts, set the alarm to update everything at 3:00. In case something breaks.
 		widgetAlarm.startAlarm()
 	}
@@ -125,7 +123,7 @@ fun WorkoutPixelApp(
 	goalViewModel: GoalViewModel, // = viewModel(),
 	pastClickViewModelAssistedFactory: PastClickViewModelAssistedFactory,
 	currentGoalUid: Int = goalViewModel.currentGoalUid.observeAsState(initial = -1).value,
-	pastClickViewModel: PastClickViewModel = viewModel(factory = provideFactory(pastClickViewModelAssistedFactory, currentGoalUid)), // = viewModel(),
+	//pastClickViewModel: PastClickViewModel = viewModel(factory = provideFactory(pastClickViewModelAssistedFactory, currentGoalUid)), // = viewModel(),
 	goals: List<Goal>,
 	updateAfterClick: (Goal) -> Unit,
 	updateGoal: (Goal) -> Unit,
@@ -134,6 +132,21 @@ fun WorkoutPixelApp(
 	WorkoutPixelTheme(
 		darkTheme = false,
 	) {
+		//val currentGoalUid: Int = goalViewModel.currentGoalUid.observeAsState(initial = -1).value
+		//val pastClickViewModel: PastClickViewModel = viewModel(factory = provideFactory(pastClickViewModelAssistedFactory, currentGoalUid))
+
+/*
+		val pastClicks by pastClickViewModel.pastClicks().observeAsState(initial = listOf())
+		Log.d(TAG, "pastClickViewModel.goalUid: ${pastClickViewModel.goalUid}")
+		Log.d(TAG, "currentGoalUid: $currentGoalUid")
+
+		if (pastClicks.isNotEmpty()) {
+			Log.d(TAG, "pastClickViewModel, pastClicks: ${pastClicks[0]}, workoutTime: ${pastClicks[0].workoutTime}")
+		} else {
+			Log.d(TAG, "pastClickViewModel: No past clicks")
+		}
+*/
+
 		val allScreens = WorkoutPixelScreen.values().toList()
 		val navController = rememberNavController()
 		val backstackEntry = navController.currentBackStackEntryAsState()
@@ -229,8 +242,8 @@ fun WorkoutPixelApp(
 				},
 				currentGoal = currentGoal,
 				//currentGoal = goalFromGoalsByUid(goalUid = currentGoalUid, goals = goals),
-				pastClickViewModel = pastClickViewModel,
-				// pastClickViewModelAssistedFactory = pastClickViewModelAssistedFactory,
+				// pastClickViewModel = pastClickViewModel,
+				pastClickViewModelAssistedFactory = pastClickViewModelAssistedFactory,
 				modifier = Modifier.padding(innerPadding),
 			)
 		}
@@ -250,8 +263,8 @@ fun WorkoutPixelNavHost(
 	updateGoal: (updatedGoal: Goal, navigateUp: Boolean) -> Unit,
 	deleteGoal: (updatedGoal: Goal, navigateUp: Boolean) -> Unit,
 	currentGoal: Goal?,
-	pastClickViewModel: PastClickViewModel,
-	// pastClickViewModelAssistedFactory: PastClickViewModelAssistedFactory,
+	// pastClickViewModel: PastClickViewModel,
+	pastClickViewModelAssistedFactory: PastClickViewModelAssistedFactory,
 	modifier: Modifier = Modifier,
 ) {
 	NavHost(
@@ -284,8 +297,8 @@ fun WorkoutPixelNavHost(
 					updateAfterClick = { updateAfterClick(currentGoal) },
 					deleteGoal = { deleteGoal(it, true) },
 					updateGoal = updateGoal,
-					pastClickViewModel = pastClickViewModel,
-					// pastClickViewModelAssistedFactory = pastClickViewModelAssistedFactory,
+					//pastClickViewModel = pastClickViewModel,
+					pastClickViewModelAssistedFactory = pastClickViewModelAssistedFactory,
 				)
 			} else (Text("currentGoal = null"))
 		}
