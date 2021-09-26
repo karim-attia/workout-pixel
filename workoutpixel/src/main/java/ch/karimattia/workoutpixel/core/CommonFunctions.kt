@@ -5,7 +5,7 @@ import android.content.ComponentName
 import android.content.Context
 import android.util.Log
 import ch.karimattia.workoutpixel.R
-import ch.karimattia.workoutpixel.core.Constants.PREFS_NAME
+import ch.karimattia.workoutpixel.core.Constants.PREFERENCE_NAME
 import ch.karimattia.workoutpixel.data.Goal
 import ch.karimattia.workoutpixel.data.GoalRepository
 import ch.karimattia.workoutpixel.ui.theme.Blue
@@ -30,7 +30,8 @@ object Constants {
 	const val MILLISECONDS_IN_A_DAY = 24 * 60 * 60 * 1000
 	const val ACTION_ALARM_UPDATE = "ALARM_UPDATE"
 	const val ACTION_DONE_EXERCISE = "DONE_EXERCISE"
-	const val PREFS_NAME = "com.example.WorkoutPixel"
+	const val PREFERENCE_NAME = "settings"
+
 }
 
 private const val TAG = "WORKOUT_PIXEL COMMON FUNCTIONS"
@@ -195,7 +196,7 @@ fun dateTimeBeautiful(date: Long): String {
  */
 // Last alarm
 fun saveTimeWithStringToSharedPreferences(context: Context, string: String?) {
-	val prefs = context.getSharedPreferences(PREFS_NAME, 0).edit()
+	val prefs = context.getSharedPreferences(PREFERENCE_NAME, 0).edit()
 	val timeLastWorkoutBeautiful = dateTimeBeautiful(System.currentTimeMillis())
 	prefs.putString(string, timeLastWorkoutBeautiful)
 	prefs.apply()

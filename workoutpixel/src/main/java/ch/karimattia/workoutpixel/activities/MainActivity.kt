@@ -13,12 +13,10 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -26,8 +24,11 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import ch.karimattia.workoutpixel.composables.*
 import ch.karimattia.workoutpixel.core.*
-import ch.karimattia.workoutpixel.data.*
-import ch.karimattia.workoutpixel.ui.theme.WorkoutPixelTheme
+import ch.karimattia.workoutpixel.data.Goal
+import ch.karimattia.workoutpixel.data.GoalViewModel
+import ch.karimattia.workoutpixel.data.PastClickViewModelAssistedFactory
+import ch.karimattia.workoutpixel.data.SettingsViewModel
+import ch.karimattia.workoutpixel.ui.theme.*
 import coil.annotation.ExperimentalCoilApi
 import com.google.accompanist.pager.ExperimentalPagerApi
 import dagger.hilt.android.AndroidEntryPoint
@@ -59,13 +60,19 @@ class MainActivity : ComponentActivity() {
 
 	@Inject
 	lateinit var databaseInteractions: DatabaseInteractions
+	// @Inject
+	// lateinit var settingsRepository: SettingsRepository
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 		val goalViewModel: GoalViewModel by viewModels()
+		val settingsViewModel: SettingsViewModel by viewModels()
 		// val currentGoalUid by goalViewModel.currentGoalUid.observe()
 		// val pastClickViewModel: PastClickViewModel by viewModels()
 		var alreadySetUp = false
+
+		Log.d(TAG, "$Green, $Blue, $Red, $Purple ")
+
 
 		goalViewModel.allGoals.observe(this, { goals ->
 			Log.d(TAG, "___________observe___________")
@@ -74,7 +81,9 @@ class MainActivity : ComponentActivity() {
 				WorkoutPixelApp(
 					goalViewModel = goalViewModel,
 					pastClickViewModelAssistedFactory = pastClickViewModelAssistedFactory,
+					// settingsRepository = settingsRepository,
 					// pastClickViewModel = pastClickViewModel,
+					settingsViewModel = settingsViewModel,
 					goals = goals,
 					updateAfterClick = {
 						// contains updateGoal
@@ -122,8 +131,10 @@ class MainActivity : ComponentActivity() {
 fun WorkoutPixelApp(
 	goalViewModel: GoalViewModel, // = viewModel(),
 	pastClickViewModelAssistedFactory: PastClickViewModelAssistedFactory,
+	// settingsRepository: SettingsRepository,
 	currentGoalUid: Int = goalViewModel.currentGoalUid.observeAsState(initial = -1).value,
 	//pastClickViewModel: PastClickViewModel = viewModel(factory = provideFactory(pastClickViewModelAssistedFactory, currentGoalUid)), // = viewModel(),
+	settingsViewModel: SettingsViewModel,
 	goals: List<Goal>,
 	updateAfterClick: (Goal) -> Unit,
 	updateGoal: (Goal) -> Unit,
@@ -244,6 +255,8 @@ fun WorkoutPixelApp(
 				//currentGoal = goalFromGoalsByUid(goalUid = currentGoalUid, goals = goals),
 				// pastClickViewModel = pastClickViewModel,
 				pastClickViewModelAssistedFactory = pastClickViewModelAssistedFactory,
+				// settingsRepository = settingsRepository,
+				settingsViewModel = settingsViewModel,
 				modifier = Modifier.padding(innerPadding),
 			)
 		}
@@ -265,6 +278,8 @@ fun WorkoutPixelNavHost(
 	currentGoal: Goal?,
 	// pastClickViewModel: PastClickViewModel,
 	pastClickViewModelAssistedFactory: PastClickViewModelAssistedFactory,
+	// settingsRepository: SettingsRepository,
+	settingsViewModel: SettingsViewModel,
 	modifier: Modifier = Modifier,
 ) {
 	NavHost(
@@ -323,7 +338,9 @@ fun WorkoutPixelNavHost(
 		) {
 			Log.d(TAG, "------------Settings------------")
 			// TODO: Get from datamodel
-			Settings() //settingsData = SettingsData(Green = Color(Green), Blue = Color(Blue), Red = Color(Red), Purple = Color(Purple), ))
+			Settings(
+				settingsViewModel = settingsViewModel
+			) //settingsData = SettingsData(Green = Color(Green), Blue = Color(Blue), Red = Color(Red), Purple = Color(Purple), ))
 		}
 
 	}

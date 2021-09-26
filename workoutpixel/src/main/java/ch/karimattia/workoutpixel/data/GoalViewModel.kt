@@ -10,11 +10,11 @@ import javax.inject.Inject
 
 @HiltViewModel
 class GoalViewModel @Inject constructor(
-	// private val application: Application,
-	private val repository: GoalRepository
+	private val goalRepository: GoalRepository,
+	// private val settingsRepository: SettingsRepository
 ) : ViewModel() {
 
-	val allGoals: LiveData<List<Goal>> = repository.allGoals.asLiveData()
+	val allGoals: LiveData<List<Goal>> = goalRepository.allGoals.asLiveData()
 	//val goalsWithInvalidOrNullAppWidgetId: LiveData<List<Goal>> = repository.goalsWithInvalidOrNullAppWidgetId.asLiveData()
 
 	private val _currentGoalUid = MutableLiveData(-1)
@@ -26,6 +26,9 @@ class GoalViewModel @Inject constructor(
 			_currentGoalUid.value = -1
 		}
 	}
+
+	//val settingsData: LiveData<SettingsData> = settingsRepository.getSettings().asLiveData()
+
 
 /*	private val _currentGoal = MutableLiveData<Goal?>()
 	val currentGoal: LiveData<Goal?> = _currentGoal
@@ -55,17 +58,17 @@ class GoalViewModel @Inject constructor(
 */
 
 	fun updateGoal(goal: Goal) = viewModelScope.launch {
-		repository.updateGoal(goal)
+		goalRepository.updateGoal(goal)
 		Log.d("KotlinGoalViewModel: updateGoal: ", "$goal")
 	}
 
 	fun deleteGoal(goal: Goal) = viewModelScope.launch {
-		repository.deleteGoal(goal)
+		goalRepository.deleteGoal(goal)
 		Log.d("KotlinGoalViewModel: deleteGoal: ", "$goal")
 	}
 
 	fun insertGoal(goal: Goal) = viewModelScope.launch {
-		goal.uid = repository.insertGoal(goal).toInt()
+		goal.uid = goalRepository.insertGoal(goal).toInt()
 		GoalWidgetActions(context = viewModelScope.coroutineContext as Context, goal = goal).runUpdate(true)
 	}
 }
