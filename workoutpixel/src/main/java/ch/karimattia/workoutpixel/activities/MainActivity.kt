@@ -1,6 +1,5 @@
 package ch.karimattia.workoutpixel.activities
 
-import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -37,6 +36,10 @@ import javax.inject.Inject
 private const val TAG: String = "MainActivity"
 
 @AndroidEntryPoint
+@ExperimentalComposeUiApi
+@ExperimentalCoilApi
+@ExperimentalAnimationGraphicsApi
+@ExperimentalPagerApi
 class MainActivity : ComponentActivity() {
 
 	// Create a class that has those two and extend it (also in AppWidgetProvider, ConfigureActivity)?
@@ -49,15 +52,13 @@ class MainActivity : ComponentActivity() {
 	// Or inject via constructor? Only for below. Doesn't work for AppWidgetProvider.
 	@Inject
 	lateinit var widgetAlarm: WidgetAlarm
+
 	@Inject
 	lateinit var pastClickViewModelAssistedFactory: PastClickViewModelAssistedFactory
+
 	@Inject
 	lateinit var databaseInteractions: DatabaseInteractions
 
-	@ExperimentalComposeUiApi
-	@ExperimentalCoilApi
-	@ExperimentalAnimationGraphicsApi
-	@ExperimentalPagerApi
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 		val goalViewModel: GoalViewModel by viewModels()

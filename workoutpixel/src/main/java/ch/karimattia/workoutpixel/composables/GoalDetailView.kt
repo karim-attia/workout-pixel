@@ -63,6 +63,8 @@ fun GoalDetailView(
 
 	if (pastClicks.isNotEmpty()) {
 		Log.d(TAG, "Recomposition Top, pastClicks: ${pastClicks[0]}, workoutTime: ${pastClicks[0].workoutTime}")
+	} else {
+		Log.d(TAG, "Recomposition Top: No past clicks")
 	}
 
 
