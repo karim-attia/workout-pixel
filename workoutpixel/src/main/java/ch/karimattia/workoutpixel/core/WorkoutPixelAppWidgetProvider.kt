@@ -18,9 +18,7 @@ import javax.inject.Inject
  * App Widget Configuration implemented in [ConfigureActivity][ConfigureActivity::class]
  */
 @AndroidEntryPoint
-class WorkoutPixelAppWidgetProvider @Inject constructor(
-	private val repository: GoalRepository
-) : AppWidgetProvider() {
+class WorkoutPixelAppWidgetProvider : AppWidgetProvider() {
 	private val tag = "WorkoutPixelAppWidgetProvider"
 
 	@Inject
@@ -28,8 +26,13 @@ class WorkoutPixelAppWidgetProvider @Inject constructor(
 	private fun goalSaveActions(goal: Goal): GoalSaveActions {
 		return goalSaveActionsFactory.create(goal)
 	}
-	@Inject	lateinit var widgetAlarm: WidgetAlarm
-	@Inject	lateinit var contextFunctions: ContextFunctions
+
+	@Inject
+	lateinit var widgetAlarm: WidgetAlarm
+	@Inject
+	lateinit var contextFunctions: ContextFunctions
+	@Inject
+	lateinit var repository: GoalRepository
 
 	// Entry point
 	override fun onReceive(context: Context, intent: Intent) {
