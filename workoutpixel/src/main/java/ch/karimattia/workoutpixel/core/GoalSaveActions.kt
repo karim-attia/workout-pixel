@@ -12,13 +12,14 @@ import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.qualifiers.ApplicationContext
 
+private const val TAG: String = "GoalSaveActions"
+
 class GoalSaveActions @AssistedInject constructor(
 	@ApplicationContext val context: Context,
 	private val goalRepository: GoalRepository,
 	private val pastClickRepository: PastClickRepository,
 	@Assisted var goal: Goal,
 ) {
-	private val TAG: String = this.toString()
 
 	@AssistedFactory
 	interface Factory {

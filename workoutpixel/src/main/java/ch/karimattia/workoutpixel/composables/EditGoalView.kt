@@ -33,9 +33,6 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import ch.karimattia.workoutpixel.CheckboxWithText
-import ch.karimattia.workoutpixel.GoalPreview
-import ch.karimattia.workoutpixel.Infobox
 import ch.karimattia.workoutpixel.R
 import ch.karimattia.workoutpixel.core.Constants.STATUS_GREEN
 import ch.karimattia.workoutpixel.data.Goal

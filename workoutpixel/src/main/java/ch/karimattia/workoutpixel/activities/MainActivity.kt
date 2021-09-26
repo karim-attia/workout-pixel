@@ -40,13 +40,13 @@ private const val TAG: String = "MainActivity"
 class MainActivity : ComponentActivity() {
 
 	// Create a class that has those two and extend it (also in AppWidgetProvider, ConfigureActivity)?
-	// Or inject via constructor? At least the second one.
 	@Inject
 	lateinit var goalSaveActionsFactory: GoalSaveActions.Factory
 	private fun goalSaveActions(goal: Goal): GoalSaveActions {
 		return goalSaveActionsFactory.create(goal)
 	}
 
+	// Or inject via constructor? Only for below. Doesn't work for AppWidgetProvider.
 	@Inject
 	lateinit var widgetAlarm: WidgetAlarm
 	@Inject

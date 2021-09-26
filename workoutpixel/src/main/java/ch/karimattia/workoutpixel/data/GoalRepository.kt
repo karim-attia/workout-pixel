@@ -3,11 +3,12 @@ package ch.karimattia.workoutpixel.data
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
+private const val TAG = "GoalRepository"
+
 class GoalRepository @Inject constructor(
 	// application: Application,
 	private val goalDao: GoalDao
 ) {
-	private val tag = this.toString()
 	// private val db: AppDatabase = AppDatabase.getDatabase(application)
 	// private val goalDao: GoalDao = db.goalDao()
 

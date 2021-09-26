@@ -18,8 +18,6 @@ import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 import java.util.*
-import java.util.concurrent.ExecutorService
-import java.util.concurrent.Executors
 import java.util.stream.Collectors
 import javax.inject.Inject
 import kotlin.math.roundToInt
@@ -35,10 +33,10 @@ object Constants {
 	const val PREFS_NAME = "com.example.WorkoutPixel"
 }
 
-private val TAG = "WORKOUT_PIXEL COMMON FUNCTIONS"
+private const val TAG = "WORKOUT_PIXEL COMMON FUNCTIONS"
 
 // TODO: Change to enum or int 0-3. enum not great for room DB.
-val executorService: ExecutorService = Executors.newSingleThreadExecutor()
+// val executorService: ExecutorService = Executors.newSingleThreadExecutor()
 // private static final int NUMBER_OF_THREADS = 4;
 // public static final ExecutorService executorService = Executors.newFixedThreadPool(NUMBER_OF_THREADS);
 /**
@@ -231,7 +229,7 @@ class ContextFunctions @Inject constructor(
 
 	fun goalsWithInvalidOrNullAppWidgetId(goals: List<Goal>): List<Goal> {
 		return goals.stream().filter { (appWidgetId) ->
-			Arrays.stream(appWidgetIds()).noneMatch { i: Int -> appWidgetId != null && i == appWidgetId }
+			Arrays.stream(appWidgetIds()).noneMatch { i: Int -> i == appWidgetId }
 		}.collect(Collectors.toList())
 	}
 
@@ -272,11 +270,49 @@ fun days(days: Int): String {
 
 fun testData(): List<Goal> {
 	val testData: MutableList<Goal> = ArrayList()
-	testData.add(Goal(0, null, "Push ups", today3Am() - intervalInMilliseconds(1), 2, 2, false, false, Constants.STATUS_GREEN))
-	testData.add(Goal(0, null, "Back exercises", today3Am() - intervalInMilliseconds(2), 7, 2, true, false, Constants.STATUS_GREEN))
-	testData.add(Goal(0, null, "Visualize your day", today3Am() + (intervalInMilliseconds(1) * 0.259).roundToInt(), 1, 2, false, true, Constants.STATUS_GREEN))
-	testData.add(Goal(0, null, "Morning walk", today3Am(), 1, 2, false, false, Constants.STATUS_GREEN))
-	testData.add(Goal(0, null, "Water plants", today3Am() - intervalInMilliseconds(7), 7, 2, true, false, Constants.STATUS_BLUE))
+	testData.add(
+		Goal(
+			title = "Push ups",
+			lastWorkout = today3Am() - intervalInMilliseconds(1),
+			intervalBlue = 2,
+			status = Constants.STATUS_GREEN
+		)
+	)
+	testData.add(
+		Goal(
+			title = "Back exercises",
+			lastWorkout = today3Am() - intervalInMilliseconds(2),
+			intervalBlue = 7,
+			showDate = true,
+			status = Constants.STATUS_GREEN
+		)
+	)
+	testData.add(
+		Goal(
+			title = "Visualize your day",
+			lastWorkout = today3Am() + (intervalInMilliseconds(1) * 0.259).roundToInt(),
+			intervalBlue = 1,
+			showTime = true,
+			status = Constants.STATUS_GREEN
+		)
+	)
+	testData.add(
+		Goal(
+			title = "Morning walk",
+			lastWorkout = today3Am(),
+			intervalBlue = 1,
+			status = Constants.STATUS_GREEN
+		)
+	)
+	testData.add(
+		Goal(
+			title = "Water plants",
+			lastWorkout = today3Am() - intervalInMilliseconds(7),
+			intervalBlue = 7,
+			showDate = true,
+			status = Constants.STATUS_BLUE
+		)
+	)
 	for (goal in testData) {
 		goal.uid = testData.indexOf(goal) + 1
 	}

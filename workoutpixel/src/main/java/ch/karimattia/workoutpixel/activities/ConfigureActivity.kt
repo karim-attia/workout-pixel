@@ -15,11 +15,9 @@ import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.ExperimentalComposeUiApi
 import ch.karimattia.workoutpixel.composables.EditGoalView
-import ch.karimattia.workoutpixel.core.Constants.STATUS_NONE
 import ch.karimattia.workoutpixel.core.ContextFunctions
-import ch.karimattia.workoutpixel.data.Goal
-import ch.karimattia.workoutpixel.core.GoalSaveActions
 import ch.karimattia.workoutpixel.core.GoalWidgetActions
+import ch.karimattia.workoutpixel.data.Goal
 import ch.karimattia.workoutpixel.data.GoalViewModel
 import ch.karimattia.workoutpixel.ui.theme.WorkoutPixelTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -28,16 +26,12 @@ import javax.inject.Inject
 private const val TAG: String = "ConfigureCompose"
 
 @AndroidEntryPoint
+@ExperimentalComposeUiApi
 class ConfigureActivity : ComponentActivity() {
 
 	@Inject
-	lateinit var goalSaveActionsFactory: GoalSaveActions.Factory
-	private fun goalSaveActions(goal: Goal): GoalSaveActions {
-		return goalSaveActionsFactory.create(goal)
-	}
-	@Inject	lateinit var contextFunctions: ContextFunctions
+	lateinit var contextFunctions: ContextFunctions
 
-	@ExperimentalComposeUiApi
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 		val kotlinGoalViewModel by viewModels<GoalViewModel>()

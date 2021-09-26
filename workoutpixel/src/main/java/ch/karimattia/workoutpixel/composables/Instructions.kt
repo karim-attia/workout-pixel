@@ -49,33 +49,27 @@ fun Instructions() {
 			stringResource(R.string.instructions_intro_title),
 			R.string.instructions_pitch,
 			R.drawable.instructions_pitch,
-			R.drawable.instructions_pitch,
 		),
 		Instruction(
 			stringResource(R.string.step) + " 1",
 			R.string.instructions_step1,
 			R.drawable.step1,
-			R.drawable.instructions_long_click
 		), Instruction(
 			stringResource(R.string.step) + " 2",
 			R.string.instructions_step2,
 			R.drawable.step2,
-			R.drawable.instructions_widget_selection
 		), Instruction(
 			stringResource(R.string.step) + " 3",
 			R.string.instructions_step3,
 			R.drawable.step3,
-			R.drawable.instructions_configure_widget
 		), Instruction(
 			stringResource(R.string.step) + " 4",
 			R.string.instructions_step4,
 			R.drawable.step4,
-			R.drawable.instructions_widget_created
 		), Instruction(
 			stringResource(R.string.step) + " 5",
 			R.string.instructions_step5,
 			R.drawable.step5,
-			R.drawable.instructions_main_app
 		)
 	)
 
@@ -172,5 +166,4 @@ class Instruction internal constructor(
 	val title: String,
 	val text: Int,
 	val gif: Int,
-	val backupImage: Int
 )

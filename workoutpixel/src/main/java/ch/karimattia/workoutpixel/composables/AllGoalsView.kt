@@ -20,8 +20,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import ch.karimattia.workoutpixel.CardWithTitle
-import ch.karimattia.workoutpixel.GoalPreview
 import ch.karimattia.workoutpixel.R
 import ch.karimattia.workoutpixel.data.Goal
 import ch.karimattia.workoutpixel.core.WorkoutPixelScreen

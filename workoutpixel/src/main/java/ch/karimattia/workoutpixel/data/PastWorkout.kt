@@ -23,5 +23,4 @@ data class PastWorkout(
 	var workoutTime: Long,
 	@ColumnInfo(name = "active")
 	var isActive: Boolean = true,
-) {
-}
+)

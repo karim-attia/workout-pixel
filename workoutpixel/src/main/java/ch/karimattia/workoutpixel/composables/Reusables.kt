@@ -1,4 +1,4 @@
-package ch.karimattia.workoutpixel
+package ch.karimattia.workoutpixel.composables
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -19,8 +19,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import ch.karimattia.workoutpixel.data.Goal
 import ch.karimattia.workoutpixel.core.getColorFromStatus
+import ch.karimattia.workoutpixel.data.Goal
 import ch.karimattia.workoutpixel.ui.theme.InfoColor
 
 @Composable

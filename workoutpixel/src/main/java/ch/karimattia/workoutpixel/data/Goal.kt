@@ -45,8 +45,7 @@ data class Goal
 	}
 
 	fun hasValidAppWidgetId(): Boolean {
-		val hasValidAppWidgetId = appWidgetId != null
-		return hasValidAppWidgetId
+		return appWidgetId != null
 	}
 
 	override fun toString(): String {

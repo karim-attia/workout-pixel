@@ -11,12 +11,12 @@ import ch.karimattia.workoutpixel.data.Goal
 import kotlin.math.ceil
 import kotlin.math.floor
 
+private const val TAG: String = "GoalWidgetActions"
+
 class GoalWidgetActions(
 	val context: Context,
 	var goal: Goal,
 ) {
-	private val TAG: String = this.toString()
-
 	// Can also be called on widget with invalid AppWidgetId
 	fun runUpdate(setOnClickListener: Boolean) {
 		// Make sure to always set both the text and the background of the widget because otherwise it gets updated to some random old version.
