@@ -14,13 +14,13 @@ data class Goal
 	(
 	@Nullable
 	@ColumnInfo(name = "appWidgetId") var appWidgetId: Int?,
-	@ColumnInfo(name = "title") var title: String,
+	@ColumnInfo(name = "title") var title: String?,
 	@ColumnInfo(name = "lastWorkout") var lastWorkout: Long,
 	@ColumnInfo(name = "intervalBlue") var intervalBlue: Int,
 	@ColumnInfo(name = "intervalRed") val intervalRed: Int,
 	@ColumnInfo(name = "showDate") var showDate: Boolean,
 	@ColumnInfo(name = "showTime") var showTime: Boolean,
-	@ColumnInfo(name = "status") var status: String
+	@ColumnInfo(name = "status") var status: String?
 ) {
 	@PrimaryKey(autoGenerate = true) var uid: Int = 0
 	fun setNewLastWorkout(lastWorkout: Long): Boolean {
@@ -65,7 +65,7 @@ data class Goal
 	}
 
 	// widgetText returns the text of the whole widget based on a Widget object.
-	fun widgetText(): String {
+	fun widgetText(): String? {
 		var widgetText = title
 		if (showDate and (status != STATUS_NONE)) {
 			widgetText += "\n${dateBeautiful(lastWorkout)}"

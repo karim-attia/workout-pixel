@@ -38,15 +38,15 @@ public interface OldGoalDao {
     Goal loadGoalByUid(int uid);
 
     //@Query("SELECT * FROM goals WHERE uid=:uid")
-    LiveData<Goal> liveDataGoalByUid(int uid);
+    LiveData<OldGoal> liveDataGoalByUid(int uid);
 
     // Get all goals
     //@Query("SELECT * FROM goals")
-    LiveData<List<Goal>> loadAllGoalsLiveData();
+    LiveData<List<OldGoal>> loadAllGoalsLiveData();
 
     // Get all goals
     //@Query("SELECT * FROM goals")
-    List<Goal> loadAllGoals();
+    List<OldGoal> loadAllGoals();
 
     // Get all goals
     //@Query("SELECT * FROM goals")
@@ -57,10 +57,10 @@ public interface OldGoalDao {
     Flow<List<Goal>> loadGoalsWithInvalidOrNullAppWidgetId();*/
 
     //@Insert(onConflict = OnConflictStrategy.REPLACE, entity = Goal.class)
-    long insertGoal(Goal goal);
+    long insertGoal(OldGoal goal);
 
     //@Update(onConflict = OnConflictStrategy.REPLACE, entity = Goal.class)
-    void updateGoal(Goal goal);
+    void updateGoal(OldGoal goal);
 
     //@Query("UPDATE goals SET appWidgetId = null WHERE uid=:uid")
     void setAppWidgetIdToNullByUid(int uid);
@@ -70,16 +70,16 @@ public interface OldGoalDao {
 
     // Get all widgets without AppWidgetId
     //@Query("SELECT * FROM goals WHERE appWidgetId IS NULL")
-    List<Goal> loadGoalsWithoutValidAppWidgetId();
+    List<OldGoal> loadGoalsWithoutValidAppWidgetId();
 
     // Get all widgets without AppWidgetId
     //@Query("SELECT * FROM goals WHERE appWidgetId IS NOT NULL")
-    List<Goal> loadGoalsWithValidAppWidgetId();
+    List<OldGoal> loadGoalsWithValidAppWidgetId();
 
     // Return number of goals
     //@Query("SELECT COUNT() FROM goals")
     int getCountOfGoals();
 
     //@Delete
-    void deleteGoal(Goal goal);
+    void deleteGoal(OldGoal goal);
 }

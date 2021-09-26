@@ -177,19 +177,4 @@ public class OldGoal {
         }
         return widgetText;
     }
-
-    public OldGoal copy() {
-        OldGoal goalCopy = new OldGoal(
-                appWidgetId,
-                title,
-                lastWorkout,
-                intervalBlue,
-                intervalRed,
-                showDate,
-                showTime,
-                status
-        );
-        goalCopy.setUid(uid);
-        return goalCopy;
-    }
 }

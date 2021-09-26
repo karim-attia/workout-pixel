@@ -45,7 +45,7 @@ fun GoalPreviewWithColor(
 	onClick: () -> Unit = {},
 ) {
 	Text(
-		text = goal.widgetText(),
+		text = goal.widgetText()!!,
 		textAlign = TextAlign.Center,
 		fontSize = 12.sp,
 		color = Color.White,

@@ -310,7 +310,7 @@ fun SetUpYourWidget(
 	)
 	val keyboardController = LocalSoftwareKeyboardController.current
 	TextField(
-		value = setUpYourWidgetGoal.title,
+		value = setUpYourWidgetGoal.title!!,
 		onValueChange = {
 			setUpYourWidgetGoal.title = it
 			setUpYourWidgetGoalChange(setUpYourWidgetGoal)

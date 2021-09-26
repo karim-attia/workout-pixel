@@ -44,7 +44,6 @@ class ConfigureActivity : ComponentActivity() {
 		val context: Context = this
 
 		val goal = Goal(
-			uid = 0,
 			appWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID,
 			title = "",
 			lastWorkout = 0,

@@ -22,6 +22,7 @@ import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import java.util.stream.Collectors
 import javax.inject.Inject
+import kotlin.math.roundToInt
 
 object Constants {
 	const val STATUS_NONE = "NO STATUS"
@@ -220,11 +221,20 @@ class ContextFunctions @Inject constructor(
 			.collect(Collectors.toList())
 	}
 
+/*
 	fun goalsWithInvalidOrNullAppWidgetId(goals: List<Goal>): List<Goal> {
 		return goals.stream()
 			.filter { (_, appWidgetId) -> Arrays.stream(appWidgetIds()).noneMatch { i: Int -> appWidgetId != null && i == appWidgetId } }
 			.collect(Collectors.toList())
 	}
+*/
+
+	fun goalsWithInvalidOrNullAppWidgetId(goals: List<Goal>): List<Goal> {
+		return goals.stream().filter { (appWidgetId) ->
+			Arrays.stream(appWidgetIds()).noneMatch { i: Int -> appWidgetId != null && i == appWidgetId }
+		}.collect(Collectors.toList())
+	}
+
 }
 
 /**
@@ -262,23 +272,11 @@ fun days(days: Int): String {
 
 fun testData(): List<Goal> {
 	val testData: MutableList<Goal> = ArrayList()
-	testData.add(Goal(0, null, "Push ups", today3Am() - intervalInMilliseconds(1), 2, 2, false, false, Constants.STATUS_GREEN))
-	testData.add(Goal(0, null, "Back exercises", today3Am() - intervalInMilliseconds(2), 7, 2, true, false, Constants.STATUS_GREEN))
-	testData.add(
-		Goal(
-			0,
-			null,
-			"Visualize your day",
-			today3Am() + Math.round(intervalInMilliseconds(1) * 0.259),
-			1,
-			2,
-			false,
-			true,
-			Constants.STATUS_GREEN
-		)
-	)
-	testData.add(Goal(0, null, "Morning walk", today3Am(), 1, 2, false, false, Constants.STATUS_GREEN))
-	testData.add(Goal(0, null, "Water plants", today3Am() - intervalInMilliseconds(7), 7, 2, true, false, Constants.STATUS_BLUE))
+	testData.add(Goal(null, "Push ups", today3Am() - intervalInMilliseconds(1), 2, 2, false, false, Constants.STATUS_GREEN))
+	testData.add(Goal(null, "Back exercises", today3Am() - intervalInMilliseconds(2), 7, 2, true, false, Constants.STATUS_GREEN))
+	testData.add(Goal(null, "Visualize your day", today3Am() + (intervalInMilliseconds(1) * 0.259).roundToInt(), 1, 2, false, true, Constants.STATUS_GREEN))
+	testData.add(Goal(null, "Morning walk", today3Am(), 1, 2, false, false, Constants.STATUS_GREEN))
+	testData.add(Goal(null, "Water plants", today3Am() - intervalInMilliseconds(7), 7, 2, true, false, Constants.STATUS_BLUE))
 	for (goal in testData) {
 		goal.uid = testData.indexOf(goal) + 1
 	}
@@ -298,13 +296,6 @@ fun goalFromGoalsByUid(goalUid: Int?, goals: List<Goal>): Goal? {
 fun goalFromGoalsByUid(goalUid: Int, goals: List<Goal>): Goal? {
 	return goals.firstOrNull { it.uid == goalUid }
 }
-
-/*
-class UtilsKotlin @Inject constructor(var goalSaveActionsFactory: GoalSaveActions.Factory) {
-	fun goalSaveActions(goal: Goal): GoalSaveActions {
-		return goalSaveActionsFactory.create(goal)
-	}
-}*/
 
 class DatabaseInteractions @Inject constructor(
 	@ApplicationContext val context: Context,

@@ -113,7 +113,7 @@ fun GoalCard(
 @Composable
 fun GoalTitle(goal: Goal) {
 	Text(
-		text = goal.title.uppercase(Locale.getDefault()),
+		text = goal.title!!.uppercase(Locale.getDefault()),
 		fontSize = 16.sp,
 		fontWeight = FontWeight.Bold,
 		modifier = Modifier

@@ -11,7 +11,6 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
@@ -21,8 +20,8 @@ import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 import ch.karimattia.workoutpixel.R;
-import ch.karimattia.workoutpixel.data.Goal;
 import ch.karimattia.workoutpixel.core.WorkoutPixelAppWidgetProvider;
+import ch.karimattia.workoutpixel.data.Goal;
 import ch.karimattia.workoutpixel.ui.theme.ColorKt;
 
 public class OldCommonFunctions {
@@ -199,14 +198,6 @@ public class OldCommonFunctions {
         return goals.stream().filter(goal -> Arrays.stream(appWidgetIds(context)).noneMatch(appWidgetId -> goal.getAppWidgetId() == null || appWidgetId == goal.getAppWidgetId())).collect(Collectors.toList());
     }
     public static List<Goal> goalsWithInvalidOrNullAppWidgetId(Context context, List<Goal> goals) {
-        Log.d(TAG, "goals size: " + goals.size());
-        Log.d(TAG, "goals: " + goals);
-
-        Log.d(TAG, "appWidgetIds size: " + appWidgetIds(context).length);
-        Log.d(TAG, "appWidgetIds: " + Arrays.toString(appWidgetIds(context)));
-
-        Log.d(TAG, "goalsWithInvalidOrNullAppWidgetId size: " + (int) goals.stream().filter(widget -> Arrays.stream(appWidgetIds(context)).noneMatch(i -> widget.getAppWidgetId() != null && i == widget.getAppWidgetId())).count());
-        Log.d(TAG, "goalsWithInvalidOrNullAppWidgetId: " + goals.stream().filter(widget -> Arrays.stream(appWidgetIds(context)).noneMatch(i -> widget.getAppWidgetId() != null && i == widget.getAppWidgetId())).collect(Collectors.toList()));
         return goals.stream().filter(widget -> Arrays.stream(appWidgetIds(context)).noneMatch(i -> widget.getAppWidgetId() != null && i == widget.getAppWidgetId())).collect(Collectors.toList());
     }
 
@@ -238,16 +229,6 @@ public class OldCommonFunctions {
 //    }
 // --Commented out by Inspection STOP (23.06.21, 20:27)
 
-    // TODO: Inject repository
-    // Sets all appWidgetIds of goals that are not valid to null. Maybe later even reassign some to unassigned widgets.
-    public static void cleanGoals(Context context, List<Goal> goals) {
-        for (Goal goal: goalsWithInvalidAppWidgetId(context, goals)) {
-            if(goal.hasValidAppWidgetId()) {
-                OldGoalViewModel.setAppWidgetIdToNullByUid(context, goal.getUid());
-            }
-        }
-    }
-
     /**
      * Wordings
      */
@@ -264,18 +245,4 @@ public class OldCommonFunctions {
         else if (days > 1) {return "days.";}
         else return "INVALID NUMBER OF DAYS";
     }
-
-    public static List<Goal> testData() {
-        List<Goal> testData = new ArrayList<>();
-        testData.add(new Goal(0,null, "Push ups", today3Am()-intervalInMilliseconds(1), 2,2, false, false, STATUS_GREEN));
-        testData.add(new Goal(0,null, "Back exercises", today3Am()-intervalInMilliseconds(2), 7,2, true, false, STATUS_GREEN));
-        testData.add(new Goal(0,null, "Visualize your day", today3Am()+Math.round(intervalInMilliseconds(1)*0.259), 1,2, false, true, STATUS_GREEN));
-        testData.add(new Goal(0,null, "Morning walk", today3Am(), 1,2, false, false, STATUS_GREEN));
-        testData.add(new Goal(0,null, "Water plants", today3Am()-intervalInMilliseconds(7), 7,2, true, false, STATUS_BLUE));
-        for (Goal goal : testData) {
-            goal.setUid(testData.indexOf(goal)+1);
-        }
-        return testData;
-    }
-
 }

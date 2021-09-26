@@ -33,7 +33,6 @@ fun Settings(
     // settingsData: SettingsData
 ) {
     val goal = Goal(
-        uid = 0,
         appWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID,
         title = "Select\ncolor",
         lastWorkout = 0,
