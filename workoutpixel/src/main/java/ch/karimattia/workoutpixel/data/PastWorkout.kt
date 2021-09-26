@@ -15,6 +15,8 @@ import androidx.room.PrimaryKey
 	)]
 )
 data class PastWorkout(
+	@PrimaryKey(autoGenerate = true)
+	var uid: Int = 0,
 	@ColumnInfo(name = "widgetUid", index = true)
 	var widgetUid: Int,
 	@ColumnInfo(name = "workoutTime")
@@ -22,6 +24,4 @@ data class PastWorkout(
 	@ColumnInfo(name = "active")
 	var isActive: Boolean = true,
 ) {
-	@PrimaryKey(autoGenerate = true)
-	var uid: Int = 0
 }

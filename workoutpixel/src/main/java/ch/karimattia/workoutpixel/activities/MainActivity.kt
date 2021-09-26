@@ -64,7 +64,6 @@ class MainActivity : ComponentActivity() {
 		// val currentGoalUid by goalViewModel.currentGoalUid.observe()
 		// val pastClickViewModel: PastClickViewModel by viewModels()
 		var alreadySetUp = false
-		val context: Context = this
 
 		goalViewModel.allGoals.observe(this, { goals ->
 			Log.d(TAG, "___________observe___________")
@@ -90,14 +89,14 @@ class MainActivity : ComponentActivity() {
 			// Run oneTimeSetup once after the goals are loaded.
 			if (!alreadySetUp && goals != null) {
 				lifecycleScope.launch {
-					oneTimeSetup(goals, context)
+					oneTimeSetup(goals)
 				}
 				alreadySetUp = true
 			}
 		})
 	}
 
-	private fun oneTimeSetup(goals: List<Goal>, context: Context) {
+	private fun oneTimeSetup(goals: List<Goal>) {
 		Log.d(TAG, "oneTimeSetup")
 
 		// Update all goals

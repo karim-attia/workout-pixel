@@ -1,5 +1,6 @@
 package ch.karimattia.workoutpixel.data
 
+import android.appwidget.AppWidgetManager
 import androidx.annotation.Nullable
 import androidx.room.ColumnInfo
 import androidx.room.Entity
@@ -12,17 +13,17 @@ import ch.karimattia.workoutpixel.core.timeBeautiful
 @Entity(tableName = "goals")
 data class Goal
 	(
+	@PrimaryKey(autoGenerate = true) var uid: Int = 0,
 	@Nullable
-	@ColumnInfo(name = "appWidgetId") var appWidgetId: Int?,
-	@ColumnInfo(name = "title") var title: String?,
-	@ColumnInfo(name = "lastWorkout") var lastWorkout: Long,
-	@ColumnInfo(name = "intervalBlue") var intervalBlue: Int,
-	@ColumnInfo(name = "intervalRed") val intervalRed: Int,
-	@ColumnInfo(name = "showDate") var showDate: Boolean,
-	@ColumnInfo(name = "showTime") var showTime: Boolean,
-	@ColumnInfo(name = "status") var status: String?
+	@ColumnInfo(name = "appWidgetId") var appWidgetId: Int? = AppWidgetManager.INVALID_APPWIDGET_ID,
+	@ColumnInfo(name = "title") var title: String? = "",
+	@ColumnInfo(name = "lastWorkout") var lastWorkout: Long = 0,
+	@ColumnInfo(name = "intervalBlue") var intervalBlue: Int = 2,
+	@ColumnInfo(name = "intervalRed") val intervalRed: Int = 2,
+	@ColumnInfo(name = "showDate") var showDate: Boolean = false,
+	@ColumnInfo(name = "showTime") var showTime: Boolean = false,
+	@ColumnInfo(name = "status") var status: String? = STATUS_NONE,
 ) {
-	@PrimaryKey(autoGenerate = true) var uid: Int = 0
 	fun setNewLastWorkout(lastWorkout: Long): Boolean {
 		return if (this.lastWorkout == lastWorkout) {
 			false

@@ -272,11 +272,11 @@ fun days(days: Int): String {
 
 fun testData(): List<Goal> {
 	val testData: MutableList<Goal> = ArrayList()
-	testData.add(Goal(null, "Push ups", today3Am() - intervalInMilliseconds(1), 2, 2, false, false, Constants.STATUS_GREEN))
-	testData.add(Goal(null, "Back exercises", today3Am() - intervalInMilliseconds(2), 7, 2, true, false, Constants.STATUS_GREEN))
-	testData.add(Goal(null, "Visualize your day", today3Am() + (intervalInMilliseconds(1) * 0.259).roundToInt(), 1, 2, false, true, Constants.STATUS_GREEN))
-	testData.add(Goal(null, "Morning walk", today3Am(), 1, 2, false, false, Constants.STATUS_GREEN))
-	testData.add(Goal(null, "Water plants", today3Am() - intervalInMilliseconds(7), 7, 2, true, false, Constants.STATUS_BLUE))
+	testData.add(Goal(0, null, "Push ups", today3Am() - intervalInMilliseconds(1), 2, 2, false, false, Constants.STATUS_GREEN))
+	testData.add(Goal(0, null, "Back exercises", today3Am() - intervalInMilliseconds(2), 7, 2, true, false, Constants.STATUS_GREEN))
+	testData.add(Goal(0, null, "Visualize your day", today3Am() + (intervalInMilliseconds(1) * 0.259).roundToInt(), 1, 2, false, true, Constants.STATUS_GREEN))
+	testData.add(Goal(0, null, "Morning walk", today3Am(), 1, 2, false, false, Constants.STATUS_GREEN))
+	testData.add(Goal(0, null, "Water plants", today3Am() - intervalInMilliseconds(7), 7, 2, true, false, Constants.STATUS_BLUE))
 	for (goal in testData) {
 		goal.uid = testData.indexOf(goal) + 1
 	}

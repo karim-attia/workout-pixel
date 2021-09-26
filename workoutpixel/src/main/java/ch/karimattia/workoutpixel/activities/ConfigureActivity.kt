@@ -43,16 +43,7 @@ class ConfigureActivity : ComponentActivity() {
 		val kotlinGoalViewModel by viewModels<GoalViewModel>()
 		val context: Context = this
 
-		val goal = Goal(
-			appWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID,
-			title = "",
-			lastWorkout = 0,
-			intervalBlue = 2,
-			intervalRed = 2,
-			showDate = false,
-			showTime = false,
-			status = STATUS_NONE
-		)
+		val goal = Goal()
 
 		// Find the widget id  and whether it is a reconfigure activity from the intent.
 		val intent = intent
