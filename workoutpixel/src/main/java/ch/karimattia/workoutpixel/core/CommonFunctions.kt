@@ -249,20 +249,11 @@ class ContextFunctions @Inject constructor(
 			.collect(Collectors.toList())
 	}
 
-/*
 	fun goalsWithInvalidOrNullAppWidgetId(goals: List<Goal>): List<Goal> {
 		return goals.stream()
 			.filter { (_, appWidgetId) -> Arrays.stream(appWidgetIds()).noneMatch { i: Int -> appWidgetId != null && i == appWidgetId } }
 			.collect(Collectors.toList())
 	}
-*/
-
-	fun goalsWithInvalidOrNullAppWidgetId(goals: List<Goal>): List<Goal> {
-		return goals.stream().filter { (appWidgetId) ->
-			Arrays.stream(appWidgetIds()).noneMatch { i: Int -> i == appWidgetId }
-		}.collect(Collectors.toList())
-	}
-
 }
 
 /**

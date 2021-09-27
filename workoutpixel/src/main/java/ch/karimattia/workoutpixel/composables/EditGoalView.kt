@@ -36,9 +36,9 @@ import androidx.compose.ui.unit.sp
 import ch.karimattia.workoutpixel.R
 import ch.karimattia.workoutpixel.SettingsData
 import ch.karimattia.workoutpixel.core.Constants.STATUS_GREEN
-import ch.karimattia.workoutpixel.data.Goal
 import ch.karimattia.workoutpixel.core.days
 import ch.karimattia.workoutpixel.core.testData
+import ch.karimattia.workoutpixel.data.Goal
 import java.util.*
 
 private const val TAG: String = "EditGoalView"
@@ -63,7 +63,7 @@ fun EditGoalView(
 	// Copying the goal values fixes this...
 
 	// https://stackoverflow.com/questions/63956058/jetpack-compose-state-modify-class-property (Last answer for policy)
-	val (editGoalViewGoal, setValueEditGoalViewGoal) = remember {
+	val (editGoalViewGoal: Goal, setValueEditGoalViewGoal: (Goal) -> Unit) = remember {
 		mutableStateOf(
 			value = initialGoal.copy(),
 			policy = neverEqualPolicy()
@@ -132,7 +132,7 @@ fun EditGoalView(
 
 @Composable
 fun Hints(
-	modifier: Modifier = Modifier
+	modifier: Modifier = Modifier,
 ) {
 	FreeStandingTitle(text = "Hints", modifier = Modifier.padding(top = 8.dp))
 	val paragraphs = arrayListOf(
@@ -163,7 +163,7 @@ fun Hints(
 fun ConnectExistingGoal(
 	goalsWithoutWidget: List<Goal>,
 	connectGoal: (Goal) -> Unit,
-	modifier: Modifier = Modifier
+	modifier: Modifier = Modifier,
 ) {
 	// TODO: Expando
 	FreeStandingTitle(text = "Connect an existing goal")
@@ -269,7 +269,7 @@ fun ConnectDropdown(
 @Composable
 fun ConnectButton(
 	connectWidget: () -> Unit,
-	modifier: Modifier = Modifier
+	modifier: Modifier = Modifier,
 ) {
 	Button(
 		onClick = { connectWidget() },
@@ -428,7 +428,7 @@ fun WidgetConfigurationPreview(
 @Composable
 fun FreeStandingTitle(
 	text: String,
-	@SuppressLint("ModifierParameter") modifier: Modifier = Modifier.padding(top = 16.dp)
+	@SuppressLint("ModifierParameter") modifier: Modifier = Modifier.padding(top = 16.dp),
 ) {
 	Text(
 		text = text.uppercase(Locale.getDefault()),
