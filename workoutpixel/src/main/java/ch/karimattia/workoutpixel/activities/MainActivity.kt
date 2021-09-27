@@ -33,6 +33,7 @@ import ch.karimattia.workoutpixel.ui.theme.*
 import coil.annotation.ExperimentalCoilApi
 import com.google.accompanist.pager.ExperimentalPagerApi
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -51,6 +52,10 @@ class MainActivity : ComponentActivity() {
 	private fun goalSaveActions(goal: Goal): GoalSaveActions {
 		return goalSaveActionsFactory.create(goal)
 	}
+
+	@Inject
+	lateinit var goalWidgetActionsFactory: GoalWidgetActions.Factory
+	private fun goalWidgetActions(goal: Goal): GoalWidgetActions = goalWidgetActionsFactory.create(goal)
 
 	// Or inject via constructor? Only for below. Doesn't work for AppWidgetProvider.
 	@Inject
@@ -95,6 +100,14 @@ class MainActivity : ComponentActivity() {
 						goalSaveActions(it).updateWidgetBasedOnStatus()
 					},
 					deleteGoal = { goalViewModel.deleteGoal(it) },
+					settingChange = {
+						Log.d(TAG, "settingChange MainAct")
+						settingsViewModel.updateSettings(it)
+						lifecycleScope.launch {
+							delay(200)
+							goalSaveActions(Goal()).updateAllWidgetsBasedOnStatus()
+						}
+					}
 				)
 			}
 
@@ -136,6 +149,8 @@ fun WorkoutPixelApp(
 	currentGoalUid: Int = goalViewModel.currentGoalUid.observeAsState(initial = -1).value,
 	//pastClickViewModel: PastClickViewModel = viewModel(factory = provideFactory(pastClickViewModelAssistedFactory, currentGoalUid)), // = viewModel(),
 	settingsViewModel: SettingsViewModel,
+	settingsData: SettingsData = settingsViewModel.settingsData.observeAsState(initial = SettingsData()).value,
+	settingChange: (SettingsData) -> Unit,
 	goals: List<Goal>,
 	updateAfterClick: (Goal) -> Unit,
 	updateGoal: (Goal) -> Unit,
@@ -257,7 +272,9 @@ fun WorkoutPixelApp(
 				// pastClickViewModel = pastClickViewModel,
 				pastClickViewModelAssistedFactory = pastClickViewModelAssistedFactory,
 				// settingsRepository = settingsRepository,
-				settingsViewModel = settingsViewModel,
+				//settingsViewModel = settingsViewModel,
+				settingsData = settingsData,
+				settingChange = settingChange,
 				modifier = Modifier.padding(innerPadding),
 			)
 		}
@@ -280,10 +297,11 @@ fun WorkoutPixelNavHost(
 	// pastClickViewModel: PastClickViewModel,
 	pastClickViewModelAssistedFactory: PastClickViewModelAssistedFactory,
 	// settingsRepository: SettingsRepository,
-	settingsViewModel: SettingsViewModel,
+	// settingsViewModel: SettingsViewModel,
 	modifier: Modifier = Modifier,
-	settingsData: SettingsData = settingsViewModel.settingsData.observeAsState(initial = SettingsData()).value,
-	) {
+	settingsData: SettingsData, // = settingsViewModel.settingsData.observeAsState(initial = SettingsData()).value,
+	settingChange: (SettingsData) -> Unit,
+) {
 	NavHost(
 		navController = navController,
 		startDestination = if (goals.isNotEmpty()) {
@@ -342,10 +360,11 @@ fun WorkoutPixelNavHost(
 			route = WorkoutPixelScreen.Settings.name,
 		) {
 			Log.d(TAG, "------------Settings------------")
-			// TODO: Get from datamodel
 			Settings(
-				settingsViewModel = settingsViewModel
-			) //settingsData = SettingsData(Green = Color(Green), Blue = Color(Blue), Red = Color(Red), Purple = Color(Purple), ))
+				// settingsViewModel = settingsViewModel,
+				settingsData = settingsData,
+				settingChange = settingChange,
+			)
 		}
 
 	}

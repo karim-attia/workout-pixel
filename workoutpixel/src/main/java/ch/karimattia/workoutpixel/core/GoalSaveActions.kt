@@ -65,6 +65,17 @@ class GoalSaveActions @AssistedInject constructor(
 		goalWidgetActions(goal).runUpdate(true)
 	}
 
-
+	// TODO: Understand
+	// TODO: Replaced iteration through appWidgetIds with data from DB. Insert check that this is the same and fix if not. Maybe before it only iterated through some widgets. But I don't think it matters.
+	// TODO: Could check with CommonFunctions.widgetsWithValidAppWidgetId whether they are the same and at least log if not.
+	fun updateAllWidgetsBasedOnStatus() {
+		val goalList = goalRepository.loadGoalsWithValidAppWidgetId()
+		for (goal in goalList) {
+			// Not the most correct way...
+			this.goal = goal
+			// Tell the AppWidgetManager to perform an update on the current app widget
+			updateWidgetBasedOnStatus()
+		}
+	}
 }
 

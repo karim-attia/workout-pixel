@@ -22,4 +22,8 @@ class SettingsViewModel @Inject constructor(
 		// TODO: Trigger update all.
 	}
 
+	fun updateSettings(settingsData: SettingsData) = viewModelScope.launch {
+		settingsRepository.updateSettings(settingsData)
+		// TODO: Trigger update all.
+	}
 }

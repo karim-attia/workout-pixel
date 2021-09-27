@@ -52,15 +52,9 @@ class WorkoutPixelAppWidgetProvider : AppWidgetProvider() {
 
 		// Do this when the alarm hits
 		if (ACTION_ALARM_UPDATE == intent.action) {
-			saveTimeWithStringToSharedPreferences(
-				context, "Last ACTION_ALARM_UPDATE " + dateTimeBeautiful(
-					System.currentTimeMillis()
-				)
-			)
-			val goalList = repository.loadAllGoals()
-			for (goal in goalList) {
-				goalSaveActions(goal).updateWidgetBasedOnStatus()
-			}
+			saveTimeWithStringToSharedPreferences(context, "Last ACTION_ALARM_UPDATE " + dateTimeBeautiful(System.currentTimeMillis()))
+			// Not the most correct way...
+			goalSaveActions(Goal()).updateAllWidgetsBasedOnStatus()
 		}
 	}
 
@@ -71,15 +65,8 @@ class WorkoutPixelAppWidgetProvider : AppWidgetProvider() {
 		// Start alarm
 		widgetAlarm.startAlarm()
 
-		// TODO: Understand
-		// TODO: Replaced iteration through appWidgetIds with data from DB. Insert check that this is the same and fix if not. Maybe before it only iterated through some widgets. But I don't think it matters.
-		// TODO: Could check with CommonFunctions.widgetsWithValidAppWidgetId whether they are the same and at least log if not.
-		val goalList = repository.loadGoalsWithValidAppWidgetId()
-		for (goal in goalList) {
-			// Tell the AppWidgetManager to perform an update on the current app widget
-			Log.d(tag, "ON_UPDATE: " + goal.debugString())
-			goalSaveActions(goal).updateWidgetBasedOnStatus()
-		}
+		// Not the most correct way...
+		goalSaveActions(Goal()).updateAllWidgetsBasedOnStatus()
 
 		// CommonFunctions.executorService.shutdown();
 
@@ -100,13 +87,9 @@ class WorkoutPixelAppWidgetProvider : AppWidgetProvider() {
 		// Enter relevant functionality for when the first widget is created
 		Log.d(tag, "ON_ENABLED")
 		super.onEnabled(context)
-		// TODO: Run this somewhere else
-		val goalList = repository.loadGoalsWithValidAppWidgetId()
-		for (goal in goalList) {
-			// Tell the AppWidgetManager to perform an update on the current app widget
-			Log.d(tag, "ON_ENABLED: " + goal.debugString())
-			goalSaveActions(goal).updateWidgetBasedOnStatus()
-		}
+
+		// Not the most correct way...
+		goalSaveActions(Goal()).updateAllWidgetsBasedOnStatus()
 
 		// Start alarm
 		Log.v(tag, "START_ALARM")

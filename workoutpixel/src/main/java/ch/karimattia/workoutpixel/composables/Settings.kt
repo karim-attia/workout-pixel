@@ -1,5 +1,6 @@
 package ch.karimattia.workoutpixel.composables
 
+import android.graphics.Color.argb
 import android.graphics.Color.rgb
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Divider
@@ -11,6 +12,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.datastore.preferences.core.Preferences
@@ -32,39 +34,43 @@ private const val TAG: String = "Settings"
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun Settings(
-	settingsViewModel: SettingsViewModel
-) {
-	// val settingsViewModel: SettingsViewModel = SettingsViewModel(settingsRepository = SettingsModule.providesDataStore(context = LocalContext.current))
-
-	val settingsData by settingsViewModel.settingsData.observeAsState()
-	settingsData?.let {
-		Settings(
-			settingsData = it,
-			// settingChange = {_,_ ->} // setting, int -> settingsViewModel.saveIntSetting(setting, int) }
-			settingChange = { settingsViewModel.updateColorDone(it) }
-		)
-	}
-}
-
-@OptIn(ExperimentalMaterialApi::class)
-@Composable
-fun Settings(
 	settingsData: SettingsData,
-	settingChange: (Int) -> Unit
+	settingChange: (SettingsData) -> Unit
 ) {
 	val goal = Goal(title = "Select\ncolor")
-
-	// Log.d(TAG, "low : ${ if(settingsData.colorDoneInt == Green){"Green"}else{settingsData.colorDoneInt}}")
-
 	Column {
 		FreeStandingTitle(text = "Colors", modifier = Modifier.padding(all = 8.dp))
 		Divider(color = Color(TextBlack), thickness = 0.5.dp)
 		ColorSelection(
 			titleText = "Done",
-			subtitleText = "Show this color for when you reached your goal",
+			subtitleText = "Show this color when you reached your goal",
 			goal = goal,
 			color = settingsData.colorDone(),
-			onColorSelected = { settingChange(rgb(it.red, it.green, it.blue)) },
+			onColorSelected = {	settingChange(SettingsData(settingsData = settingsData, colorDoneInt = argb(it.alpha, it.red, it.green, it.blue))) },
+		)
+		Divider(color = Color(TextBlack), thickness = 0.5.dp)
+		ColorSelection(
+			titleText = "First interval",
+			subtitleText = "Show this color to gently remind you that it's time to do your thing again",
+			goal = goal,
+			color = settingsData.colorFirstInterval(),
+			onColorSelected = {	settingChange(SettingsData(settingsData = settingsData, colorFirstIntervalInt = argb(it.alpha, it.red, it.green, it.blue))) },
+		)
+		Divider(color = Color(TextBlack), thickness = 0.5.dp)
+		ColorSelection(
+			titleText = "Second interval",
+			subtitleText = "Show this color when your goal is overdue",
+			goal = goal,
+			color = settingsData.colorSecondInterval(),
+			onColorSelected = {	settingChange(SettingsData(settingsData = settingsData, colorSecondIntervalInt = argb(it.alpha, it.red, it.green, it.blue))) },
+		)
+		Divider(color = Color(TextBlack), thickness = 0.5.dp)
+		ColorSelection(
+			titleText = "Initial",
+			subtitleText = "Show this color for goals that you have never clicked",
+			goal = goal,
+			color = settingsData.colorInitial(),
+			onColorSelected = {	settingChange(SettingsData(settingsData = settingsData, colorInitialInt = argb(it.alpha, it.red, it.green, it.blue))) },
 		)
 		Divider(color = Color(TextBlack), thickness = 0.5.dp)
 	}
@@ -78,10 +84,6 @@ fun ColorSelection(
 	color: Color,
 	onColorSelected: (Color) -> Unit,
 ) {
-	// Probably higher up and settings object is directly modified.
-	// selected color
-	// popup open
-
 	val dialogState = rememberMaterialDialogState()
 	MaterialDialog(dialogState = dialogState, buttons = {
 		positiveButton("Ok")
@@ -96,22 +98,19 @@ fun ColorSelection(
 	}
 
 	Row(modifier = Modifier.padding(vertical = 4.dp, horizontal = 8.dp)) {
-		Column(verticalArrangement = Arrangement.Center) {
+		Column(verticalArrangement = Arrangement.Center, modifier = Modifier.weight(1f)) {
 			Text(text = titleText, fontWeight = FontWeight.Bold, fontSize = 16.sp)
 			Text(text = subtitleText, fontSize = 12.sp)
 		}
-		Spacer(modifier = Modifier.weight(1f))
 		GoalPreviewWithColor(goal = goal, color = color, onClick = { dialogState.show() })
 	}
 }
 
-/*
+
 @Preview(name = "Instructions preview")
 @Composable
 fun SettingsPreview() {
 	Settings(
-		settingsData = null, settingChange = { _, _ -> }
+		settingsData = SettingsData(), settingChange = {}
 	)
 }
-
-*/

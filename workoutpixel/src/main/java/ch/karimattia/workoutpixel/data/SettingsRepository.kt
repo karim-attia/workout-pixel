@@ -39,7 +39,20 @@ class SettingsRepository @Inject constructor(
 			it.copy(colorDoneInt = colorDoneInt)
 		}
 	}
+
+	suspend fun updateSettings(settingsData: SettingsData) {
+		context.dataStore.updateData {settingsData}
+	}
+
 }
+
+fun SettingsData(
+	settingsData: SettingsData,
+	colorDoneInt: Int = settingsData.colorDoneInt,
+	colorFirstIntervalInt: Int = settingsData.colorFirstIntervalInt,
+	colorSecondIntervalInt: Int = settingsData.colorSecondIntervalInt,
+	colorInitialInt: Int = settingsData.colorInitialInt,
+	) = SettingsData(colorDoneInt = colorDoneInt, colorFirstIntervalInt = colorFirstIntervalInt, colorSecondIntervalInt = colorSecondIntervalInt, colorInitialInt = colorInitialInt)
 
 @Serializable
 data class SettingsData(
