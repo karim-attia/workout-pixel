@@ -11,6 +11,7 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.qualifiers.ApplicationContext
+import javax.inject.Inject
 
 private const val TAG: String = "GoalSaveActions"
 
@@ -18,6 +19,7 @@ class GoalSaveActions @AssistedInject constructor(
 	@ApplicationContext val context: Context,
 	private val goalRepository: GoalRepository,
 	private val pastClickRepository: PastClickRepository,
+	private var goalWidgetActionsFactory: GoalWidgetActions.Factory,
 	@Assisted var goal: Goal,
 ) {
 
@@ -25,6 +27,7 @@ class GoalSaveActions @AssistedInject constructor(
 	interface Factory {
 		fun create(goal: Goal): GoalSaveActions
 	}
+	private fun goalWidgetActions(goal: Goal): GoalWidgetActions = goalWidgetActionsFactory.create(goal)
 
 	fun updateAfterClick() {
 		Log.d(TAG, "ACTION_DONE_EXERCISE " + goal.debugString() + "start")
@@ -38,7 +41,7 @@ class GoalSaveActions @AssistedInject constructor(
 		goal.lastWorkout = System.currentTimeMillis()
 
 		// Instruct the widget manager to update the widget with the latest widget data
-		GoalWidgetActions(context, goal).runUpdate(false)
+		goalWidgetActions(goal).runUpdate(false)
 
 		// Add the workout to the database. Technicalities are taken care of in PastWorkoutsViewModel.
 		pastClickRepository.insertClickedWorkout(goal.uid, goal.lastWorkout)
@@ -59,7 +62,7 @@ class GoalSaveActions @AssistedInject constructor(
 		}
 
 		// Instruct the widget manager to update the widget with the latest widget data
-		GoalWidgetActions(context, goal).runUpdate(true)
+		goalWidgetActions(goal).runUpdate(true)
 	}
 
 

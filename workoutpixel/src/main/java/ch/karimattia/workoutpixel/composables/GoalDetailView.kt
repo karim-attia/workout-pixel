@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import ch.karimattia.workoutpixel.R
+import ch.karimattia.workoutpixel.SettingsData
 import ch.karimattia.workoutpixel.data.Goal
 import ch.karimattia.workoutpixel.core.dateBeautiful
 import ch.karimattia.workoutpixel.core.testData
@@ -48,6 +49,7 @@ fun GoalDetailView(
 	updateAfterClick: () -> Unit,
 	deleteGoal: (Goal) -> Unit,
 	updateGoal: (updatedGoal: Goal, navigateUp: Boolean) -> Unit,
+	settingsData: SettingsData,
 	// pastClickViewModel: PastClickViewModel,
 	pastClickViewModelAssistedFactory: PastClickViewModelAssistedFactory,
 	// pastClickViewModel: PastClickViewModel = remember { provideFactory(pastClickViewModelAssistedFactory, goal.uid).create(PastClickViewModel::class.java) },
@@ -77,7 +79,8 @@ fun GoalDetailView(
 		deleteGoal = deleteGoal,
 		updateGoal = updateGoal,
 		updatePastClick = { pastClickViewModel.updatePastClick(it) },
-		pastClicks = pastClicks // ViewModel.pastClicks(goal.uid).observeAsState(initial = listOf()).value,
+		pastClicks = pastClicks, // ViewModel.pastClicks(goal.uid).observeAsState(initial = listOf()).value,
+		settingsData = settingsData,
 		)
 	/*
 	var connectExistingGoal by remember { mutableStateOf(0) }
@@ -94,7 +97,8 @@ fun GoalDetailView(
 	deleteGoal: (Goal) -> Unit,
 	updateGoal: (updatedGoal: Goal, navigateUp: Boolean) -> Unit,
 	updatePastClick: (PastWorkout) -> Unit,
-	pastClicks: List<PastWorkout>
+	pastClicks: List<PastWorkout>,
+	settingsData: SettingsData,
 ) {
 
 	Log.d(TAG, "Recomposition Bottom")
@@ -108,6 +112,7 @@ fun GoalDetailView(
 		Spacer(modifier = Modifier.height(6.dp))
 		GoalOverviewView(
 			goal = goal,
+			settingsData = settingsData,
 			updateAfterClick = updateAfterClick
 		)
 		if (!goal.hasValidAppWidgetId()) {
@@ -128,6 +133,7 @@ fun GoalDetailView(
 @Composable
 fun GoalOverviewView(
 	goal: Goal,
+	settingsData: SettingsData,
 	updateAfterClick: () -> Unit,
 ) {
 	CardWithTitle(
@@ -137,7 +143,7 @@ fun GoalOverviewView(
 		// Preview and rest
 		Row(verticalAlignment = Alignment.CenterVertically) {
 			GoalPreview(
-				goal = goal, onClick = updateAfterClick
+				goal = goal, settingsData = settingsData, onClick = updateAfterClick
 			)
 			// Rest
 			Column(
@@ -340,6 +346,7 @@ fun GoalDetailViewPreview() {
 		updateGoal = { _, _ -> },
 		updatePastClick = {},
 		pastClicks = listOf(),
+		settingsData = SettingsData(),
 	)
 }
 

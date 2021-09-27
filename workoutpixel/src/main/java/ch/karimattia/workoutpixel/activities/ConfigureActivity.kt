@@ -13,12 +13,15 @@ import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.ExperimentalComposeUiApi
+import ch.karimattia.workoutpixel.SettingsData
 import ch.karimattia.workoutpixel.composables.EditGoalView
 import ch.karimattia.workoutpixel.core.ContextFunctions
 import ch.karimattia.workoutpixel.core.GoalWidgetActions
 import ch.karimattia.workoutpixel.data.Goal
 import ch.karimattia.workoutpixel.data.GoalViewModel
+import ch.karimattia.workoutpixel.data.SettingsViewModel
 import ch.karimattia.workoutpixel.ui.theme.WorkoutPixelTheme
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -30,11 +33,16 @@ private const val TAG: String = "ConfigureCompose"
 class ConfigureActivity : ComponentActivity() {
 
 	@Inject
+	lateinit var goalWidgetActionsFactory: GoalWidgetActions.Factory
+	private fun goalWidgetActions(goal: Goal): GoalWidgetActions = goalWidgetActionsFactory.create(goal)
+
+	@Inject
 	lateinit var contextFunctions: ContextFunctions
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 		val kotlinGoalViewModel by viewModels<GoalViewModel>()
+		val settingsViewModel: SettingsViewModel by viewModels()
 		val context: Context = this
 
 		val goal = Goal()
@@ -84,9 +92,10 @@ class ConfigureActivity : ComponentActivity() {
 						goal.setNewStatus()
 						it.setNewStatus()
 						kotlinGoalViewModel.updateGoal(it)
-						GoalWidgetActions(context, it).runUpdate(true)
+						goalWidgetActions(it).runUpdate(true)
 						setWidgetAndFinish(goal = it, context = this)
 					},
+					settingsData = settingsViewModel.settingsData.observeAsState(initial = SettingsData()).value,
 				)
 			}
 		})
@@ -115,6 +124,7 @@ fun ConfigureActivityCompose(
 	goalsWithoutWidget: List<Goal>,
 	addUpdateWidget: (Goal) -> Unit,
 	connectGoal: (Goal) -> Unit,
+	settingsData: SettingsData,
 ) {
 	WorkoutPixelTheme(
 		darkTheme = false,
@@ -128,6 +138,7 @@ fun ConfigureActivityCompose(
 				goalsWithoutWidget = goalsWithoutWidget,
 				addUpdateWidget = addUpdateWidget,
 				connectGoal = connectGoal,
+				settingsData = settingsData,
 				// modifier = Modifier.padding(innerPadding),
 			)
 		}

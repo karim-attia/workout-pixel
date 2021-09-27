@@ -4,34 +4,59 @@ import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
 import android.content.Context
 import android.content.Intent
+import android.graphics.drawable.Drawable
+import android.graphics.drawable.GradientDrawable
 import android.util.Log
 import android.widget.RemoteViews
 import ch.karimattia.workoutpixel.R
+import ch.karimattia.workoutpixel.SettingsData
+import ch.karimattia.workoutpixel.SettingsRepository
 import ch.karimattia.workoutpixel.data.Goal
+import ch.karimattia.workoutpixel.data.GoalRepository
+import ch.karimattia.workoutpixel.data.PastClickRepository
+import ch.karimattia.workoutpixel.data.SettingsViewModel
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
+import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 import kotlin.math.ceil
 import kotlin.math.floor
 
 private const val TAG: String = "GoalWidgetActions"
 
-class GoalWidgetActions(
-	val context: Context,
-	var goal: Goal,
+class GoalWidgetActions @AssistedInject constructor(
+	@ApplicationContext val context: Context,
+	private val settingsRepository: SettingsRepository,
+	@Assisted var goal: Goal,
 ) {
+	@AssistedFactory
+	interface Factory {
+		fun create(goal: Goal): GoalWidgetActions
+	}
+
+	private suspend fun settingsData(): SettingsData = settingsRepository.getSettingsOnce()
+
 	// Can also be called on widget with invalid AppWidgetId
 	fun runUpdate(setOnClickListener: Boolean) {
 		// Make sure to always set both the text and the background of the widget because otherwise it gets updated to some random old version.
 		val appWidgetManager = AppWidgetManager.getInstance(context)
-		if (goal.appWidgetId != null) {
-			appWidgetManager.updateAppWidget(
-				goal.appWidgetId!!,
-				widgetView(context, setOnClickListener, appWidgetManager)
-			)
-		} else {
-			Log.d(TAG, "runUpdate: appWidgetId == null " + goal.debugString())
+		CoroutineScope(Dispatchers.IO).launch {
+			if (goal.appWidgetId != null) {
+				appWidgetManager.updateAppWidget(
+					goal.appWidgetId!!,
+					widgetView(context, setOnClickListener, appWidgetManager)
+				)
+			} else {
+				Log.d(TAG, "runUpdate: appWidgetId == null " + goal.debugString())
+			}
 		}
 	}
 
-	private fun widgetView(context: Context, setOnClickListener: Boolean, appWidgetManager: AppWidgetManager): RemoteViews {
+	private suspend fun widgetView(context: Context, setOnClickListener: Boolean, appWidgetManager: AppWidgetManager): RemoteViews {
 		val widgetView = RemoteViews(context.packageName, R.layout.widget_layout)
 		// Set an onClickListener for every widget: https://stackoverflow.com/questions/30174386/multiple-instances-of-widget-with-separated-working-clickable-imageview
 		if (setOnClickListener) {
@@ -39,7 +64,10 @@ class GoalWidgetActions(
 		}
 		// Before updating a widget, the text and background of the view need to be set. Otherwise, the existing not updated properties of the widgetView will be passed.
 		widgetView.setTextViewText(R.id.appwidget_text, goal.widgetText())
-		widgetView.setInt(R.id.appwidget_text, "setBackgroundResource", getDrawableIntFromStatus(goal.status))
+
+		// widgetView.setInt(R.id.appwidget_text, "setBackgroundResource", getDrawableIntFromStatus(goal.status))
+		widgetView.setInt(R.id.appwidget_text, "setBackgroundColor", getColorFromStatus(status = goal.status, settingsData = settingsData()))
+
 		// Set size if available
 		// https://stackoverflow.com/questions/25153604/get-the-size-of-my-homescreen-widget
 		if (goal.appWidgetId != null) {

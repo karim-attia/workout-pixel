@@ -23,14 +23,18 @@ class WorkoutPixelAppWidgetProvider : AppWidgetProvider() {
 
 	@Inject
 	lateinit var goalSaveActionsFactory: GoalSaveActions.Factory
-	private fun goalSaveActions(goal: Goal): GoalSaveActions {
-		return goalSaveActionsFactory.create(goal)
-	}
+	private fun goalSaveActions(goal: Goal): GoalSaveActions = goalSaveActionsFactory.create(goal)
+
+	@Inject
+	lateinit var goalWidgetActionsFactory: GoalWidgetActions.Factory
+	private fun goalWidgetActions(goal: Goal): GoalWidgetActions = goalWidgetActionsFactory.create(goal)
 
 	@Inject
 	lateinit var widgetAlarm: WidgetAlarm
+
 	@Inject
 	lateinit var contextFunctions: ContextFunctions
+
 	@Inject
 	lateinit var repository: GoalRepository
 
@@ -96,6 +100,7 @@ class WorkoutPixelAppWidgetProvider : AppWidgetProvider() {
 		// Enter relevant functionality for when the first widget is created
 		Log.d(tag, "ON_ENABLED")
 		super.onEnabled(context)
+		// TODO: Run this somewhere else
 		val goalList = repository.loadGoalsWithValidAppWidgetId()
 		for (goal in goalList) {
 			// Tell the AppWidgetManager to perform an update on the current app widget
@@ -124,6 +129,6 @@ class WorkoutPixelAppWidgetProvider : AppWidgetProvider() {
 	// Entry point
 	override fun onAppWidgetOptionsChanged(context: Context, appWidgetManager: AppWidgetManager, appWidgetId: Int, bundle: Bundle) {
 		val goal = repository.loadGoalByAppWidgetId(appWidgetId)
-		GoalWidgetActions(context, goal).runUpdate(false)
+		goalWidgetActions(goal).runUpdate(false)
 	}
 }

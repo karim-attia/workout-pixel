@@ -34,6 +34,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import ch.karimattia.workoutpixel.R
+import ch.karimattia.workoutpixel.SettingsData
 import ch.karimattia.workoutpixel.core.Constants.STATUS_GREEN
 import ch.karimattia.workoutpixel.data.Goal
 import ch.karimattia.workoutpixel.core.days
@@ -50,6 +51,7 @@ fun EditGoalView(
 	goalsWithoutWidget: List<Goal> = ArrayList<Goal>(),
 	addUpdateWidget: (Goal) -> Unit,
 	connectGoal: (Goal) -> Unit = {},
+	settingsData: SettingsData,
 ) {
 	Log.d(TAG, "initialGoal: " + initialGoal.intervalBlue.toString())
 
@@ -109,6 +111,7 @@ fun EditGoalView(
 		WidgetConfigurationPreview(
 			editGoalViewGoal = editGoalViewGoal,
 			isFirstConfigure = isFirstConfigure,
+			settingsData = settingsData,
 			modifier = modifier,
 		)
 		Spacer(
@@ -406,6 +409,7 @@ fun SetUpYourWidget(
 fun WidgetConfigurationPreview(
 	editGoalViewGoal: Goal,
 	isFirstConfigure: Boolean,
+	settingsData: SettingsData,
 	modifier: Modifier = Modifier,
 ) {
 	val previewGoal = editGoalViewGoal.copy()
@@ -416,6 +420,7 @@ fun WidgetConfigurationPreview(
 	FreeStandingTitle(text = "Preview")
 	GoalPreview(
 		goal = previewGoal,
+		settingsData = settingsData,
 		modifier = modifier,
 	)
 }
@@ -469,5 +474,6 @@ fun EditGoalViewPreview() {
 		initialGoal = testData()[0],
 		isFirstConfigure = false,
 		addUpdateWidget = { },
+		settingsData = SettingsData(),
 	)
 }

@@ -4,7 +4,9 @@ import android.appwidget.AppWidgetManager
 import android.content.ComponentName
 import android.content.Context
 import android.util.Log
+import androidx.compose.ui.graphics.Color
 import ch.karimattia.workoutpixel.R
+import ch.karimattia.workoutpixel.SettingsData
 import ch.karimattia.workoutpixel.core.Constants.PREFERENCE_NAME
 import ch.karimattia.workoutpixel.data.Goal
 import ch.karimattia.workoutpixel.data.GoalRepository
@@ -154,6 +156,33 @@ fun getColorFromStatus(status: String?): Int {
 		}
 	}
 }
+
+fun getColorFromStatusColor(status: String?, settingsData: SettingsData): Color {
+	return when (status) {
+		Constants.STATUS_GREEN -> settingsData.colorDone()
+		Constants.STATUS_BLUE -> settingsData.colorFirstInterval()
+		Constants.STATUS_RED -> settingsData.colorSecondInterval()
+		Constants.STATUS_NONE -> settingsData.colorInitial()
+		else -> {
+			Log.d(TAG, "getColorFromStatus: status not correctly assigned.")
+			Color(0)
+		}
+	}
+}
+
+fun getColorFromStatus(status: String?, settingsData: SettingsData): Int {
+	return when (status) {
+		Constants.STATUS_GREEN -> settingsData.colorDoneInt
+		Constants.STATUS_BLUE -> settingsData.colorFirstIntervalInt
+		Constants.STATUS_RED -> settingsData.colorSecondIntervalInt
+		Constants.STATUS_NONE -> settingsData.colorInitialInt
+		else -> {
+			Log.d(TAG, "getColorFromStatus: status not correctly assigned.")
+			0
+		}
+	}
+}
+
 
 /**
  * Time and date formatting stuff

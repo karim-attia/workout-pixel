@@ -21,6 +21,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import ch.karimattia.workoutpixel.R
+import ch.karimattia.workoutpixel.SettingsData
 import ch.karimattia.workoutpixel.data.Goal
 import ch.karimattia.workoutpixel.core.WorkoutPixelScreen
 import ch.karimattia.workoutpixel.core.dateBeautiful
@@ -34,11 +35,13 @@ fun AllGoals(
 	goals: List<Goal>,
 	updateAfterClick: (Goal) -> Unit,
 	navigateTo: (destination: String, goal: Goal?) -> Unit,
+	settingsData: SettingsData,
 ) {
 	GoalList(
 		goals = goals,
 		updateAfterClick = updateAfterClick,
 		navigateTo = navigateTo,
+		settingsData = settingsData,
 	)
 }
 
@@ -47,6 +50,7 @@ fun GoalList(
 	goals: List<Goal>,
 	updateAfterClick: (Goal) -> Unit,
 	navigateTo: (destination: String, goal: Goal?) -> Unit,
+	settingsData: SettingsData,
 ) {
 	Column(
 		modifier = Modifier
@@ -59,7 +63,8 @@ fun GoalList(
 				GoalCard(
 					goal = goals[i],
 					updateAfterClick = { updateAfterClick(goals[i]) },
-					navigateTo = navigateTo
+					navigateTo = navigateTo,
+					settingsData = settingsData,
 				)
 			}
 		} else {
@@ -74,6 +79,7 @@ fun GoalCard(
 	goal: Goal,
 	updateAfterClick: () -> Unit,
 	navigateTo: (destination: String, goal: Goal?) -> Unit,
+	settingsData: SettingsData,
 ) {
 	Card(
 		backgroundColor = Color.White,
@@ -93,6 +99,7 @@ fun GoalCard(
 			GoalPreview(
 				goal = goal,
 				onClick = updateAfterClick,
+				settingsData = settingsData,
 				modifier = Modifier.padding(all = 4.dp)
 			)
 			// Rest
@@ -176,5 +183,6 @@ fun AllGoalsPreview() {
 		goals = testData(),
 		updateAfterClick = {},
 		navigateTo = { _, _ -> },
+		settingsData = SettingsData(),
 	)
 }

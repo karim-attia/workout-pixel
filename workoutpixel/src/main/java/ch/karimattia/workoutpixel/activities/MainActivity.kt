@@ -22,6 +22,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import ch.karimattia.workoutpixel.SettingsData
 import ch.karimattia.workoutpixel.composables.*
 import ch.karimattia.workoutpixel.core.*
 import ch.karimattia.workoutpixel.data.Goal
@@ -281,7 +282,8 @@ fun WorkoutPixelNavHost(
 	// settingsRepository: SettingsRepository,
 	settingsViewModel: SettingsViewModel,
 	modifier: Modifier = Modifier,
-) {
+	settingsData: SettingsData = settingsViewModel.settingsData.observeAsState(initial = SettingsData()).value,
+	) {
 	NavHost(
 		navController = navController,
 		startDestination = if (goals.isNotEmpty()) {
@@ -297,6 +299,7 @@ fun WorkoutPixelNavHost(
 				goals = goals,
 				updateAfterClick = updateAfterClick,
 				navigateTo = navigateTo,
+				settingsData = settingsData,
 			)
 		}
 		composable(route = WorkoutPixelScreen.Instructions.name) {
@@ -313,6 +316,7 @@ fun WorkoutPixelNavHost(
 					deleteGoal = { deleteGoal(it, true) },
 					updateGoal = updateGoal,
 					//pastClickViewModel = pastClickViewModel,
+					settingsData = settingsData,
 					pastClickViewModelAssistedFactory = pastClickViewModelAssistedFactory,
 				)
 			} else (Text("currentGoal = null"))
@@ -326,7 +330,8 @@ fun WorkoutPixelNavHost(
 				EditGoalView(
 					initialGoal = currentGoal,
 					isFirstConfigure = false,
-					addUpdateWidget = { updateGoal(it, true) }
+					addUpdateWidget = { updateGoal(it, true) },
+					settingsData = settingsData,
 				)
 			} else (
 					Text("currentGoal = null")
