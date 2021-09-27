@@ -1,10 +1,18 @@
 package ch.karimattia.workoutpixel.data
 
+import android.util.Log
+import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.lifecycle.*
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+private const val TAG: String = "PastClickViewModel"
 
 /*
 @HiltViewModel
@@ -62,9 +70,24 @@ class PastClickViewModel @AssistedInject constructor(
 	private val repository: PastClickRepository,
 	@Assisted var goalUid: Int,
 ) : ViewModel() {
-	fun pastClicks(): LiveData<List<PastWorkout>> = repository.pastClicksByGoalUid(goalUid = goalUid).asLiveData()
+	private fun pastClicksFlow(): Flow<List<PastWorkout>> = repository.pastClicksByGoalUid(goalUid = goalUid)
 	fun updatePastClick(pastClick: PastWorkout) = viewModelScope.launch {
 		repository.updatePastWorkout(pastClick)
+	}
+
+	var pastClicks = mutableStateListOf<PastWorkout>() //Using an immutable list is recommended
+
+	// This is needed so the state of pastClicks and thus the UI updates.
+	init {
+		viewModelScope.launch {
+			pastClicksFlow().collect {pastWorkouts ->
+				pastClicks.clear()
+				for (workout in pastWorkouts) {
+					pastClicks.add(workout)
+				}
+				Log.d(TAG, "collect")
+			}
+		}
 	}
 }
 
@@ -82,4 +105,3 @@ fun provideFactory(
 		return assistedFactory.create(goalUid) as T
 	}
 }
-
