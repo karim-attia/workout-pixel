@@ -149,7 +149,7 @@ fun WorkoutPixelApp(
 	currentGoalUid: Int = goalViewModel.currentGoalUid.observeAsState(initial = -1).value,
 	//pastClickViewModel: PastClickViewModel = viewModel(factory = provideFactory(pastClickViewModelAssistedFactory, currentGoalUid)), // = viewModel(),
 	settingsViewModel: SettingsViewModel,
-	settingsData: SettingsData = settingsViewModel.settingsData.observeAsState(initial = SettingsData()).value,
+	settingsData: SettingsData? = settingsViewModel.settingsData.observeAsState().value,
 	settingChange: (SettingsData) -> Unit,
 	goals: List<Goal>,
 	updateAfterClick: (Goal) -> Unit,
@@ -239,44 +239,44 @@ fun WorkoutPixelApp(
 			}
 		) { innerPadding ->
 
-			WorkoutPixelNavHost(
-				navController = navController,
-				goals = goals,
-				updateAfterClick = updateAfterClick,
-				navigateTo = { destination: String, goal: Goal? ->
-					Log.d(TAG, "navigateTo $goal")
-					goalViewModel.changeCurrentGoalUid(goal)
-					navController.navigate(destination)
-				},
-				updateGoal = { updatedGoal: Goal, navigateUp: Boolean ->
-					updateGoal(updatedGoal)
-					if (navigateUp) {
-						// Why did I have this?
-						// kotlinGoalViewModel.changeCurrentGoal(updatedGoal)
-						navController.navigateUp()
-					}
+			if (settingsData != null) {
+				WorkoutPixelNavHost(
+					navController = navController,
+					goals = goals,
+					updateAfterClick = updateAfterClick,
+					navigateTo = { destination: String, goal: Goal? ->
+						Log.d(TAG, "navigateTo $goal")
+						goalViewModel.changeCurrentGoalUid(goal)
+						navController.navigate(destination)
+					},
+					updateGoal = { updatedGoal: Goal, navigateUp: Boolean ->
+						updateGoal(updatedGoal)
+						if (navigateUp) {
+							// Why did I have this?
+							// kotlinGoalViewModel.changeCurrentGoal(updatedGoal)
+							navController.navigateUp()
+						}
 
-				},
-				deleteGoal = { deletedGoal: Goal, navigateUp: Boolean ->
-					deleteGoal(deletedGoal)
-					if (navigateUp) {
-						// The goal uid of the deleted goal doesn't exist anymore. Removing it from the current goal removes sources of errors.
-						goalViewModel.changeCurrentGoalUid(null)
-						//kotlinGoalViewModel.changeCurrentGoal(null, goals)
-						navController.navigateUp()
-					}
-
-				},
-				currentGoal = currentGoal,
-				//currentGoal = goalFromGoalsByUid(goalUid = currentGoalUid, goals = goals),
-				// pastClickViewModel = pastClickViewModel,
-				pastClickViewModelAssistedFactory = pastClickViewModelAssistedFactory,
-				// settingsRepository = settingsRepository,
-				//settingsViewModel = settingsViewModel,
-				settingsData = settingsData,
-				settingChange = settingChange,
-				modifier = Modifier.padding(innerPadding),
-			)
+					},
+					deleteGoal = { deletedGoal: Goal, navigateUp: Boolean ->
+						deleteGoal(deletedGoal)
+						if (navigateUp) {
+							// The goal uid of the deleted goal doesn't exist anymore. Removing it from the current goal removes sources of errors.
+							goalViewModel.changeCurrentGoalUid(null)
+							navController.navigateUp()
+						}
+					},
+					currentGoal = currentGoal,
+					//currentGoal = goalFromGoalsByUid(goalUid = currentGoalUid, goals = goals),
+					// pastClickViewModel = pastClickViewModel,
+					pastClickViewModelAssistedFactory = pastClickViewModelAssistedFactory,
+					// settingsRepository = settingsRepository,
+					//settingsViewModel = settingsViewModel,
+					settingsData = settingsData,
+					settingChange = settingChange,
+					modifier = Modifier.padding(innerPadding),
+				)
+			}
 		}
 	}
 }
@@ -294,12 +294,9 @@ fun WorkoutPixelNavHost(
 	updateGoal: (updatedGoal: Goal, navigateUp: Boolean) -> Unit,
 	deleteGoal: (updatedGoal: Goal, navigateUp: Boolean) -> Unit,
 	currentGoal: Goal?,
-	// pastClickViewModel: PastClickViewModel,
 	pastClickViewModelAssistedFactory: PastClickViewModelAssistedFactory,
-	// settingsRepository: SettingsRepository,
-	// settingsViewModel: SettingsViewModel,
 	modifier: Modifier = Modifier,
-	settingsData: SettingsData, // = settingsViewModel.settingsData.observeAsState(initial = SettingsData()).value,
+	settingsData: SettingsData,
 	settingChange: (SettingsData) -> Unit,
 ) {
 	NavHost(
@@ -361,7 +358,6 @@ fun WorkoutPixelNavHost(
 		) {
 			Log.d(TAG, "------------Settings------------")
 			Settings(
-				// settingsViewModel = settingsViewModel,
 				settingsData = settingsData,
 				settingChange = settingChange,
 			)

@@ -1,92 +1,85 @@
-package ch.karimattia.workoutpixel;
+package ch.karimattia.workoutpixel
 
-import static org.junit.Assert.assertEquals;
-import static ch.karimattia.workoutpixel.core.CommonFunctionsKt.getNewStatus;
-import static ch.karimattia.workoutpixel.core.CommonFunctionsKt.intervalInMilliseconds;
-import static ch.karimattia.workoutpixel.core.Constants.STATUS_BLUE;
-import static ch.karimattia.workoutpixel.core.Constants.STATUS_GREEN;
-import static ch.karimattia.workoutpixel.core.Constants.STATUS_RED;
+import ch.karimattia.workoutpixel.core.Constants.STATUS_BLUE
+import ch.karimattia.workoutpixel.core.Constants.STATUS_GREEN
+import ch.karimattia.workoutpixel.core.Constants.STATUS_RED
+import ch.karimattia.workoutpixel.core.intervalInMilliseconds
+import ch.karimattia.workoutpixel.core.getNewStatus
+import org.junit.Assert
+import org.junit.Test
+import java.util.*
 
-import org.testng.annotations.Test;
+class TestNewStatus {
+	private val now = System.currentTimeMillis()
+	@Test
+	fun testNewStatusGreen() {
+		val lastWorkout = now
+		val intervalBlue = 2
+		val expectedStatus: String = STATUS_GREEN
+		testNewStatus(lastWorkout, intervalBlue, expectedStatus)
+	}
 
-import java.util.Calendar;
+	@Test
+	fun testNewStatusGreenNormal() {
+		val lastWorkout = now - intervalInMilliseconds(1)
+		val intervalBlue = 2
+		val expectedStatus: String = STATUS_GREEN
+		testNewStatus(lastWorkout, intervalBlue, expectedStatus)
+	}
 
-@SuppressWarnings("UnnecessaryLocalVariable")
-public class TestNewStatus {
-    final long now = System.currentTimeMillis();
+	@Test
+	fun testNewStatusBlueNormal() {
+		val lastWorkout = now - intervalInMilliseconds(3)
+		val intervalBlue = 2
+		val expectedStatus: String = STATUS_BLUE
+		testNewStatus(lastWorkout, intervalBlue, expectedStatus)
+	}
 
-    @Test
-    public void testNewStatusGreen() {
-        long lastWorkout = now;
-        int intervalBlue = 2;
-        String expectedStatus = STATUS_GREEN;
-        testNewStatus(lastWorkout, intervalBlue, expectedStatus);
-    }
+	// Corner case
+	@Test
+	fun testNewStatusBlueCornerCase() {
+		val lastWorkout = now - intervalInMilliseconds(2)
+		val intervalBlue = 2
+		val expectedStatus: String = STATUS_BLUE
+		testNewStatus(lastWorkout, intervalBlue, expectedStatus)
+	}
 
-    @Test
-    public void testNewStatusGreenNormal() {
-        long lastWorkout = now - intervalInMilliseconds(1);
-        int intervalBlue = 2;
-        String expectedStatus = STATUS_GREEN;
-        testNewStatus(lastWorkout, intervalBlue, expectedStatus);
-    }
+	@Test
+	fun testNewStatusRedNormal() {
+		val lastWorkout = now - intervalInMilliseconds(5)
+		val intervalBlue = 2
+		val expectedStatus: String = STATUS_RED
+		testNewStatus(lastWorkout, intervalBlue, expectedStatus)
+	}
 
-    @Test
-    public void testNewStatusBlueNormal() {
-        long lastWorkout = now - intervalInMilliseconds(3);
-        int intervalBlue = 2;
-        String expectedStatus = STATUS_BLUE;
-        testNewStatus(lastWorkout, intervalBlue, expectedStatus);
-    }
+	@Test
+	fun testNewStatusRedCornerCase() {
+		val lastWorkout = now - intervalInMilliseconds(4)
+		val intervalBlue = 2
+		val expectedStatus: String = STATUS_RED
+		testNewStatus(lastWorkout, intervalBlue, expectedStatus)
+	}
 
-    // Corner case
-    @Test
-    public void testNewStatusBlueCornerCase() {
-        long lastWorkout = now - intervalInMilliseconds(2);
-        int intervalBlue = 2;
-        String expectedStatus = STATUS_BLUE;
-        testNewStatus(lastWorkout, intervalBlue, expectedStatus);
-    }
+	@Test
+	fun testNewStatusBlueLateLastNight() {
+		val today3AmCalendar = Calendar.getInstance()
+		today3AmCalendar.timeInMillis = now
+		val hourOfDay = today3AmCalendar[Calendar.HOUR_OF_DAY]
+		today3AmCalendar[Calendar.HOUR_OF_DAY] = 2
+		val today2Am = today3AmCalendar.timeInMillis
+		val lastWorkout = today2Am - intervalInMilliseconds(0)
+		val intervalBlue = 1
+		val expectedStatus: String
+		if (hourOfDay > 3) {
+			expectedStatus = STATUS_BLUE
+		} else {
+			expectedStatus = STATUS_GREEN
+		}
+		testNewStatus(lastWorkout, intervalBlue, expectedStatus)
+	}
 
-    @Test
-    public void testNewStatusRedNormal() {
-        long lastWorkout = now - intervalInMilliseconds(5);
-        int intervalBlue = 2;
-        String expectedStatus = STATUS_RED;
-        testNewStatus(lastWorkout, intervalBlue, expectedStatus);
-    }
-
-    @Test
-    public void testNewStatusRedCornerCase() {
-        long lastWorkout = now - intervalInMilliseconds(4);
-        int intervalBlue = 2;
-        String expectedStatus = STATUS_RED;
-        testNewStatus(lastWorkout, intervalBlue, expectedStatus);
-    }
-
-    @Test
-    public void testNewStatusBlueLateLastNight() {
-        Calendar today3AmCalendar = Calendar.getInstance();
-        today3AmCalendar.setTimeInMillis(now);
-        int hourOfDay = today3AmCalendar.get(Calendar.HOUR_OF_DAY);
-        today3AmCalendar.set(Calendar.HOUR_OF_DAY, 2);
-        long today2Am = today3AmCalendar.getTimeInMillis();
-
-        long lastWorkout = today2Am - intervalInMilliseconds(0);
-        int intervalBlue = 1;
-        String expectedStatus;
-        if (hourOfDay > 3) {
-            expectedStatus = STATUS_BLUE;
-        } else {
-            expectedStatus = STATUS_GREEN;
-        }
-        testNewStatus(lastWorkout, intervalBlue, expectedStatus);
-    }
-
-    public void testNewStatus(long lastWorkout, int intervalBlue, String expectedStatus) {
-        String newStatus = getNewStatus(lastWorkout, intervalBlue);
-        assertEquals(expectedStatus, newStatus);
-    }
-
-
+	private fun testNewStatus(lastWorkout: Long, intervalBlue: Int, expectedStatus: String?) {
+		val newStatus = getNewStatus(lastWorkout, intervalBlue)
+		Assert.assertEquals(expectedStatus, newStatus)
+	}
 }

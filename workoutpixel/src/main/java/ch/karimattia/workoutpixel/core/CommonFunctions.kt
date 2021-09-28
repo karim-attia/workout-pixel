@@ -119,44 +119,6 @@ fun intervalInMilliseconds(intervalInDays: Int): Long {
 /**
  * Match status to background color
  */
-fun getDrawableIntFromStatus(status: String?): Int {
-	return when (status) {
-		Constants.STATUS_GREEN -> {
-			Log.v(TAG, "set to green")
-			R.drawable.rounded_corner_green
-		}
-		Constants.STATUS_BLUE -> {
-			Log.v(TAG, "set to blue")
-			R.drawable.rounded_corner_blue
-		}
-		Constants.STATUS_RED -> {
-			Log.v(TAG, "set to red")
-			R.drawable.rounded_corner_red
-		}
-		Constants.STATUS_NONE -> {
-			Log.v(TAG, "set to purple")
-			R.drawable.rounded_corner_purple
-		}
-		else -> {
-			Log.d(TAG, "getDrawableIntFromStatus: status not correctly assigned.")
-			0
-		}
-	}
-}
-
-fun getColorFromStatus(status: String?): Int {
-	return when (status) {
-		Constants.STATUS_GREEN -> Green
-		Constants.STATUS_BLUE -> Blue
-		Constants.STATUS_RED -> Red
-		Constants.STATUS_NONE -> Purple
-		else -> {
-			Log.d(TAG, "getColorFromStatus: status not correctly assigned.")
-			0
-		}
-	}
-}
-
 fun getColorFromStatusColor(status: String?, settingsData: SettingsData): Color {
 	return when (status) {
 		Constants.STATUS_GREEN -> settingsData.colorDone()

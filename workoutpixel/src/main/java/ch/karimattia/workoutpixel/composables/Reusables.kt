@@ -20,7 +20,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import ch.karimattia.workoutpixel.SettingsData
-import ch.karimattia.workoutpixel.core.getColorFromStatus
 import ch.karimattia.workoutpixel.core.getColorFromStatusColor
 import ch.karimattia.workoutpixel.data.Goal
 import ch.karimattia.workoutpixel.ui.theme.InfoColor
@@ -105,7 +104,7 @@ fun FormattedCard(
 
 @Composable
 fun CardTitle(
-	text: String
+	text: String,
 ) {
 	Text(
 		text = text,
@@ -119,7 +118,7 @@ fun CardTitle(
 @Composable
 fun Infobox(
 	text: String,
-	modifier: Modifier = Modifier
+	modifier: Modifier = Modifier,
 ) {
 	Row(
 		verticalAlignment = Alignment.CenterVertically,
@@ -148,7 +147,7 @@ fun CheckboxWithText(
 	description: String,
 	checked: Boolean,
 	onCheckedChange: (Boolean) -> Unit,
-	modifier: Modifier = Modifier
+	modifier: Modifier = Modifier,
 ) {
 	Row(
 		verticalAlignment = Alignment.CenterVertically,

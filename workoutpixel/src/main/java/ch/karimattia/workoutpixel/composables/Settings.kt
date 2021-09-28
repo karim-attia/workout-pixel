@@ -107,7 +107,7 @@ fun ColorSelection(
 }
 
 
-@Preview(name = "Instructions preview")
+@Preview(name = "Instructions preview", showBackground = true)
 @Composable
 fun SettingsPreview() {
 	Settings(

@@ -157,9 +157,6 @@ dependencies {
     implementation 'androidx.compose.runtime:runtime-livedata:1.1.0-alpha04'
     implementation 'androidx.compose.runtime:runtime-rxjava2:1.1.0-alpha04'
 
-    // LiveData
-    implementation 'androidx.compose.runtime:runtime-livedata:1.1.0-alpha04'
-
     // UI Tests
     androidTestImplementation 'androidx.compose.ui:ui-test-junit4:1.1.0-alpha04'
 
@@ -173,16 +170,6 @@ dependencies {
     // Coil gif
     implementation("io.coil-kt:coil-compose:1.3.2")
     implementation("io.coil-kt:coil-gif:1.3.2")
-
-    // Settings: https://github.com/alorma/Compose-Settings
-    // implementation 'com.github.alorma:compose-settings:0.2.0'
-
-/*
-    // https://github.com/serbelga/ComposeColorPicker
-    implementation 'com.sergiobelda.compose.colorpicker:colorpicker:1.0.0-dev04'
-    // So that the colorpicker works
-    implementation "com.google.accompanist:accompanist-flowlayout:0.18.0"
-*/
 
     // https://github.com/vanpra/compose-material-dialogs
     implementation "io.github.vanpra.compose-material-dialogs:color:0.6.0"
