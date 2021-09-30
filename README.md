@@ -22,9 +22,9 @@ You can download the app in the [Play Store](https://play.google.com/store/apps/
 	| intervalBlue 	| How often the user wants to achieve this goal 	|
 	| status 				| Whether it has been reached within lastWorkout, determines the color of the widget |
 
-* Goals are saved in a SQL database ([AppDatabase](/workoutpixel/src/main/java/ch/karimattia/workoutpixel/data/AppDatabase.kt) and [GoalDao](/workoutpixel/src/main/java/ch/karimattia/workoutpixel/data/GoalDao.kt)) and can be accessed through the [GoalRepository](/workoutpixel/src/main/java/ch/karimattia/workoutpixel/data/GoalRepository.kt).
 * Users can add new goals by adding a widget on their Android launcher. This starts the [ConfigureActivity](/workoutpixel/src/main/java/ch/karimattia/workoutpixel/activities/ConfigureActivity.kt) where they can add the details of their goal. 
 * Saving the new goal adds it to the database and initializes the widget including a listener for when users click on it ([GoalWidgetActions](/workoutpixel/src/main/java/ch/karimattia/workoutpixel/core/GoalWidgetActions.kt)).
+* Goals are saved in a SQL database ([AppDatabase](/workoutpixel/src/main/java/ch/karimattia/workoutpixel/data/AppDatabase.kt) and [GoalDao](/workoutpixel/src/main/java/ch/karimattia/workoutpixel/data/GoalDao.kt)) and can be accessed through the [GoalRepository](/workoutpixel/src/main/java/ch/karimattia/workoutpixel/data/GoalRepository.kt).
 
 ### Clicking on the widget
 * When a user clicks on a widget, the [WorkoutPixelAppWidgetProvider](/workoutpixel/src/main/java/ch/karimattia/workoutpixel/core/WorkoutPixelAppWidgetProvider) class receives a broadcast to update the goal.
