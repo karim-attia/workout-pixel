@@ -197,7 +197,7 @@ fun PastClickList(
 					togglePastClick = {
 						updatePastClick(it)
 						// If this change causes a new last workout time, do all the necessary updates.
-						// setNewLastWorkout not needed because this is done in updateGoal. Instead, lastWorkout could be set directly.
+						// TODO: Move setNewLastWorkout to GoalSaveActions and directly save the updated goal there?
 						if (goal.setNewLastWorkout(lastClickBasedOnActiveClicks(pastClicks))) {
 							updateGoal(goal, false)
 						}

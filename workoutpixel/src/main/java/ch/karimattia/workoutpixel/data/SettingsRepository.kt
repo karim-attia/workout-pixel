@@ -31,15 +31,7 @@ class SettingsRepository @Inject constructor(
 ) {
 	private val Context.dataStore by dataStore("settings.json", serializer = SettingsDataSerializer)
 	val getSettings: Flow<SettingsData> = context.dataStore.data
-
 	suspend fun getSettingsOnce(): SettingsData = getSettings.first()
-
-	suspend fun updateColorDone(colorDoneInt: Int) {
-		context.dataStore.updateData {
-			it.copy(colorDoneInt = colorDoneInt)
-		}
-	}
-
 	suspend fun updateSettings(settingsData: SettingsData) {
 		context.dataStore.updateData {settingsData}
 	}

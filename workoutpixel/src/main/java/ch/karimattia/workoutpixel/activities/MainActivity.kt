@@ -29,11 +29,12 @@ import ch.karimattia.workoutpixel.data.Goal
 import ch.karimattia.workoutpixel.data.GoalViewModel
 import ch.karimattia.workoutpixel.data.PastClickViewModelAssistedFactory
 import ch.karimattia.workoutpixel.data.SettingsViewModel
-import ch.karimattia.workoutpixel.ui.theme.*
+import ch.karimattia.workoutpixel.ui.theme.WorkoutPixelTheme
 import coil.annotation.ExperimentalCoilApi
 import com.google.accompanist.pager.ExperimentalPagerApi
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -49,9 +50,7 @@ class MainActivity : ComponentActivity() {
 	// Create a class that has those two and extend it (also in AppWidgetProvider, ConfigureActivity)?
 	@Inject
 	lateinit var goalSaveActionsFactory: GoalSaveActions.Factory
-	private fun goalSaveActions(goal: Goal): GoalSaveActions {
-		return goalSaveActionsFactory.create(goal)
-	}
+	private fun goalSaveActions(goal: Goal): GoalSaveActions = goalSaveActionsFactory.create(goal)
 
 	@Inject
 	lateinit var goalWidgetActionsFactory: GoalWidgetActions.Factory
@@ -66,59 +65,43 @@ class MainActivity : ComponentActivity() {
 
 	@Inject
 	lateinit var databaseInteractions: DatabaseInteractions
-	// @Inject
-	// lateinit var settingsRepository: SettingsRepository
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 		val goalViewModel: GoalViewModel by viewModels()
 		val settingsViewModel: SettingsViewModel by viewModels()
-		// val currentGoalUid by goalViewModel.currentGoalUid.observe()
-		// val pastClickViewModel: PastClickViewModel by viewModels()
-		var alreadySetUp = false
 
-		Log.d(TAG, "$Green, $Blue, $Red, $Purple ")
-
-
-		goalViewModel.allGoals.observe(this, { goals ->
-			Log.d(TAG, "___________observe___________")
-
-			setContent {
-				WorkoutPixelApp(
-					goalViewModel = goalViewModel,
-					pastClickViewModelAssistedFactory = pastClickViewModelAssistedFactory,
-					// settingsRepository = settingsRepository,
-					// pastClickViewModel = pastClickViewModel,
-					settingsViewModel = settingsViewModel,
-					goals = goals,
-					updateAfterClick = {
-						// contains updateGoal
-						goalSaveActions(it).updateAfterClick()
-					},
-					updateGoal = {
-						goalViewModel.updateGoal(it)
-						goalSaveActions(it).updateWidgetBasedOnStatus()
-					},
-					deleteGoal = { goalViewModel.deleteGoal(it) },
-					settingChange = {
-						Log.d(TAG, "settingChange MainAct")
-						settingsViewModel.updateSettings(it)
-						lifecycleScope.launch {
-							delay(200)
-							goalSaveActions(Goal()).updateAllWidgetsBasedOnStatus()
-						}
+		setContent {
+			WorkoutPixelApp(
+				goalViewModel = goalViewModel,
+				pastClickViewModelAssistedFactory = pastClickViewModelAssistedFactory,
+				goals = goalViewModel.allGoals,
+				updateAfterClick = {
+					// contains updateGoal
+					goalSaveActions(it).updateAfterClick()
+				},
+				updateGoal = {
+					goalViewModel.updateGoal(it)
+					goalWidgetActions(it).runUpdate(true)
+				},
+				deleteGoal = { goalViewModel.deleteGoal(it) },
+				settingsData = settingsViewModel.settingsData.observeAsState().value,
+				settingChange = {
+					settingsViewModel.updateSettings(it)
+					lifecycleScope.launch {
+						// TODO: Could move to ViewModel
+						delay(200)
+						goalSaveActions(Goal()).updateAllWidgetsBasedOnStatus()
 					}
-				)
-			}
-
-			// Run oneTimeSetup once after the goals are loaded.
-			if (!alreadySetUp && goals != null) {
-				lifecycleScope.launch {
-					oneTimeSetup(goals)
 				}
-				alreadySetUp = true
-			}
-		})
+			)
+		}
+
+		// Run oneTimeSetup once after the goals are loaded.
+		lifecycleScope.launch {
+			delay(500)
+			oneTimeSetup(goalViewModel.allGoalsFlow.first())
+		}
 	}
 
 	private fun oneTimeSetup(goals: List<Goal>) {
@@ -127,7 +110,7 @@ class MainActivity : ComponentActivity() {
 		for (goal in goals) {
 			// Sometimes the onClickListener in the widgets stop working. This is a super stupid way to regularly reset the onClickListener when you open the main app.
 			if (goal.hasValidAppWidgetId()) {
-				goalSaveActions(goal).updateWidgetBasedOnStatus()
+				goalWidgetActions(goal).runUpdate(true)
 			}
 		}
 		// Remove appWidgetId if it is not valid anymore. Run only once.
@@ -143,13 +126,10 @@ class MainActivity : ComponentActivity() {
 @ExperimentalComposeUiApi
 @Composable
 fun WorkoutPixelApp(
-	goalViewModel: GoalViewModel, // = viewModel(),
+	goalViewModel: GoalViewModel,
 	pastClickViewModelAssistedFactory: PastClickViewModelAssistedFactory,
-	// settingsRepository: SettingsRepository,
 	currentGoalUid: Int = goalViewModel.currentGoalUid.observeAsState(initial = -1).value,
-	//pastClickViewModel: PastClickViewModel = viewModel(factory = provideFactory(pastClickViewModelAssistedFactory, currentGoalUid)), // = viewModel(),
-	settingsViewModel: SettingsViewModel,
-	settingsData: SettingsData? = settingsViewModel.settingsData.observeAsState().value,
+	settingsData: SettingsData?,
 	settingChange: (SettingsData) -> Unit,
 	goals: List<Goal>,
 	updateAfterClick: (Goal) -> Unit,
@@ -159,28 +139,10 @@ fun WorkoutPixelApp(
 	WorkoutPixelTheme(
 		darkTheme = false,
 	) {
-		//val currentGoalUid: Int = goalViewModel.currentGoalUid.observeAsState(initial = -1).value
-		//val pastClickViewModel: PastClickViewModel = viewModel(factory = provideFactory(pastClickViewModelAssistedFactory, currentGoalUid))
-
-/*
-		val pastClicks by pastClickViewModel.pastClicks().observeAsState(initial = listOf())
-		Log.d(TAG, "pastClickViewModel.goalUid: ${pastClickViewModel.goalUid}")
-		Log.d(TAG, "currentGoalUid: $currentGoalUid")
-
-		if (pastClicks.isNotEmpty()) {
-			Log.d(TAG, "pastClickViewModel, pastClicks: ${pastClicks[0]}, workoutTime: ${pastClicks[0].workoutTime}")
-		} else {
-			Log.d(TAG, "pastClickViewModel: No past clicks")
-		}
-*/
-
 		val allScreens = WorkoutPixelScreen.values().toList()
 		val navController = rememberNavController()
 		val backstackEntry = navController.currentBackStackEntryAsState()
 		val currentScreen = WorkoutPixelScreen.fromRoute(backstackEntry.value?.destination?.route)
-		//val appBarTitle: String? by kotlinGoalViewModel.appBarTitle.observeAsState()
-		// val currentGoalUid: Int? by goalViewModel.currentGoalUid.observeAsState()
-		//val currentGoal: Goal? by kotlinGoalViewModel.currentGoal.observeAsState()
 		val currentGoal: Goal? = goalFromGoalsByUid(goalUid = currentGoalUid, goals = goals)
 
 		Scaffold(
@@ -252,8 +214,6 @@ fun WorkoutPixelApp(
 					updateGoal = { updatedGoal: Goal, navigateUp: Boolean ->
 						updateGoal(updatedGoal)
 						if (navigateUp) {
-							// Why did I have this?
-							// kotlinGoalViewModel.changeCurrentGoal(updatedGoal)
 							navController.navigateUp()
 						}
 
@@ -267,11 +227,7 @@ fun WorkoutPixelApp(
 						}
 					},
 					currentGoal = currentGoal,
-					//currentGoal = goalFromGoalsByUid(goalUid = currentGoalUid, goals = goals),
-					// pastClickViewModel = pastClickViewModel,
 					pastClickViewModelAssistedFactory = pastClickViewModelAssistedFactory,
-					// settingsRepository = settingsRepository,
-					//settingsViewModel = settingsViewModel,
 					settingsData = settingsData,
 					settingChange = settingChange,
 					modifier = Modifier.padding(innerPadding),
@@ -330,7 +286,6 @@ fun WorkoutPixelNavHost(
 					updateAfterClick = { updateAfterClick(currentGoal) },
 					deleteGoal = { deleteGoal(it, true) },
 					updateGoal = updateGoal,
-					//pastClickViewModel = pastClickViewModel,
 					settingsData = settingsData,
 					pastClickViewModelAssistedFactory = pastClickViewModelAssistedFactory,
 				)

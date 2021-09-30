@@ -13,6 +13,7 @@ import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.ExperimentalComposeUiApi
 import ch.karimattia.workoutpixel.SettingsData
@@ -20,6 +21,7 @@ import ch.karimattia.workoutpixel.composables.EditGoalView
 import ch.karimattia.workoutpixel.core.ContextFunctions
 import ch.karimattia.workoutpixel.core.GoalWidgetActions
 import ch.karimattia.workoutpixel.data.Goal
+import ch.karimattia.workoutpixel.data.GoalRepository
 import ch.karimattia.workoutpixel.data.GoalViewModel
 import ch.karimattia.workoutpixel.data.SettingsViewModel
 import ch.karimattia.workoutpixel.ui.theme.WorkoutPixelTheme
@@ -35,31 +37,26 @@ class ConfigureActivity : ComponentActivity() {
 	@Inject
 	lateinit var goalWidgetActionsFactory: GoalWidgetActions.Factory
 	private fun goalWidgetActions(goal: Goal): GoalWidgetActions = goalWidgetActionsFactory.create(goal)
-
 	@Inject
 	lateinit var contextFunctions: ContextFunctions
+	@Inject
+	lateinit var goalRepository: GoalRepository
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 		val kotlinGoalViewModel by viewModels<GoalViewModel>()
 		val settingsViewModel: SettingsViewModel by viewModels()
-		val context: Context = this
 
 		val goal = Goal()
 
-		// Find the widget id  and whether it is a reconfigure activity from the intent.
-		val intent = intent
+		// Find the widget id and whether it is a reconfigure activity from the intent.
 		val extras = intent.extras
 
 		// Get the AppWidgetId from the launcher if there is one provided. Else exit.
 		// Set the result to CANCELED. This will cause the widget host to cancel out of the widget placement if the user presses the back button.
 		setResult(RESULT_CANCELED)
 		if (extras != null) {
-			goal.appWidgetId =
-				extras.getInt(
-					AppWidgetManager.EXTRA_APPWIDGET_ID,
-					AppWidgetManager.INVALID_APPWIDGET_ID
-				)
+			goal.appWidgetId = extras.getInt(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID)
 		} else {
 			Log.d(TAG, "extras = null")
 		}
@@ -71,39 +68,29 @@ class ConfigureActivity : ComponentActivity() {
 			return
 		}
 
-		kotlinGoalViewModel.allGoals.observe(this, { goals ->
-			Log.d(TAG, "___________observe___________")
-
-			val goalsWithoutWidget = contextFunctions.goalsWithInvalidOrNullAppWidgetId(goals)
-
-			setContent {
-				ConfigureActivityCompose(
-					initialGoal = goal,
-					isFirstConfigure = true,
-					goalsWithoutWidget = goalsWithoutWidget,
-					addUpdateWidget = {
-						// Insert the goal into the DB and also update the widget. The update is done there, because the OnClickListener needs the goal uid. This is returned by the DB.
-						kotlinGoalViewModel.insertGoal(it)
-						// goal has the wrong uid here, but this doesn't matter for setWidgetAndFinish
-						setWidgetAndFinish(goal = it, context = this)
-					},
-					connectGoal = {
-						// Not necessarely needed since we always update all goals regardless of whether they are connected. But it doesn't hurt to set the status here.
-						// goal.setNewStatus()
-						// it.setNewStatus()
-						kotlinGoalViewModel.updateGoal(it)
-						goalWidgetActions(it).runUpdate(true)
-						setWidgetAndFinish(goal = it, context = this)
-					},
-					settingsData = settingsViewModel.settingsData.observeAsState(initial = SettingsData()).value,
-				)
-			}
-		})
+		setContent {
+			ConfigureActivityCompose(
+				initialGoal = goal,
+				isFirstConfigure = true,
+				addUpdateWidget = {
+					// Insert the goal into the DB and also update the widget. The update is done there, because the OnClickListener needs the goal uid. This is returned by the DB.
+					kotlinGoalViewModel.insertGoal(it)
+					// goal has the wrong uid here, but this doesn't matter for setWidgetAndFinish
+					setWidgetAndFinish(goal = it)
+				},
+				connectGoal = {
+					kotlinGoalViewModel.updateGoal(it)
+					goalWidgetActions(it).runUpdate(true)
+					setWidgetAndFinish(goal = it)
+				},
+				goalsWithoutWidget = goalRepository.loadGoalsWithoutValidAppWidgetId().collectAsState(initial = emptyList()).value,
+				settingsData = settingsViewModel.settingsData.observeAsState(initial = SettingsData()).value,
+			)
+		}
 	}
 
-	private fun setWidgetAndFinish(goal: Goal, context: Context) {
+	private fun setWidgetAndFinish(goal: Goal, context: Context = this) {
 		// Make sure we pass back the original appWidgetId.
-		// Reconfiguration does not need this.
 		val resultValue = Intent()
 		resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, goal.appWidgetId)
 		setResult(RESULT_OK, resultValue)

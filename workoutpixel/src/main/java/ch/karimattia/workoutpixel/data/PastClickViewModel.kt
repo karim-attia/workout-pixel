@@ -2,6 +2,7 @@ package ch.karimattia.workoutpixel.data
 
 import android.util.Log
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -24,7 +25,7 @@ class PastClickViewModel @AssistedInject constructor(
 		repository.updatePastWorkout(pastClick)
 	}
 
-	val pastClicks = mutableStateListOf<PastClick>()
+	val pastClicks: SnapshotStateList<PastClick> = mutableStateListOf()
 
 	// This is needed so the state of pastClicks and thus the UI updates.
 	init {

@@ -258,16 +258,6 @@ fun testData(): List<Goal> {
 	return testData
 }
 
-fun goalFromGoalsByUid(goalUid: Int?, goals: List<Goal>): Goal? {
-	return if (goalUid == null || goalUid == -1) {
-		Log.d("goalFromGoalsByUid", "null or -1")
-		null
-	} else {
-		Log.d("goalFromGoalsByUid", "$goalUid")
-		goalFromGoalsByUid(goals = goals, goalUid = goalUid)
-	}
-}
-
 fun goalFromGoalsByUid(goalUid: Int, goals: List<Goal>): Goal? {
 	return goals.firstOrNull { it.uid == goalUid }
 }

@@ -17,13 +17,7 @@ class SettingsViewModel @Inject constructor(
 
 	val settingsData: LiveData<SettingsData> = settingsRepository.getSettings.asLiveData()
 
-	fun updateColorDone(int: Int) = viewModelScope.launch {
-		settingsRepository.updateColorDone(int)
-		// TODO: Trigger update all.
-	}
-
 	fun updateSettings(settingsData: SettingsData) = viewModelScope.launch {
 		settingsRepository.updateSettings(settingsData)
-		// TODO: Trigger update all.
 	}
 }

@@ -66,7 +66,7 @@ interface GoalDao {
 
 	// Get all goals without AppWidgetId
 	@Query("SELECT * FROM goals WHERE appWidgetId =:invalidAppWidgetId")
-	fun loadGoalsWithoutValidAppWidgetId(invalidAppWidgetId: Int = AppWidgetManager.INVALID_APPWIDGET_ID): List<Goal>
+	fun loadGoalsWithoutValidAppWidgetId(invalidAppWidgetId: Int = AppWidgetManager.INVALID_APPWIDGET_ID): Flow<List<Goal>>
 
 	// Get all goals with AppWidgetId
 	@Query("SELECT * FROM goals WHERE appWidgetId !=:invalidAppWidgetId")

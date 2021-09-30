@@ -6,12 +6,8 @@ import javax.inject.Inject
 private const val TAG = "GoalRepository"
 
 class GoalRepository @Inject constructor(
-	// application: Application,
 	private val goalDao: GoalDao
 ) {
-	// private val db: AppDatabase = AppDatabase.getDatabase(application)
-	// private val goalDao: GoalDao = db.goalDao()
-
 	// Room executes all queries on a separate thread.
 	// Observed Flow will notify the observer when the data has changed.
 
@@ -36,6 +32,10 @@ class GoalRepository @Inject constructor(
 
 	fun loadAllGoals(): List<Goal> {
 		return goalDao.loadAllGoals()
+	}
+
+	fun loadGoalsWithoutValidAppWidgetId(): Flow<List<Goal>> {
+		return goalDao.loadGoalsWithoutValidAppWidgetId()
 	}
 
 	fun loadGoalsWithValidAppWidgetId(): List<Goal> {

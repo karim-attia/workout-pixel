@@ -48,7 +48,7 @@ private const val TAG: String = "EditGoalView"
 fun EditGoalView(
 	initialGoal: Goal,
 	isFirstConfigure: Boolean,
-	goalsWithoutWidget: List<Goal> = ArrayList<Goal>(),
+	goalsWithoutWidget: List<Goal> = emptyList(),
 	addUpdateWidget: (Goal) -> Unit,
 	connectGoal: (Goal) -> Unit = {},
 	settingsData: SettingsData,
@@ -310,7 +310,7 @@ fun SetUpYourWidget(
 	)
 	val keyboardController = LocalSoftwareKeyboardController.current
 	TextField(
-		value = setUpYourWidgetGoal.title!!,
+		value = setUpYourWidgetGoal.title,
 		onValueChange = {
 			setUpYourWidgetGoal.title = it
 			setUpYourWidgetGoalChange(setUpYourWidgetGoal)
