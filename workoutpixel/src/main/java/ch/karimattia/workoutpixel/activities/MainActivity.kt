@@ -22,7 +22,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import ch.karimattia.workoutpixel.SettingsData
+import ch.karimattia.workoutpixel.data.SettingsData
 import ch.karimattia.workoutpixel.composables.*
 import ch.karimattia.workoutpixel.core.*
 import ch.karimattia.workoutpixel.data.Goal

@@ -7,7 +7,7 @@ import android.content.Intent
 import android.util.Log
 import android.widget.RemoteViews
 import ch.karimattia.workoutpixel.R
-import ch.karimattia.workoutpixel.SettingsRepository
+import ch.karimattia.workoutpixel.data.SettingsRepository
 import ch.karimattia.workoutpixel.data.Goal
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -63,7 +63,7 @@ class GoalWidgetActions @AssistedInject constructor(
 
 		// Set size if available
 		// https://stackoverflow.com/questions/25153604/get-the-size-of-my-homescreen-widget
-		val height = appWidgetManager.getAppWidgetOptions(goal.appWidgetId!!).getInt(AppWidgetManager.OPTION_APPWIDGET_MAX_HEIGHT, 44)
+		val height = appWidgetManager.getAppWidgetOptions(goal.appWidgetId).getInt(AppWidgetManager.OPTION_APPWIDGET_MAX_HEIGHT, 44)
 		val paddingInDp = height - 44
 		val paddingInPx = (paddingInDp * context.resources.displayMetrics.density + 0.5f).toInt()
 		val paddigTopInPx = ceil(paddingInPx / 4.0).toInt()
@@ -83,6 +83,6 @@ class GoalWidgetActions @AssistedInject constructor(
 			return null
 		}
 		intent.putExtra("goalUid", goal.uid)
-		return PendingIntent.getBroadcast(context, goal.appWidgetId!!, intent, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
+		return PendingIntent.getBroadcast(context, goal.appWidgetId, intent, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
 	}
 }

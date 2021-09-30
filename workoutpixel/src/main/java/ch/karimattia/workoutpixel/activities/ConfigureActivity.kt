@@ -16,7 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.ExperimentalComposeUiApi
-import ch.karimattia.workoutpixel.SettingsData
+import ch.karimattia.workoutpixel.data.SettingsData
 import ch.karimattia.workoutpixel.composables.EditGoalView
 import ch.karimattia.workoutpixel.core.ContextFunctions
 import ch.karimattia.workoutpixel.core.GoalWidgetActions

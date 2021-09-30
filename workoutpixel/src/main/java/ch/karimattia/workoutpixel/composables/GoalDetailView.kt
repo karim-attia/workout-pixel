@@ -27,7 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import ch.karimattia.workoutpixel.R
-import ch.karimattia.workoutpixel.SettingsData
+import ch.karimattia.workoutpixel.data.SettingsData
 import ch.karimattia.workoutpixel.core.dateBeautiful
 import ch.karimattia.workoutpixel.core.testData
 import ch.karimattia.workoutpixel.core.timeBeautiful

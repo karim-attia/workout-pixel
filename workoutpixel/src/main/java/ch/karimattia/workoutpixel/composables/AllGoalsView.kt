@@ -21,7 +21,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import ch.karimattia.workoutpixel.R
-import ch.karimattia.workoutpixel.SettingsData
+import ch.karimattia.workoutpixel.data.SettingsData
 import ch.karimattia.workoutpixel.data.Goal
 import ch.karimattia.workoutpixel.core.WorkoutPixelScreen
 import ch.karimattia.workoutpixel.core.dateBeautiful
@@ -118,7 +118,7 @@ fun GoalCard(
 @Composable
 fun GoalTitle(goal: Goal) {
 	Text(
-		text = goal.title!!.uppercase(Locale.getDefault()),
+		text = goal.title.uppercase(Locale.getDefault()),
 		fontSize = 16.sp,
 		fontWeight = FontWeight.Bold,
 		modifier = Modifier

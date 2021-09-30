@@ -3,9 +3,8 @@ package ch.karimattia.workoutpixel.core
 import android.appwidget.AppWidgetManager
 import android.content.ComponentName
 import android.content.Context
-import android.util.Log
 import androidx.compose.ui.graphics.Color
-import ch.karimattia.workoutpixel.SettingsData
+import ch.karimattia.workoutpixel.data.SettingsData
 import ch.karimattia.workoutpixel.core.Constants.PREFERENCE_NAME
 import ch.karimattia.workoutpixel.data.Goal
 import ch.karimattia.workoutpixel.data.GoalRepository

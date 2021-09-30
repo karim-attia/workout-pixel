@@ -1,4 +1,4 @@
-package ch.karimattia.workoutpixel
+package ch.karimattia.workoutpixel.data
 
 import android.content.Context
 import androidx.compose.ui.graphics.Color
@@ -24,7 +24,7 @@ import java.io.OutputStream
 import javax.inject.Inject
 import javax.inject.Singleton
 
-const val TAG = "SettingsRepository"
+private const val TAG = "SettingsRepository"
 
 class SettingsRepository @Inject constructor(
 	@ApplicationContext val context: Context,
