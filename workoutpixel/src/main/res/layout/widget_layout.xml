@@ -8,7 +8,9 @@
         android:id="@+id/appwidget_text"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        style="@style/WorkoutPixel"
+        android:textColor="#ffffff"
+        android:textSize="12sp"
+        android:gravity="center"
         android:background="@drawable/rounded_corner_green"
         android:text="@string/standard_widget_text"
         />

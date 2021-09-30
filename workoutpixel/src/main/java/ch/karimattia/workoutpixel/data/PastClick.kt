@@ -14,7 +14,7 @@ import androidx.room.PrimaryKey
 		onDelete = ForeignKey.CASCADE
 	)]
 )
-data class PastWorkout(
+data class PastClick(
 	@PrimaryKey(autoGenerate = true)
 	var uid: Int = 0,
 	@ColumnInfo(name = "widgetUid", index = true)

@@ -50,7 +50,7 @@ fun GoalDetailView(
 	settingsData: SettingsData,
 	pastClickViewModelAssistedFactory: PastClickViewModelAssistedFactory,
 	pastClickViewModel: PastClickViewModel = viewModel(factory = provideFactory(pastClickViewModelAssistedFactory, goal.uid)),
-	pastClicks: List<PastWorkout> = pastClickViewModel.pastClicks,
+	pastClicks: List<PastClick> = pastClickViewModel.pastClicks,
 ) {
 	GoalDetailView(
 		goal = goal,
@@ -69,8 +69,8 @@ fun GoalDetailView(
 	updateAfterClick: () -> Unit,
 	deleteGoal: (Goal) -> Unit,
 	updateGoal: (updatedGoal: Goal, navigateUp: Boolean) -> Unit,
-	updatePastClick: (PastWorkout) -> Unit,
-	pastClicks: List<PastWorkout>,
+	updatePastClick: (PastClick) -> Unit,
+	pastClicks: List<PastClick>,
 	settingsData: SettingsData,
 ) {
 
@@ -162,8 +162,8 @@ fun GoalDetailNoWidgetCard(
 fun PastClicks(
 	goal: Goal,
 	updateGoal: (updatedGoal: Goal, navigateUp: Boolean) -> Unit,
-	updatePastClick: (PastWorkout) -> Unit,
-	pastClicks: List<PastWorkout>
+	updatePastClick: (PastClick) -> Unit,
+	pastClicks: List<PastClick>
 ) {
 	CardWithTitle(
 		// TODO: If numberOfPastClicks > 50, declare it. Or implement some paging.
@@ -182,8 +182,8 @@ fun PastClicks(
 fun PastClickList(
 	goal: Goal,
 	updateGoal: (updatedGoal: Goal, navigateUp: Boolean) -> Unit,
-	updatePastClick: (PastWorkout) -> Unit,
-	pastClicks: List<PastWorkout>
+	updatePastClick: (PastClick) -> Unit,
+	pastClicks: List<PastClick>
 ) {
 	val numberOfPastClicks = pastClicks.size
 	if (numberOfPastClicks > 0) {
@@ -198,7 +198,7 @@ fun PastClickList(
 						updatePastClick(it)
 						// If this change causes a new last workout time, do all the necessary updates.
 						// setNewLastWorkout not needed because this is done in updateGoal. Instead, lastWorkout could be set directly.
-						if (goal.setNewLastWorkout(lastWorkoutBasedOnActiveWorkouts(pastClicks))) {
+						if (goal.setNewLastWorkout(lastClickBasedOnActiveClicks(pastClicks))) {
 							updateGoal(goal, false)
 						}
 					}
@@ -217,8 +217,8 @@ fun PastClickList(
 
 @Composable
 fun PastClickEntry(
-	pastClick: PastWorkout,
-	togglePastClick: (PastWorkout) -> Unit,
+	pastClick: PastClick,
+	togglePastClick: (PastClick) -> Unit,
 ) {
 	PastClickEntry(
 		date = dateBeautiful(pastClick.workoutTime),
@@ -291,9 +291,9 @@ fun PastClickEntry(
 	}
 }
 
-fun lastWorkoutBasedOnActiveWorkouts(pastClicks: List<PastWorkout>): Long {
+fun lastClickBasedOnActiveClicks(pastClicks: List<PastClick>): Long {
 	val activeWorkoutsOrderedByWorkoutTime = pastClicks.stream()
-		.filter { clickedWorkout: PastWorkout -> clickedWorkout.isActive }.collect(
+		.filter { clickedClick: PastClick -> clickedClick.isActive }.collect(
 			Collectors.toList()
 		)
 

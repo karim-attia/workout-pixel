@@ -52,7 +52,7 @@ fun SettingsData(
 	colorFirstIntervalInt: Int = settingsData.colorFirstIntervalInt,
 	colorSecondIntervalInt: Int = settingsData.colorSecondIntervalInt,
 	colorInitialInt: Int = settingsData.colorInitialInt,
-	) = SettingsData(colorDoneInt = colorDoneInt, colorFirstIntervalInt = colorFirstIntervalInt, colorSecondIntervalInt = colorSecondIntervalInt, colorInitialInt = colorInitialInt)
+	): SettingsData = SettingsData(colorDoneInt = colorDoneInt, colorFirstIntervalInt = colorFirstIntervalInt, colorSecondIntervalInt = colorSecondIntervalInt, colorInitialInt = colorInitialInt)
 
 @Serializable
 data class SettingsData(

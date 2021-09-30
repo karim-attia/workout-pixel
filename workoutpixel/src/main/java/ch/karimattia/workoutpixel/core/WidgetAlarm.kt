@@ -50,6 +50,6 @@ class WidgetAlarm @Inject constructor(
 	private fun pendingIntent(context: Context): PendingIntent {
 		val alarmIntent = Intent(context, WorkoutPixelAppWidgetProvider::class.java)
 		alarmIntent.action = ACTION_ALARM_UPDATE
-		return PendingIntent.getBroadcast(context, 0, alarmIntent, PendingIntent.FLAG_CANCEL_CURRENT)
+		return PendingIntent.getBroadcast(context, 0, alarmIntent, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
 	}
 }

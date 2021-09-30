@@ -65,7 +65,7 @@ class ConfigureActivity : ComponentActivity() {
 		}
 
 		// If this activity was started with an intent without an app widget ID, finish with an error.
-		if (goal.appWidgetId == null || goal.appWidgetId == AppWidgetManager.INVALID_APPWIDGET_ID) {
+		if (goal.appWidgetId == AppWidgetManager.INVALID_APPWIDGET_ID) {
 			Log.d(TAG, "AppWidgetId is invalid.")
 			finishAndRemoveTask()
 			return
@@ -89,8 +89,8 @@ class ConfigureActivity : ComponentActivity() {
 					},
 					connectGoal = {
 						// Not necessarely needed since we always update all goals regardless of whether they are connected. But it doesn't hurt to set the status here.
-						goal.setNewStatus()
-						it.setNewStatus()
+						// goal.setNewStatus()
+						// it.setNewStatus()
 						kotlinGoalViewModel.updateGoal(it)
 						goalWidgetActions(it).runUpdate(true)
 						setWidgetAndFinish(goal = it, context = this)

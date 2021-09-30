@@ -33,7 +33,7 @@ fun GoalPreview(
 ) {
 	GoalPreviewWithColor(
 		goal = goal,
-		color = getColorFromStatusColor(goal.status, settingsData = settingsData),
+		color = getColorFromStatusColor(goal.status(), settingsData = settingsData),
 		modifier = modifier,
 		onClick = onClick,
 	)

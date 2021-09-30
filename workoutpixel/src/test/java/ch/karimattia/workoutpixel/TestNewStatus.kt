@@ -1,21 +1,21 @@
 package ch.karimattia.workoutpixel
 
-import ch.karimattia.workoutpixel.core.Constants.STATUS_BLUE
-import ch.karimattia.workoutpixel.core.Constants.STATUS_GREEN
-import ch.karimattia.workoutpixel.core.Constants.STATUS_RED
-import ch.karimattia.workoutpixel.core.intervalInMilliseconds
+import ch.karimattia.workoutpixel.core.Status
 import ch.karimattia.workoutpixel.core.getNewStatus
+import ch.karimattia.workoutpixel.core.intervalInMilliseconds
+import ch.karimattia.workoutpixel.data.Goal
 import org.junit.Assert
 import org.junit.Test
 import java.util.*
 
 class TestNewStatus {
 	private val now = System.currentTimeMillis()
+
 	@Test
 	fun testNewStatusGreen() {
 		val lastWorkout = now
 		val intervalBlue = 2
-		val expectedStatus: String = STATUS_GREEN
+		val expectedStatus: Status = Status.GREEN
 		testNewStatus(lastWorkout, intervalBlue, expectedStatus)
 	}
 
@@ -23,7 +23,7 @@ class TestNewStatus {
 	fun testNewStatusGreenNormal() {
 		val lastWorkout = now - intervalInMilliseconds(1)
 		val intervalBlue = 2
-		val expectedStatus: String = STATUS_GREEN
+		val expectedStatus: Status = Status.GREEN
 		testNewStatus(lastWorkout, intervalBlue, expectedStatus)
 	}
 
@@ -31,7 +31,7 @@ class TestNewStatus {
 	fun testNewStatusBlueNormal() {
 		val lastWorkout = now - intervalInMilliseconds(3)
 		val intervalBlue = 2
-		val expectedStatus: String = STATUS_BLUE
+		val expectedStatus: Status = Status.BLUE
 		testNewStatus(lastWorkout, intervalBlue, expectedStatus)
 	}
 
@@ -40,7 +40,7 @@ class TestNewStatus {
 	fun testNewStatusBlueCornerCase() {
 		val lastWorkout = now - intervalInMilliseconds(2)
 		val intervalBlue = 2
-		val expectedStatus: String = STATUS_BLUE
+		val expectedStatus: Status = Status.BLUE
 		testNewStatus(lastWorkout, intervalBlue, expectedStatus)
 	}
 
@@ -48,7 +48,7 @@ class TestNewStatus {
 	fun testNewStatusRedNormal() {
 		val lastWorkout = now - intervalInMilliseconds(5)
 		val intervalBlue = 2
-		val expectedStatus: String = STATUS_RED
+		val expectedStatus: Status = Status.RED
 		testNewStatus(lastWorkout, intervalBlue, expectedStatus)
 	}
 
@@ -56,7 +56,7 @@ class TestNewStatus {
 	fun testNewStatusRedCornerCase() {
 		val lastWorkout = now - intervalInMilliseconds(4)
 		val intervalBlue = 2
-		val expectedStatus: String = STATUS_RED
+		val expectedStatus: Status = Status.RED
 		testNewStatus(lastWorkout, intervalBlue, expectedStatus)
 	}
 
@@ -69,17 +69,17 @@ class TestNewStatus {
 		val today2Am = today3AmCalendar.timeInMillis
 		val lastWorkout = today2Am - intervalInMilliseconds(0)
 		val intervalBlue = 1
-		val expectedStatus: String
+		val expectedStatus: Status
 		if (hourOfDay > 3) {
-			expectedStatus = STATUS_BLUE
+			expectedStatus = Status.BLUE
 		} else {
-			expectedStatus = STATUS_GREEN
+			expectedStatus = Status.GREEN
 		}
 		testNewStatus(lastWorkout, intervalBlue, expectedStatus)
 	}
 
-	private fun testNewStatus(lastWorkout: Long, intervalBlue: Int, expectedStatus: String?) {
-		val newStatus = getNewStatus(lastWorkout, intervalBlue)
+	private fun testNewStatus(lastWorkout: Long, intervalBlue: Int, expectedStatus: Status) {
+		val newStatus = getNewStatus(Goal(lastWorkout = lastWorkout, intervalBlue = intervalBlue))
 		Assert.assertEquals(expectedStatus, newStatus)
 	}
 }

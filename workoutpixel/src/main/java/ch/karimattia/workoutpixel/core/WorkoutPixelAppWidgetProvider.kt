@@ -44,14 +44,14 @@ class WorkoutPixelAppWidgetProvider : AppWidgetProvider() {
 		Log.d(tag, "ON_RECEIVE ${intent.action}------------------------------------------------------------------------")
 
 		// Do this if the widget has been clicked
-		if (ACTION_DONE_EXERCISE == intent.action) {
+		if (intent.action == ACTION_DONE_EXERCISE) {
 			val uid = intent.getIntExtra("goalUid", 0)
 			val goal = repository.loadGoalByUid(uid)
 			goalSaveActions(goal).updateAfterClick()
 		}
 
 		// Do this when the alarm hits
-		if (ACTION_ALARM_UPDATE == intent.action) {
+		if (intent.action == ACTION_ALARM_UPDATE) {
 			saveTimeWithStringToSharedPreferences(context, "Last ACTION_ALARM_UPDATE " + dateTimeBeautiful(System.currentTimeMillis()))
 			// Not the most correct way...
 			goalSaveActions(Goal()).updateAllWidgetsBasedOnStatus()
@@ -109,7 +109,6 @@ class WorkoutPixelAppWidgetProvider : AppWidgetProvider() {
 		}
 	}
 
-	// Entry point
 	override fun onAppWidgetOptionsChanged(context: Context, appWidgetManager: AppWidgetManager, appWidgetId: Int, bundle: Bundle) {
 		val goal = repository.loadGoalByAppWidgetId(appWidgetId)
 		goalWidgetActions(goal).runUpdate(false)

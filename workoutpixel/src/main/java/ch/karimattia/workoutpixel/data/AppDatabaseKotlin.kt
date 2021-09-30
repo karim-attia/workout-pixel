@@ -1,9 +1,8 @@
 package ch.karimattia.workoutpixel.data
 
 import android.content.Context
-import androidx.room.Database
-import androidx.room.Room
-import androidx.room.RoomDatabase
+import androidx.room.*
+import androidx.room.migration.AutoMigrationSpec
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -11,9 +10,18 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
-@Database(entities = [PastWorkout::class, Goal::class], version = 2)
+@Database(
+	entities = [Goal::class, PastClick::class],
+	version = 4,
+	autoMigrations = [
+		AutoMigration(from = 2, to = 4, spec = AppDatabaseKotlin.AutoMigration::class),
+		AutoMigration(from = 3, to = 4, spec = AppDatabaseKotlin.AutoMigration::class)
+	])
 abstract class AppDatabaseKotlin : RoomDatabase() {
 	abstract fun goalDao(): GoalDao
+
+	@DeleteColumn(tableName = "goals", columnName = "status")
+	class AutoMigration : AutoMigrationSpec
 }
 
 @InstallIn(SingletonComponent::class)

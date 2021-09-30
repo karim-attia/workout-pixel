@@ -1,5 +1,6 @@
 package ch.karimattia.workoutpixel.data
 
+import android.appwidget.AppWidgetManager
 import androidx.lifecycle.LiveData
 import androidx.room.*
 import kotlinx.coroutines.flow.Flow
@@ -9,20 +10,20 @@ interface GoalDao {
 	// Past Workouts
 	// Return all workouts by appWidgetId
 	@Query("SELECT * FROM pastWorkouts WHERE widgetUid=:goalUid ORDER BY workoutTime DESC")
-	fun loadAllPastWorkouts(goalUid: Int): LiveData<List<PastWorkout>>
+	fun loadAllPastWorkouts(goalUid: Int): LiveData<List<PastClick>>
 
 	@Query("SELECT * FROM pastWorkouts WHERE widgetUid=:goalUid ORDER BY workoutTime DESC")
-	fun loadAllPastWorkoutsFlow(goalUid: Int): Flow<List<PastWorkout>>
+	fun loadAllPastWorkoutsFlow(goalUid: Int): Flow<List<PastClick>>
 
 	// Return number of active workouts by appWidgetId
 	@Query("SELECT COUNT() FROM pastWorkouts WHERE widgetUid=:goalUid AND active='1'")
 	fun getCountOfActivePastWorkouts(goalUid: Int): Int
 
-	@Insert(onConflict = OnConflictStrategy.REPLACE, entity = PastWorkout::class)
-	fun insertPastWorkout(pastWorkout: PastWorkout)
+	@Insert(onConflict = OnConflictStrategy.REPLACE, entity = PastClick::class)
+	fun insertPastWorkout(pastClick: PastClick)
 
-	@Update(onConflict = OnConflictStrategy.REPLACE, entity = PastWorkout::class)
-	fun updatePastWorkout(pastWorkout: PastWorkout)
+	@Update(onConflict = OnConflictStrategy.REPLACE, entity = PastClick::class)
+	fun updatePastWorkout(pastClick: PastClick)
 
 	// Widgets
 	// Get goal by appWidgetId
@@ -57,19 +58,19 @@ interface GoalDao {
 	@Update(onConflict = OnConflictStrategy.REPLACE, entity = Goal::class)
 	fun updateGoal(goal: Goal)
 
-	@Query("UPDATE goals SET appWidgetId = null WHERE uid=:uid")
-	fun setAppWidgetIdToNullByUid(uid: Int)
+	@Query("UPDATE goals SET appWidgetId =:invalidAppWidgetId WHERE uid=:uid")
+	fun setAppWidgetIdToNullByUid(uid: Int, invalidAppWidgetId: Int = AppWidgetManager.INVALID_APPWIDGET_ID)
 
-	@Query("UPDATE goals SET appWidgetId = null WHERE appWidgetId=:appWidgetId")
-	fun setAppWidgetIdToNullByAppwidgetId(appWidgetId: Int)
+	@Query("UPDATE goals SET appWidgetId =:invalidAppWidgetId WHERE appWidgetId=:appWidgetId")
+	fun setAppWidgetIdToNullByAppwidgetId(appWidgetId: Int, invalidAppWidgetId: Int = AppWidgetManager.INVALID_APPWIDGET_ID)
 
 	// Get all goals without AppWidgetId
-	@Query("SELECT * FROM goals WHERE appWidgetId IS NULL")
-	fun loadGoalsWithoutValidAppWidgetId(): List<Goal>
+	@Query("SELECT * FROM goals WHERE appWidgetId =:invalidAppWidgetId")
+	fun loadGoalsWithoutValidAppWidgetId(invalidAppWidgetId: Int = AppWidgetManager.INVALID_APPWIDGET_ID): List<Goal>
 
 	// Get all goals with AppWidgetId
-	@Query("SELECT * FROM goals WHERE appWidgetId IS NOT NULL")
-	fun loadGoalsWithValidAppWidgetId(): List<Goal>
+	@Query("SELECT * FROM goals WHERE appWidgetId !=:invalidAppWidgetId")
+	fun loadGoalsWithValidAppWidgetId(invalidAppWidgetId: Int = AppWidgetManager.INVALID_APPWIDGET_ID): List<Goal>
 
 	// Return number of goals
 	@get:Query("SELECT COUNT() FROM goals")

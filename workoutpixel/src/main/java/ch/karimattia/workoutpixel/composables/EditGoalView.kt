@@ -35,7 +35,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import ch.karimattia.workoutpixel.R
 import ch.karimattia.workoutpixel.SettingsData
-import ch.karimattia.workoutpixel.core.Constants.STATUS_GREEN
+import ch.karimattia.workoutpixel.core.Status
 import ch.karimattia.workoutpixel.core.days
 import ch.karimattia.workoutpixel.core.testData
 import ch.karimattia.workoutpixel.data.Goal
@@ -414,7 +414,6 @@ fun WidgetConfigurationPreview(
 ) {
 	val previewGoal = editGoalViewGoal.copy()
 	if (isFirstConfigure) {
-		previewGoal.status = STATUS_GREEN
 		previewGoal.lastWorkout = remember { System.currentTimeMillis() }
 	}
 	FreeStandingTitle(text = "Preview")
