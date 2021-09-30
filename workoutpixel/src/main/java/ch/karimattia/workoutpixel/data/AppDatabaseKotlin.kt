@@ -12,10 +12,11 @@ import javax.inject.Singleton
 
 @Database(
 	entities = [Goal::class, PastClick::class],
-	version = 4,
+	version = 5,
 	autoMigrations = [
 		AutoMigration(from = 2, to = 4, spec = AppDatabaseKotlin.AutoMigration::class),
-		AutoMigration(from = 3, to = 4, spec = AppDatabaseKotlin.AutoMigration::class)
+		AutoMigration(from = 3, to = 4, spec = AppDatabaseKotlin.AutoMigration::class),
+		AutoMigration(from = 4, to = 5, spec = AppDatabaseKotlin.AutoMigration::class),
 	])
 abstract class AppDatabaseKotlin : RoomDatabase() {
 	abstract fun goalDao(): GoalDao

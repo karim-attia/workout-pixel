@@ -14,7 +14,7 @@ data class Goal
 	(
 	@PrimaryKey(autoGenerate = true) var uid: Int = 0,
 	@ColumnInfo(name = "appWidgetId") var appWidgetId: Int = AppWidgetManager.INVALID_APPWIDGET_ID,
-	@ColumnInfo(name = "title") var title: String? = "",
+	@ColumnInfo(name = "title") var title: String = "",
 	@ColumnInfo(name = "lastWorkout") var lastWorkout: Long = 0,
 	@ColumnInfo(name = "intervalBlue") var intervalBlue: Int = 2,
 	@ColumnInfo(name = "intervalRed") val intervalRed: Int = 2,
@@ -32,13 +32,9 @@ data class Goal
 		}
 	}
 
-	fun hasValidAppWidgetId(): Boolean {
-		return appWidgetId != AppWidgetManager.INVALID_APPWIDGET_ID
-	}
+	fun hasValidAppWidgetId(): Boolean = appWidgetId != AppWidgetManager.INVALID_APPWIDGET_ID
 
-	override fun toString(): String {
-		return title + ": " + everyWording()
-	}
+	override fun toString(): String = title + ": " + everyWording()
 
 	fun everyWording(): String {
 		var everyWording = "Every $intervalBlue day"
@@ -48,13 +44,11 @@ data class Goal
 		return everyWording
 	}
 
-	fun debugString(): String {
-		return "widgetUid: $uid, appWidgetId: $appWidgetId, Title: $title: "
-	}
+	fun debugString(): String = "widgetUid: $uid, appWidgetId: $appWidgetId, Title: $title: "
 
 	// widgetText returns the text of the whole widget based on a Widget object.
-	fun widgetText(): String? {
-		var widgetText = title
+	fun widgetText(): String {
+		var widgetText: String = title
 		if (showDate and (status() != Status.NONE)) {
 			widgetText += "\n${dateBeautiful(lastWorkout)}"
 		}
