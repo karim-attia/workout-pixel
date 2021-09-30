@@ -30,7 +30,7 @@ You can download the app in the [Play Store](https://play.google.com/store/apps/
 * When a user clicks on a widget, the [WorkoutPixelAppWidgetProvider](/workoutpixel/src/main/java/ch/karimattia/workoutpixel/core/WorkoutPixelAppWidgetProvider.kt) class receives a broadcast to update the goal.
 * This instructs the [GoalSaveActions](/workoutpixel/src/main/java/ch/karimattia/workoutpixel/core/GoalSaveActions.kt) class to update the goal with this latest click.
 * Then, the [GoalWidgetActions](/workoutpixel/src/main/java/ch/karimattia/workoutpixel/core/GoalWidgetActions.kt) class updates the widget on the homescreen, e.g. turns it green.
-* This also saves a [PastClick](/workoutpixel/src/main/java/ch/karimattia/workoutpixel/data/PastWorkout.kt) to the database.
+* This also saves a [PastClick](/workoutpixel/src/main/java/ch/karimattia/workoutpixel/data/PastClick.kt) to the database.
 
 ### Updating the widget over night
 * The [WidgetAlarm](/workoutpixel/src/main/java/ch/karimattia/workoutpixel/core/WidgetAlarm.kt) class triggers a broadcast at 3:00 every night.
