@@ -4,10 +4,10 @@ import android.appwidget.AppWidgetManager
 import android.content.ComponentName
 import android.content.Context
 import androidx.compose.ui.graphics.Color
-import ch.karimattia.workoutpixel.data.SettingsData
 import ch.karimattia.workoutpixel.core.Constants.PREFERENCE_NAME
 import ch.karimattia.workoutpixel.data.Goal
 import ch.karimattia.workoutpixel.data.GoalRepository
+import ch.karimattia.workoutpixel.data.SettingsData
 import dagger.hilt.android.qualifiers.ApplicationContext
 import java.time.Instant
 import java.time.ZoneId
@@ -30,25 +30,6 @@ enum class Status {
 }
 
 private const val TAG = "WORKOUT_PIXEL COMMON FUNCTIONS"
-
-/**
- * Get new status
- */
-// Controls which status to set.
-fun getNewStatus(goal: Goal): Status {
-
-	// Point in time when the widget should change to blue/red as soon as it's night time the next time.
-	val timeBlue = goal.lastWorkout + intervalInMilliseconds(goal.intervalBlue - 1)
-	val timeRed = timeBlue + intervalInMilliseconds(2)
-
-	// Don't change the widget status if this is the first time the alarm runs and thus lastWorkout == 0L.
-	return when {
-		goal.lastWorkout == 0L -> Status.NONE
-		timeRed < last3Am() -> Status.RED
-		timeBlue < last3Am() -> Status.BLUE
-		else -> Status.GREEN
-	}
-}
 
 /**
  * Calendar stuff
@@ -98,14 +79,8 @@ fun intervalInMilliseconds(intervalInDays: Int): Long {
 /**
  * Match status to background color
  */
-fun getColorFromStatusColor(status: Status, settingsData: SettingsData): Color {
-	return when (status) {
-		Status.GREEN -> settingsData.colorDone()
-		Status.BLUE -> settingsData.colorFirstInterval()
-		Status.RED -> settingsData.colorSecondInterval()
-		Status.NONE -> settingsData.colorInitial()
-	}
-}
+fun getColorFromStatusColor(status: Status, settingsData: SettingsData): Color =
+	Color(getColorFromStatus(status = status, settingsData = settingsData))
 
 fun getColorFromStatus(status: Status, settingsData: SettingsData): Int {
 	return when (status) {
@@ -115,7 +90,6 @@ fun getColorFromStatus(status: Status, settingsData: SettingsData): Int {
 		Status.NONE -> settingsData.colorInitialInt
 	}
 }
-
 
 /**
  * Time and date formatting stuff
@@ -188,21 +162,12 @@ class ContextFunctions @Inject constructor(
 /**
  * Wordings
  */
-fun times(times: Int): String {
+fun plural(times: Int, word: String): String {
 	return when {
-		times == 0 -> "0 times"
-		times == 1 -> "1 time"
-		times > 1 -> "$times times"
-		else -> "INVALID NUMBER OF TIMES"
-	}
-}
-
-fun days(days: Int): String {
-	return when {
-		days == 0 -> "days."
-		days == 1 -> "day."
-		days > 1 -> "days."
-		else -> "INVALID NUMBER OF DAYS"
+		times == 0 -> word + "s"
+		times == 1 -> word
+		times > 1 -> word + "s"
+		else -> "INVALID NUMBER OF $word"
 	}
 }
 

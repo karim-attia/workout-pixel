@@ -5,9 +5,10 @@ import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.ZeroCornerSize
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
@@ -20,11 +21,13 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -34,10 +37,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import ch.karimattia.workoutpixel.R
-import ch.karimattia.workoutpixel.data.SettingsData
-import ch.karimattia.workoutpixel.core.days
+import ch.karimattia.workoutpixel.core.plural
 import ch.karimattia.workoutpixel.core.testData
 import ch.karimattia.workoutpixel.data.Goal
+import ch.karimattia.workoutpixel.data.SettingsData
 import java.util.*
 
 private const val TAG: String = "EditGoalView"
@@ -308,27 +311,40 @@ fun SetUpYourWidget(
 		modifier = modifier
 	)
 	val keyboardController = LocalSoftwareKeyboardController.current
-	TextField(
+
+	val interactionSource = remember { MutableInteractionSource() }
+	BasicTextField(
 		value = setUpYourWidgetGoal.title,
 		onValueChange = {
 			setUpYourWidgetGoal.title = it
 			setUpYourWidgetGoalChange(setUpYourWidgetGoal)
 		},
-		textStyle = TextStyle(fontSize = 18.sp),
-		shape = MaterialTheme.shapes.small.copy(
-			bottomEnd = ZeroCornerSize,
-			bottomStart = ZeroCornerSize,
-			topEnd = ZeroCornerSize,
-			topStart = ZeroCornerSize
+		textStyle = LocalTextStyle.current.copy(
+			color = MaterialTheme.colors.onBackground,
+			fontSize = 20.sp
 		),
+		interactionSource = interactionSource,
+		decorationBox = { innerTextField ->
+			Column(
+				modifier = Modifier
+					.fillMaxWidth()
+			) {
+				val isFocused = interactionSource.collectIsFocusedAsState().value
+				Box(modifier = Modifier.padding(start = 4.dp, end = 4.dp, bottom = 4.dp)) { innerTextField() }
+				Divider(thickness = 1.5.dp, color = if (isFocused) MaterialTheme.colors.primary else Color.Gray)
+			}
+		},
+		cursorBrush = SolidColor(MaterialTheme.colors.primary),
 		singleLine = true,
 		keyboardOptions = KeyboardOptions(
 			capitalization = KeyboardCapitalization.Sentences,
 			imeAction = ImeAction.Done
 		),
-		keyboardActions = KeyboardActions(onDone = { keyboardController?.hide() }),
+		keyboardActions = KeyboardActions(onDone = {
+			keyboardController?.hide()
+		}),
 		modifier = modifier
-			.fillMaxWidth()
+			.fillMaxWidth().padding(bottom = 10.dp)
 	)
 	Text(
 		text = stringResource(id = R.string.interval),
@@ -376,7 +392,7 @@ fun SetUpYourWidget(
 			)
 		}
 		Text(
-			text = days(setUpYourWidgetGoal.intervalBlue),
+			text = plural(setUpYourWidgetGoal.intervalBlue, "day") + ".",
 			modifier = textModifier,
 		)
 	}
@@ -465,7 +481,7 @@ fun AddUpdateWidgetButton(
 }
 
 @ExperimentalComposeUiApi
-@Preview("EditGoalView preview")
+@Preview(name = "EditGoalView preview", showBackground = true)
 @Composable
 fun EditGoalViewPreview() {
 	EditGoalView(

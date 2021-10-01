@@ -1,7 +1,6 @@
 package ch.karimattia.workoutpixel
 
 import ch.karimattia.workoutpixel.core.Status
-import ch.karimattia.workoutpixel.core.getNewStatus
 import ch.karimattia.workoutpixel.core.intervalInMilliseconds
 import ch.karimattia.workoutpixel.data.Goal
 import org.junit.Assert
@@ -79,7 +78,7 @@ class TestNewStatus {
 	}
 
 	private fun testNewStatus(lastWorkout: Long, intervalBlue: Int, expectedStatus: Status) {
-		val newStatus = getNewStatus(Goal(lastWorkout = lastWorkout, intervalBlue = intervalBlue))
+		val newStatus = Goal(lastWorkout = lastWorkout, intervalBlue = intervalBlue).status()
 		Assert.assertEquals(expectedStatus, newStatus)
 	}
 }

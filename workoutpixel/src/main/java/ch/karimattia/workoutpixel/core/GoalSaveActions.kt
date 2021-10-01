@@ -33,7 +33,7 @@ class GoalSaveActions @AssistedInject constructor(
 		Log.d(TAG, "ACTION_DONE_EXERCISE " + goal.debugString() + "start")
 		val numberOfPastWorkouts = pastClickRepository.getCountOfActivePastWorkouts(goal.uid) + 1
 		Toast.makeText(
-			context, "Oh yeah! Already done this " + times(numberOfPastWorkouts) + " :)", Toast.LENGTH_SHORT
+			context, "Oh yeah! Already done this $numberOfPastWorkouts ${plural(numberOfPastWorkouts, "time")} :)", Toast.LENGTH_SHORT
 		).show()
 
 		// Update the widget data with the latest click
