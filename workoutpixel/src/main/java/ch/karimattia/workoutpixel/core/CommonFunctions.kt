@@ -3,6 +3,7 @@ package ch.karimattia.workoutpixel.core
 import android.appwidget.AppWidgetManager
 import android.content.ComponentName
 import android.content.Context
+import android.util.Log
 import androidx.compose.ui.graphics.Color
 import ch.karimattia.workoutpixel.core.Constants.PREFERENCE_NAME
 import ch.karimattia.workoutpixel.data.Goal
@@ -10,6 +11,7 @@ import ch.karimattia.workoutpixel.data.GoalRepository
 import ch.karimattia.workoutpixel.data.SettingsData
 import dagger.hilt.android.qualifiers.ApplicationContext
 import java.time.Instant
+import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
@@ -94,29 +96,28 @@ fun getColorFromStatus(status: Status, settingsData: SettingsData): Int {
 /**
  * Time and date formatting stuff
  */
-fun dateBeautiful(date: Long): String {
+fun dateBeautiful(date: Long, locale: Locale = Locale("de", "CH")): String {
 	return if (date == 0L) {
 		"Never"
 	} else {
-		val lastWorkout = Instant.ofEpochMilli(date).atZone(ZoneId.systemDefault()).toLocalDateTime()
-		val dateFormatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT).withLocale(Locale("de", "CH"))
+		val lastWorkout: LocalDateTime = Instant.ofEpochMilli(date).atZone(ZoneId.systemDefault()).toLocalDateTime()
+		val dateFormatter: DateTimeFormatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT).withLocale(locale)
 		lastWorkout.format(dateFormatter)
 	}
 }
 
-fun timeBeautiful(date: Long): String {
+fun timeBeautiful(date: Long, locale: Locale = Locale("de", "CH")): String {
 	return if (date == 0L) "" else {
-		val lastWorkout = Instant.ofEpochMilli(date).atZone(ZoneId.systemDefault()).toLocalDateTime()
-		val dateFormatter = DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT).withLocale(Locale("de", "CH"))
+		val lastWorkout: LocalDateTime = Instant.ofEpochMilli(date).atZone(ZoneId.systemDefault()).toLocalDateTime()
+		val dateFormatter: DateTimeFormatter = DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT).withLocale(locale)
 		lastWorkout.format(dateFormatter)
 	}
 }
 
-fun dateTimeBeautiful(date: Long): String {
+fun dateTimeBeautiful(date: Long, locale: Locale = Locale("de", "CH")): String {
 	return if (date == 0L) "Never" else {
-		val lastWorkout = Instant.ofEpochMilli(date).atZone(ZoneId.systemDefault()).toLocalDateTime()
-		val dateFormatter =
-			DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT).withLocale(Locale("de", "CH"))
+		val lastWorkout: LocalDateTime = Instant.ofEpochMilli(date).atZone(ZoneId.systemDefault()).toLocalDateTime()
+		val dateFormatter: DateTimeFormatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT).withLocale(locale)
 		lastWorkout.format(dateFormatter)
 	}
 }

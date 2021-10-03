@@ -30,11 +30,14 @@ class PastClickViewModel @AssistedInject constructor(
 	// This is needed so the state of pastClicks and thus the UI updates.
 	init {
 		viewModelScope.launch {
-			pastClicksFlow().collect { pastWorkouts ->
+			pastClicksFlow().collect { newPastClicks ->
 				pastClicks.clear()
+				pastClicks.addAll(newPastClicks)
+/*
 				for (workout in pastWorkouts) {
 					pastClicks.add(workout)
 				}
+*/
 				Log.d(TAG, "collect")
 			}
 		}

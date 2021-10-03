@@ -23,11 +23,14 @@ class GoalViewModel @Inject constructor(
 	// This is needed so the state of allGoals and thus the UI updates.
 	init {
 		viewModelScope.launch {
-			allGoalsFlow.collect { goals ->
+			allGoalsFlow.collect { newGoals ->
 				allGoals.clear()
-				for (goal in goals) {
+				allGoals.addAll(newGoals)
+/*
+				for (goal in newGoals) {
 					allGoals.add(goal)
 				}
+*/
 			}
 		}
 	}

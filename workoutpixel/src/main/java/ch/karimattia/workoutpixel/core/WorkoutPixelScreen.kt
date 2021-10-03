@@ -36,7 +36,7 @@ enum class WorkoutPixelScreen(
 	),
 	Settings(
 		showBackNavigation = true,
-		displayName = "Workout Pixel settings",
+		displayName = "Settings",
 	),
 	;
 

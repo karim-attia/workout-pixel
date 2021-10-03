@@ -21,6 +21,7 @@ import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
 import java.io.InputStream
 import java.io.OutputStream
+import java.util.*
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -38,20 +39,15 @@ class SettingsRepository @Inject constructor(
 
 }
 
-fun SettingsData(
-	settingsData: SettingsData,
-	colorDoneInt: Int = settingsData.colorDoneInt,
-	colorFirstIntervalInt: Int = settingsData.colorFirstIntervalInt,
-	colorSecondIntervalInt: Int = settingsData.colorSecondIntervalInt,
-	colorInitialInt: Int = settingsData.colorInitialInt,
-	): SettingsData = SettingsData(colorDoneInt = colorDoneInt, colorFirstIntervalInt = colorFirstIntervalInt, colorSecondIntervalInt = colorSecondIntervalInt, colorInitialInt = colorInitialInt)
-
 @Serializable
 data class SettingsData(
 	val colorDoneInt: Int = Green,
 	val colorFirstIntervalInt: Int = Blue,
 	val colorSecondIntervalInt: Int = Red,
 	val colorInitialInt: Int = Purple,
+	val locale: String = "locale",
+	val country: String = Locale.getDefault().country,
+	val language: String = Locale.getDefault().language,
 ) {
 	fun colorDone(): Color = Color(colorDoneInt)
 	fun colorFirstInterval(): Color = Color(colorFirstIntervalInt)

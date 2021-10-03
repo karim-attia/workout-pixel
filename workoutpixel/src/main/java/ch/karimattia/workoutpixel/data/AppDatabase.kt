@@ -14,11 +14,11 @@ import javax.inject.Singleton
 	entities = [Goal::class, PastClick::class],
 	version = 5,
 	autoMigrations = [
-		AutoMigration(from = 2, to = 4, spec = AppDatabaseKotlin.AutoMigration::class),
-		AutoMigration(from = 3, to = 4, spec = AppDatabaseKotlin.AutoMigration::class),
-		AutoMigration(from = 4, to = 5, spec = AppDatabaseKotlin.AutoMigration::class),
+		AutoMigration(from = 2, to = 4, spec = AppDatabase.AutoMigration::class),
+		AutoMigration(from = 3, to = 4, spec = AppDatabase.AutoMigration::class),
+		AutoMigration(from = 4, to = 5, spec = AppDatabase.AutoMigration::class),
 	])
-abstract class AppDatabaseKotlin : RoomDatabase() {
+abstract class AppDatabase : RoomDatabase() {
 	abstract fun goalDao(): GoalDao
 
 	@DeleteColumn(tableName = "goals", columnName = "status")
@@ -30,16 +30,16 @@ abstract class AppDatabaseKotlin : RoomDatabase() {
 class DatabaseModule {
 
 	@Provides
-	fun provideGoalDao(appDatabaseKotlin: AppDatabaseKotlin): GoalDao {
+	fun provideGoalDao(appDatabaseKotlin: AppDatabase): GoalDao {
 		return appDatabaseKotlin.goalDao()
 	}
 
 	@Provides
 	@Singleton
-	fun provideAppDatabase(@ApplicationContext context: Context): AppDatabaseKotlin {
+	fun provideAppDatabase(@ApplicationContext context: Context): AppDatabase {
 		return Room.databaseBuilder(
 			context,
-			AppDatabaseKotlin::class.java,
+			AppDatabase::class.java,
 			"WorkoutPixelDatabase"
 		)
 			.allowMainThreadQueries()
