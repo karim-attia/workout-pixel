@@ -16,14 +16,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.ExperimentalComposeUiApi
-import ch.karimattia.workoutpixel.data.SettingsData
 import ch.karimattia.workoutpixel.composables.EditGoalView
-import ch.karimattia.workoutpixel.core.ContextFunctions
 import ch.karimattia.workoutpixel.core.GoalWidgetActions
-import ch.karimattia.workoutpixel.data.Goal
-import ch.karimattia.workoutpixel.data.GoalRepository
-import ch.karimattia.workoutpixel.data.GoalViewModel
-import ch.karimattia.workoutpixel.data.SettingsViewModel
+import ch.karimattia.workoutpixel.data.*
 import ch.karimattia.workoutpixel.ui.theme.WorkoutPixelTheme
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -37,8 +32,7 @@ class ConfigureActivity : ComponentActivity() {
 	@Inject
 	lateinit var goalWidgetActionsFactory: GoalWidgetActions.Factory
 	private fun goalWidgetActions(goal: Goal): GoalWidgetActions = goalWidgetActionsFactory.create(goal)
-	@Inject
-	lateinit var contextFunctions: ContextFunctions
+
 	@Inject
 	lateinit var goalRepository: GoalRepository
 

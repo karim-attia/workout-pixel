@@ -3,7 +3,6 @@ package ch.karimattia.workoutpixel.core
 import android.appwidget.AppWidgetManager
 import android.content.ComponentName
 import android.content.Context
-import android.util.Log
 import androidx.compose.ui.graphics.Color
 import ch.karimattia.workoutpixel.core.Constants.PREFERENCE_NAME
 import ch.karimattia.workoutpixel.data.Goal
@@ -20,6 +19,8 @@ import java.util.stream.Collectors
 import javax.inject.Inject
 import kotlin.math.roundToInt
 
+@Suppress("unused") private const val TAG = "WORKOUT_PIXEL COMMON FUNCTIONS"
+
 object Constants {
 	const val MILLISECONDS_IN_A_DAY = 24 * 60 * 60 * 1000
 	const val ACTION_ALARM_UPDATE = "ALARM_UPDATE"
@@ -30,8 +31,6 @@ object Constants {
 enum class Status {
 	NONE, GREEN, BLUE, RED
 }
-
-private const val TAG = "WORKOUT_PIXEL COMMON FUNCTIONS"
 
 /**
  * Calendar stuff
@@ -151,7 +150,7 @@ class ContextFunctions @Inject constructor(
 			.collect(Collectors.toList())
 	}
 
-	fun goalsWithInvalidOrNullAppWidgetId(goals: List<Goal>): List<Goal> {
+	@Suppress("unused") fun goalsWithInvalidOrNullAppWidgetId(goals: List<Goal>): List<Goal> {
 		return goals.stream()
 			.filter { (_, appWidgetId) ->
 				Arrays.stream(appWidgetIds()).noneMatch { i: Int -> appWidgetId != AppWidgetManager.INVALID_APPWIDGET_ID && i == appWidgetId }

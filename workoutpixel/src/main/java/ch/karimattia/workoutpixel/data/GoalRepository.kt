@@ -3,7 +3,7 @@ package ch.karimattia.workoutpixel.data
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
-private const val TAG = "GoalRepository"
+@Suppress("unused") private const val TAG = "GoalRepository"
 
 class GoalRepository @Inject constructor(
 	private val goalDao: GoalDao
@@ -28,10 +28,6 @@ class GoalRepository @Inject constructor(
 
 	fun loadGoalByUid(uid: Int): Goal {
 		return goalDao.loadGoalByUid(uid)
-	}
-
-	fun loadAllGoals(): List<Goal> {
-		return goalDao.loadAllGoals()
 	}
 
 	fun loadGoalsWithoutValidAppWidgetId(): Flow<List<Goal>> {

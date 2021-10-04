@@ -28,6 +28,7 @@ import ch.karimattia.workoutpixel.data.Goal
 import ch.karimattia.workoutpixel.data.SettingsData
 import java.util.*
 
+@Suppress("unused")
 private const val TAG: String = "AllGoals"
 
 @Composable

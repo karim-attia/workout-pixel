@@ -25,7 +25,7 @@ import java.util.*
 import javax.inject.Inject
 import javax.inject.Singleton
 
-private const val TAG = "SettingsRepository"
+@Suppress("unused") private const val TAG = "SettingsRepository"
 
 class SettingsRepository @Inject constructor(
 	@ApplicationContext val context: Context,
@@ -44,7 +44,6 @@ data class SettingsData(
 	val colorFirstIntervalInt: Int = Blue,
 	val colorSecondIntervalInt: Int = Red,
 	val colorInitialInt: Int = Purple,
-	val locale: String = "locale",
 	val dateLanguage: String = Locale.getDefault().language,
 	val dateCountry: String = Locale.getDefault().country,
 	val timeLanguage: String = Locale.getDefault().language,

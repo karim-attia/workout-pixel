@@ -35,7 +35,7 @@ import com.google.accompanist.pager.HorizontalPagerIndicator
 import com.google.accompanist.pager.rememberPagerState
 import java.util.*
 
-private const val TAG: String = "Instructions"
+@Suppress("unused") private const val TAG: String = "Instructions"
 
 @ExperimentalCoilApi
 @ExperimentalAnimationGraphicsApi
@@ -78,8 +78,8 @@ fun Instructions() {
 			.background(Color(GrayBackground))
 			.padding(16.dp)
 	) {
-		val pagerState = rememberPagerState(pageCount = instructions.size)
-		HorizontalPager(state = pagerState, modifier = Modifier.weight(1f)) { page ->
+		val pagerState = rememberPagerState()
+		HorizontalPager(count = instructions.size, state = pagerState, modifier = Modifier.weight(1f)) { page ->
 
 			Column {
 				// https://stackoverflow.com/questions/60229555/adding-gif-into-jetpack-compose

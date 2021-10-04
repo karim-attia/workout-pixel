@@ -1,6 +1,5 @@
 package ch.karimattia.workoutpixel.composables
 
-import android.annotation.SuppressLint
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -21,10 +20,8 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
-import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
@@ -34,6 +31,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import ch.karimattia.workoutpixel.R
@@ -136,7 +134,7 @@ fun EditGoalView(
 fun Hints(
 	modifier: Modifier = Modifier,
 ) {
-	FreeStandingTitle(text = "Hints", modifier = Modifier.padding(top = 8.dp))
+	FreeStandingTitle(text = "Hints", topPadding = 8.dp)
 	val paragraphs = arrayListOf(
 		buildAnnotatedString {
 			withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) { append("Start small. ") }
@@ -344,7 +342,8 @@ fun SetUpYourWidget(
 			keyboardController?.hide()
 		}),
 		modifier = modifier
-			.fillMaxWidth().padding(bottom = 10.dp)
+			.fillMaxWidth()
+			.padding(bottom = 10.dp)
 	)
 	Text(
 		text = stringResource(id = R.string.interval),
@@ -442,13 +441,14 @@ fun WidgetConfigurationPreview(
 @Composable
 fun FreeStandingTitle(
 	text: String,
-	@SuppressLint("ModifierParameter") modifier: Modifier = Modifier.padding(top = 16.dp),
+	modifier: Modifier = Modifier,
+	topPadding: Dp = 16.dp,
 ) {
 	Text(
 		text = text.uppercase(Locale.getDefault()),
 		fontSize = 16.sp,
 		fontWeight = FontWeight.Bold,
-		modifier = modifier
+		modifier = modifier.padding(top = topPadding)
 	)
 }
 

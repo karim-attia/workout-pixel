@@ -140,7 +140,7 @@ fun WorkoutPixelApp(
 		darkTheme = false,
 	) {
 		val allScreens = WorkoutPixelScreen.values().toList()
-		val navController = rememberNavController(navigators = emptyArray())
+		val navController = rememberNavController()
 		val backstackEntry = navController.currentBackStackEntryAsState()
 		val currentScreen = WorkoutPixelScreen.fromRoute(backstackEntry.value?.destination?.route)
 		val currentGoal: Goal? = goalFromGoalsByUid(goalUid = currentGoalUid, goals = goals)

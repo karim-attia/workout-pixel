@@ -28,6 +28,7 @@ import com.vanpra.composematerialdialogs.listItemsSingleChoice
 import com.vanpra.composematerialdialogs.rememberMaterialDialogState
 import com.vanpra.composematerialdialogs.title
 import java.util.*
+import java.util.Locale.getAvailableLocales
 
 private const val TAG: String = "Settings"
 
@@ -37,8 +38,8 @@ fun Settings(
 	settingChange: (SettingsData) -> Unit,
 ) {
 	val goal = Goal(title = "Select\ncolor")
-	Log.d(TAG, settingsData.dateLanguage + " " + settingsData.dateCountry)
-	Log.d(TAG, settingsData.timeLanguage + " " + settingsData.timeCountry)
+	Log.d(TAG, "dateLanguage: ${settingsData.dateLanguage} / dateCountry: ${settingsData.dateCountry}")
+	Log.d(TAG, "timeLanguage: ${settingsData.timeLanguage} / timeCountry: ${settingsData.timeCountry}")
 	Column {
 		Divider(color = Color(TextBlack), thickness = 0.5.dp)
 		SettingsTitle(text = "Colors")
@@ -76,128 +77,122 @@ fun Settings(
 		)
 		Divider(color = Color(TextBlack), thickness = 0.5.dp)
 		SettingsTitle(text = "Date and time format")
-
-		LocaleSelectionDate(
+		LocaleSelectionDateTime(
 			goal = goal,
 			settingsData = settingsData,
 			onChoiceChange = { language: String, country: String ->
-				settingChange(settingsData.copy(dateLanguage = language,
-					dateCountry = country))
+				settingChange(settingsData.copy(dateLanguage = language, dateCountry = country))
 			},
+			format = Formats(settingsData = settingsData).DATE
 		)
-		LocaleSelectionTime(
+		LocaleSelectionDateTime(
 			goal = goal,
 			settingsData = settingsData,
 			onChoiceChange = { language: String, country: String ->
-				settingChange(settingsData.copy(timeLanguage = language,
-					dateCountry = country))
+				settingChange(settingsData.copy(timeLanguage = language, timeCountry = country))
 			},
+			format = Formats(settingsData = settingsData).TIME
 		)
-
 		Divider(color = Color(TextBlack), thickness = 0.5.dp)
 	}
 }
 
+data class Format(
+	val label: String,
+	val locale: Locale,
+	// Function to convert a locale into a nice example string
+	val transformDateTimeFormatToString: (locale: Locale) -> String,
+	val maxStringSizeFilter: Int,
+	val showDate: Boolean = false,
+	val showTime: Boolean = false,
+)
+
+class Formats(
+	val settingsData: SettingsData,
+	val DATE: Format = Format(
+		label = "date",
+		locale = settingsData.dateLocale(),
+		transformDateTimeFormatToString = { dateBeautiful(2010651132000L, it) },
+		maxStringSizeFilter = 10,
+		showDate = true,
+	),
+	val TIME: Format = Format(
+		label = "time",
+		locale = settingsData.timeLocale(),
+		transformDateTimeFormatToString = { timeBeautiful(8460000L, it) + " / " + timeBeautiful(date = 8460000L + 12 * 60 * 60 * 1000, it) },
+		maxStringSizeFilter = 23,
+		showTime = true,
+	),
+)
+
 @Composable
-fun LocaleSelectionDate(
+fun LocaleSelectionDateTime(
 	goal: Goal,
 	settingsData: SettingsData,
+	format: Format,
 	onChoiceChange: (language: String, country: String) -> Unit,
+	// All locales
+	listLocales: Array<Locale> = getAvailableLocales(),
 ) {
-	val dialogState = rememberMaterialDialogState()
-	val listLocales = Locale.getAvailableLocales()
-	val listDateFormats: List<String> = listLocales.map {
-		try {
-			dateBeautiful(2010651132000L, it)
-		} catch (e: Exception) {
-			"errorerror"
-		}
+	// val listLocales = listOf(CANADA, CANADA_FRENCH, CHINA, CHINESE, ENGLISH, FRANCE, FRENCH, GERMAN, GERMANY, ITALIAN, ITALY, JAPAN, JAPANESE, KOREA, KOREAN, PRC, ROOT, SIMPLIFIED_CHINESE, TAIWAN, TRADITIONAL_CHINESE, UK, US)
+
+	fun transformDateTimeFormatToStringTry(locale: Locale): String = try {
+		format.transformDateTimeFormatToString(locale)
+	} catch (e: Exception) {
+		"errorerrorerrorerrorerror"
 	}
-	val listDateFormatsWithoutDuplicates: List<String> = ArrayList(LinkedHashSet(listDateFormats.filter { it.length < 9 })).toList()
+
+	val dialogState = rememberMaterialDialogState()
+	Log.d(TAG, "size of listLocales: ${listLocales.size}")
 	MaterialDialog(dialogState = dialogState, buttons = {
 		positiveButton("Ok")
 		negativeButton("Cancel")
 	}) {
-		Log.d(TAG, "listTimeFormatsWithoutDuplicates: $listDateFormatsWithoutDuplicates")
-		title(text = "Choose date format")
-		listItemsSingleChoice(
-			list = listDateFormatsWithoutDuplicates,
-			initialSelection = 0, //listDateFormatsWithoutDuplicates.indexOf(settingsData.dateCountry),
-			onChoiceChange = { timeFormat ->
-				Log.d(TAG, "timeFormat: $timeFormat")
-				Log.d(TAG, "listTimeFormatsWithoutDuplicates[timeFormat]: ${listDateFormatsWithoutDuplicates[timeFormat]}")
-				Log.d(TAG,
-					"listTimeFormats.indexOf(listTimeFormatsWithoutDuplicates[timeFormat]): ${listDateFormats.indexOf(listDateFormatsWithoutDuplicates[timeFormat])}")
-				val thisLocale = listLocales[listDateFormats.indexOf(listDateFormatsWithoutDuplicates[timeFormat])]
-				Log.d(TAG, "thisLocale: $thisLocale")
-				onChoiceChange(thisLocale.language, thisLocale.country)
-				Log.d(TAG, "thisLocale.language: ${thisLocale.language}")
-			},
-		)
-	}
+		// A nice example string for all locales
+		val listTimeFormats: List<String> = listLocales.map { Locale(it.language, it.country) }.map { transformDateTimeFormatToStringTry(it) }
+		Log.d(TAG, "size of listTimeFormats: ${listTimeFormats.size}")
+		Log.d(TAG, "format.locale: ${format.locale}")
+		// Same as above but without duplicates
+		val listTimeFormatsWithoutDuplicates: List<String> =
+			ArrayList(HashSet(listTimeFormats.filter { it.length < format.maxStringSizeFilter })).toList()
+		// Log.d(TAG, "size of listTimeFormatsWithoutDuplicates: ${listTimeFormatsWithoutDuplicates.size}")
 
-	SettingsEntry(
-		titleText = "Date format",
-		subtitleText = dateBeautiful(2010651132000L, settingsData.dateLocale()),
-		onClick = { dialogState.show() },
-	) {
-		GoalPreview(
-			goal = goal.copy(
-				title = "Your goal",
-				showDate = true,
-				lastWorkout = remember { System.currentTimeMillis() }),
-			settingsData = settingsData,
-		)
-	}
-}
-
-@Composable
-fun LocaleSelectionTime(
-	goal: Goal,
-	settingsData: SettingsData,
-	onChoiceChange: (language: String, country: String) -> Unit,
-) {
-	val dialogState = rememberMaterialDialogState()
-	val listLocales = Locale.getAvailableLocales()
-	val listTimeFormats: List<String> = listLocales.map {
-		try {
-			timeBeautiful(8460000L, it) + " / " + timeBeautiful(date = 8460000L + 12 * 60 * 60 * 1000, it)
-		} catch (e: Exception) {
-			"errorerrorerrorerrorerrorerror"
-		}
-	}
-	val listTimeFormatsWithoutDuplicates: List<String> = ArrayList(LinkedHashSet(listTimeFormats.filter { it.length < 23 })).toList()
-	MaterialDialog(dialogState = dialogState, buttons = {
-		positiveButton("Ok")
-		negativeButton("Cancel")
-	}) {
-		Log.d(TAG, "listTimeFormatsWithoutDuplicates: $listTimeFormatsWithoutDuplicates")
-		title(text = "Choose time format for widget")
+		// Log.d(TAG, "listLocales: $listLocales")
+		// Log.d(TAG, "listLocalesLanguages: $listLocalesLanguages")
+		// Log.d(TAG, "listLocalesCountries: $listLocalesCountries")
+		// Log.d(TAG, "listTimeFormatsWithoutDuplicates: $listTimeFormatsWithoutDuplicates")
+		title(text = "Choose ${format.label} format for widget")
 		listItemsSingleChoice(
 			list = listTimeFormatsWithoutDuplicates,
-			initialSelection = 0, //listTimeFormatsWithoutDuplicates.indexOf(settingsData.country),
-			onChoiceChange = { timeFormat ->
-				Log.d(TAG, "timeFormat: $timeFormat")
-				Log.d(TAG, "listTimeFormatsWithoutDuplicates[timeFormat]: ${listTimeFormatsWithoutDuplicates[timeFormat]}")
+			// 1. Build Locale from data in settingsData. 2. Convert into nice example string. 3. Lookup this string in the list.
+			initialSelection = listTimeFormatsWithoutDuplicates.indexOf(transformDateTimeFormatToStringTry(format.locale)),
+			onChoiceChange = { selectedTimeFormatIndex ->
+				// Index of chosen time format
+				Log.d(TAG, "Index of chosen time format: $selectedTimeFormatIndex")
+				// Nice example string of chosen time format
+				Log.d(TAG, "Nice example string of chosen time format: ${listTimeFormatsWithoutDuplicates[selectedTimeFormatIndex]}")
+				// Index of chosen time format in original list with duplicates
 				Log.d(TAG,
-					"listTimeFormats.indexOf(listTimeFormatsWithoutDuplicates[timeFormat]): ${listTimeFormats.indexOf(listTimeFormatsWithoutDuplicates[timeFormat])}")
-				val thisLocale = listLocales[listTimeFormats.indexOf(listTimeFormatsWithoutDuplicates[timeFormat])]
+					"Index of chosen time format in original list with duplicates: ${listTimeFormats.indexOf(listTimeFormatsWithoutDuplicates[selectedTimeFormatIndex])}")
+				// Use this index to get the locale in the list of all locales.
+				val thisLocale = listLocales[listTimeFormats.indexOf(listTimeFormatsWithoutDuplicates[selectedTimeFormatIndex])]
 				Log.d(TAG, "thisLocale: $thisLocale")
+				// Update the settings with this locale
 				onChoiceChange(thisLocale.language, thisLocale.country)
-				Log.d(TAG, "thisLocale.language: ${thisLocale.language}")
+				Log.d(TAG, "format: ${transformDateTimeFormatToStringTry(thisLocale)}")
 			},
 		)
 	}
 
 	SettingsEntry(
-		titleText = "Time format",
-		subtitleText = timeBeautiful(8460000L, settingsData.timeLocale()) + " / " + timeBeautiful(date = 8460000L + 12 * 60 * 60 * 1000,
-			settingsData.timeLocale()),
+		titleText = "${format.label.replaceFirstChar { it.uppercase() }} format",
+		subtitleText = format.transformDateTimeFormatToString(format.locale),
 		onClick = { dialogState.show() },
 	) {
 		GoalPreview(
 			goal = goal.copy(title = "Your goal",
-				showTime = true,
+				showDate = format.showDate,
+				showTime = format.showTime,
 				lastWorkout = remember { System.currentTimeMillis() }),
 			settingsData = settingsData,
 		)

@@ -5,7 +5,6 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import ch.karimattia.workoutpixel.core.*
-import java.util.*
 
 @Entity(tableName = "goals")
 data class Goal

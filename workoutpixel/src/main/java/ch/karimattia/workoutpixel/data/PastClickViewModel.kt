@@ -1,6 +1,5 @@
 package ch.karimattia.workoutpixel.data
 
-import android.util.Log
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.lifecycle.ViewModel
@@ -13,7 +12,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
-private const val TAG: String = "PastClickViewModel"
+@Suppress("unused") private const val TAG: String = "PastClickViewModel"
 
 // @HiltViewModel //: https://stackoverflow.com/questions/68649447/viewmodel-constructor-should-be-annotated-with-inject-instead-of-assistedinjec
 class PastClickViewModel @AssistedInject constructor(

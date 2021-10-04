@@ -1,31 +1,12 @@
 package ch.karimattia.workoutpixel.data
 
 import android.appwidget.AppWidgetManager
-import androidx.lifecycle.LiveData
 import androidx.room.*
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface GoalDao {
-	// Past Workouts
-	// Return all workouts by appWidgetId
-	@Query("SELECT * FROM pastWorkouts WHERE widgetUid=:goalUid ORDER BY workoutTime DESC")
-	fun loadAllPastWorkouts(goalUid: Int): LiveData<List<PastClick>>
-
-	@Query("SELECT * FROM pastWorkouts WHERE widgetUid=:goalUid ORDER BY workoutTime DESC")
-	fun loadAllPastWorkoutsFlow(goalUid: Int): Flow<List<PastClick>>
-
-	// Return number of active workouts by appWidgetId
-	@Query("SELECT COUNT() FROM pastWorkouts WHERE widgetUid=:goalUid AND active='1'")
-	fun getCountOfActivePastWorkouts(goalUid: Int): Int
-
-	@Insert(onConflict = OnConflictStrategy.REPLACE, entity = PastClick::class)
-	fun insertPastWorkout(pastClick: PastClick)
-
-	@Update(onConflict = OnConflictStrategy.REPLACE, entity = PastClick::class)
-	fun updatePastWorkout(pastClick: PastClick)
-
-	// Widgets
+	// Goals
 	// Get goal by appWidgetId
 	@Query("SELECT * FROM goals WHERE appWidgetId=:appWidgetId")
 	fun loadGoalByAppWidgetId(appWidgetId: Int): Goal
@@ -33,13 +14,6 @@ interface GoalDao {
 	// Get goal by uid
 	@Query("SELECT * FROM goals WHERE uid=:uid")
 	fun loadGoalByUid(uid: Int): Goal
-
-	@Query("SELECT * FROM goals WHERE uid=:uid")
-	fun liveDataGoalByUid(uid: Int): LiveData<Goal>
-
-	// Get all goals
-	@Query("SELECT * FROM goals")
-	fun loadAllGoalsLiveData(): LiveData<List<Goal>>
 
 	// Get all goals
 	@Query("SELECT * FROM goals")
@@ -49,9 +23,6 @@ interface GoalDao {
 	@Query("SELECT * FROM goals")
 	fun loadAllGoalsFlow(): Flow<List<Goal>>
 
-	/*    // Get all goals with invalid appWidgetId
-    @Query("SELECT * FROM goals WHERE appWidgetId IS NULL OR appWidgetId=0")
-    Flow<List<Goal>> loadGoalsWithInvalidOrNullAppWidgetId();*/
 	@Insert(onConflict = OnConflictStrategy.REPLACE, entity = Goal::class)
 	fun insertGoal(goal: Goal): Long
 
@@ -72,10 +43,21 @@ interface GoalDao {
 	@Query("SELECT * FROM goals WHERE appWidgetId !=:invalidAppWidgetId")
 	fun loadGoalsWithValidAppWidgetId(invalidAppWidgetId: Int = AppWidgetManager.INVALID_APPWIDGET_ID): List<Goal>
 
-	// Return number of goals
-	@get:Query("SELECT COUNT() FROM goals")
-	val countOfGoals: Int
-
 	@Delete
 	fun deleteGoal(goal: Goal)
+
+
+	// Past Workouts
+	@Query("SELECT * FROM pastWorkouts WHERE widgetUid=:goalUid ORDER BY workoutTime DESC")
+	fun loadAllPastWorkoutsFlow(goalUid: Int): Flow<List<PastClick>>
+
+	// Return number of active workouts by appWidgetId
+	@Query("SELECT COUNT() FROM pastWorkouts WHERE widgetUid=:goalUid AND active='1'")
+	fun getCountOfActivePastWorkouts(goalUid: Int): Int
+
+	@Insert(onConflict = OnConflictStrategy.REPLACE, entity = PastClick::class)
+	fun insertPastWorkout(pastClick: PastClick)
+
+	@Update(onConflict = OnConflictStrategy.REPLACE, entity = PastClick::class)
+	fun updatePastWorkout(pastClick: PastClick)
 }
