@@ -24,7 +24,7 @@ object Constants {
 	const val MILLISECONDS_IN_A_DAY = 24 * 60 * 60 * 1000
 	const val ACTION_ALARM_UPDATE = "ALARM_UPDATE"
 	const val ACTION_DONE_EXERCISE = "DONE_EXERCISE"
-	const val PREFERENCE_NAME = "settings"
+	const val PREFERENCE_NAME = "shared_prefs"
 }
 
 enum class Status {
@@ -96,7 +96,7 @@ fun getColorFromStatus(status: Status, settingsData: SettingsData): Int {
 /**
  * Time and date formatting stuff
  */
-fun dateBeautiful(date: Long, locale: Locale = Locale("de", "CH")): String {
+fun dateBeautiful(date: Long, locale: Locale): String {
 	return if (date == 0L) {
 		"Never"
 	} else {
@@ -106,7 +106,7 @@ fun dateBeautiful(date: Long, locale: Locale = Locale("de", "CH")): String {
 	}
 }
 
-fun timeBeautiful(date: Long, locale: Locale = Locale("de", "CH")): String {
+fun timeBeautiful(date: Long, locale: Locale): String {
 	return if (date == 0L) "" else {
 		val lastWorkout: LocalDateTime = Instant.ofEpochMilli(date).atZone(ZoneId.systemDefault()).toLocalDateTime()
 		val dateFormatter: DateTimeFormatter = DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT).withLocale(locale)
@@ -126,7 +126,7 @@ fun dateTimeBeautiful(date: Long, locale: Locale = Locale("de", "CH")): String {
  * Save to shared preferences stuff
  */
 // Last alarm
-fun saveTimeWithStringToSharedPreferences(context: Context, string: String?) {
+fun saveTimeWithStringToSharedPreferences(context: Context, string: String) {
 	val prefs = context.getSharedPreferences(PREFERENCE_NAME, 0).edit()
 	val timeLastWorkoutBeautiful = dateTimeBeautiful(System.currentTimeMillis())
 	prefs.putString(string, timeLastWorkoutBeautiful)

@@ -19,9 +19,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import ch.karimattia.workoutpixel.data.SettingsData
 import ch.karimattia.workoutpixel.core.getColorFromStatusColor
 import ch.karimattia.workoutpixel.data.Goal
+import ch.karimattia.workoutpixel.data.SettingsData
 import ch.karimattia.workoutpixel.ui.theme.InfoColor
 
 @Composable
@@ -29,25 +29,11 @@ fun GoalPreview(
 	goal: Goal,
 	settingsData: SettingsData,
 	modifier: Modifier = Modifier,
-	onClick: () -> Unit = {},
-) {
-	GoalPreviewWithColor(
-		goal = goal,
-		color = getColorFromStatusColor(goal.status(), settingsData = settingsData),
-		modifier = modifier,
-		onClick = onClick,
-	)
-}
-
-@Composable
-fun GoalPreviewWithColor(
-	goal: Goal,
-	color: Color,
-	modifier: Modifier = Modifier,
+	backgroundColor: Color = getColorFromStatusColor(goal.status(), settingsData = settingsData),
 	onClick: () -> Unit = {},
 ) {
 	Text(
-		text = goal.widgetText(),
+		text = goal.widgetText(settingsData),
 		textAlign = TextAlign.Center,
 		fontSize = 12.sp,
 		color = Color.White,
@@ -56,7 +42,7 @@ fun GoalPreviewWithColor(
 			.width(66.dp)
 			.height(44.dp)
 			.clip(shape = RoundedCornerShape(4.dp))
-			.background(color)
+			.background(backgroundColor)
 			.wrapContentSize(Alignment.Center)
 	)
 }

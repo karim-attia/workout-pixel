@@ -5,6 +5,7 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import ch.karimattia.workoutpixel.core.*
+import java.util.*
 
 @Entity(tableName = "goals")
 data class Goal
@@ -46,11 +47,11 @@ data class Goal
 	fun debugString(): String = "widgetUid: $uid, appWidgetId: $appWidgetId, Title: $title: "
 
 	// widgetText returns the text of the whole widget based on a Widget object.
-	fun widgetText(): String {
+	fun widgetText(settingsData: SettingsData): String {
 		var widgetText: String = title
 		if ((status() != Status.NONE)) {
-			if (showDate) widgetText += "\n${dateBeautiful(lastWorkout)}"
-			if (showTime) widgetText += "\n${timeBeautiful(lastWorkout)}"
+			if (showDate) widgetText += "\n${dateBeautiful(lastWorkout, settingsData.dateLocale())}"
+			if (showTime) widgetText += "\n${timeBeautiful(lastWorkout, settingsData.timeLocale())}"
 		}
 		return widgetText
 	}

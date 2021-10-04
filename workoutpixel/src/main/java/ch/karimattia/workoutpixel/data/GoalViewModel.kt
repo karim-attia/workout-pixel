@@ -26,11 +26,6 @@ class GoalViewModel @Inject constructor(
 			allGoalsFlow.collect { newGoals ->
 				allGoals.clear()
 				allGoals.addAll(newGoals)
-/*
-				for (goal in newGoals) {
-					allGoals.add(goal)
-				}
-*/
 			}
 		}
 	}

@@ -33,12 +33,6 @@ class PastClickViewModel @AssistedInject constructor(
 			pastClicksFlow().collect { newPastClicks ->
 				pastClicks.clear()
 				pastClicks.addAll(newPastClicks)
-/*
-				for (workout in pastWorkouts) {
-					pastClicks.add(workout)
-				}
-*/
-				Log.d(TAG, "collect")
 			}
 		}
 	}

@@ -34,9 +34,8 @@ class SettingsRepository @Inject constructor(
 	val getSettings: Flow<SettingsData> = context.dataStore.data
 	suspend fun getSettingsOnce(): SettingsData = getSettings.first()
 	suspend fun updateSettings(settingsData: SettingsData) {
-		context.dataStore.updateData {settingsData}
+		context.dataStore.updateData { settingsData }
 	}
-
 }
 
 @Serializable
@@ -46,13 +45,17 @@ data class SettingsData(
 	val colorSecondIntervalInt: Int = Red,
 	val colorInitialInt: Int = Purple,
 	val locale: String = "locale",
-	val country: String = Locale.getDefault().country,
-	val language: String = Locale.getDefault().language,
+	val dateLanguage: String = Locale.getDefault().language,
+	val dateCountry: String = Locale.getDefault().country,
+	val timeLanguage: String = Locale.getDefault().language,
+	val timeCountry: String = Locale.getDefault().country,
 ) {
 	fun colorDone(): Color = Color(colorDoneInt)
 	fun colorFirstInterval(): Color = Color(colorFirstIntervalInt)
 	fun colorSecondInterval(): Color = Color(colorSecondIntervalInt)
 	fun colorInitial(): Color = Color(colorInitialInt)
+	fun dateLocale(): Locale = Locale(dateLanguage, dateCountry)
+	fun timeLocale(): Locale = Locale(timeLanguage, timeCountry)
 }
 
 object SettingsDataSerializer : Serializer<SettingsData> {
@@ -80,7 +83,7 @@ object SettingsModule {
 	@Singleton
 	@Provides
 	fun providesDataStore(
-		@ApplicationContext context: Context
+		@ApplicationContext context: Context,
 	) = SettingsRepository(context = context)
 }
 

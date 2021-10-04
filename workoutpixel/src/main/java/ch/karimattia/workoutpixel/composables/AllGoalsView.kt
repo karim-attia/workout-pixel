@@ -21,11 +21,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import ch.karimattia.workoutpixel.R
-import ch.karimattia.workoutpixel.data.SettingsData
-import ch.karimattia.workoutpixel.data.Goal
 import ch.karimattia.workoutpixel.core.WorkoutPixelScreen
 import ch.karimattia.workoutpixel.core.dateBeautiful
 import ch.karimattia.workoutpixel.core.testData
+import ch.karimattia.workoutpixel.data.Goal
+import ch.karimattia.workoutpixel.data.SettingsData
 import java.util.*
 
 private const val TAG: String = "AllGoals"
@@ -107,8 +107,8 @@ fun GoalCard(
 			{
 				GoalTitle(goal)
 				Row(modifier = Modifier.padding(top = 1.dp)) {
-					IntervalIconAndText(goal)
-					LastDoneIconAndText(goal)
+					IntervalIconAndText(goal = goal)
+					LastDoneIconAndText(goal = goal, settingsData = settingsData)
 				}
 			}
 		}
@@ -136,11 +136,11 @@ fun IntervalIconAndText(goal: Goal) {
 }
 
 @Composable
-fun LastDoneIconAndText(goal: Goal) {
+fun LastDoneIconAndText(goal: Goal, settingsData: SettingsData) {
 	IconAndText(
 		Icons.Filled.Done,
 		22, 0,
-		dateBeautiful(goal.lastWorkout)
+		dateBeautiful(date = goal.lastWorkout, locale = settingsData.dateLocale())
 	)
 }
 
@@ -166,7 +166,7 @@ fun IconAndText(icon: ImageVector, size: Int, iconPaddingLeft: Int, text: String
 
 @Composable
 fun InstructionsCard(
-	navigateTo: () -> Unit
+	navigateTo: () -> Unit,
 ) {
 	CardWithTitle(
 		title = stringResource(id = R.string.no_goals_defined_yet),

@@ -16,7 +16,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import ch.karimattia.workoutpixel.core.dateBeautiful
-import ch.karimattia.workoutpixel.core.dateTimeBeautiful
 import ch.karimattia.workoutpixel.core.timeBeautiful
 import ch.karimattia.workoutpixel.data.Goal
 import ch.karimattia.workoutpixel.data.SettingsData
@@ -38,6 +37,8 @@ fun Settings(
 	settingChange: (SettingsData) -> Unit,
 ) {
 	val goal = Goal(title = "Select\ncolor")
+	Log.d(TAG, settingsData.dateLanguage + " " + settingsData.dateCountry)
+	Log.d(TAG, settingsData.timeLanguage + " " + settingsData.timeCountry)
 	Column {
 		Divider(color = Color(TextBlack), thickness = 0.5.dp)
 		SettingsTitle(text = "Colors")
@@ -47,6 +48,7 @@ fun Settings(
 			goal = goal,
 			color = settingsData.colorDone(),
 			onColorSelected = { settingChange(settingsData.copy(colorDoneInt = argb(it.alpha, it.red, it.green, it.blue))) },
+			settingsData = settingsData,
 		)
 		ColorSelection(
 			titleText = "Pending goals",
@@ -54,6 +56,7 @@ fun Settings(
 			goal = goal,
 			color = settingsData.colorFirstInterval(),
 			onColorSelected = { settingChange(settingsData.copy(colorFirstIntervalInt = argb(it.alpha, it.red, it.green, it.blue))) },
+			settingsData = settingsData,
 		)
 		ColorSelection(
 			titleText = "Due goals",
@@ -61,6 +64,7 @@ fun Settings(
 			goal = goal,
 			color = settingsData.colorSecondInterval(),
 			onColorSelected = { settingChange(settingsData.copy(colorSecondIntervalInt = argb(it.alpha, it.red, it.green, it.blue))) },
+			settingsData = settingsData,
 		)
 		ColorSelection(
 			titleText = "New goals",
@@ -68,150 +72,45 @@ fun Settings(
 			goal = goal,
 			color = settingsData.colorInitial(),
 			onColorSelected = { settingChange(settingsData.copy(colorInitialInt = argb(it.alpha, it.red, it.green, it.blue))) },
-		)
-		Divider(color = Color(TextBlack), thickness = 0.5.dp)
-		SettingsTitle(text = "Date and time format")
-		CountrySelection(
-			goal = goal,
 			settingsData = settingsData,
-			onChoiceChange = { settingChange(settingsData.copy(country = it)) },
-		)
-		LanguageSelection(
-			goal = goal,
-			settingsData = settingsData,
-			onChoiceChange = { settingChange(settingsData.copy(language = it)) },
 		)
 		Divider(color = Color(TextBlack), thickness = 0.5.dp)
 		SettingsTitle(text = "Date and time format")
 
 		LocaleSelectionDate(
-			locale = settingsData.country,
 			goal = goal,
 			settingsData = settingsData,
-			onChoiceChange = { settingChange(settingsData.copy(country = it)) },
+			onChoiceChange = { language: String, country: String ->
+				settingChange(settingsData.copy(dateLanguage = language,
+					dateCountry = country))
+			},
 		)
 		LocaleSelectionTime(
-			locale = settingsData.country,
 			goal = goal,
 			settingsData = settingsData,
-			onChoiceChange = { settingChange(settingsData.copy(country = it)) },
+			onChoiceChange = { language: String, country: String ->
+				settingChange(settingsData.copy(timeLanguage = language,
+					dateCountry = country))
+			},
 		)
-
-
 
 		Divider(color = Color(TextBlack), thickness = 0.5.dp)
 	}
 }
 
 @Composable
-fun CountrySelection(
-	goal: Goal,
-	settingsData: SettingsData,
-	onChoiceChange: (String) -> Unit,
-) {
-	val dialogState = rememberMaterialDialogState()
-	val listCountries: List<String> = Locale.getISOCountries().asList()
-	val listDisplayCountry: List<String> = listCountries.map { Locale("", it).displayCountry }
-	MaterialDialog(dialogState = dialogState, buttons = {
-		positiveButton("Ok")
-		negativeButton("Cancel")
-	}) {
-		Log.d(TAG, "listCountries: $listCountries")
-		Log.d(TAG, "listDisplayCountry: $listDisplayCountry")
-		title(text = "Choose country")
-		listItemsSingleChoice(
-			list = listDisplayCountry,
-			initialSelection = listCountries.indexOf(settingsData.country),
-			onChoiceChange = { onChoiceChange(listCountries[it]) },
-		)
-	}
-
-	SettingsEntry(
-		titleText = "Country",
-		subtitleText = "${settingsData.country} - ${
-			dateTimeBeautiful((System.currentTimeMillis()),
-				Locale(settingsData.language, settingsData.country))
-		}",
-		onClick = { dialogState.show() },
-	) {
-		GoalPreview(
-			goal = goal.copy(title = "Your goal",
-				showDate = true,
-				showTime = true,
-				lastWorkout = remember { System.currentTimeMillis() }),
-			settingsData = settingsData,
-		)
-	}
-}
-
-@Composable
-fun LanguageSelection(
-	goal: Goal,
-	settingsData: SettingsData,
-	onChoiceChange: (String) -> Unit,
-) {
-	val dialogState = rememberMaterialDialogState()
-	val all = Locale.getAvailableLocales()
-	fun listLanguages(): List<String> {
-		val list = mutableListOf<String>()
-		for (locale: Locale in all) {
-			if (locale.country == settingsData.country) {
-				list += locale.language
-			}
-		}
-		return list
-	}
-	MaterialDialog(dialogState = dialogState, buttons = {
-		positiveButton("Ok")
-		negativeButton("Cancel")
-	}) {
-		Log.d(TAG, "listCountries: ${listLanguages()}")
-		title(text = "Choose language")
-		listItemsSingleChoice(
-			list = listLanguages(),
-			initialSelection = listLanguages().indexOf(settingsData.country),
-			onChoiceChange = { onChoiceChange(listLanguages()[it]) },
-		)
-	}
-
-	SettingsEntry(
-		titleText = "Language",
-		subtitleText = "${settingsData.country} - ${
-			dateTimeBeautiful((System.currentTimeMillis()),
-				Locale(settingsData.language, settingsData.country))
-		}",
-		onClick = { dialogState.show() },
-	) {
-		GoalPreview(
-			goal = goal.copy(title = "Your goal",
-				showDate = true,
-				showTime = true,
-				lastWorkout = remember { System.currentTimeMillis() }),
-			settingsData = settingsData,
-		)
-	}
-}
-
-@Composable
 fun LocaleSelectionDate(
-	locale: String,
 	goal: Goal,
 	settingsData: SettingsData,
-	onChoiceChange: (String) -> Unit,
+	onChoiceChange: (language: String, country: String) -> Unit,
 ) {
 	val dialogState = rememberMaterialDialogState()
-	val listDisplayName: List<String> = Locale.getAvailableLocales().map {
-		it.displayName + try {
-			dateTimeBeautiful((System.currentTimeMillis()), it)
-		} catch (e: Exception) {
-		}
-	}.toList()
 	val listLocales = Locale.getAvailableLocales()
 	val listDateFormats: List<String> = listLocales.map {
 		try {
-			dateBeautiful((System.currentTimeMillis()), it)
+			dateBeautiful(2010651132000L, it)
 		} catch (e: Exception) {
-			"errorerrorerrorerrorerrorerror"
+			"errorerror"
 		}
 	}
 	val listDateFormatsWithoutDuplicates: List<String> = ArrayList(LinkedHashSet(listDateFormats.filter { it.length < 9 })).toList()
@@ -223,7 +122,7 @@ fun LocaleSelectionDate(
 		title(text = "Choose date format")
 		listItemsSingleChoice(
 			list = listDateFormatsWithoutDuplicates,
-			initialSelection = listDateFormatsWithoutDuplicates.indexOf(settingsData.country),
+			initialSelection = 0, //listDateFormatsWithoutDuplicates.indexOf(settingsData.dateCountry),
 			onChoiceChange = { timeFormat ->
 				Log.d(TAG, "timeFormat: $timeFormat")
 				Log.d(TAG, "listTimeFormatsWithoutDuplicates[timeFormat]: ${listDateFormatsWithoutDuplicates[timeFormat]}")
@@ -231,21 +130,21 @@ fun LocaleSelectionDate(
 					"listTimeFormats.indexOf(listTimeFormatsWithoutDuplicates[timeFormat]): ${listDateFormats.indexOf(listDateFormatsWithoutDuplicates[timeFormat])}")
 				val thisLocale = listLocales[listDateFormats.indexOf(listDateFormatsWithoutDuplicates[timeFormat])]
 				Log.d(TAG, "thisLocale: $thisLocale")
-				onChoiceChange(thisLocale.language)
+				onChoiceChange(thisLocale.language, thisLocale.country)
 				Log.d(TAG, "thisLocale.language: ${thisLocale.language}")
 			},
 		)
 	}
 
 	SettingsEntry(
-		titleText = "Choose date format for widget",
-		subtitleText = "$locale - ${dateTimeBeautiful((System.currentTimeMillis()), Locale(locale))}",
+		titleText = "Date format",
+		subtitleText = dateBeautiful(2010651132000L, settingsData.dateLocale()),
 		onClick = { dialogState.show() },
 	) {
 		GoalPreview(
-			goal = goal.copy(title = "Your goal",
+			goal = goal.copy(
+				title = "Your goal",
 				showDate = true,
-				showTime = true,
 				lastWorkout = remember { System.currentTimeMillis() }),
 			settingsData = settingsData,
 		)
@@ -254,22 +153,15 @@ fun LocaleSelectionDate(
 
 @Composable
 fun LocaleSelectionTime(
-	locale: String,
 	goal: Goal,
 	settingsData: SettingsData,
-	onChoiceChange: (String) -> Unit,
+	onChoiceChange: (language: String, country: String) -> Unit,
 ) {
 	val dialogState = rememberMaterialDialogState()
-	val listDisplayName: List<String> = Locale.getAvailableLocales().map {
-		it.displayName + try {
-			dateTimeBeautiful((System.currentTimeMillis()), it)
-		} catch (e: Exception) {
-		}
-	}.toList()
 	val listLocales = Locale.getAvailableLocales()
 	val listTimeFormats: List<String> = listLocales.map {
 		try {
-			timeBeautiful((System.currentTimeMillis()), it) + " / " + timeBeautiful((System.currentTimeMillis() + 12 * 60 * 60 * 1000), it)
+			timeBeautiful(8460000L, it) + " / " + timeBeautiful(date = 8460000L + 12 * 60 * 60 * 1000, it)
 		} catch (e: Exception) {
 			"errorerrorerrorerrorerrorerror"
 		}
@@ -283,7 +175,7 @@ fun LocaleSelectionTime(
 		title(text = "Choose time format for widget")
 		listItemsSingleChoice(
 			list = listTimeFormatsWithoutDuplicates,
-			initialSelection = listTimeFormatsWithoutDuplicates.indexOf(settingsData.country),
+			initialSelection = 0, //listTimeFormatsWithoutDuplicates.indexOf(settingsData.country),
 			onChoiceChange = { timeFormat ->
 				Log.d(TAG, "timeFormat: $timeFormat")
 				Log.d(TAG, "listTimeFormatsWithoutDuplicates[timeFormat]: ${listTimeFormatsWithoutDuplicates[timeFormat]}")
@@ -291,20 +183,20 @@ fun LocaleSelectionTime(
 					"listTimeFormats.indexOf(listTimeFormatsWithoutDuplicates[timeFormat]): ${listTimeFormats.indexOf(listTimeFormatsWithoutDuplicates[timeFormat])}")
 				val thisLocale = listLocales[listTimeFormats.indexOf(listTimeFormatsWithoutDuplicates[timeFormat])]
 				Log.d(TAG, "thisLocale: $thisLocale")
-				onChoiceChange(thisLocale.language)
+				onChoiceChange(thisLocale.language, thisLocale.country)
 				Log.d(TAG, "thisLocale.language: ${thisLocale.language}")
 			},
 		)
 	}
 
 	SettingsEntry(
-		titleText = "Date and time format in widget",
-		subtitleText = "$locale - ${dateTimeBeautiful((System.currentTimeMillis()), Locale(locale))}",
+		titleText = "Time format",
+		subtitleText = timeBeautiful(8460000L, settingsData.timeLocale()) + " / " + timeBeautiful(date = 8460000L + 12 * 60 * 60 * 1000,
+			settingsData.timeLocale()),
 		onClick = { dialogState.show() },
 	) {
 		GoalPreview(
 			goal = goal.copy(title = "Your goal",
-				showDate = true,
 				showTime = true,
 				lastWorkout = remember { System.currentTimeMillis() }),
 			settingsData = settingsData,
@@ -320,6 +212,7 @@ fun ColorSelection(
 	goal: Goal,
 	color: Color,
 	onColorSelected: (Color) -> Unit,
+	settingsData: SettingsData,
 ) {
 	val dialogState = rememberMaterialDialogState()
 	MaterialDialog(dialogState = dialogState, buttons = {
@@ -335,7 +228,7 @@ fun ColorSelection(
 	}
 
 	SettingsEntry(titleText = titleText, subtitleText = subtitleText, onClick = { dialogState.show() }) {
-		GoalPreviewWithColor(goal = goal, color = color)
+		GoalPreview(goal = goal, backgroundColor = color, settingsData = settingsData)
 	}
 }
 

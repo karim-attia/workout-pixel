@@ -27,10 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import ch.karimattia.workoutpixel.R
-import ch.karimattia.workoutpixel.data.SettingsData
-import ch.karimattia.workoutpixel.core.dateBeautiful
-import ch.karimattia.workoutpixel.core.testData
-import ch.karimattia.workoutpixel.core.timeBeautiful
+import ch.karimattia.workoutpixel.core.*
 import ch.karimattia.workoutpixel.data.*
 import ch.karimattia.workoutpixel.ui.theme.TextBlack
 import com.vanpra.composematerialdialogs.MaterialDialog
@@ -96,7 +93,8 @@ fun GoalDetailView(
 			goal = goal,
 			updateGoal = updateGoal,
 			updatePastClick = updatePastClick,
-			pastClicks = pastClicks
+			pastClicks = pastClicks,
+			settingsData = settingsData,
 		)
 
 		Spacer(modifier = Modifier.height(40.dp))
@@ -123,8 +121,8 @@ fun GoalOverviewView(
 				modifier = Modifier.padding(start = 6.dp, top = 3.dp)
 			)
 			{
-				IntervalIconAndText(goal)
-				LastDoneIconAndText(goal)
+				IntervalIconAndText(goal = goal)
+				LastDoneIconAndText(goal = goal, settingsData = settingsData)
 			}
 		}
 	}
@@ -163,7 +161,8 @@ fun PastClicks(
 	goal: Goal,
 	updateGoal: (updatedGoal: Goal, navigateUp: Boolean) -> Unit,
 	updatePastClick: (PastClick) -> Unit,
-	pastClicks: List<PastClick>
+	pastClicks: List<PastClick>,
+	settingsData: SettingsData,
 ) {
 	CardWithTitle(
 		// TODO: If numberOfPastClicks > 50, declare it. Or implement some paging.
@@ -173,7 +172,8 @@ fun PastClicks(
 			goal = goal,
 			updateGoal = updateGoal,
 			updatePastClick = updatePastClick,
-			pastClicks = pastClicks
+			pastClicks = pastClicks,
+			settingsData = settingsData,
 		)
 	}
 }
@@ -183,7 +183,8 @@ fun PastClickList(
 	goal: Goal,
 	updateGoal: (updatedGoal: Goal, navigateUp: Boolean) -> Unit,
 	updatePastClick: (PastClick) -> Unit,
-	pastClicks: List<PastClick>
+	pastClicks: List<PastClick>,
+	settingsData: SettingsData,
 ) {
 	val numberOfPastClicks = pastClicks.size
 	if (numberOfPastClicks > 0) {
@@ -193,6 +194,7 @@ fun PastClickList(
 
 			for (i in 0 until minOf(numberOfPastClicks, 50)) {
 				PastClickEntry(
+					settingsData = settingsData,
 					pastClick = pastClicks[i],
 					togglePastClick = {
 						updatePastClick(it)
@@ -217,12 +219,13 @@ fun PastClickList(
 
 @Composable
 fun PastClickEntry(
+	settingsData: SettingsData,
 	pastClick: PastClick,
 	togglePastClick: (PastClick) -> Unit,
 ) {
 	PastClickEntry(
-		date = dateBeautiful(pastClick.workoutTime),
-		time = timeBeautiful(pastClick.workoutTime),
+		date = dateBeautiful(pastClick.workoutTime, settingsData.dateLocale()),
+		time = timeBeautiful(pastClick.workoutTime, settingsData.timeLocale()),
 		icon = if (pastClick.isActive) {
 			Icons.Filled.Delete
 		} else {

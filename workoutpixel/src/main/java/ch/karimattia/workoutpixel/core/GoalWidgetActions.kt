@@ -7,8 +7,9 @@ import android.content.Intent
 import android.util.Log
 import android.widget.RemoteViews
 import ch.karimattia.workoutpixel.R
-import ch.karimattia.workoutpixel.data.SettingsRepository
 import ch.karimattia.workoutpixel.data.Goal
+import ch.karimattia.workoutpixel.data.SettingsData
+import ch.karimattia.workoutpixel.data.SettingsRepository
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -47,19 +48,21 @@ class GoalWidgetActions @AssistedInject constructor(
 		}
 	}
 
+
 	private suspend fun widgetView(context: Context, setOnClickListener: Boolean, appWidgetManager: AppWidgetManager): RemoteViews {
 		val widgetView = RemoteViews(context.packageName, R.layout.widget_layout)
+		val settingsData: SettingsData = settingsRepository.getSettingsOnce()
 		// Set an onClickListener for every widget: https://stackoverflow.com/questions/30174386/multiple-instances-of-widget-with-separated-working-clickable-imageview
 		if (setOnClickListener) {
 			widgetView.setOnClickPendingIntent(R.id.appwidget_text, widgetPendingIntent(context))
 		}
 		// Before updating a widget, the text and background of the view need to be set. Otherwise, the existing not updated properties of the widgetView will be passed.
-		widgetView.setTextViewText(R.id.appwidget_text, goal.widgetText())
+		widgetView.setTextViewText(R.id.appwidget_text, goal.widgetText(settingsData = settingsData))
 
 		// widgetView.setInt(R.id.appwidget_text, "setBackgroundResource", getDrawableIntFromStatus(goal.status))
 		widgetView.setInt(R.id.appwidget_text,
 			"setBackgroundColor",
-			getColorFromStatus(status = goal.status(), settingsData = settingsRepository.getSettingsOnce()))
+			getColorFromStatus(status = goal.status(), settingsData = settingsData))
 
 		// Set size if available
 		// https://stackoverflow.com/questions/25153604/get-the-size-of-my-homescreen-widget
