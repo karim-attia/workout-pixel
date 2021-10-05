@@ -1,5 +1,9 @@
 package ch.karimattia.workoutpixel.composables
 
+import android.app.PendingIntent
+import android.appwidget.AppWidgetManager
+import android.content.ComponentName
+import android.content.Context
 import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -18,6 +22,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -153,6 +158,14 @@ fun GoalDetailNoWidgetCard(
 			title(text = "Do you really want to delete this goal?")
 			message(text = "This will irreversibly remove the goal including all its data like past clicks.")
 		}
+		val context: Context = LocalContext.current
+		Button(
+			onClick = { pinAppWidget(goal= goal, context = context) },
+			modifier = Modifier.padding(top = 8.dp)
+		) {
+			Text(text = "Add widget to homescreen", modifier = Modifier.padding(end = 16.dp))
+		}
+
 	}
 }
 

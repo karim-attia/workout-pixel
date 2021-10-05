@@ -7,6 +7,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import ch.karimattia.workoutpixel.core.Constants.ACTION_DONE_EXERCISE
+import ch.karimattia.workoutpixel.core.Constants.ACTION_SETUP_WIDGET
 import ch.karimattia.workoutpixel.data.Goal
 import ch.karimattia.workoutpixel.data.GoalRepository
 import dagger.hilt.android.AndroidEntryPoint
@@ -41,22 +42,41 @@ class WorkoutPixelAppWidgetProvider : AppWidgetProvider() {
 
 	// Entry point
 	override fun onReceive(context: Context, intent: Intent) {
+		//val widgetId = intent.extras!!.getInt(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID)
+		//Log.d(TAG, "ACTION_SETUP_WIDGET widgetId: $widgetId")
+
+
 		runBlocking {
 			super.onReceive(context, intent)
 			Log.d(TAG, "ON_RECEIVE ${intent.action}------------------------------------------------------------------------")
 
 			// Do this if the widget has been clicked
-			if (intent.action.equals(ACTION_DONE_EXERCISE)) {
-				val uid = intent.getIntExtra(Constants.GOAL_UID, 0)
-				val goal = repository.loadGoalByUid(uid)
-				goalSaveActions(goal).updateAfterClick()
-			} else {
-				// Do this when the alarm hits
-				Log.d(TAG, "intent.action: ${intent.action}")
-				saveTimeWithStringToSharedPreferences(context,
-					"Last ACTION_ALARM_UPDATE ${dateTimeBeautiful(System.currentTimeMillis())}, intent.action: ${intent.action}")
-				// Not the most correct way...
-				goalSaveActions(Goal()).updateAllWidgetsBasedOnStatus()
+			when {
+				intent.action.equals(ACTION_DONE_EXERCISE) -> {
+					val uid = intent.getIntExtra(Constants.GOAL_UID, 0)
+					val goal = repository.loadGoalByUid(uid)
+					goalSaveActions(goal).updateAfterClick()
+				}
+				intent.action.equals(ACTION_SETUP_WIDGET) -> {
+					Log.d(TAG, "ACTION_SETUP_WIDGET")
+					val extras: Bundle? = intent.extras
+					Log.d(TAG, "extras: $extras")
+					if (extras != null) {
+						val uid = intent.getIntExtra(Constants.GOAL_UID, 0)
+						val goal = repository.loadGoalByUid(uid)
+						goal.appWidgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID)
+						repository.updateGoal(goal)
+						goalWidgetActions(goal).runUpdate(true)
+					}
+				}
+				else -> {
+					// Do this when the alarm hits
+					Log.d(TAG, "intent.action: ${intent.action}")
+					saveTimeWithStringToSharedPreferences(context,
+						"Last ACTION_ALARM_UPDATE ${dateTimeBeautiful(System.currentTimeMillis())}, intent.action: ${intent.action}")
+					// Not the most correct way...
+					goalSaveActions(Goal()).updateAllWidgetsBasedOnStatus()
+				}
 			}
 		}
 	}

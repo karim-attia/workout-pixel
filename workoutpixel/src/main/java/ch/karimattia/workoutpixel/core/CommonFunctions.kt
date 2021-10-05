@@ -1,8 +1,10 @@
 package ch.karimattia.workoutpixel.core
 
+import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
 import android.content.ComponentName
 import android.content.Context
+import android.content.Intent
 import android.util.Log
 import androidx.compose.ui.graphics.Color
 import ch.karimattia.workoutpixel.core.Constants.PREFERENCE_NAME
@@ -27,6 +29,7 @@ object Constants {
 	const val MILLISECONDS_IN_A_DAY = 24 * 60 * 60 * 1000
 	const val ACTION_ALARM_UPDATE = "ALARM_UPDATE"
 	const val ACTION_DONE_EXERCISE = "DONE_EXERCISE"
+	const val ACTION_SETUP_WIDGET = "SETUP_WIDGET"
 	const val PREFERENCE_NAME = "SharedPreferences"
 	const val GOAL_UID = "goalUid"
 	const val INVALID_GOAL_UID = 0
@@ -243,4 +246,35 @@ class DatabaseInteractions @Inject constructor(
 			}
 		}
 	}
+}
+
+// https://developer.android.com/guide/topics/appwidgets/configuration#pin
+// https://developer.android.com/reference/android/appwidget/AppWidgetManager#requestPinAppWidget(android.content.ComponentName,%20android.os.Bundle,%20android.app.PendingIntent)
+fun pinAppWidget(goal: Goal, context: Context) {
+	val appWidgetManager = AppWidgetManager.getInstance(context)
+	val myProvider = ComponentName(context, WorkoutPixelAppWidgetProvider::class.java)
+
+	if (appWidgetManager.isRequestPinAppWidgetSupported) {
+		// Create the PendingIntent object only if your app needs to be notified
+		// that the user allowed the widget to be pinned. Note that, if the pinning
+		// operation fails, your app isn't notified. This callback receives the ID
+		// of the newly-pinned widget (EXTRA_APPWIDGET_ID).
+		val pinIntent = Intent(context, WorkoutPixelAppWidgetProvider::class.java)
+		pinIntent.action = Constants.ACTION_SETUP_WIDGET
+		pinIntent.putExtra(Constants.GOAL_UID, goal.uid)
+
+		val successCallback: PendingIntent = PendingIntent.getBroadcast(
+			/* context = */ context,
+			/* requestCode = */ 0,
+			/* intent = */ pinIntent,
+		/* flags = */ PendingIntent.FLAG_UPDATE_CURRENT)
+
+		appWidgetManager.requestPinAppWidget(myProvider, null, successCallback)
+	}
+}
+
+private fun pendingIntent(context: Context): PendingIntent {
+	val alarmIntent = Intent(context, WorkoutPixelAppWidgetProvider::class.java)
+	alarmIntent.action = Constants.ACTION_ALARM_UPDATE
+	return PendingIntent.getBroadcast(context, 0, alarmIntent, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
 }
