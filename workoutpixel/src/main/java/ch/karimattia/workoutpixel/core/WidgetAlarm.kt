@@ -10,10 +10,11 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import java.text.DateFormat
 import javax.inject.Inject
 
-// Responsible to start and stop the alarm that updates the widget at 3:00 every day.
-// The alarm is started when the first widget is created (by WorkoutPixel.onCreate()) or the device restarts (by WorkoutPixel.onUpdate()).
-// WorkoutPixel.onUpdate() may not only be called upon device restarts but also in other cases. Check the documentation for that.
-
+/**
+ * Responsible to start and stop the alarm that updates the widget at 3:00 every day.
+ * The alarm is started when the first widget is created (by WorkoutPixel.onCreate()) or the device restarts (by WorkoutPixel.onUpdate()).
+ * WorkoutPixel.onUpdate() may not only be called upon device restarts but also in other cases. Check the documentation for that.
+ */
 class WidgetAlarm @Inject constructor(
 	@ApplicationContext val context: Context,
 ) {

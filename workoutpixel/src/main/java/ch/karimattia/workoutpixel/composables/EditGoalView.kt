@@ -50,7 +50,8 @@ fun EditGoalView(
 	initialGoal: Goal,
 	isFirstConfigure: Boolean,
 	goalsWithoutWidget: List<Goal> = emptyList(),
-	addUpdateWidget: (Goal) -> Unit,
+	updateGoal: (Goal) -> Unit,
+	insertGoal: (Goal) -> Unit = { },
 	settingsData: SettingsData,
 ) {
 	Log.d(TAG, "START")
@@ -92,9 +93,9 @@ fun EditGoalView(
 		if (isFirstConfigure && goalsWithoutWidget.isNotEmpty()) {
 			ConnectExistingGoal(
 				goalsWithoutWidget = goalsWithoutWidget,
-				connectGoal = {
-					it.appWidgetId = initialGoal.appWidgetId
-					addUpdateWidget(it)
+				connectGoal = { updatedConnectedGoal ->
+					updatedConnectedGoal.appWidgetId = initialGoal.appWidgetId
+					updateGoal(updatedConnectedGoal)
 				},
 				modifier = modifier,
 			)
@@ -128,7 +129,7 @@ fun EditGoalView(
 		)
 		AddUpdateWidgetButton(
 			isFirstConfigure = isFirstConfigure,
-			addUpdateWidget = { addUpdateWidget(editGoalViewGoal) },
+			insertUpdateWidget = { if (isFirstConfigure) insertGoal(editGoalViewGoal) else updateGoal(editGoalViewGoal) },
 			modifier = Modifier
 				.padding(top = 24.dp)
 				.align(Alignment.End),
@@ -457,12 +458,12 @@ fun FreeStandingTitle(
 @Composable
 fun AddUpdateWidgetButton(
 	isFirstConfigure: Boolean,
-	addUpdateWidget: () -> Unit,
+	insertUpdateWidget: () -> Unit,
 	modifier: Modifier = Modifier,
 ) {
 	Button(
 		onClick = {
-			addUpdateWidget()
+			insertUpdateWidget()
 		},
 		modifier = modifier
 			.fillMaxWidth(),
@@ -489,7 +490,7 @@ fun EditGoalViewPreview() {
 	EditGoalView(
 		initialGoal = testData()[0],
 		isFirstConfigure = false,
-		addUpdateWidget = { },
+		updateGoal = { },
 		settingsData = SettingsData(),
 	)
 }

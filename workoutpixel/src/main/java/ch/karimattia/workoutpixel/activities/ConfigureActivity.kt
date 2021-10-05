@@ -14,14 +14,11 @@ import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.lifecycle.lifecycleScope
 import ch.karimattia.workoutpixel.composables.EditGoalView
-import ch.karimattia.workoutpixel.core.Constants
 import ch.karimattia.workoutpixel.core.GoalWidgetActions
-import ch.karimattia.workoutpixel.core.goalFromGoalsByUid
 import ch.karimattia.workoutpixel.data.*
 import ch.karimattia.workoutpixel.ui.theme.WorkoutPixelTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -67,18 +64,27 @@ class ConfigureActivity : ComponentActivity() {
 		}
 
 		setContent {
+			// collectedGoal can return null despite of what lint says.
+			@Suppress("KotlinDeprecation")
 			val collectedGoal: Goal = goalRepository.loadGoalByAppWidgetIdFlow(goal).collectAsState(initial = goal).value ?: goal
 			val isFirstConfigure = collectedGoal == goal
 			Log.d(TAG, "isFirstConfigure: $isFirstConfigure")
 
 			ConfigureActivityCompose(
-				// collectedGoal can return null despite of what lint says.
-				initialGoal =  if (isFirstConfigure) goal else collectedGoal,
+				initialGoal = if (isFirstConfigure) goal else collectedGoal,
 				isFirstConfigure = isFirstConfigure,
-				addUpdateWidget = {updatedGoal ->
+				insertGoal = { updatedGoal ->
 					lifecycleScope.launch {
 						// Insert the goal into the DB and also update the widget.
 						updatedGoal.uid = goalViewModel.insertGoal(updatedGoal)
+						goalWidgetActions(goal = updatedGoal).runUpdate(true)
+						setWidgetAndFinish(goal = updatedGoal, isFirstConfigure = isFirstConfigure)
+					}
+				},
+				updateGoal = {updatedGoal ->
+					lifecycleScope.launch {
+						// Insert the goal into the DB and also update the widget.
+						goalViewModel.updateGoal(updatedGoal)
 						goalWidgetActions(goal = updatedGoal).runUpdate(true)
 						setWidgetAndFinish(goal = updatedGoal, isFirstConfigure = isFirstConfigure)
 					}
@@ -109,7 +115,8 @@ fun ConfigureActivityCompose(
 	initialGoal: Goal,
 	isFirstConfigure: Boolean,
 	goalsWithoutWidget: List<Goal>,
-	addUpdateWidget: (Goal) -> Unit,
+	updateGoal: (Goal) -> Unit,
+	insertGoal: (Goal) -> Unit,
 	settingsData: SettingsData,
 ) {
 	Log.d(TAG, "initialGoal.toString() $initialGoal")
@@ -124,7 +131,8 @@ fun ConfigureActivityCompose(
 				initialGoal = initialGoal,
 				isFirstConfigure = isFirstConfigure,
 				goalsWithoutWidget = goalsWithoutWidget,
-				addUpdateWidget = addUpdateWidget,
+				updateGoal = updateGoal,
+				insertGoal = insertGoal,
 				settingsData = settingsData,
 				// modifier = Modifier.padding(innerPadding),
 			)

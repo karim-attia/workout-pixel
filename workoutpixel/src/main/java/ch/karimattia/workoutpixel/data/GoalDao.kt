@@ -9,7 +9,7 @@ interface GoalDao {
 	// Goals
 	// Get goal by appWidgetId
 	@Query("SELECT * FROM goals WHERE appWidgetId=:appWidgetId")
-	fun loadGoalByAppWidgetId(appWidgetId: Int): Goal
+	suspend fun loadGoalByAppWidgetId(appWidgetId: Int): Goal
 
 	// Get goal by uid
 	@Query("SELECT * FROM goals WHERE uid=:uid")
@@ -21,20 +21,19 @@ interface GoalDao {
 
 	// Get all goals
 	@Query("SELECT * FROM goals")
-	fun loadAllGoals(): List<Goal>
-
-	// Get all goals
-	@Query("SELECT * FROM goals")
 	fun loadAllGoalsFlow(): Flow<List<Goal>>
 
 	@Insert(onConflict = OnConflictStrategy.REPLACE, entity = Goal::class)
 	suspend fun insertGoal(goal: Goal): Long
 
+	@Update(onConflict = OnConflictStrategy.REPLACE, entity = Goal::class)
+	suspend fun updateGoal(goal: Goal)
+
 	@Query("UPDATE goals SET appWidgetId =:invalidAppWidgetId WHERE uid=:uid")
-	fun setAppWidgetIdToNullByUid(uid: Int, invalidAppWidgetId: Int = AppWidgetManager.INVALID_APPWIDGET_ID)
+	suspend fun setAppWidgetIdToNullByUid(uid: Int, invalidAppWidgetId: Int = AppWidgetManager.INVALID_APPWIDGET_ID)
 
 	@Query("UPDATE goals SET appWidgetId =:invalidAppWidgetId WHERE appWidgetId=:appWidgetId")
-	fun setAppWidgetIdToNullByAppwidgetId(appWidgetId: Int, invalidAppWidgetId: Int = AppWidgetManager.INVALID_APPWIDGET_ID)
+	suspend fun setAppWidgetIdToNullByAppwidgetId(appWidgetId: Int, invalidAppWidgetId: Int = AppWidgetManager.INVALID_APPWIDGET_ID)
 
 	// Get all goals without AppWidgetId
 	@Query("SELECT * FROM goals WHERE appWidgetId =:invalidAppWidgetId")
@@ -45,7 +44,8 @@ interface GoalDao {
 	suspend fun loadGoalsWithValidAppWidgetId(invalidAppWidgetId: Int = AppWidgetManager.INVALID_APPWIDGET_ID): List<Goal>
 
 	@Delete
-	fun deleteGoal(goal: Goal)
+	suspend fun deleteGoal(goal: Goal)
+
 
 
 	// Past Workouts
@@ -54,11 +54,11 @@ interface GoalDao {
 
 	// Return number of active workouts by appWidgetId
 	@Query("SELECT COUNT() FROM pastWorkouts WHERE widgetUid=:goalUid AND active='1'")
-	fun getCountOfActivePastWorkouts(goalUid: Int): Int
+	suspend fun getCountOfActivePastWorkouts(goalUid: Int): Int
 
 	@Insert(onConflict = OnConflictStrategy.REPLACE, entity = PastClick::class)
-	fun insertPastWorkout(pastClick: PastClick)
+	suspend fun insertPastWorkout(pastClick: PastClick)
 
 	@Update(onConflict = OnConflictStrategy.REPLACE, entity = PastClick::class)
-	fun updatePastWorkout(pastClick: PastClick)
+	suspend fun updatePastWorkout(pastClick: PastClick)
 }

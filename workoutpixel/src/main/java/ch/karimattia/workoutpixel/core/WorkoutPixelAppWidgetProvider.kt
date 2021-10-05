@@ -46,7 +46,7 @@ class WorkoutPixelAppWidgetProvider : AppWidgetProvider() {
 			Log.d(TAG, "ON_RECEIVE ${intent.action}------------------------------------------------------------------------")
 
 			// Do this if the widget has been clicked
-			if (intent.action == ACTION_DONE_EXERCISE) {
+			if (intent.action.equals(ACTION_DONE_EXERCISE)) {
 				val uid = intent.getIntExtra(Constants.GOAL_UID, 0)
 				val goal = repository.loadGoalByUid(uid)
 				goalSaveActions(goal).updateAfterClick()
@@ -62,53 +62,63 @@ class WorkoutPixelAppWidgetProvider : AppWidgetProvider() {
 	}
 
 	override fun onUpdate(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray) {
+		runBlocking {
+			Log.d(TAG, "ON_UPDATE\n------------------------------------------------------------------------")
+			// Start alarm
+			widgetAlarm.startAlarm()
 
-		Log.d(TAG, "ON_UPDATE\n------------------------------------------------------------------------")
-		// Start alarm
-		widgetAlarm.startAlarm()
-
-		// Not the most correct way...
-		goalSaveActions(Goal()).updateAllWidgetsBasedOnStatus()
+			// Not the most correct way...
+			goalSaveActions(Goal()).updateAllWidgetsBasedOnStatus()
+		}
 	}
 
 	override fun onDeleted(context: Context, appWidgetIds: IntArray) {
-		// When the user deletes the widget, delete the preference associated with it.
-		Log.d(TAG, "ON_DELETED")
+		runBlocking {
+			// When the user deletes the widget, delete the preference associated with it.
+			Log.d(TAG, "ON_DELETED")
 
-		// TODO: This is also called if the configuration is aborted. Then, this database call is useless.
-		for (appWidgetId in appWidgetIds) {
-			repository.setAppWidgetIdToNullByAppwidgetId(appWidgetId)
+			// TODO: This is also called if the configuration is aborted. Then, this database call is useless.
+			for (appWidgetId in appWidgetIds) {
+				repository.setAppWidgetIdToNullByAppwidgetId(appWidgetId)
+			}
 		}
 	}
 
 	override fun onEnabled(context: Context) {
-		// Enter relevant functionality for when the first widget is created
-		Log.d(TAG, "ON_ENABLED")
-		super.onEnabled(context)
+		runBlocking {
 
-		// Not the most correct way...
-		goalSaveActions(Goal()).updateAllWidgetsBasedOnStatus()
+			// Enter relevant functionality for when the first widget is created
+			Log.d(TAG, "ON_ENABLED")
+			super.onEnabled(context)
 
-		// Start alarm
-		Log.v(TAG, "START_ALARM")
-		widgetAlarm.startAlarm()
-		Log.v(TAG, "ALARM_STARTED")
+			// Not the most correct way...
+			goalSaveActions(Goal()).updateAllWidgetsBasedOnStatus()
+
+			// Start alarm
+			Log.v(TAG, "START_ALARM")
+			widgetAlarm.startAlarm()
+			Log.v(TAG, "ALARM_STARTED")
+		}
 	}
 
 	override fun onDisabled(context: Context) {
-		// Enter relevant functionality for when the last widget is disabled
-		// Stop alarm only if all widgets have been disabled
-		Log.d(TAG, "ON_DISABLED")
-		if (contextFunctions.appWidgetIds().isEmpty()) {
-			// stop alarm
-			Log.v(TAG, "STOP_ALARM")
-			widgetAlarm.stopAlarm()
-			Log.v(TAG, "STOPPED_ALARM")
+		runBlocking {
+			// Enter relevant functionality for when the last widget is disabled
+			// Stop alarm only if all widgets have been disabled
+			Log.d(TAG, "ON_DISABLED")
+			if (contextFunctions.appWidgetIds().isEmpty()) {
+				// stop alarm
+				Log.v(TAG, "STOP_ALARM")
+				widgetAlarm.stopAlarm()
+				Log.v(TAG, "STOPPED_ALARM")
+			}
 		}
 	}
 
 	override fun onAppWidgetOptionsChanged(context: Context, appWidgetManager: AppWidgetManager, appWidgetId: Int, bundle: Bundle) {
-		val goal = repository.loadGoalByAppWidgetId(appWidgetId)
-		goalWidgetActions(goal).runUpdate(false)
+		runBlocking {
+			val goal = repository.loadGoalByAppWidgetId(appWidgetId)
+			goalWidgetActions(goal).runUpdate(false)
+		}
 	}
 }

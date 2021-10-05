@@ -12,7 +12,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
-@Suppress("unused") private const val TAG: String = "PastClickViewModel"
+@Suppress("unused")
+private const val TAG: String = "PastClickViewModel"
 
 // @HiltViewModel //: https://stackoverflow.com/questions/68649447/viewmodel-constructor-should-be-annotated-with-inject-instead-of-assistedinjec
 class PastClickViewModel @AssistedInject constructor(
@@ -20,9 +21,7 @@ class PastClickViewModel @AssistedInject constructor(
 	@Assisted var goalUid: Int,
 ) : ViewModel() {
 	private fun pastClicksFlow(): Flow<List<PastClick>> = repository.pastClicksByGoalUid(goalUid = goalUid)
-	fun updatePastClick(pastClick: PastClick) = viewModelScope.launch {
-		repository.updatePastWorkout(pastClick)
-	}
+	fun updatePastClick(pastClick: PastClick) = viewModelScope.launch { repository.updatePastClick(pastClick) }
 
 	val pastClicks: SnapshotStateList<PastClick> = mutableStateListOf()
 

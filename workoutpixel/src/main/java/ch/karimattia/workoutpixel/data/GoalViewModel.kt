@@ -3,8 +3,11 @@ package ch.karimattia.workoutpixel.data
 import android.util.Log
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
-import androidx.lifecycle.*
-import ch.karimattia.workoutpixel.core.GoalWidgetActions
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import ch.karimattia.workoutpixel.core.Constants
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
@@ -17,6 +20,7 @@ class GoalViewModel @Inject constructor(
 ) : ViewModel() {
 	val allGoalsFlow: Flow<List<Goal>> = goalRepository.allGoals
 	val allGoals: SnapshotStateList<Goal> = mutableStateListOf()
+
 	// This is needed so the state of allGoals and thus the UI updates.
 	init {
 		viewModelScope.launch {
@@ -27,19 +31,14 @@ class GoalViewModel @Inject constructor(
 		}
 	}
 
-	private val _currentGoalUid = MutableLiveData(-1)
+	private val _currentGoalUid = MutableLiveData(Constants.INVALID_GOAL_UID)
 	val currentGoalUid: LiveData<Int> = _currentGoalUid
 	fun changeCurrentGoalUid(goal: Goal?) {
 		if (goal != null) {
 			_currentGoalUid.value = goal.uid
 		} else {
-			_currentGoalUid.value = -1
+			_currentGoalUid.value = Constants.INVALID_GOAL_UID
 		}
-	}
-
-	fun updateGoal(goal: Goal) = viewModelScope.launch {
-		goalRepository.insertGoal(goal)
-		Log.d("KotlinGoalViewModel: updateGoal: ", "$goal")
 	}
 
 	fun deleteGoal(goal: Goal) = viewModelScope.launch {
@@ -48,5 +47,6 @@ class GoalViewModel @Inject constructor(
 	}
 
 	suspend fun insertGoal(goal: Goal): Int = goalRepository.insertGoal(goal)
+	suspend fun updateGoal(goal: Goal) = goalRepository.updateGoal(goal)
 
 }

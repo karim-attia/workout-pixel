@@ -3,6 +3,7 @@ package ch.karimattia.workoutpixel.core
 import android.appwidget.AppWidgetManager
 import android.content.ComponentName
 import android.content.Context
+import android.util.Log
 import androidx.compose.ui.graphics.Color
 import ch.karimattia.workoutpixel.core.Constants.PREFERENCE_NAME
 import ch.karimattia.workoutpixel.data.Goal
@@ -19,7 +20,8 @@ import java.util.stream.Collectors
 import javax.inject.Inject
 import kotlin.math.roundToInt
 
-@Suppress("unused") private const val TAG = "WORKOUT_PIXEL COMMON FUNCTIONS"
+@Suppress("unused")
+private const val TAG = "WORKOUT_PIXEL COMMON FUNCTIONS"
 
 object Constants {
 	const val MILLISECONDS_IN_A_DAY = 24 * 60 * 60 * 1000
@@ -140,10 +142,8 @@ fun saveTimeWithStringToSharedPreferences(context: Context, string: String) {
 class ContextFunctions @Inject constructor(
 	@ApplicationContext val context: Context,
 ) {
-	fun appWidgetIds(): IntArray {
-		val thisAppWidget = ComponentName(context.packageName, WorkoutPixelAppWidgetProvider::class.java.name)
-		return AppWidgetManager.getInstance(context).getAppWidgetIds(thisAppWidget)
-	}
+	fun appWidgetIds(): IntArray =
+		AppWidgetManager.getInstance(context).getAppWidgetIds(ComponentName(context.packageName, WorkoutPixelAppWidgetProvider::class.java.name))
 
 	fun goalsWithInvalidAppWidgetId(goals: List<Goal>): List<Goal> {
 		return goals.stream().filter { (_, _) ->
@@ -152,7 +152,8 @@ class ContextFunctions @Inject constructor(
 			.collect(Collectors.toList())
 	}
 
-	@Suppress("unused") fun goalsWithInvalidOrNullAppWidgetId(goals: List<Goal>): List<Goal> {
+	@Suppress("unused")
+	fun goalsWithInvalidOrNullAppWidgetId(goals: List<Goal>): List<Goal> {
 		return goals.stream()
 			.filter { (_, appWidgetId) ->
 				Arrays.stream(appWidgetIds()).noneMatch { i: Int -> appWidgetId != AppWidgetManager.INVALID_APPWIDGET_ID && i == appWidgetId }
@@ -235,7 +236,7 @@ class DatabaseInteractions @Inject constructor(
 ) {
 	// @Inject lateinit var contextFunctions: ContextFunctions
 	// Sets all appWidgetIds of goals that are not valid to null. Maybe later even reassign some to unassigned widgets.
-	fun cleanGoals(goals: List<Goal>) {
+	suspend fun cleanGoals(goals: List<Goal>) {
 		for (goal in contextFunctions.goalsWithInvalidAppWidgetId(goals)) {
 			if (goal.hasValidAppWidgetId()) {
 				repository.setAppWidgetIdToNullByUid(goal.uid)

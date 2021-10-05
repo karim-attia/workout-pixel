@@ -14,9 +14,6 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.neverEqualPolicy
-import androidx.compose.runtime.remember
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.lifecycleScope
@@ -77,19 +74,21 @@ class MainActivity : ComponentActivity() {
 				goals = goalViewModel.allGoals,
 				updateAfterClick = {
 					// contains updateGoal
-					goalSaveActions(it).updateAfterClick()
+					lifecycleScope.launch {
+						goalSaveActions(it).updateAfterClick()
+					}
 				},
 				updateGoal = {
 					lifecycleScope.launch {
-						goalViewModel.insertGoal(it)
+						goalViewModel.updateGoal(it)
 						goalWidgetActions(it).runUpdate(true)
 					}
 				},
 				deleteGoal = { goalViewModel.deleteGoal(it) },
 				settingsData = settingsViewModel.settingsData.observeAsState().value,
 				settingChange = {
-					settingsViewModel.updateSettings(it)
 					lifecycleScope.launch {
+						settingsViewModel.updateSettings(it)
 						// TODO: Could move to ViewModel
 						delay(200)
 						goalSaveActions(Goal()).updateAllWidgetsBasedOnStatus()
@@ -105,8 +104,7 @@ class MainActivity : ComponentActivity() {
 		}
 	}
 
-	private fun oneTimeSetup(goals: List<Goal>) {
-		Log.v(TAG, "oneTimeSetup")
+	private suspend fun oneTimeSetup(goals: List<Goal>) {
 		// Update all goals
 		for (goal in goals) {
 			// Sometimes the onClickListener in the widgets stop working. This is a super stupid way to regularly reset the onClickListener when you open the main app.
@@ -129,7 +127,7 @@ class MainActivity : ComponentActivity() {
 fun WorkoutPixelApp(
 	goalViewModel: GoalViewModel,
 	pastClickViewModelAssistedFactory: PastClickViewModelAssistedFactory,
-	currentGoalUid: Int = goalViewModel.currentGoalUid.observeAsState(initial = -1).value,
+	currentGoalUid: Int = goalViewModel.currentGoalUid.observeAsState(initial = Constants.INVALID_GOAL_UID).value,
 	settingsData: SettingsData?,
 	settingChange: (SettingsData) -> Unit,
 	goals: List<Goal>,
@@ -301,7 +299,7 @@ fun WorkoutPixelNavHost(
 				EditGoalView(
 					initialGoal = currentGoal,
 					isFirstConfigure = false,
-					addUpdateWidget = { updateGoal(it, true) },
+					updateGoal = { updateGoal(it, true) },
 					settingsData = settingsData,
 				)
 			} else (

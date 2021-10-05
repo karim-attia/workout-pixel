@@ -11,7 +11,6 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.runBlocking
 
 private const val TAG: String = "GoalSaveActions"
 
@@ -30,7 +29,7 @@ class GoalSaveActions @AssistedInject constructor(
 
 	private fun goalWidgetActions(goal: Goal): GoalWidgetActions = goalWidgetActionsFactory.create(goal)
 
-	fun updateAfterClick() = runBlocking {
+	suspend fun updateAfterClick() {
 		Log.d(TAG, "ACTION_DONE_EXERCISE " + goal.debugString() + "start")
 		val numberOfPastWorkouts = pastClickRepository.getCountOfActivePastWorkouts(goal.uid) + 1
 		Toast.makeText(
@@ -47,7 +46,7 @@ class GoalSaveActions @AssistedInject constructor(
 		pastClickRepository.insertPastClick(PastClick(widgetUid = goal.uid, workoutTime = goal.lastWorkout))
 
 		// Update the widget data in the db
-		goalRepository.insertGoal(goal)
+		goalRepository.updateGoal(goal)
 
 		Log.d(TAG, "ACTION_DONE_EXERCISE ${goal.debugString()}complete    --------------------------------------------")
 	}
@@ -56,8 +55,7 @@ class GoalSaveActions @AssistedInject constructor(
 	// TODO: Replaced iteration through appWidgetIds with data from DB. Insert check that this is the same and fix if not. Maybe before it only iterated through some widgets. But I don't think it matters.
 	// TODO: Could check with CommonFunctions.widgetsWithValidAppWidgetId whether they are the same and at least log if not.
 	// TODO: Find different home for this.
-	// TODO: Make suspend
-	fun updateAllWidgetsBasedOnStatus() = runBlocking {
+	suspend fun updateAllWidgetsBasedOnStatus() {
 		Log.v(TAG, "updateAllWidgetsBasedOnStatus  --------------------------------------------")
 		val goalList = goalRepository.loadGoalsWithValidAppWidgetId()
 		for (goal in goalList) {

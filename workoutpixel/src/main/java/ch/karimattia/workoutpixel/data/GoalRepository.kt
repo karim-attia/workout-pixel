@@ -2,14 +2,14 @@ package ch.karimattia.workoutpixel.data
 
 import android.appwidget.AppWidgetManager
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import javax.inject.Inject
 
-@Suppress("unused") private const val TAG = "GoalRepository"
+@Suppress("unused")
+private const val TAG = "GoalRepository"
 
 class GoalRepository @Inject constructor(
-	private val goalDao: GoalDao
+	private val goalDao: GoalDao,
 ) {
 	// Room executes all queries on a separate thread.
 	// Observed Flow will notify the observer when the data has changed.
@@ -17,42 +17,17 @@ class GoalRepository @Inject constructor(
 	val allGoals: Flow<List<Goal>> = goalDao.loadAllGoalsFlow()
 	//val goalsWithInvalidOrNullAppWidgetId: Flow<List<Goal>> = goalDao.loadGoalsWithInvalidOrNullAppWidgetId()
 
-	fun deleteGoal(goal: Goal) {
-		goalDao.deleteGoal(goal)
-	}
-
-	suspend fun insertGoal(goal: Goal): Int {
-		return goalDao.insertGoal(goal).toInt()
-	}
-
-	suspend fun loadGoalByUid(uid: Int): Goal {
-		return goalDao.loadGoalByUid(uid)
-	}
-
+	suspend fun deleteGoal(goal: Goal) = goalDao.deleteGoal(goal = goal)
+	suspend fun insertGoal(goal: Goal): Int = goalDao.insertGoal(goal = goal).toInt()
+	suspend fun updateGoal(goal: Goal) = goalDao.updateGoal(goal = goal)
+	suspend fun loadGoalByUid(uid: Int): Goal = goalDao.loadGoalByUid(uid = uid)
 	fun loadGoalByAppWidgetIdFlow(goal: Goal): Flow<Goal> {
 		return if (goal.appWidgetId == AppWidgetManager.INVALID_APPWIDGET_ID) flowOf(goal)
 		else goalDao.loadGoalByAppWidgetIdFlow(goal.appWidgetId)
 	}
-
-	fun loadGoalsWithoutValidAppWidgetId(): Flow<List<Goal>> {
-		return goalDao.loadGoalsWithoutValidAppWidgetId()
-	}
-
-	suspend fun loadGoalsWithValidAppWidgetId(): List<Goal> {
-		return goalDao.loadGoalsWithValidAppWidgetId()
-	}
-
-	fun setAppWidgetIdToNullByAppwidgetId(appWidgetId: Int) {
-		goalDao.setAppWidgetIdToNullByAppwidgetId(appWidgetId)
-		// OldCommonFunctions.executorService.execute {goalDao.setAppWidgetIdToNullByAppwidgetId(appWidgetId)}
-	}
-
-	fun loadGoalByAppWidgetId(appWidgetId: Int): Goal {
-		return goalDao.loadGoalByAppWidgetId(appWidgetId)
-	}
-
-	fun setAppWidgetIdToNullByUid(uid: Int) {
-		goalDao.setAppWidgetIdToNullByUid(uid)
-		// OldCommonFunctions.executorService.execute { OldGoalViewModel.workoutDao(context).setAppWidgetIdToNullByUid(uid) }
-	}
+	fun loadGoalsWithoutValidAppWidgetId(): Flow<List<Goal>> = goalDao.loadGoalsWithoutValidAppWidgetId()
+	suspend fun loadGoalsWithValidAppWidgetId(): List<Goal> = goalDao.loadGoalsWithValidAppWidgetId()
+	suspend fun setAppWidgetIdToNullByAppwidgetId(appWidgetId: Int) = goalDao.setAppWidgetIdToNullByAppwidgetId(appWidgetId = appWidgetId)
+	suspend fun loadGoalByAppWidgetId(appWidgetId: Int): Goal = goalDao.loadGoalByAppWidgetId(appWidgetId = appWidgetId)
+	suspend fun setAppWidgetIdToNullByUid(uid: Int) = goalDao.setAppWidgetIdToNullByUid(uid = uid)
 }
