@@ -35,6 +35,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import ch.karimattia.workoutpixel.R
+import ch.karimattia.workoutpixel.core.getColorFromStatusColor
 import ch.karimattia.workoutpixel.core.plural
 import ch.karimattia.workoutpixel.core.testData
 import ch.karimattia.workoutpixel.data.Goal
@@ -50,10 +51,10 @@ fun EditGoalView(
 	isFirstConfigure: Boolean,
 	goalsWithoutWidget: List<Goal> = emptyList(),
 	addUpdateWidget: (Goal) -> Unit,
-	connectGoal: (Goal) -> Unit = {},
 	settingsData: SettingsData,
 ) {
-	Log.d(TAG, "initialGoal: " + initialGoal.intervalBlue.toString())
+	Log.d(TAG, "START")
+	Log.d(TAG, "isFirstConfigure: $isFirstConfigure")
 
 	// For some reason, any change in the goal recomposes this page
 	// It even updates the initialGoal
@@ -69,6 +70,12 @@ fun EditGoalView(
 			policy = neverEqualPolicy()
 		)
 	}
+	// If the caller sends a new initialGoal, update editGoalViewGoal with it. If it's the same one (e.g. through a recomposition), keep the values edited by the user.
+	val lastValueOfInitialGoal = remember { mutableStateOf(initialGoal) }
+	if (lastValueOfInitialGoal.value != initialGoal) {
+		setValueEditGoalViewGoal(initialGoal)
+		lastValueOfInitialGoal.value = initialGoal
+	}
 
 	Column(
 		modifier = Modifier
@@ -81,14 +88,13 @@ fun EditGoalView(
 		Hints(
 			modifier = modifier,
 		)
-		Log.d(TAG, "goalsWithoutWidget size: ${goalsWithoutWidget.size}")
 		var connectExistingGoal by remember { mutableStateOf(false) }
 		if (isFirstConfigure && goalsWithoutWidget.isNotEmpty()) {
 			ConnectExistingGoal(
 				goalsWithoutWidget = goalsWithoutWidget,
 				connectGoal = {
 					it.appWidgetId = initialGoal.appWidgetId
-					connectGoal(it)
+					addUpdateWidget(it)
 				},
 				modifier = modifier,
 			)
@@ -406,7 +412,6 @@ fun SetUpYourWidget(
 			setUpYourWidgetGoal.showDate = it
 			setUpYourWidgetGoalChange(setUpYourWidgetGoal)
 		},
-		modifier = modifier,
 	)
 	CheckboxWithText(
 		description = stringResource(id = R.string.show_time_in_the_widget),
@@ -415,7 +420,6 @@ fun SetUpYourWidget(
 			setUpYourWidgetGoal.showTime = it
 			setUpYourWidgetGoalChange(setUpYourWidgetGoal)
 		},
-		modifier = Modifier.padding(top = 4.dp),
 	)
 }
 
@@ -426,14 +430,12 @@ fun WidgetConfigurationPreview(
 	settingsData: SettingsData,
 	modifier: Modifier = Modifier,
 ) {
-	val previewGoal = editGoalViewGoal.copy()
-	if (isFirstConfigure) {
-		previewGoal.lastWorkout = remember { System.currentTimeMillis() }
-	}
-	FreeStandingTitle(text = "Preview")
+	// 12dp because the checkbox above has 4 dp clickable area and then 16 is too much.
+	FreeStandingTitle(text = "Preview", topPadding = 12.dp)
 	GoalPreview(
-		goal = previewGoal,
+		goal = editGoalViewGoal,
 		settingsData = settingsData,
+		backgroundColor = if (isFirstConfigure) settingsData.colorDone() else getColorFromStatusColor(editGoalViewGoal.status(), settingsData = settingsData),
 		modifier = modifier,
 	)
 }

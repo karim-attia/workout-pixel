@@ -18,6 +18,5 @@ class PastClickRepository @Inject constructor(
 
 	fun insertPastClick(pastClick: PastClick) {
 		goalDao.insertPastWorkout(pastClick)
-		// CommonFunctions.executorService.execute { goalDao.insertPastWorkout(clickedWorkout) }
 	}
 }

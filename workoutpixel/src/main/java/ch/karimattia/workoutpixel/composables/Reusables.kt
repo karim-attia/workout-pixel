@@ -138,13 +138,13 @@ fun CheckboxWithText(
 	Row(
 		verticalAlignment = Alignment.CenterVertically,
 		modifier = modifier
-			//.padding(top = 4.dp)
 			.fillMaxWidth()
 			.clickable { onCheckedChange(!checked) }
+			.padding(vertical = 4.dp)
 	) {
 		Checkbox(
 			checked = checked,
-			onCheckedChange = { onCheckedChange(it) }
+			onCheckedChange = null // {onCheckedChange(it) }
 		)
 		Text(
 			text = description,

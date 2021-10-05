@@ -1,6 +1,9 @@
 package ch.karimattia.workoutpixel.data
 
+import android.appwidget.AppWidgetManager
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOf
 import javax.inject.Inject
 
 @Suppress("unused") private const val TAG = "GoalRepository"
@@ -14,27 +17,28 @@ class GoalRepository @Inject constructor(
 	val allGoals: Flow<List<Goal>> = goalDao.loadAllGoalsFlow()
 	//val goalsWithInvalidOrNullAppWidgetId: Flow<List<Goal>> = goalDao.loadGoalsWithInvalidOrNullAppWidgetId()
 
-	fun updateGoal(goal: Goal) {
-		goalDao.updateGoal(goal)
-	}
-
 	fun deleteGoal(goal: Goal) {
 		goalDao.deleteGoal(goal)
 	}
 
-	fun insertGoal(goal: Goal): Long {
-		return goalDao.insertGoal(goal)
+	suspend fun insertGoal(goal: Goal): Int {
+		return goalDao.insertGoal(goal).toInt()
 	}
 
-	fun loadGoalByUid(uid: Int): Goal {
+	suspend fun loadGoalByUid(uid: Int): Goal {
 		return goalDao.loadGoalByUid(uid)
+	}
+
+	fun loadGoalByAppWidgetIdFlow(goal: Goal): Flow<Goal> {
+		return if (goal.appWidgetId == AppWidgetManager.INVALID_APPWIDGET_ID) flowOf(goal)
+		else goalDao.loadGoalByAppWidgetIdFlow(goal.appWidgetId)
 	}
 
 	fun loadGoalsWithoutValidAppWidgetId(): Flow<List<Goal>> {
 		return goalDao.loadGoalsWithoutValidAppWidgetId()
 	}
 
-	fun loadGoalsWithValidAppWidgetId(): List<Goal> {
+	suspend fun loadGoalsWithValidAppWidgetId(): List<Goal> {
 		return goalDao.loadGoalsWithValidAppWidgetId()
 	}
 

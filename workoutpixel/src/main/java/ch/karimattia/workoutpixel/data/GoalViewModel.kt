@@ -14,10 +14,7 @@ import javax.inject.Inject
 @HiltViewModel
 class GoalViewModel @Inject constructor(
 	private val goalRepository: GoalRepository,
-	private val goalWidgetActionsFactory: GoalWidgetActions.Factory,
 ) : ViewModel() {
-	private fun goalWidgetActions(goal: Goal): GoalWidgetActions = goalWidgetActionsFactory.create(goal)
-
 	val allGoalsFlow: Flow<List<Goal>> = goalRepository.allGoals
 	val allGoals: SnapshotStateList<Goal> = mutableStateListOf()
 	// This is needed so the state of allGoals and thus the UI updates.
@@ -41,7 +38,7 @@ class GoalViewModel @Inject constructor(
 	}
 
 	fun updateGoal(goal: Goal) = viewModelScope.launch {
-		goalRepository.updateGoal(goal)
+		goalRepository.insertGoal(goal)
 		Log.d("KotlinGoalViewModel: updateGoal: ", "$goal")
 	}
 
@@ -50,8 +47,6 @@ class GoalViewModel @Inject constructor(
 		Log.d("KotlinGoalViewModel: deleteGoal: ", "$goal")
 	}
 
-	fun insertGoal(goal: Goal) = viewModelScope.launch {
-		goal.uid = goalRepository.insertGoal(goal).toInt()
-		goalWidgetActions(goal = goal).runUpdate(true)
-	}
+	suspend fun insertGoal(goal: Goal): Int = goalRepository.insertGoal(goal)
+
 }

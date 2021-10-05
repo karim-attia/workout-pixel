@@ -25,7 +25,9 @@ object Constants {
 	const val MILLISECONDS_IN_A_DAY = 24 * 60 * 60 * 1000
 	const val ACTION_ALARM_UPDATE = "ALARM_UPDATE"
 	const val ACTION_DONE_EXERCISE = "DONE_EXERCISE"
-	const val PREFERENCE_NAME = "shared_prefs"
+	const val PREFERENCE_NAME = "SharedPreferences"
+	const val GOAL_UID = "goalUid"
+	const val INVALID_GOAL_UID = 0
 }
 
 enum class Status {

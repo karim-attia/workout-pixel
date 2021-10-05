@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+https://developer.android.com/guide/topics/appwidgets
+-->
 <appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
 	android:configure="ch.karimattia.workoutpixel.activities.ConfigureActivity"
 	android:initialKeyguardLayout="@layout/widget_layout"
@@ -6,7 +9,14 @@
 	android:minWidth="40dp"
 	android:minHeight="40dp"
 	android:previewImage="@drawable/widget_preview"
-	android:updatePeriodMillis="0"
-	android:widgetCategory="home_screen" />
+	android:previewLayout="@layout/widget_layout"
+	android:updatePeriodMillis="21600000"
+	android:widgetCategory="home_screen"
+	android:targetCellWidth="1"
+	android:targetCellHeight="1"
+	android:widgetFeatures="reconfigurable"
+	/>
 
-	<!--    android:widgetFeatures="reconfigurable" -->
+	<!--
+        android:description="Add a widget with your goal"
+    -->

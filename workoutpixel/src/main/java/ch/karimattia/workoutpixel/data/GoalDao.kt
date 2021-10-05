@@ -13,7 +13,11 @@ interface GoalDao {
 
 	// Get goal by uid
 	@Query("SELECT * FROM goals WHERE uid=:uid")
-	fun loadGoalByUid(uid: Int): Goal
+	suspend fun loadGoalByUid(uid: Int): Goal
+
+	// Get goal by uid
+	@Query("SELECT * FROM goals WHERE appWidgetId=:appWidgetId")
+	fun loadGoalByAppWidgetIdFlow(appWidgetId: Int): Flow<Goal>
 
 	// Get all goals
 	@Query("SELECT * FROM goals")
@@ -24,10 +28,7 @@ interface GoalDao {
 	fun loadAllGoalsFlow(): Flow<List<Goal>>
 
 	@Insert(onConflict = OnConflictStrategy.REPLACE, entity = Goal::class)
-	fun insertGoal(goal: Goal): Long
-
-	@Update(onConflict = OnConflictStrategy.REPLACE, entity = Goal::class)
-	fun updateGoal(goal: Goal)
+	suspend fun insertGoal(goal: Goal): Long
 
 	@Query("UPDATE goals SET appWidgetId =:invalidAppWidgetId WHERE uid=:uid")
 	fun setAppWidgetIdToNullByUid(uid: Int, invalidAppWidgetId: Int = AppWidgetManager.INVALID_APPWIDGET_ID)
@@ -41,7 +42,7 @@ interface GoalDao {
 
 	// Get all goals with AppWidgetId
 	@Query("SELECT * FROM goals WHERE appWidgetId !=:invalidAppWidgetId")
-	fun loadGoalsWithValidAppWidgetId(invalidAppWidgetId: Int = AppWidgetManager.INVALID_APPWIDGET_ID): List<Goal>
+	suspend fun loadGoalsWithValidAppWidgetId(invalidAppWidgetId: Int = AppWidgetManager.INVALID_APPWIDGET_ID): List<Goal>
 
 	@Delete
 	fun deleteGoal(goal: Goal)

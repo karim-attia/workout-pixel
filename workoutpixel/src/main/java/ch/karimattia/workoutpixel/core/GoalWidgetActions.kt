@@ -85,7 +85,7 @@ class GoalWidgetActions @AssistedInject constructor(
 			Log.d(TAG, "widgetPendingIntent: appWidgetId is null where it shouldn't be.")
 			return null
 		}
-		intent.putExtra("goalUid", goal.uid)
+		intent.putExtra(Constants.GOAL_UID, goal.uid)
 		return PendingIntent.getBroadcast(context, goal.appWidgetId, intent, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
 	}
 }

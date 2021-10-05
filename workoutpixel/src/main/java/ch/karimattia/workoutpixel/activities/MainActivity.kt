@@ -14,6 +14,9 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.neverEqualPolicy
+import androidx.compose.runtime.remember
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.lifecycleScope
@@ -22,13 +25,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import ch.karimattia.workoutpixel.data.SettingsData
 import ch.karimattia.workoutpixel.composables.*
 import ch.karimattia.workoutpixel.core.*
-import ch.karimattia.workoutpixel.data.Goal
-import ch.karimattia.workoutpixel.data.GoalViewModel
-import ch.karimattia.workoutpixel.data.PastClickViewModelAssistedFactory
-import ch.karimattia.workoutpixel.data.SettingsViewModel
+import ch.karimattia.workoutpixel.data.*
 import ch.karimattia.workoutpixel.ui.theme.WorkoutPixelTheme
 import coil.annotation.ExperimentalCoilApi
 import com.google.accompanist.pager.ExperimentalPagerApi
@@ -81,8 +80,10 @@ class MainActivity : ComponentActivity() {
 					goalSaveActions(it).updateAfterClick()
 				},
 				updateGoal = {
-					goalViewModel.updateGoal(it)
-					goalWidgetActions(it).runUpdate(true)
+					lifecycleScope.launch {
+						goalViewModel.insertGoal(it)
+						goalWidgetActions(it).runUpdate(true)
+					}
 				},
 				deleteGoal = { goalViewModel.deleteGoal(it) },
 				settingsData = settingsViewModel.settingsData.observeAsState().value,
