@@ -15,6 +15,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import ch.karimattia.workoutpixel.core.colorToInt
 import ch.karimattia.workoutpixel.core.dateBeautiful
 import ch.karimattia.workoutpixel.core.timeBeautiful
 import ch.karimattia.workoutpixel.data.Goal
@@ -48,7 +49,7 @@ fun Settings(
 			subtitleText = "Color of goals that you recently reached",
 			goal = goal,
 			color = settingsData.colorDone(),
-			onColorSelected = { settingChange(settingsData.copy(colorDoneInt = argb(it.alpha, it.red, it.green, it.blue))) },
+			onColorSelected = { settingChange(settingsData.copy(colorDoneInt = colorToInt(it)))},
 			settingsData = settingsData,
 		)
 		ColorSelection(
@@ -56,7 +57,7 @@ fun Settings(
 			subtitleText = "Color to remind you to reach this goal",
 			goal = goal,
 			color = settingsData.colorFirstInterval(),
-			onColorSelected = { settingChange(settingsData.copy(colorFirstIntervalInt = argb(it.alpha, it.red, it.green, it.blue))) },
+			onColorSelected = { settingChange(settingsData.copy(colorFirstIntervalInt = colorToInt(it))) },
 			settingsData = settingsData,
 		)
 		ColorSelection(
@@ -64,7 +65,7 @@ fun Settings(
 			subtitleText = "Color of goals that are pending since 2+ days",
 			goal = goal,
 			color = settingsData.colorSecondInterval(),
-			onColorSelected = { settingChange(settingsData.copy(colorSecondIntervalInt = argb(it.alpha, it.red, it.green, it.blue))) },
+			onColorSelected = { settingChange(settingsData.copy(colorSecondIntervalInt = colorToInt(it))) },
 			settingsData = settingsData,
 		)
 		ColorSelection(
@@ -72,7 +73,7 @@ fun Settings(
 			subtitleText = "Color of goals that you never clicked",
 			goal = goal,
 			color = settingsData.colorInitial(),
-			onColorSelected = { settingChange(settingsData.copy(colorInitialInt = argb(it.alpha, it.red, it.green, it.blue))) },
+			onColorSelected = { settingChange(settingsData.copy(colorInitialInt = colorToInt(it))) },
 			settingsData = settingsData,
 		)
 		Divider(color = Color(TextBlack), thickness = 0.5.dp)

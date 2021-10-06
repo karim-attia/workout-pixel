@@ -1,25 +1,17 @@
 package ch.karimattia.workoutpixel.core
 
-import android.app.PendingIntent
-import android.appwidget.AppWidgetManager
-import android.content.ComponentName
 import android.content.Context
-import android.content.Intent
-import android.util.Log
 import androidx.compose.ui.graphics.Color
 import ch.karimattia.workoutpixel.core.Constants.PREFERENCE_NAME
 import ch.karimattia.workoutpixel.data.Goal
-import ch.karimattia.workoutpixel.data.GoalRepository
+import ch.karimattia.workoutpixel.data.PastClick
 import ch.karimattia.workoutpixel.data.SettingsData
-import dagger.hilt.android.qualifiers.ApplicationContext
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 import java.util.*
-import java.util.stream.Collectors
-import javax.inject.Inject
 import kotlin.math.roundToInt
 
 @Suppress("unused")
@@ -85,7 +77,7 @@ fun intervalInMilliseconds(intervalInDays: Int): Long {
 //    }
 // --Commented out by Inspection STOP (23.06.21, 20:28)
 /**
- * Match status to background color
+ * Color stuff
  */
 fun getColorFromStatusColor(status: Status, settingsData: SettingsData): Color =
 	Color(getColorFromStatus(status = status, settingsData = settingsData))
@@ -98,6 +90,8 @@ fun getColorFromStatus(status: Status, settingsData: SettingsData): Int {
 		Status.NONE -> settingsData.colorInitialInt
 	}
 }
+
+fun colorToInt(color: Color): Int = android.graphics.Color.argb(color.alpha, color.red, color.green, color.blue)
 
 /**
  * Time and date formatting stuff
@@ -140,32 +134,6 @@ fun saveTimeWithStringToSharedPreferences(context: Context, string: String) {
 }
 
 /**
- * AppWidgetId stuff
- */
-class ContextFunctions @Inject constructor(
-	@ApplicationContext val context: Context,
-) {
-	fun appWidgetIds(): IntArray =
-		AppWidgetManager.getInstance(context).getAppWidgetIds(ComponentName(context.packageName, WorkoutPixelAppWidgetProvider::class.java.name))
-
-	fun goalsWithInvalidAppWidgetId(goals: List<Goal>): List<Goal> {
-		return goals.stream().filter { (_, _) ->
-			Arrays.stream(appWidgetIds()).noneMatch { appWidgetId: Int -> appWidgetId == appWidgetId }
-		}
-			.collect(Collectors.toList())
-	}
-
-	@Suppress("unused")
-	fun goalsWithInvalidOrNullAppWidgetId(goals: List<Goal>): List<Goal> {
-		return goals.stream()
-			.filter { (_, appWidgetId) ->
-				Arrays.stream(appWidgetIds()).noneMatch { i: Int -> appWidgetId != AppWidgetManager.INVALID_APPWIDGET_ID && i == appWidgetId }
-			}
-			.collect(Collectors.toList())
-	}
-}
-
-/**
  * Wordings
  */
 fun plural(times: Int, word: String): String {
@@ -177,104 +145,65 @@ fun plural(times: Int, word: String): String {
 	}
 }
 
-fun testData(): List<Goal> {
-	val testData: MutableList<Goal> = ArrayList()
-	testData.add(
-		Goal(
-			title = "Push ups",
-			lastWorkout = today3Am() - intervalInMilliseconds(1),
-			intervalBlue = 2,
-			//status = Status.GREEN
-		)
-	)
-	testData.add(
-		Goal(
-			title = "Back exercises",
-			lastWorkout = today3Am() - intervalInMilliseconds(2),
-			intervalBlue = 7,
-			showDate = true,
-			//status = Status.GREEN
-		)
-	)
-	testData.add(
-		Goal(
-			title = "Visualize your day",
-			lastWorkout = today3Am() + (intervalInMilliseconds(1) * 0.259).roundToInt(),
-			intervalBlue = 1,
-			showTime = true,
-			//status = Status.GREEN
-		)
-	)
-	testData.add(
-		Goal(
-			title = "Morning walk",
-			lastWorkout = today3Am(),
-			intervalBlue = 1,
-			//status = Status.GREEN
-		)
-	)
-	testData.add(
-		Goal(
-			title = "Water plants",
-			lastWorkout = today3Am() - intervalInMilliseconds(7),
-			intervalBlue = 7,
-			showDate = true,
-			//status = Status.BLUE
-		)
-	)
-	for (goal in testData) {
-		goal.uid = testData.indexOf(goal) + 1
-	}
-	return testData
-}
-
 fun goalFromGoalsByUid(goalUid: Int, goals: List<Goal>): Goal? {
 	return goals.firstOrNull { it.uid == goalUid }
 }
 
-class DatabaseInteractions @Inject constructor(
-	@ApplicationContext val context: Context,
-	private val repository: GoalRepository,
-	private val contextFunctions: ContextFunctions,
-) {
-	// @Inject lateinit var contextFunctions: ContextFunctions
-	// Sets all appWidgetIds of goals that are not valid to null. Maybe later even reassign some to unassigned widgets.
-	suspend fun cleanGoals(goals: List<Goal>) {
-		for (goal in contextFunctions.goalsWithInvalidAppWidgetId(goals)) {
-			if (goal.hasValidAppWidgetId()) {
-				repository.setAppWidgetIdToNullByUid(goal.uid)
-			}
-		}
-	}
-}
 
-// https://developer.android.com/guide/topics/appwidgets/configuration#pin
-// https://developer.android.com/reference/android/appwidget/AppWidgetManager#requestPinAppWidget(android.content.ComponentName,%20android.os.Bundle,%20android.app.PendingIntent)
-fun pinAppWidget(goal: Goal, context: Context) {
-	val appWidgetManager = AppWidgetManager.getInstance(context)
-	val myProvider = ComponentName(context, WorkoutPixelAppWidgetProvider::class.java)
+/**
+ * Test data
+ */
+val testGoals: List<Goal> = listOf(
+	Goal(
+		uid = 1,
+		title = "Push ups",
+		lastWorkout = today3Am() - intervalInMilliseconds(1),
+		intervalBlue = 2,
+		//status = Status.GREEN
+	),
+	Goal(
+		uid = 2,
+		title = "Back exercises",
+		lastWorkout = today3Am() - intervalInMilliseconds(2),
+		intervalBlue = 7,
+		showDate = true,
+		//status = Status.GREEN
+	),
+	Goal(
+		uid = 3,
+		title = "Visualize your day",
+		lastWorkout = today3Am() + (intervalInMilliseconds(1) * 0.259).roundToInt(),
+		intervalBlue = 1,
+		showTime = true,
+		//status = Status.GREEN
+	),
+	Goal(
+		uid = 4,
+		title = "Morning walk",
+		lastWorkout = today3Am(),
+		intervalBlue = 1,
+		//status = Status.GREEN
+	),
+	Goal(
+		uid = 5,
+		title = "Water plants",
+		lastWorkout = today3Am() - intervalInMilliseconds(7),
+		intervalBlue = 7,
+		showDate = true,
+		//status = Status.BLUE
+	)
+)
 
-	if (appWidgetManager.isRequestPinAppWidgetSupported) {
-		// Create the PendingIntent object only if your app needs to be notified
-		// that the user allowed the widget to be pinned. Note that, if the pinning
-		// operation fails, your app isn't notified. This callback receives the ID
-		// of the newly-pinned widget (EXTRA_APPWIDGET_ID).
-		val pinIntent = Intent(context, WorkoutPixelAppWidgetProvider::class.java)
-		pinIntent.action = Constants.ACTION_SETUP_WIDGET
-		pinIntent.putExtra(Constants.GOAL_UID, goal.uid)
+val testPastClicks: List<PastClick> = listOf(
+	PastClick(
+		uid = 1,
+		widgetUid = 1,
+		workoutTime = today3Am() - intervalInMilliseconds(1) + (intervalInMilliseconds(1) * 0.259).roundToInt(),
+	),
+	PastClick(
+		uid = 2,
+		widgetUid = 1,
+		workoutTime = today3Am() - intervalInMilliseconds(2) - (intervalInMilliseconds(1) * 0.259).roundToInt(),
+	),
+)
 
-		val successCallback: PendingIntent = PendingIntent.getBroadcast(
-			/* context = */ context,
-			/* requestCode = */ 0,
-			/* intent = */ pinIntent,
-		/* flags = */ PendingIntent.FLAG_UPDATE_CURRENT)
-
-		appWidgetManager.requestPinAppWidget(myProvider, null, successCallback)
-	}
-}
-
-private fun pendingIntent(context: Context): PendingIntent {
-	val alarmIntent = Intent(context, WorkoutPixelAppWidgetProvider::class.java)
-	alarmIntent.action = Constants.ACTION_ALARM_UPDATE
-	return PendingIntent.getBroadcast(context, 0, alarmIntent, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
-}

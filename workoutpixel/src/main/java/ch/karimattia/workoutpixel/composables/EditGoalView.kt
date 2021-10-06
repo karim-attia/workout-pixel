@@ -37,7 +37,7 @@ import androidx.compose.ui.unit.sp
 import ch.karimattia.workoutpixel.R
 import ch.karimattia.workoutpixel.core.getColorFromStatusColor
 import ch.karimattia.workoutpixel.core.plural
-import ch.karimattia.workoutpixel.core.testData
+import ch.karimattia.workoutpixel.core.testGoals
 import ch.karimattia.workoutpixel.data.Goal
 import ch.karimattia.workoutpixel.data.SettingsData
 import java.util.*
@@ -488,7 +488,7 @@ fun AddUpdateWidgetButton(
 @Composable
 fun EditGoalViewPreview() {
 	EditGoalView(
-		initialGoal = testData()[0],
+		initialGoal = testGoals[0],
 		isFirstConfigure = false,
 		updateGoal = { },
 		settingsData = SettingsData(),

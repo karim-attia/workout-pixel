@@ -23,7 +23,7 @@ import androidx.compose.ui.unit.sp
 import ch.karimattia.workoutpixel.R
 import ch.karimattia.workoutpixel.core.WorkoutPixelScreen
 import ch.karimattia.workoutpixel.core.dateBeautiful
-import ch.karimattia.workoutpixel.core.testData
+import ch.karimattia.workoutpixel.core.testGoals
 import ch.karimattia.workoutpixel.data.Goal
 import ch.karimattia.workoutpixel.data.SettingsData
 import java.util.*
@@ -181,7 +181,7 @@ fun InstructionsCard(
 @Composable
 fun AllGoalsPreview() {
 	AllGoals(
-		goals = testData(),
+		goals = testGoals,
 		updateAfterClick = {},
 		navigateTo = { _, _ -> },
 		settingsData = SettingsData(),

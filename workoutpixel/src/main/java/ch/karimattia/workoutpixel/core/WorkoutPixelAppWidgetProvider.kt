@@ -24,18 +24,14 @@ private const val TAG = "WorkoutPixelAppWidgetProvider"
 class WorkoutPixelAppWidgetProvider : AppWidgetProvider() {
 
 	@Inject
-	lateinit var goalSaveActionsFactory: GoalSaveActions.Factory
-	private fun goalSaveActions(goal: Goal): GoalSaveActions = goalSaveActionsFactory.create(goal)
-
-	@Inject
-	lateinit var goalWidgetActionsFactory: GoalWidgetActions.Factory
-	private fun goalWidgetActions(goal: Goal): GoalWidgetActions = goalWidgetActionsFactory.create(goal)
+	lateinit var goalActionsFactory: GoalActions.Factory
+	private fun goalActions(goal: Goal): GoalActions = goalActionsFactory.create(goal)
 
 	@Inject
 	lateinit var widgetAlarm: WidgetAlarm
 
 	@Inject
-	lateinit var contextFunctions: ContextFunctions
+	lateinit var otherActions: OtherActions
 
 	@Inject
 	lateinit var repository: GoalRepository
@@ -45,28 +41,34 @@ class WorkoutPixelAppWidgetProvider : AppWidgetProvider() {
 		//val widgetId = intent.extras!!.getInt(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID)
 		//Log.d(TAG, "ACTION_SETUP_WIDGET widgetId: $widgetId")
 
+		if (intent.action.equals(ACTION_SETUP_WIDGET)) {
+			var appWidgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID)
+			Log.d(TAG, "appWidgetId1: $appWidgetId")
+			appWidgetId = intent.extras!!.getInt(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID)
+			Log.d(TAG, "appWidgetId2: $appWidgetId")
+			//appWidgetId = intent!!.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID)
+			//Log.d(TAG, "appWidgetId3: $appWidgetId")
+		}
 
 		runBlocking {
 			super.onReceive(context, intent)
 			Log.d(TAG, "ON_RECEIVE ${intent.action}------------------------------------------------------------------------")
-
-			// Do this if the widget has been clicked
 			when {
+				// Do this if the widget has been clicked
 				intent.action.equals(ACTION_DONE_EXERCISE) -> {
 					val uid = intent.getIntExtra(Constants.GOAL_UID, 0)
 					val goal = repository.loadGoalByUid(uid)
-					goalSaveActions(goal).updateAfterClick()
+					goalActions(goal).updateAfterClick()
 				}
 				intent.action.equals(ACTION_SETUP_WIDGET) -> {
 					Log.d(TAG, "ACTION_SETUP_WIDGET")
 					val extras: Bundle? = intent.extras
-					Log.d(TAG, "extras: $extras")
 					if (extras != null) {
 						val uid = intent.getIntExtra(Constants.GOAL_UID, 0)
 						val goal = repository.loadGoalByUid(uid)
 						goal.appWidgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID)
+						goalActions(goal).runUpdate(true)
 						repository.updateGoal(goal)
-						goalWidgetActions(goal).runUpdate(true)
 					}
 				}
 				else -> {
@@ -74,8 +76,7 @@ class WorkoutPixelAppWidgetProvider : AppWidgetProvider() {
 					Log.d(TAG, "intent.action: ${intent.action}")
 					saveTimeWithStringToSharedPreferences(context,
 						"Last ACTION_ALARM_UPDATE ${dateTimeBeautiful(System.currentTimeMillis())}, intent.action: ${intent.action}")
-					// Not the most correct way...
-					goalSaveActions(Goal()).updateAllWidgetsBasedOnStatus()
+					otherActions.updateAllWidgets()
 				}
 			}
 		}
@@ -87,8 +88,7 @@ class WorkoutPixelAppWidgetProvider : AppWidgetProvider() {
 			// Start alarm
 			widgetAlarm.startAlarm()
 
-			// Not the most correct way...
-			goalSaveActions(Goal()).updateAllWidgetsBasedOnStatus()
+			otherActions.updateAllWidgets()
 		}
 	}
 
@@ -111,8 +111,7 @@ class WorkoutPixelAppWidgetProvider : AppWidgetProvider() {
 			Log.d(TAG, "ON_ENABLED")
 			super.onEnabled(context)
 
-			// Not the most correct way...
-			goalSaveActions(Goal()).updateAllWidgetsBasedOnStatus()
+			otherActions.updateAllWidgets()
 
 			// Start alarm
 			Log.v(TAG, "START_ALARM")
@@ -126,7 +125,7 @@ class WorkoutPixelAppWidgetProvider : AppWidgetProvider() {
 			// Enter relevant functionality for when the last widget is disabled
 			// Stop alarm only if all widgets have been disabled
 			Log.d(TAG, "ON_DISABLED")
-			if (contextFunctions.appWidgetIds().isEmpty()) {
+			if (otherActions.appWidgetIds().isEmpty()) {
 				// stop alarm
 				Log.v(TAG, "STOP_ALARM")
 				widgetAlarm.stopAlarm()
@@ -136,9 +135,11 @@ class WorkoutPixelAppWidgetProvider : AppWidgetProvider() {
 	}
 
 	override fun onAppWidgetOptionsChanged(context: Context, appWidgetManager: AppWidgetManager, appWidgetId: Int, bundle: Bundle) {
+/*
 		runBlocking {
 			val goal = repository.loadGoalByAppWidgetId(appWidgetId)
-			goalWidgetActions(goal).runUpdate(false)
+			goalActions(goal).runUpdate(false)
 		}
+*/
 	}
 }

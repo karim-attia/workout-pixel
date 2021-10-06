@@ -1,28 +1,22 @@
 package ch.karimattia.workoutpixel.composables
 
-import android.app.PendingIntent
-import android.appwidget.AppWidgetManager
-import android.content.ComponentName
-import android.content.Context
 import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Button
-import androidx.compose.material.Divider
-import androidx.compose.material.Icon
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Backspace
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.DeleteForever
 import androidx.compose.material.icons.filled.Undo
+import androidx.compose.material.icons.filled.Widgets
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.key
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -32,8 +26,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import ch.karimattia.workoutpixel.R
-import ch.karimattia.workoutpixel.core.*
+import ch.karimattia.workoutpixel.core.dateBeautiful
+import ch.karimattia.workoutpixel.core.testGoals
+import ch.karimattia.workoutpixel.core.testPastClicks
+import ch.karimattia.workoutpixel.core.timeBeautiful
 import ch.karimattia.workoutpixel.data.*
+import ch.karimattia.workoutpixel.ui.theme.GreenTest
 import ch.karimattia.workoutpixel.ui.theme.TextBlack
 import com.vanpra.composematerialdialogs.MaterialDialog
 import com.vanpra.composematerialdialogs.message
@@ -49,6 +47,7 @@ fun GoalDetailView(
 	updateAfterClick: () -> Unit,
 	deleteGoal: (Goal) -> Unit,
 	updateGoal: (updatedGoal: Goal, navigateUp: Boolean) -> Unit,
+	addWidgetToHomeScreen: (Goal) -> Unit,
 	settingsData: SettingsData,
 	pastClickViewModelAssistedFactory: PastClickViewModelAssistedFactory,
 	pastClickViewModel: PastClickViewModel = viewModel(factory = provideFactory(pastClickViewModelAssistedFactory, goal.uid)),
@@ -59,6 +58,7 @@ fun GoalDetailView(
 		updateAfterClick = updateAfterClick,
 		deleteGoal = deleteGoal,
 		updateGoal = updateGoal,
+		addWidgetToHomeScreen = { addWidgetToHomeScreen(goal) },
 		updatePastClick = { pastClickViewModel.updatePastClick(it) },
 		pastClicks = pastClicks,
 		settingsData = settingsData,
@@ -71,6 +71,7 @@ fun GoalDetailView(
 	updateAfterClick: () -> Unit,
 	deleteGoal: (Goal) -> Unit,
 	updateGoal: (updatedGoal: Goal, navigateUp: Boolean) -> Unit,
+	addWidgetToHomeScreen: () -> Unit,
 	updatePastClick: (PastClick) -> Unit,
 	pastClicks: List<PastClick>,
 	settingsData: SettingsData,
@@ -91,7 +92,9 @@ fun GoalDetailView(
 			updateAfterClick = updateAfterClick
 		)
 		if (!goal.hasValidAppWidgetId()) {
-			GoalDetailNoWidgetCard(goal = goal, deleteGoal = deleteGoal)
+			GoalDetailNoWidgetCard(
+				goal = goal, deleteGoal = deleteGoal, addWidgetToHomeScreen = addWidgetToHomeScreen,
+			)
 		}
 
 		PastClicks(
@@ -137,19 +140,22 @@ fun GoalOverviewView(
 fun GoalDetailNoWidgetCard(
 	goal: Goal,
 	deleteGoal: (Goal) -> Unit,
+	addWidgetToHomeScreen: () -> Unit,
 ) {
 	CardWithTitle(
 		title = "No widget for this goal"
 	) {
 		val dialogState = rememberMaterialDialogState()
-
 		Infobox(text = "There is no widget for this goal on your homescreen. Add a new widget and connect it to this goal to keep the data.")
+		// TODO: Make destructive red color.
 		Button(
 			onClick = { dialogState.show() },
-			modifier = Modifier.padding(top = 8.dp)
+			modifier = Modifier.padding(top = 8.dp),
+			colors = ButtonDefaults.buttonColors(backgroundColor = Color.Red, contentColor = Color.White)
 		) {
-			Text(text = "Delete goal", modifier = Modifier.padding(end = 16.dp))
-			Icon(imageVector = Icons.Filled.Backspace, contentDescription = null)
+			Icon(imageVector = Icons.Filled.DeleteForever, contentDescription = null)
+			Spacer(modifier = Modifier.padding(end = 8.dp))
+			Text(text = "Delete goal".uppercase(), modifier = Modifier.padding(end = 16.dp))
 		}
 		MaterialDialog(dialogState = dialogState, buttons = {
 			positiveButton(text = "Confirm", onClick = { deleteGoal(goal) })
@@ -158,12 +164,14 @@ fun GoalDetailNoWidgetCard(
 			title(text = "Do you really want to delete this goal?")
 			message(text = "This will irreversibly remove the goal including all its data like past clicks.")
 		}
-		val context: Context = LocalContext.current
 		Button(
-			onClick = { pinAppWidget(goal= goal, context = context) },
-			modifier = Modifier.padding(top = 8.dp)
+			onClick = addWidgetToHomeScreen,
+			modifier = Modifier.padding(top = 4.dp),
+			colors = ButtonDefaults.buttonColors(backgroundColor = GreenTest, contentColor = Color.White)
 		) {
-			Text(text = "Add widget to homescreen", modifier = Modifier.padding(end = 16.dp))
+			Icon(imageVector = Icons.Filled.Widgets, contentDescription = null)
+			Spacer(modifier = Modifier.padding(end = 8.dp))
+			Text(text = "Add to homescreen".uppercase(), modifier = Modifier.padding(end = 16.dp))
 		}
 
 	}
@@ -206,19 +214,21 @@ fun PastClickList(
 			Divider(color = Color(TextBlack), thickness = 1.dp)
 
 			for (i in 0 until minOf(numberOfPastClicks, 50)) {
-				PastClickEntry(
-					settingsData = settingsData,
-					pastClick = pastClicks[i],
-					togglePastClick = {
-						updatePastClick(it)
-						// If this change causes a new last workout time, do all the necessary updates.
-						// TODO: Move setNewLastWorkout to GoalSaveActions and directly save the updated goal there?
-						if (goal.setNewLastWorkout(lastClickBasedOnActiveClicks(pastClicks))) {
-							updateGoal(goal, false)
+				key(pastClicks[i].uid) {
+					PastClickEntry(
+						settingsData = settingsData,
+						pastClick = pastClicks[i],
+						togglePastClick = {
+							updatePastClick(it)
+							// If this change causes a new last workout time, do all the necessary updates.
+							// TODO: Move setNewLastWorkout to GoalSaveActions and directly save the updated goal there?
+							if (goal.setNewLastWorkout(lastClickBasedOnActiveClicks(pastClicks))) {
+								updateGoal(goal, false)
+							}
 						}
-					}
-				)
-				Divider(color = Color(TextBlack), thickness = 0.5.dp)
+					)
+					Divider(color = Color(TextBlack), thickness = 0.5.dp)
+				}
 			}
 		}
 	} else {
@@ -279,8 +289,8 @@ fun PastClickEntry(
 			fontWeight = fontWeight,
 			style = TextStyle(textDecoration = textDecoration),
 			modifier = Modifier
-				.width(72.dp)
-				.padding(start = 4.dp)
+				.width(80.dp)
+				.padding(start = 4.dp, end = 12.dp)
 				.align(Alignment.CenterVertically)
 		)
 		Text(
@@ -289,7 +299,7 @@ fun PastClickEntry(
 			fontWeight = fontWeight,
 			style = TextStyle(textDecoration = textDecoration),
 			modifier = Modifier
-				.width(72.dp)
+				.width(80.dp)
 				.padding(end = 12.dp)
 				.align(Alignment.CenterVertically)
 		)
@@ -330,12 +340,13 @@ fun lastClickBasedOnActiveClicks(pastClicks: List<PastClick>): Long {
 @Composable
 fun GoalDetailViewPreview() {
 	GoalDetailView(
-		goal = testData()[0],
+		goal = testGoals[0],
 		updateAfterClick = {},
 		deleteGoal = {},
 		updateGoal = { _, _ -> },
+		addWidgetToHomeScreen = {},
 		updatePastClick = {},
-		pastClicks = listOf(),
+		pastClicks = testPastClicks,
 		settingsData = SettingsData(),
 	)
 }

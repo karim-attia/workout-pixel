@@ -15,4 +15,7 @@ val InfoColor: Int = rgb(227,242,253)
 @JvmField val TextBlack: Int = rgb(128,128,128)
 @JvmField val TextBlack2: Int = rgb(80,80,80)
 
+val GreenTest = Color(0xFF3DDC84)
+
+
 val GrayBackground: Int = rgb(250,250,250)

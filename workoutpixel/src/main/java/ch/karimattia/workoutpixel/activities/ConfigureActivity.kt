@@ -18,7 +18,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.lifecycle.lifecycleScope
 import ch.karimattia.workoutpixel.composables.EditGoalView
-import ch.karimattia.workoutpixel.core.GoalWidgetActions
+import ch.karimattia.workoutpixel.core.GoalActions
 import ch.karimattia.workoutpixel.data.*
 import ch.karimattia.workoutpixel.ui.theme.WorkoutPixelTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -32,8 +32,8 @@ private const val TAG: String = "ConfigureCompose"
 class ConfigureActivity : ComponentActivity() {
 
 	@Inject
-	lateinit var goalWidgetActionsFactory: GoalWidgetActions.Factory
-	private fun goalWidgetActions(goal: Goal): GoalWidgetActions = goalWidgetActionsFactory.create(goal)
+	lateinit var goalActionsFactory: GoalActions.Factory
+	private fun goalWidgetActions(goal: Goal): GoalActions = goalActionsFactory.create(goal)
 
 	@Inject
 	lateinit var goalRepository: GoalRepository

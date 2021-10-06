@@ -45,12 +45,8 @@ class MainActivity : ComponentActivity() {
 
 	// Create a class that has those two and extend it (also in AppWidgetProvider, ConfigureActivity)?
 	@Inject
-	lateinit var goalSaveActionsFactory: GoalSaveActions.Factory
-	private fun goalSaveActions(goal: Goal): GoalSaveActions = goalSaveActionsFactory.create(goal)
-
-	@Inject
-	lateinit var goalWidgetActionsFactory: GoalWidgetActions.Factory
-	private fun goalWidgetActions(goal: Goal): GoalWidgetActions = goalWidgetActionsFactory.create(goal)
+	lateinit var goalActionsFactory: GoalActions.Factory
+	private fun goalActions(goal: Goal): GoalActions = goalActionsFactory.create(goal)
 
 	// Or inject via constructor? Only for below. Doesn't work for AppWidgetProvider.
 	@Inject
@@ -60,7 +56,7 @@ class MainActivity : ComponentActivity() {
 	lateinit var pastClickViewModelAssistedFactory: PastClickViewModelAssistedFactory
 
 	@Inject
-	lateinit var databaseInteractions: DatabaseInteractions
+	lateinit var otherActions: OtherActions
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
@@ -75,23 +71,25 @@ class MainActivity : ComponentActivity() {
 				updateAfterClick = {
 					// contains updateGoal
 					lifecycleScope.launch {
-						goalSaveActions(it).updateAfterClick()
+						goalActions(it).updateAfterClick()
 					}
 				},
 				updateGoal = {
 					lifecycleScope.launch {
 						goalViewModel.updateGoal(it)
-						goalWidgetActions(it).runUpdate(true)
+						goalActions(it).runUpdate(true)
 					}
 				},
 				deleteGoal = { goalViewModel.deleteGoal(it) },
+				addWidgetToHomeScreen = { goalActions(it).pinAppWidget() },
 				settingsData = settingsViewModel.settingsData.observeAsState().value,
 				settingChange = {
 					lifecycleScope.launch {
+						Log.d(TAG, "settingChange")
 						settingsViewModel.updateSettings(it)
 						// TODO: Could move to ViewModel
 						delay(200)
-						goalSaveActions(Goal()).updateAllWidgetsBasedOnStatus()
+						otherActions.updateAllWidgets()
 					}
 				}
 			)
@@ -109,11 +107,11 @@ class MainActivity : ComponentActivity() {
 		for (goal in goals) {
 			// Sometimes the onClickListener in the widgets stop working. This is a super stupid way to regularly reset the onClickListener when you open the main app.
 			if (goal.hasValidAppWidgetId()) {
-				goalWidgetActions(goal).runUpdate(true)
+				goalActions(goal).runUpdate(true)
 			}
 		}
 		// Remove appWidgetId if it is not valid anymore. Run only once.
-		databaseInteractions.cleanGoals(goals)
+		otherActions.cleanGoals(goals)
 		// Every time the app starts, set the alarm to update everything at 3:00. In case something breaks.
 		widgetAlarm.startAlarm()
 	}
@@ -134,6 +132,7 @@ fun WorkoutPixelApp(
 	updateAfterClick: (Goal) -> Unit,
 	updateGoal: (Goal) -> Unit,
 	deleteGoal: (Goal) -> Unit,
+	addWidgetToHomeScreen: (Goal) -> Unit,
 ) {
 	WorkoutPixelTheme(
 		darkTheme = false,
@@ -225,6 +224,7 @@ fun WorkoutPixelApp(
 							navController.navigateUp()
 						}
 					},
+					addWidgetToHomeScreen = addWidgetToHomeScreen,
 					currentGoal = currentGoal,
 					pastClickViewModelAssistedFactory = pastClickViewModelAssistedFactory,
 					settingsData = settingsData,
@@ -248,6 +248,7 @@ fun WorkoutPixelNavHost(
 	navigateTo: (destination: String, goal: Goal?) -> Unit,
 	updateGoal: (updatedGoal: Goal, navigateUp: Boolean) -> Unit,
 	deleteGoal: (updatedGoal: Goal, navigateUp: Boolean) -> Unit,
+	addWidgetToHomeScreen: (Goal) -> Unit,
 	currentGoal: Goal?,
 	pastClickViewModelAssistedFactory: PastClickViewModelAssistedFactory,
 	modifier: Modifier = Modifier,
@@ -285,6 +286,7 @@ fun WorkoutPixelNavHost(
 					updateAfterClick = { updateAfterClick(currentGoal) },
 					deleteGoal = { deleteGoal(it, true) },
 					updateGoal = updateGoal,
+					addWidgetToHomeScreen = addWidgetToHomeScreen,
 					settingsData = settingsData,
 					pastClickViewModelAssistedFactory = pastClickViewModelAssistedFactory,
 				)
