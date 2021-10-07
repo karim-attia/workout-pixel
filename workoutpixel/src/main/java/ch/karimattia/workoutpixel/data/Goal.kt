@@ -42,7 +42,7 @@ data class Goal
 
 	fun hasValidAppWidgetId(): Boolean = appWidgetId != AppWidgetManager.INVALID_APPWIDGET_ID
 	override fun toString(): String = title + ": " + everyWording()
-	fun everyWording(): String = "Every $intervalBlue day${if (intervalBlue > 1) "s" else ""}"
+	fun everyWording(): String = "Every ${if (intervalBlue == 1) "day" else "$intervalBlue days"}"
 	fun debugString(): String = "widgetUid: $uid, appWidgetId: $appWidgetId, Title: $title: "
 
 	// widgetText returns the text of the whole widget based on a goal.

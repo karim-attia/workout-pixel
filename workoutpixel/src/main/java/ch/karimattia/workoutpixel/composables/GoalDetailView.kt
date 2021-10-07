@@ -1,5 +1,7 @@
 package ch.karimattia.workoutpixel.composables
 
+import android.appwidget.AppWidgetManager
+import android.content.ComponentName
 import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -17,6 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -26,10 +29,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import ch.karimattia.workoutpixel.R
-import ch.karimattia.workoutpixel.core.dateBeautiful
-import ch.karimattia.workoutpixel.core.testGoals
-import ch.karimattia.workoutpixel.core.testPastClicks
-import ch.karimattia.workoutpixel.core.timeBeautiful
+import ch.karimattia.workoutpixel.core.*
 import ch.karimattia.workoutpixel.data.*
 import ch.karimattia.workoutpixel.ui.theme.GreenTest
 import ch.karimattia.workoutpixel.ui.theme.TextBlack
@@ -166,16 +166,20 @@ fun GoalDetailNoWidgetCard(
 			title(text = "Do you really want to delete this goal?")
 			message(text = "This will irreversibly remove the goal including all its data like past clicks.")
 		}
-		Button(
-			onClick = addWidgetToHomeScreen,
-			modifier = Modifier
-				.padding(top = 4.dp)
-				.fillMaxWidth(),
-			colors = ButtonDefaults.buttonColors(backgroundColor = GreenTest, contentColor = Color.White)
-		) {
-			Icon(imageVector = Icons.Filled.Widgets, contentDescription = null)
-			Spacer(modifier = Modifier.padding(end = 8.dp))
-			Text(text = "Add to homescreen".uppercase(), modifier = Modifier.padding(end = 16.dp))
+
+		val appWidgetManager = AppWidgetManager.getInstance(LocalContext.current)
+		if (appWidgetManager.isRequestPinAppWidgetSupported) {
+			Button(
+				onClick = addWidgetToHomeScreen,
+				modifier = Modifier
+					.padding(top = 4.dp)
+					.fillMaxWidth(),
+				colors = ButtonDefaults.buttonColors(backgroundColor = GreenTest, contentColor = Color.White)
+			) {
+				Icon(imageVector = Icons.Filled.Widgets, contentDescription = null)
+				Spacer(modifier = Modifier.padding(end = 8.dp))
+				Text(text = "Add to homescreen".uppercase(), modifier = Modifier.padding(end = 16.dp))
+			}
 		}
 	}
 }

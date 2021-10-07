@@ -157,7 +157,7 @@ class Formats(
 		label = "time",
 		locale = settingsData.timeLocale(),
 		isLocaleDefault = settingsData.isTimeLocaleDefault(),
-		transformDateTimeFormatToString = { timeBeautiful(8460000L, it) + " / " + timeBeautiful(date = 8460000L + 12 * 60 * 60 * 1000, it) },
+		transformDateTimeFormatToString = { timeBeautiful(7520000L, it) + " / " + timeBeautiful(date = 7520000L + 12 * 60 * 60 * 1000, it) },
 		maxStringSizeFilter = 23,
 		showTime = true,
 	),
