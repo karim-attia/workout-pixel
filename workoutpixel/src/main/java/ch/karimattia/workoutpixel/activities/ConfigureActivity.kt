@@ -33,7 +33,7 @@ class ConfigureActivity : ComponentActivity() {
 
 	@Inject
 	lateinit var widgetActionsFactory: WidgetActions.Factory
-	private fun goalWidgetActions(goal: Goal): WidgetActions = widgetActionsFactory.create(goal)
+	private fun widgetActions(goal: Goal): WidgetActions = widgetActionsFactory.create(goal)
 
 	@Inject
 	lateinit var goalRepository: GoalRepository
@@ -77,7 +77,7 @@ class ConfigureActivity : ComponentActivity() {
 					lifecycleScope.launch {
 						// Insert the goal into the DB and also update the widget.
 						updatedGoal.uid = goalViewModel.insertGoal(updatedGoal)
-						goalWidgetActions(goal = updatedGoal).runUpdate(true)
+						widgetActions(goal = updatedGoal).runUpdate(true)
 						setWidgetAndFinish(goal = updatedGoal, isFirstConfigure = isFirstConfigure)
 					}
 				},
@@ -85,7 +85,7 @@ class ConfigureActivity : ComponentActivity() {
 					lifecycleScope.launch {
 						// Insert the goal into the DB and also update the widget.
 						goalViewModel.updateGoal(updatedGoal)
-						goalWidgetActions(goal = updatedGoal).runUpdate(true)
+						widgetActions(goal = updatedGoal).runUpdate(true)
 						setWidgetAndFinish(goal = updatedGoal, isFirstConfigure = isFirstConfigure)
 					}
 				},

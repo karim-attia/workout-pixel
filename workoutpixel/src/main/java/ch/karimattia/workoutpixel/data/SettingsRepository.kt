@@ -43,17 +43,19 @@ data class SettingsData(
 	val colorFirstIntervalInt: Int = Blue,
 	val colorSecondIntervalInt: Int = Red,
 	val colorInitialInt: Int = Purple,
-	val dateLanguage: String = Locale.getDefault().language,
-	val dateCountry: String = Locale.getDefault().country,
-	val timeLanguage: String = Locale.getDefault().language,
-	val timeCountry: String = Locale.getDefault().country,
+	val dateLanguage: String? = Locale.getDefault().language,
+	val dateCountry: String? = Locale.getDefault().country,
+	val timeLanguage: String? = Locale.getDefault().language,
+	val timeCountry: String? = Locale.getDefault().country,
 ) {
 	fun colorDone(): Color = Color(colorDoneInt)
 	fun colorFirstInterval(): Color = Color(colorFirstIntervalInt)
 	fun colorSecondInterval(): Color = Color(colorSecondIntervalInt)
 	fun colorInitial(): Color = Color(colorInitialInt)
-	fun dateLocale(): Locale = Locale(dateLanguage, dateCountry)
-	fun timeLocale(): Locale = Locale(timeLanguage, timeCountry)
+	fun isDateLocaleDefault(): Boolean = (dateLanguage == null || dateCountry == null)
+	fun isTimeLocaleDefault(): Boolean = (timeLanguage == null || timeCountry == null)
+	fun dateLocale(): Locale = if (isDateLocaleDefault()) Locale.getDefault() else Locale(dateLanguage!!, dateCountry!!)
+	fun timeLocale(): Locale = if (isTimeLocaleDefault()) Locale.getDefault() else Locale(timeLanguage!!, timeCountry!!)
 }
 
 object SettingsDataSerializer : Serializer<SettingsData> {

@@ -45,7 +45,7 @@ data class Goal
 	fun everyWording(): String = "Every $intervalBlue day${if (intervalBlue > 1) "s" else ""}"
 	fun debugString(): String = "widgetUid: $uid, appWidgetId: $appWidgetId, Title: $title: "
 
-	// widgetText returns the text of the whole widget based on a Goal object.
+	// widgetText returns the text of the whole widget based on a goal.
 	fun widgetText(settingsData: SettingsData): String {
 		var widgetText: String = title
 		if ((status() != Status.NONE)) {
