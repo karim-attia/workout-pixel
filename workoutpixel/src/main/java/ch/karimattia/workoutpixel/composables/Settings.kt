@@ -121,14 +121,14 @@ fun ColorSelection(
 		title(text = "Choose color for ${titleText.lowercase(Locale.getDefault())}")
 		colorChooser(
 			// First two colors are currentColor, resetColor. If any of the colorPalette colors are the same, don't show them.
-			colors = ArrayList(LinkedHashSet(listOf(currentColor, resetColor).plus(ColorPalette.Primary))),
+			colors = ArrayList(LinkedHashSet(listOf(currentColor, resetColor).plus(ColorPalette.Primary).plus(ColorPalette.Accent))),
 			argbPickerState = ARGBPickerState.WithAlphaSelector,
 			onColorSelected = { onColorSelected(it) },
 		)
 	}
 
 	SettingsEntry(titleText = titleText, subtitleText = subtitleText, onClick = { dialogState.show() }) {
-		GoalPreview(goal = goal, backgroundColor = currentColor, settingsData = settingsData)
+		GoalPreview(goal = goal, backgroundColor = currentColor, settingsData = settingsData, onClick = { dialogState.show() })
 	}
 }
 
@@ -227,6 +227,7 @@ fun LocaleSelectionDateTime(
 				showTime = format.showTime,
 				lastWorkout = remember { System.currentTimeMillis() }),
 			settingsData = settingsData,
+			onClick = { dialogState.show() },
 		)
 	}
 }

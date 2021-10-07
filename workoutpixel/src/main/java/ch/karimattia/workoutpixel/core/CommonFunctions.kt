@@ -128,8 +128,7 @@ fun dateTimeBeautiful(date: Long, locale: Locale = Locale("de", "CH")): String {
 // Last alarm
 fun saveTimeWithStringToSharedPreferences(context: Context, string: String) {
 	val prefs = context.getSharedPreferences(PREFERENCE_NAME, 0).edit()
-	val timeLastWorkoutBeautiful = dateTimeBeautiful(System.currentTimeMillis())
-	prefs.putString(string, timeLastWorkoutBeautiful)
+	prefs.putString(string, "")
 	prefs.apply()
 }
 

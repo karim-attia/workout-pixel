@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import ch.karimattia.workoutpixel.core.Constants.ACTION_ALARM_UPDATE
 import ch.karimattia.workoutpixel.core.Constants.ACTION_DONE_EXERCISE
 import ch.karimattia.workoutpixel.core.Constants.ACTION_SETUP_WIDGET
 import ch.karimattia.workoutpixel.data.Goal
@@ -56,11 +57,9 @@ class WorkoutPixelAppWidgetProvider : AppWidgetProvider() {
 					goalActions(goal).runUpdate(true)
 					repository.updateGoal(goal)
 				}
-				else -> {
+				intent.action.equals(ACTION_ALARM_UPDATE) -> {
 					// Do this when the alarm hits
-					Log.d(TAG, "intent.action: ${intent.action}")
-					saveTimeWithStringToSharedPreferences(context,
-						"Last ACTION_ALARM_UPDATE ${dateTimeBeautiful(System.currentTimeMillis())}, intent.action: ${intent.action}")
+					saveTimeWithStringToSharedPreferences(context, "ACTION_ALARM_UPDATE ${dateTimeBeautiful(System.currentTimeMillis())}")
 					otherActions.updateAllWidgets()
 				}
 			}
@@ -72,8 +71,8 @@ class WorkoutPixelAppWidgetProvider : AppWidgetProvider() {
 			Log.d(TAG, "ON_UPDATE\n------------------------------------------------------------------------")
 			// Start alarm
 			widgetAlarm.startAlarm()
-
 			otherActions.updateAllWidgets()
+			saveTimeWithStringToSharedPreferences(context, "onUpdate ${dateTimeBeautiful(System.currentTimeMillis())}")
 		}
 	}
 
@@ -86,6 +85,7 @@ class WorkoutPixelAppWidgetProvider : AppWidgetProvider() {
 			for (appWidgetId in appWidgetIds) {
 				repository.setAppWidgetIdToNullByAppwidgetId(appWidgetId)
 			}
+			saveTimeWithStringToSharedPreferences(context, "onDeleted ${dateTimeBeautiful(System.currentTimeMillis())}")
 		}
 	}
 
@@ -102,6 +102,7 @@ class WorkoutPixelAppWidgetProvider : AppWidgetProvider() {
 			Log.v(TAG, "START_ALARM")
 			widgetAlarm.startAlarm()
 			Log.v(TAG, "ALARM_STARTED")
+			saveTimeWithStringToSharedPreferences(context, "onEnabled ${dateTimeBeautiful(System.currentTimeMillis())}")
 		}
 	}
 
@@ -116,6 +117,7 @@ class WorkoutPixelAppWidgetProvider : AppWidgetProvider() {
 				widgetAlarm.stopAlarm()
 				Log.v(TAG, "STOPPED_ALARM")
 			}
+			saveTimeWithStringToSharedPreferences(context, "onDisabled ${dateTimeBeautiful(System.currentTimeMillis())}")
 		}
 	}
 
@@ -123,6 +125,7 @@ class WorkoutPixelAppWidgetProvider : AppWidgetProvider() {
 		runBlocking {
 			val goal = repository.loadGoalByAppWidgetId(appWidgetId)
 			goalActions(goal).runUpdate(false)
+			saveTimeWithStringToSharedPreferences(context, "onAppWidgetOptionsChanged ${dateTimeBeautiful(System.currentTimeMillis())}")
 		}
 	}
 }
