@@ -155,7 +155,6 @@ class Formats(
 	),
 )
 
-// This is super ugly, but also super unimportant, so I kinda don't want to touch it. :D
 @Composable
 fun LocaleSelectionDateTime(
 	goal: Goal,
@@ -177,10 +176,12 @@ fun LocaleSelectionDateTime(
 		positiveButton("Ok")
 		negativeButton("Cancel")
 	}) {
-		// Map of all nice strings to their locales
-		// map: Make sure, we only include Locales that are recreatable by language and country.
-		// associateBy: Map unique nice example string to their locales.
-		// remove entries with strings that are too long.
+		/**
+		 * Map of all nice strings to their locales
+		 * map: Make sure, we only include Locales that are recreatable by language and country.
+		 * associateBy: Map unique nice example string to their locales.
+		 * filterKeys: remove entries with strings that are too long.
+		 */
 		val mapFormatsToLocales: Map<String, Locale> = listLocales
 			.map { Locale(it.language, it.country) }
 			.associateBy { transformDateTimeFormatToStringTryCatch(it) }
