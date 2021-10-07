@@ -19,7 +19,7 @@ import ch.karimattia.workoutpixel.core.dateBeautiful
 import ch.karimattia.workoutpixel.core.timeBeautiful
 import ch.karimattia.workoutpixel.data.Goal
 import ch.karimattia.workoutpixel.data.SettingsData
-import ch.karimattia.workoutpixel.ui.theme.TextBlack
+import ch.karimattia.workoutpixel.ui.theme.*
 import com.vanpra.composematerialdialogs.MaterialDialog
 import com.vanpra.composematerialdialogs.color.ARGBPickerState
 import com.vanpra.composematerialdialogs.color.ColorPalette
@@ -47,7 +47,8 @@ fun Settings(
 			titleText = "Done goals",
 			subtitleText = "Color of goals that you recently reached",
 			goal = goal,
-			color = settingsData.colorDone(),
+			currentColor = settingsData.colorDone(),
+			resetColor = Color(Green),
 			onColorSelected = { settingChange(settingsData.copy(colorDoneInt = colorToInt(it))) },
 			settingsData = settingsData,
 		)
@@ -55,7 +56,8 @@ fun Settings(
 			titleText = "Pending goals",
 			subtitleText = "Color to remind you to reach this goal",
 			goal = goal,
-			color = settingsData.colorFirstInterval(),
+			currentColor = settingsData.colorFirstInterval(),
+			resetColor = Color(Blue),
 			onColorSelected = { settingChange(settingsData.copy(colorFirstIntervalInt = colorToInt(it))) },
 			settingsData = settingsData,
 		)
@@ -63,7 +65,8 @@ fun Settings(
 			titleText = "Due goals",
 			subtitleText = "Color of goals that are pending since 2+ days",
 			goal = goal,
-			color = settingsData.colorSecondInterval(),
+			currentColor = settingsData.colorSecondInterval(),
+			resetColor = Color(Red),
 			onColorSelected = { settingChange(settingsData.copy(colorSecondIntervalInt = colorToInt(it))) },
 			settingsData = settingsData,
 		)
@@ -71,10 +74,12 @@ fun Settings(
 			titleText = "New goals",
 			subtitleText = "Color of goals that you never clicked",
 			goal = goal,
-			color = settingsData.colorInitial(),
+			currentColor = settingsData.colorInitial(),
+			resetColor = Color(Purple),
 			onColorSelected = { settingChange(settingsData.copy(colorInitialInt = colorToInt(it))) },
 			settingsData = settingsData,
 		)
+		// DATE format
 		Divider(color = Color(TextBlack), thickness = 0.5.dp)
 		SettingsTitle(text = "Date and time format")
 		LocaleSelectionDateTime(
@@ -85,6 +90,7 @@ fun Settings(
 			},
 			format = Formats(settingsData = settingsData).DATE
 		)
+		// TIME format
 		LocaleSelectionDateTime(
 			goal = goal,
 			settingsData = settingsData,
@@ -102,7 +108,8 @@ fun ColorSelection(
 	titleText: String,
 	subtitleText: String,
 	goal: Goal,
-	color: Color,
+	currentColor: Color,
+	resetColor: Color,
 	onColorSelected: (Color) -> Unit,
 	settingsData: SettingsData,
 ) {
@@ -113,14 +120,15 @@ fun ColorSelection(
 	}) {
 		title(text = "Choose color for ${titleText.lowercase(Locale.getDefault())}")
 		colorChooser(
-			colors = listOf(color).plus(ColorPalette.Primary),
+			// First two colors are currentColor, resetColor. If any of the colorPalette colors are the same, don't show them.
+			colors = ArrayList(LinkedHashSet(listOf(currentColor, resetColor).plus(ColorPalette.Primary))),
 			argbPickerState = ARGBPickerState.WithAlphaSelector,
 			onColorSelected = { onColorSelected(it) },
 		)
 	}
 
 	SettingsEntry(titleText = titleText, subtitleText = subtitleText, onClick = { dialogState.show() }) {
-		GoalPreview(goal = goal, backgroundColor = color, settingsData = settingsData)
+		GoalPreview(goal = goal, backgroundColor = currentColor, settingsData = settingsData)
 	}
 }
 
