@@ -30,7 +30,6 @@ import coil.annotation.ExperimentalCoilApi
 import com.google.accompanist.pager.ExperimentalPagerApi
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -45,8 +44,8 @@ class MainActivity : ComponentActivity() {
 
 	// Create a class that has those two and extend it (also in AppWidgetProvider, ConfigureActivity)?
 	@Inject
-	lateinit var goalActionsFactory: GoalActions.Factory
-	private fun goalActions(goal: Goal): GoalActions = goalActionsFactory.create(goal)
+	lateinit var widgetActionsFactory: WidgetActions.Factory
+	private fun goalActions(goal: Goal): WidgetActions = widgetActionsFactory.create(goal)
 
 	// Or inject via constructor? Only for below. Doesn't work for AppWidgetProvider.
 	@Inject
@@ -80,8 +79,8 @@ class MainActivity : ComponentActivity() {
 						goalActions(it).runUpdate(true)
 					}
 				},
-				deleteGoal = { goalViewModel.deleteGoal(it) },
-				addWidgetToHomeScreen = { goalActions(it).pinAppWidget() },
+				deleteGoal = { lifecycleScope.launch { goalViewModel.deleteGoal(it) } },
+				addWidgetToHomeScreen = { lifecycleScope.launch { goalActions(it).pinAppWidget() } },
 				settingsData = settingsViewModel.settingsData.observeAsState().value,
 				settingChange = {
 					lifecycleScope.launch {
@@ -98,22 +97,10 @@ class MainActivity : ComponentActivity() {
 		// Run oneTimeSetup once after the goals are loaded.
 		lifecycleScope.launch {
 			delay(500)
-			oneTimeSetup(goalViewModel.allGoalsFlow.first())
+			otherActions.oneTimeSetup()
+			// Every time the app starts, set the alarm to update everything at 3:00. In case something breaks.
+			widgetAlarm.startAlarm()
 		}
-	}
-
-	private suspend fun oneTimeSetup(goals: List<Goal>) {
-		// Update all goals
-		for (goal in goals) {
-			// Sometimes the onClickListener in the widgets stop working. This is a super stupid way to regularly reset the onClickListener when you open the main app.
-			if (goal.hasValidAppWidgetId()) {
-				goalActions(goal).runUpdate(true)
-			}
-		}
-		// Remove appWidgetId if it is not valid anymore. Run only once.
-		otherActions.cleanGoals(goals)
-		// Every time the app starts, set the alarm to update everything at 3:00. In case something breaks.
-		widgetAlarm.startAlarm()
 	}
 }
 

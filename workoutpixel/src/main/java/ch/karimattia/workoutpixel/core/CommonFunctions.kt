@@ -145,10 +145,10 @@ fun plural(times: Int, word: String): String {
 	}
 }
 
-fun goalFromGoalsByUid(goalUid: Int, goals: List<Goal>): Goal? {
-	return goals.firstOrNull { it.uid == goalUid }
-}
-
+/**
+ * goalFromGoalsByUid
+ */
+fun goalFromGoalsByUid(goalUid: Int, goals: List<Goal>): Goal? = goals.firstOrNull { it.uid == goalUid }
 
 /**
  * Test data

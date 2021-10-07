@@ -37,6 +37,7 @@ import com.vanpra.composematerialdialogs.MaterialDialog
 import com.vanpra.composematerialdialogs.message
 import com.vanpra.composematerialdialogs.rememberMaterialDialogState
 import com.vanpra.composematerialdialogs.title
+import kotlinx.coroutines.runBlocking
 import java.util.stream.Collectors
 
 private const val TAG: String = "GoalDetailView"
@@ -59,7 +60,7 @@ fun GoalDetailView(
 		deleteGoal = deleteGoal,
 		updateGoal = updateGoal,
 		addWidgetToHomeScreen = { addWidgetToHomeScreen(goal) },
-		updatePastClick = { pastClickViewModel.updatePastClick(it) },
+		updatePastClick = { runBlocking { pastClickViewModel.updatePastClick(it)  }},
 		pastClicks = pastClicks,
 		settingsData = settingsData,
 	)
@@ -147,10 +148,11 @@ fun GoalDetailNoWidgetCard(
 	) {
 		val dialogState = rememberMaterialDialogState()
 		Infobox(text = "There is no widget for this goal on your homescreen. Add a new widget and connect it to this goal to keep the data.")
-		// TODO: Make destructive red color.
 		Button(
 			onClick = { dialogState.show() },
-			modifier = Modifier.padding(top = 8.dp),
+			modifier = Modifier
+				.padding(top = 8.dp)
+				.fillMaxWidth(),
 			colors = ButtonDefaults.buttonColors(backgroundColor = Color.Red, contentColor = Color.White)
 		) {
 			Icon(imageVector = Icons.Filled.DeleteForever, contentDescription = null)
@@ -166,14 +168,15 @@ fun GoalDetailNoWidgetCard(
 		}
 		Button(
 			onClick = addWidgetToHomeScreen,
-			modifier = Modifier.padding(top = 4.dp),
+			modifier = Modifier
+				.padding(top = 4.dp)
+				.fillMaxWidth(),
 			colors = ButtonDefaults.buttonColors(backgroundColor = GreenTest, contentColor = Color.White)
 		) {
 			Icon(imageVector = Icons.Filled.Widgets, contentDescription = null)
 			Spacer(modifier = Modifier.padding(end = 8.dp))
 			Text(text = "Add to homescreen".uppercase(), modifier = Modifier.padding(end = 16.dp))
 		}
-
 	}
 }
 
@@ -289,7 +292,7 @@ fun PastClickEntry(
 			fontWeight = fontWeight,
 			style = TextStyle(textDecoration = textDecoration),
 			modifier = Modifier
-				.width(80.dp)
+				.width(90.dp)
 				.padding(start = 4.dp, end = 12.dp)
 				.align(Alignment.CenterVertically)
 		)
@@ -299,7 +302,7 @@ fun PastClickEntry(
 			fontWeight = fontWeight,
 			style = TextStyle(textDecoration = textDecoration),
 			modifier = Modifier
-				.width(80.dp)
+				.width(90.dp)
 				.padding(end = 12.dp)
 				.align(Alignment.CenterVertically)
 		)

@@ -25,7 +25,8 @@ import java.util.*
 import javax.inject.Inject
 import javax.inject.Singleton
 
-@Suppress("unused") private const val TAG = "SettingsRepository"
+@Suppress("unused")
+private const val TAG = "SettingsRepository"
 
 class SettingsRepository @Inject constructor(
 	@ApplicationContext val context: Context,
@@ -33,9 +34,7 @@ class SettingsRepository @Inject constructor(
 	private val Context.dataStore by dataStore("settings.json", serializer = SettingsDataSerializer)
 	val getSettings: Flow<SettingsData> = context.dataStore.data
 	suspend fun getSettingsOnce(): SettingsData = getSettings.first()
-	suspend fun updateSettings(settingsData: SettingsData) {
-		context.dataStore.updateData { settingsData }
-	}
+	suspend fun updateSettings(settingsData: SettingsData) = context.dataStore.updateData { settingsData }
 }
 
 @Serializable

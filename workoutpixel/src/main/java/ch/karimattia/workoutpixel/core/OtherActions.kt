@@ -18,51 +18,55 @@ class OtherActions @Inject constructor(
 	private val goalRepository: GoalRepository,
 ) {
 	@Inject
-	lateinit var goalActionsFactory: GoalActions.Factory
-	private fun goalActions(goal: Goal): GoalActions = goalActionsFactory.create(goal)
+	lateinit var widgetActionsFactory: WidgetActions.Factory
+	private fun goalActions(goal: Goal): WidgetActions = widgetActionsFactory.create(goal)
 
 	// TODO: Understand
 	// TODO: Replaced iteration through appWidgetIds with data from DB. Insert check that this is the same and fix if not. Maybe before it only iterated through some widgets. But I don't think it matters.
 	// TODO: Could check with CommonFunctions.widgetsWithValidAppWidgetId whether they are the same and at least log if not.
-	// TODO: Find different home for this.
 	suspend fun updateAllWidgets() {
 		Log.d(TAG, "updateAllWidgets  --------------------------------------------")
-		val goalList = goalRepository.loadGoalsWithValidAppWidgetId()
-		for (goal in goalList) {
+		val goalsWithValidAppWidgetId: List<Goal> = goalRepository.loadGoalsWithValidAppWidgetId()
+		for (goal in goalsWithValidAppWidgetId) {
 			// Tell the AppWidgetManager to perform an update on the current app widget
 			// Instruct the widget manager to update the widget with the latest widget data
 			goalActions(goal).runUpdate(true)
 		}
 	}
 
-	// @Inject lateinit var contextFunctions: ContextFunctions
-	// Sets all appWidgetIds of goals that are not valid to null. Maybe later even reassign some to unassigned widgets.
-	suspend fun cleanGoals(goals: List<Goal>) {
-		for (goal in goalsWithInvalidAppWidgetId(goals)) {
-			if (goal.hasValidAppWidgetId()) {
-				goalRepository.setAppWidgetIdToNullByUid(goal.uid)
-			}
+	/**
+	 * Run maintenance once after every app start.
+	 */
+	suspend fun oneTimeSetup() {
+		val goalsWithValidAppWidgetId: List<Goal> = goalRepository.loadGoalsWithValidAppWidgetId()
+		// Update all goals
+		// Sometimes the onClickListener in the widgets stop working. This is a super stupid way to regularly reset the onClickListener when you open the main app.
+		updateAllWidgets()
+		// Clean goals: sets all appWidgetIds of goals that are not valid to null. Maybe later even reassign some to unassigned widgets.
+		for (goal in goalsWithoutWidget(goals = goalsWithValidAppWidgetId)) {
+			goalRepository.setAppWidgetIdToNullByUid(goal.uid)
 		}
 	}
 
 	/**
 	 * AppWidgetId stuff
 	 */
-	fun appWidgetIds(): IntArray =
+	val appWidgetIds: IntArray =
 		AppWidgetManager.getInstance(context).getAppWidgetIds(ComponentName(context.packageName, WorkoutPixelAppWidgetProvider::class.java.name))
 
-	fun goalsWithInvalidAppWidgetId(goals: List<Goal>): List<Goal> {
+	// Does not only catch goals with appWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID, but actually checks whether there is a widget.
+	private fun goalsWithoutWidget(goals: List<Goal>): List<Goal> {
 		return goals.stream().filter { (_, _) ->
-			Arrays.stream(appWidgetIds()).noneMatch { appWidgetId: Int -> appWidgetId == appWidgetId }
+			Arrays.stream(appWidgetIds).noneMatch { appWidgetId: Int -> appWidgetId == appWidgetId }
 		}
 			.collect(Collectors.toList())
 	}
 
 	@Suppress("unused")
-	fun goalsWithInvalidOrNullAppWidgetId(goals: List<Goal>): List<Goal> {
+	private fun goalsWithInvalidOrNullAppWidgetId(goals: List<Goal>): List<Goal> {
 		return goals.stream()
 			.filter { (_, appWidgetId) ->
-				Arrays.stream(appWidgetIds()).noneMatch { i: Int -> appWidgetId != AppWidgetManager.INVALID_APPWIDGET_ID && i == appWidgetId }
+				Arrays.stream(appWidgetIds).noneMatch { i: Int -> appWidgetId != AppWidgetManager.INVALID_APPWIDGET_ID && i == appWidgetId }
 			}
 			.collect(Collectors.toList())
 	}

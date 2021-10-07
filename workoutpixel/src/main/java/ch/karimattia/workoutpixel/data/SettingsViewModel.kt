@@ -14,5 +14,4 @@ class SettingsViewModel @Inject constructor(
 	val settingsData: LiveData<SettingsData> = settingsRepository.getSettings.asLiveData()
 
 	suspend fun updateSettings(settingsData: SettingsData) = settingsRepository.updateSettings(settingsData)
-
 }

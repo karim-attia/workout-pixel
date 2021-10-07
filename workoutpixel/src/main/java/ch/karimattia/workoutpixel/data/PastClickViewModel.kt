@@ -20,15 +20,15 @@ class PastClickViewModel @AssistedInject constructor(
 	private val repository: PastClickRepository,
 	@Assisted var goalUid: Int,
 ) : ViewModel() {
-	private fun pastClicksFlow(): Flow<List<PastClick>> = repository.pastClicksByGoalUid(goalUid = goalUid)
-	fun updatePastClick(pastClick: PastClick) = viewModelScope.launch { repository.updatePastClick(pastClick) }
+	private val pastClicksFlow: Flow<List<PastClick>> = repository.pastClicksByGoalUid(goalUid = goalUid)
+	suspend fun updatePastClick(pastClick: PastClick) = repository.updatePastClick(pastClick)
 
 	val pastClicks: SnapshotStateList<PastClick> = mutableStateListOf()
 
 	// This is needed so the state of pastClicks and thus the UI updates.
 	init {
 		viewModelScope.launch {
-			pastClicksFlow().collect { newPastClicks ->
+			pastClicksFlow.collect { newPastClicks ->
 				pastClicks.clear()
 				pastClicks.addAll(newPastClicks)
 			}

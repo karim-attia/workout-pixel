@@ -1,5 +1,6 @@
 package ch.karimattia.workoutpixel.core
 
+import android.annotation.SuppressLint
 import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
 import android.content.ComponentName
@@ -15,16 +16,15 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import kotlin.math.ceil
 import kotlin.math.floor
 
 private const val TAG: String = "GoalActions"
 
-class GoalActions @AssistedInject constructor(
+/**
+ * Class that manages everything related to the widget on the homescreen.
+ */
+class WidgetActions @AssistedInject constructor(
 	@ApplicationContext val context: Context,
 	private val goalRepository: GoalRepository,
 	private val pastClickRepository: PastClickRepository,
@@ -34,7 +34,7 @@ class GoalActions @AssistedInject constructor(
 
 	@AssistedFactory
 	interface Factory {
-		fun create(goal: Goal): GoalActions
+		fun create(goal: Goal): WidgetActions
 	}
 
 	suspend fun updateAfterClick() {
@@ -60,35 +60,29 @@ class GoalActions @AssistedInject constructor(
 	}
 
 	// Can also be called on widget with invalid AppWidgetId
-	fun runUpdate(setOnClickListener: Boolean) {
+	suspend fun runUpdate(setOnClickListener: Boolean) {
 		if (goal.appWidgetId != AppWidgetManager.INVALID_APPWIDGET_ID) {
-			CoroutineScope(Dispatchers.IO).launch {
-				// Make sure to always set both the text and the background of the widget because otherwise it gets updated to some random old version.
-				val appWidgetManager = AppWidgetManager.getInstance(context)
-				appWidgetManager.updateAppWidget(
-					goal.appWidgetId,
-					widgetView(setOnClickListener, appWidgetManager)
-				)
-			}
-		} else {
-			Log.d(TAG, "runUpdate: appWidgetId == null " + goal.debugString())
-		}
+			// Make sure to always set both the text and the background of the widget because otherwise it gets updated to some random old version.
+			val appWidgetManager = AppWidgetManager.getInstance(context)
+			appWidgetManager.updateAppWidget(
+				goal.appWidgetId,
+				widgetView(setOnClickListener, appWidgetManager)
+			)
+		} else Log.d(TAG, "runUpdate: appWidgetId == null " + goal.debugString())
 	}
 
+	@SuppressLint("ResourceType")
 	private suspend fun widgetView(setOnClickListener: Boolean, appWidgetManager: AppWidgetManager = AppWidgetManager.getInstance(context)): RemoteViews {
 		val widgetView = RemoteViews(context.packageName, R.layout.widget_layout)
 		val settingsData: SettingsData = settingsRepository.getSettingsOnce()
 		// Set an onClickListener for every widget: https://stackoverflow.com/questions/30174386/multiple-instances-of-widget-with-separated-working-clickable-imageview
-		if (setOnClickListener) {
-			widgetView.setOnClickPendingIntent(R.id.appwidget_text, widgetPendingIntent())
-		}
+		if (setOnClickListener) widgetView.setOnClickPendingIntent(R.id.appwidget_text, widgetPendingIntent())
+
 		// Before updating a widget, the text and background of the view need to be set. Otherwise, the existing not updated properties of the widgetView will be passed.
 		widgetView.setTextViewText(R.id.appwidget_text, goal.widgetText(settingsData = settingsData))
 
-		// widgetView.setInt(R.id.appwidget_text, "setBackgroundResource", getDrawableIntFromStatus(goal.status))
-		widgetView.setInt(R.id.appwidget_text,
-			"setBackgroundColor",
-			getColorFromStatus(status = goal.status(), settingsData = settingsData))
+		// widgetView.setInt(R.id.appwidget_text, "setBackgroundResource", R.drawable.rounded_corner_green)
+		widgetView.setInt(R.id.appwidget_text, "setBackgroundColor", getColorFromStatus(status = goal.status(), settingsData = settingsData))
 
 		// Set size if available
 		// https://stackoverflow.com/questions/25153604/get-the-size-of-my-homescreen-widget
@@ -117,7 +111,7 @@ class GoalActions @AssistedInject constructor(
 
 	// https://developer.android.com/guide/topics/appwidgets/configuration#pin
 	// https://developer.android.com/reference/android/appwidget/AppWidgetManager#requestPinAppWidget(android.content.ComponentName,%20android.os.Bundle,%20android.app.PendingIntent)
-	fun pinAppWidget() = runBlocking {
+	suspend fun pinAppWidget() {
 		val appWidgetManager = AppWidgetManager.getInstance(context)
 		val myProvider = ComponentName(context, WorkoutPixelAppWidgetProvider::class.java)
 		Log.d(TAG, "pinAppWidget ${goal.debugString()}")
@@ -136,10 +130,11 @@ class GoalActions @AssistedInject constructor(
 				/* intent = */ pinIntent,
 				/* flags = */ PendingIntent.FLAG_UPDATE_CURRENT)
 
+			// Looks weird.
 			val bundle = Bundle()
 			bundle.putParcelable(AppWidgetManager.EXTRA_APPWIDGET_PREVIEW, widgetView(false))
 
-			appWidgetManager.requestPinAppWidget(myProvider, bundle, successCallback)
+			appWidgetManager.requestPinAppWidget(myProvider, null, successCallback)
 		}
 	}
 }
