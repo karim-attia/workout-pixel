@@ -209,7 +209,7 @@ fun LocaleSelectionDateTime(
 				if (selectedFormatIndex == 0) onChoiceChange(null, null) else {
 					val selectedFormat: String = listOfFormatsWithDefault[selectedFormatIndex]
 					// selectedFormat is from list which stems from map, thus should be not null.
-					val chosenLocale: Locale = if (mapFormatsToLocales[selectedFormat] != null) mapFormatsToLocales[selectedFormat] as Locale else format.locale
+					val chosenLocale: Locale = mapFormatsToLocales[selectedFormat] ?: format.locale
 					onChoiceChange(chosenLocale.language, chosenLocale.country)
 				}
 			}

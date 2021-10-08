@@ -3,6 +3,7 @@ package ch.karimattia.workoutpixel.data
 import android.appwidget.AppWidgetManager
 import androidx.room.ColumnInfo
 import androidx.room.Entity
+import androidx.room.Ignore
 import androidx.room.PrimaryKey
 import ch.karimattia.workoutpixel.core.*
 
@@ -24,11 +25,19 @@ data class Goal
 		val timeRed = timeBlue + intervalInMilliseconds(2)
 
 		return when {
+			statusOverride != null -> statusOverride!!
 			lastWorkout == 0L -> Status.NONE
 			timeRed < last3Am() -> Status.RED
 			timeBlue < last3Am() -> Status.BLUE
 			else -> Status.GREEN
 		}
+	}
+
+	@Ignore
+	var statusOverride: Status? = null
+	fun withStatusOverride(status: Status): Goal {
+		statusOverride = status
+		return this
 	}
 
 	fun setNewLastWorkout(lastWorkout: Long): Boolean {

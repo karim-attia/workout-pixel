@@ -35,7 +35,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import ch.karimattia.workoutpixel.R
-import ch.karimattia.workoutpixel.core.getColorFromStatusColor
+import ch.karimattia.workoutpixel.core.Status
 import ch.karimattia.workoutpixel.core.plural
 import ch.karimattia.workoutpixel.core.testGoals
 import ch.karimattia.workoutpixel.data.Goal
@@ -434,9 +434,8 @@ fun WidgetConfigurationPreview(
 	// 12dp because the checkbox above has 4 dp clickable area and then 16 is too much.
 	FreeStandingTitle(text = "Preview", topPadding = 12.dp)
 	GoalPreview(
-		goal = editGoalViewGoal,
+		goal = if (isFirstConfigure) editGoalViewGoal.withStatusOverride(Status.GREEN) else editGoalViewGoal,
 		settingsData = settingsData,
-		backgroundColor = if (isFirstConfigure) settingsData.colorDone() else getColorFromStatusColor(editGoalViewGoal.status(), settingsData = settingsData),
 		modifier = modifier,
 	)
 }
