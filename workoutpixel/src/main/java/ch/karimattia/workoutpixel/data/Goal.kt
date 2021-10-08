@@ -58,8 +58,9 @@ data class Goal
 	fun widgetText(settingsData: SettingsData): String {
 		var widgetText: String = title
 		if ((status() != Status.NONE)) {
-			if (showDate) widgetText += "\n${dateBeautiful(lastWorkout, settingsData.dateLocale())}"
-			if (showTime) widgetText += "\n${timeBeautiful(lastWorkout, settingsData.timeLocale())}"
+			val displayTime: Long = if (statusOverride == Status.GREEN) System.currentTimeMillis() else {lastWorkout}
+			if (showDate) widgetText += "\n${dateBeautiful(displayTime, settingsData.dateLocale())}"
+			if (showTime) widgetText += "\n${timeBeautiful(displayTime, settingsData.timeLocale())}"
 		}
 		return widgetText
 	}
