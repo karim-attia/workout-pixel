@@ -3,6 +3,7 @@ package ch.karimattia.workoutpixel.composables
 import android.appwidget.AppWidgetManager
 import android.content.ComponentName
 import android.util.Log
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -92,7 +93,7 @@ fun GoalDetailView(
 			settingsData = settingsData,
 			updateAfterClick = updateAfterClick
 		)
-		if (!goal.hasValidAppWidgetId()) {
+		AnimatedVisibility(!goal.hasValidAppWidgetId()) {
 			GoalDetailNoWidgetCard(
 				goal = goal, deleteGoal = deleteGoal, addWidgetToHomeScreen = addWidgetToHomeScreen,
 			)
@@ -215,7 +216,7 @@ fun PastClickList(
 	settingsData: SettingsData,
 ) {
 	val numberOfPastClicks = pastClicks.size
-	if (numberOfPastClicks > 0) {
+	AnimatedVisibility (numberOfPastClicks > 0) {
 		Column {
 			PastClickEntry(date = "Date", time = "Time", bold = true)
 			Divider(color = Color(TextBlack), thickness = 1.dp)
@@ -238,7 +239,8 @@ fun PastClickList(
 				}
 			}
 		}
-	} else {
+	} 
+	AnimatedVisibility(visible = numberOfPastClicks == 0){
 		Text(
 			text = stringResource(R.string.you_have_never_completed_this_goal_as_soon_as_you_click_on_the_widget_the_click_will_show_up_here),
 			fontSize = 14.sp

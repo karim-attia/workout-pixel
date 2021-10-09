@@ -16,8 +16,10 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.qualifiers.ApplicationContext
+import java.lang.Integer.max
 import kotlin.math.ceil
 import kotlin.math.floor
+import kotlin.math.roundToInt
 
 private const val TAG: String = "GoalActions"
 
@@ -86,12 +88,13 @@ class WidgetActions @AssistedInject constructor(
 
 		// Set size if available
 		// https://stackoverflow.com/questions/25153604/get-the-size-of-my-homescreen-widget
-		val height = appWidgetManager.getAppWidgetOptions(goal.appWidgetId).getInt(AppWidgetManager.OPTION_APPWIDGET_MAX_HEIGHT, 44)
-		val paddingInDp = height - 44
-		val paddingInPx = (paddingInDp * context.resources.displayMetrics.density + 0.5f).toInt()
-		val paddigTopInPx = ceil(paddingInPx / 4.0).toInt()
-		val paddigBottomInPx = floor(paddingInPx / 4.0 * 3.0).toInt()
-		widgetView.setViewPadding(R.id.widget_container, 0, paddigTopInPx, 0, paddigBottomInPx)
+		val heightInDp: Int = appWidgetManager.getAppWidgetOptions(goal.appWidgetId).getInt(AppWidgetManager.OPTION_APPWIDGET_MAX_HEIGHT, 44)
+		val paddingInDp: Int = max(heightInDp - 50, 0)
+		val density: Float = context.resources.displayMetrics.density
+		val paddingInPx: Int = (paddingInDp * density).toInt()
+		val paddingTopInPx: Int = ceil(paddingInPx / 4.0).toInt()
+		val paddingBottomInPx: Int = floor(paddingInPx / 4.0 * 3.0).toInt()
+		widgetView.setViewPadding(R.id.widget_container, 0, paddingTopInPx, 0, paddingBottomInPx)
 
 		return widgetView
 	}
