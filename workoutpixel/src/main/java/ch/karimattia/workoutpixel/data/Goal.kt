@@ -27,7 +27,7 @@ data class Goal
 		val timeRed = timeBlue + intervalInMilliseconds(2)
 
 		return when {
-			// statusOverride != null -> statusOverride!!
+			statusOverride != null -> statusOverride!!
 			lastWorkout == 0L -> Status.NONE
 			timeRed < last3Am() -> Status.RED
 			timeBlue < last3Am() -> Status.BLUE
