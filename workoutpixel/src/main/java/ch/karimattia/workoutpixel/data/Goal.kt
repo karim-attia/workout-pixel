@@ -33,7 +33,7 @@ data class Goal
 		}
 	}
 
-Comme	// Is just needed for preview and thus not needed to save to database.
+	// Is just needed for preview and thus not needed to save to database.
 	@Ignore
 	var statusOverride: Status? = null
 	fun withStatusOverride(status: Status): Goal {
