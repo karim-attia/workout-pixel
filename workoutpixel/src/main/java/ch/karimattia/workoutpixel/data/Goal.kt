@@ -15,9 +15,11 @@ data class Goal
 	@ColumnInfo(name = "title") var title: String = "",
 	@ColumnInfo(name = "lastWorkout") var lastWorkout: Long = 0,
 	@ColumnInfo(name = "intervalBlue") var intervalBlue: Int = 2,
-	@ColumnInfo(name = "intervalRed") val intervalRed: Int = 2,
+	@ColumnInfo(name = "intervalRed") var intervalRed: Int = 2,
 	@ColumnInfo(name = "showDate") var showDate: Boolean = false,
 	@ColumnInfo(name = "showTime") var showTime: Boolean = false,
+	// Is just needed for preview and thus not needed to save to database.
+	@Ignore var statusOverride: Status? = null,
 ) {
 	fun status(): Status {
 		// Point in time when the widget should change to blue/red as soon as it's night time the next time.
@@ -25,20 +27,12 @@ data class Goal
 		val timeRed = timeBlue + intervalInMilliseconds(2)
 
 		return when {
-			statusOverride != null -> statusOverride!!
+			// statusOverride != null -> statusOverride!!
 			lastWorkout == 0L -> Status.NONE
 			timeRed < last3Am() -> Status.RED
 			timeBlue < last3Am() -> Status.BLUE
 			else -> Status.GREEN
 		}
-	}
-
-	// Is just needed for preview and thus not needed to save to database.
-	@Ignore
-	var statusOverride: Status? = null
-	fun withStatusOverride(status: Status): Goal {
-		statusOverride = status
-		return this
 	}
 
 	fun setNewLastWorkout(lastWorkout: Long): Boolean {

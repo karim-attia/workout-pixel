@@ -434,7 +434,7 @@ fun WidgetConfigurationPreview(
 	// 12dp because the checkbox above has 4 dp clickable area and then 16 is too much.
 	FreeStandingTitle(text = "Preview", topPadding = 12.dp)
 	GoalPreview(
-		goal = if (isFirstConfigure) editGoalViewGoal.withStatusOverride(Status.GREEN) else editGoalViewGoal,
+		goal = if (isFirstConfigure) editGoalViewGoal.copy(statusOverride = Status.GREEN) else editGoalViewGoal,
 		settingsData = settingsData,
 		modifier = modifier,
 	)
