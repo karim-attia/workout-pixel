@@ -2,20 +2,28 @@ package ch.karimattia.workoutpixel.composables
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Card
-import androidx.compose.material.Checkbox
-import androidx.compose.material.Icon
-import androidx.compose.material.Text
+import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -23,6 +31,9 @@ import ch.karimattia.workoutpixel.core.getColorFromStatusColor
 import ch.karimattia.workoutpixel.data.Goal
 import ch.karimattia.workoutpixel.data.SettingsData
 import ch.karimattia.workoutpixel.ui.theme.InfoColor
+
+@Suppress("unused")
+private const val TAG: String = "Reusables"
 
 @Composable
 fun GoalPreview(
@@ -151,4 +162,46 @@ fun CheckboxWithText(
 			modifier = Modifier.padding(start = 6.dp),
 		)
 	}
+}
+
+@ExperimentalComposeUiApi
+@Composable
+fun GoalTitleTextField(
+	title: String,
+	onValueChange: (String) -> Unit,
+	modifier: Modifier = Modifier,
+) {
+	val keyboardController = LocalSoftwareKeyboardController.current
+	val interactionSource = remember { MutableInteractionSource() }
+	BasicTextField(
+		value = title,
+		onValueChange = {			onValueChange(it)		},
+		textStyle = LocalTextStyle.current.copy(
+			color = MaterialTheme.colors.onBackground,
+			fontSize = 20.sp
+		),
+		interactionSource = interactionSource,
+		decorationBox = { innerTextField ->
+			Column(
+				modifier = Modifier
+					.fillMaxWidth()
+			) {
+				val isFocused = interactionSource.collectIsFocusedAsState().value
+				Box(modifier = Modifier.padding(start = 4.dp, end = 4.dp, bottom = 4.dp)) { innerTextField() }
+				Divider(thickness = 1.5.dp, color = if (isFocused) MaterialTheme.colors.primary else Color.Gray)
+			}
+		},
+		cursorBrush = SolidColor(MaterialTheme.colors.primary),
+		singleLine = true,
+		keyboardOptions = KeyboardOptions(
+			capitalization = KeyboardCapitalization.Sentences,
+			imeAction = ImeAction.Done
+		),
+		keyboardActions = KeyboardActions(onDone = {
+			keyboardController?.hide()
+		}),
+		modifier = modifier
+			.fillMaxWidth()
+			.padding(bottom = 10.dp)
+	)
 }

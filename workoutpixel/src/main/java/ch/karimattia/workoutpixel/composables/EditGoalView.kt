@@ -315,43 +315,16 @@ fun SetUpYourWidget(
 		fontSize = 14.sp,
 		modifier = modifier
 	)
-	val keyboardController = LocalSoftwareKeyboardController.current
 
-	val interactionSource = remember { MutableInteractionSource() }
-	BasicTextField(
-		value = setUpYourWidgetGoal.title,
+	GoalTitleTextField(
+		title= setUpYourWidgetGoal.title,
 		onValueChange = {
 			setUpYourWidgetGoal.title = it
 			setUpYourWidgetGoalChange(setUpYourWidgetGoal)
 		},
-		textStyle = LocalTextStyle.current.copy(
-			color = MaterialTheme.colors.onBackground,
-			fontSize = 20.sp
-		),
-		interactionSource = interactionSource,
-		decorationBox = { innerTextField ->
-			Column(
-				modifier = Modifier
-					.fillMaxWidth()
-			) {
-				val isFocused = interactionSource.collectIsFocusedAsState().value
-				Box(modifier = Modifier.padding(start = 4.dp, end = 4.dp, bottom = 4.dp)) { innerTextField() }
-				Divider(thickness = 1.5.dp, color = if (isFocused) MaterialTheme.colors.primary else Color.Gray)
-			}
-		},
-		cursorBrush = SolidColor(MaterialTheme.colors.primary),
-		singleLine = true,
-		keyboardOptions = KeyboardOptions(
-			capitalization = KeyboardCapitalization.Sentences,
-			imeAction = ImeAction.Done
-		),
-		keyboardActions = KeyboardActions(onDone = {
-			keyboardController?.hide()
-		}),
 		modifier = modifier
-			.fillMaxWidth()
-			.padding(bottom = 10.dp)
 	)
+
 	Text(
 		text = stringResource(id = R.string.interval),
 		modifier = modifier,

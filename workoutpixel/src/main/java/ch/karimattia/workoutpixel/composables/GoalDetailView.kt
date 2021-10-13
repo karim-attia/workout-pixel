@@ -4,6 +4,7 @@ import android.appwidget.AppWidgetManager
 import android.content.ComponentName
 import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -216,7 +217,7 @@ fun PastClickList(
 	settingsData: SettingsData,
 ) {
 	val numberOfPastClicks = pastClicks.size
-	AnimatedVisibility (numberOfPastClicks > 0) {
+	if (numberOfPastClicks > 0) {
 		Column {
 			PastClickEntry(date = "Date", time = "Time", bold = true)
 			Divider(color = Color(TextBlack), thickness = 1.dp)
@@ -240,7 +241,7 @@ fun PastClickList(
 			}
 		}
 	} 
-	AnimatedVisibility(visible = numberOfPastClicks == 0){
+	if(numberOfPastClicks == 0){
 		Text(
 			text = stringResource(R.string.you_have_never_completed_this_goal_as_soon_as_you_click_on_the_widget_the_click_will_show_up_here),
 			fontSize = 14.sp

@@ -1,7 +1,9 @@
 package ch.karimattia.workoutpixel.activities
 
+import android.appwidget.AppWidgetManager
 import android.os.Bundle
 import android.util.Log
+import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -16,6 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -25,6 +28,7 @@ import androidx.navigation.compose.rememberNavController
 import ch.karimattia.workoutpixel.composables.*
 import ch.karimattia.workoutpixel.core.*
 import ch.karimattia.workoutpixel.data.*
+import ch.karimattia.workoutpixel.onboarding.Onboarding
 import ch.karimattia.workoutpixel.ui.theme.WorkoutPixelTheme
 import coil.annotation.ExperimentalCoilApi
 import com.google.accompanist.pager.ExperimentalPagerApi
@@ -80,7 +84,12 @@ class MainActivity : ComponentActivity() {
 					}
 				},
 				deleteGoal = { lifecycleScope.launch { goalViewModel.deleteGoal(it) } },
-				addWidgetToHomeScreen = { lifecycleScope.launch { goalActions(it).pinAppWidget() } },
+				addWidgetToHomeScreen = { goal, insertNewGoal ->
+					lifecycleScope.launch {
+						if (insertNewGoal) goal.uid = goalViewModel.insertGoal(goal)
+						goalActions(goal).pinAppWidget()
+					}
+				},
 				settingsData = settingsViewModel.settingsData.observeAsState().value,
 				settingChange = {
 					lifecycleScope.launch {
@@ -119,7 +128,7 @@ fun WorkoutPixelApp(
 	updateAfterClick: (Goal) -> Unit,
 	updateGoal: (Goal) -> Unit,
 	deleteGoal: (Goal) -> Unit,
-	addWidgetToHomeScreen: (Goal) -> Unit,
+	addWidgetToHomeScreen: (goal: Goal, insertNewGoal: Boolean) -> Unit,
 ) {
 	WorkoutPixelTheme(
 		darkTheme = false,
@@ -235,7 +244,7 @@ fun WorkoutPixelNavHost(
 	navigateTo: (destination: String, goal: Goal?) -> Unit,
 	updateGoal: (updatedGoal: Goal, navigateUp: Boolean) -> Unit,
 	deleteGoal: (updatedGoal: Goal, navigateUp: Boolean) -> Unit,
-	addWidgetToHomeScreen: (Goal) -> Unit,
+	addWidgetToHomeScreen: (goal: Goal, insertNewGoal: Boolean) -> Unit,
 	currentGoal: Goal?,
 	pastClickViewModelAssistedFactory: PastClickViewModelAssistedFactory,
 	modifier: Modifier = Modifier,
@@ -262,7 +271,12 @@ fun WorkoutPixelNavHost(
 		}
 		composable(route = WorkoutPixelScreen.Instructions.name) {
 			Log.d(TAG, "------------Instructions------------")
-			Instructions()
+			val appWidgetManager = AppWidgetManager.getInstance(LocalContext.current)
+			if (appWidgetManager.isRequestPinAppWidgetSupported) {
+				Onboarding(settingsData = settingsData, addNewWidgetToHomeScreen = { addWidgetToHomeScreen(it, true) })
+			} else {
+				Instructions()
+			}
 		}
 		// GoalDetailView
 		composable(route = WorkoutPixelScreen.GoalDetailView.name) {
@@ -273,7 +287,7 @@ fun WorkoutPixelNavHost(
 					updateAfterClick = { updateAfterClick(currentGoal) },
 					deleteGoal = { deleteGoal(it, true) },
 					updateGoal = updateGoal,
-					addWidgetToHomeScreen = addWidgetToHomeScreen,
+					addWidgetToHomeScreen = { addWidgetToHomeScreen(it, false) },
 					settingsData = settingsData,
 					pastClickViewModelAssistedFactory = pastClickViewModelAssistedFactory,
 				)

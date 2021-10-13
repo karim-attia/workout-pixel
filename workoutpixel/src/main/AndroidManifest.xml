@@ -26,9 +26,11 @@
                 android:resource="@xml/workout_pixel_info" />
         </receiver>
 
+        <!-- https://stackoverflow.com/questions/64050392/software-keyboard-overlaps-content-of-jetpack-compose-view -->
         <activity
             android:name=".activities.MainActivity"
             android:label="Workout Pixel"
+            android:windowSoftInputMode="adjustResize"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -40,7 +42,7 @@
             android:name=".activities.ConfigureActivity"
             android:label="Add a widget for your goal"
             android:parentActivityName=".activities.MainActivity"
-            android:theme="@style/ConfigureTheme"
+            android:windowSoftInputMode="adjustResize"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
