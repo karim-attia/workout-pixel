@@ -59,11 +59,11 @@ fun GoalList(
 			.padding(top = 6.dp, bottom = 40.dp)
 	) {
 		if (goals.isNotEmpty()) {
-			for (i in goals.indices) {
+			for (goal in goals) {
 				// contentPadding = PaddingValues(top = 6.dp, bottom = 40.dp),
 				GoalCard(
-					goal = goals[i],
-					updateAfterClick = { updateAfterClick(goals[i]) },
+					goal = goal,
+					updateAfterClick = { updateAfterClick(goal) },
 					navigateTo = navigateTo,
 					settingsData = settingsData,
 				)

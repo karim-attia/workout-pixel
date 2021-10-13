@@ -1,6 +1,7 @@
 package ch.karimattia.workoutpixel.onboarding
 
 import android.util.Log
+import androidx.compose.foundation.ScrollState
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.lifecycle.LiveData
@@ -9,6 +10,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ch.karimattia.workoutpixel.data.Goal
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -20,25 +22,27 @@ class OnboardingViewModel @Inject constructor(
 	//private val goalRepository: GoalRepository,
 ) : ViewModel() {
 	var currentStep: Int = 0
-	private val firstMessage = introMessage()
+	private val firstMessage = introMessage
 	var latestMessage: MutableLiveData<Message> = MutableLiveData(firstMessage)
 
 	fun increaseCurrentStep() {
 		Log.d(TAG, "increaseCurrentStep currentStep: ${currentStep}")
 		currentStep++
+		shownMessages.clear()
+		shownMessages.addAll(messageQueue.slice(0..currentStep))
 		Log.d(TAG, "increaseCurrentStep currentStep: ${currentStep}")
 		Log.d(TAG, "increaseCurrentStep: ${latestMessage.value!!.debugString()}")
-		latestMessage.value = if (currentStep < messages.size) messages[currentStep] else messages[messages.size - 1]
+		latestMessage.value = if (currentStep < messageQueue.size) messageQueue[currentStep] else messageQueue[messageQueue.size - 1]
 		Log.d(TAG, "increaseCurrentStep: ${latestMessage.value!!.debugString()}")
-		Log.d(TAG, "increaseCurrentStep: messages.size: ${messages.size}")
-		latestMessage.value!!.nextMessage?.let { messages.add(element = it) }
-		Log.d(TAG, "increaseCurrentStep: messages.size: ${messages.size}")
+		Log.d(TAG, "increaseCurrentStep: messages.size: ${messageQueue.size}")
+		latestMessage.value!!.nextMessage?.let { messageQueue.add(element = it) }
+		Log.d(TAG, "increaseCurrentStep: messages.size: ${messageQueue.size}")
 		checkAutoAdvance()
 	}
 
 	private fun checkAutoAdvance() {
 		Log.d(TAG, "checkAutoAdvance: ${latestMessage.value!!.debugString()}")
-		if (latestMessage.value!!.autoAdvance && currentStep < messages.size - 1) {
+		if (latestMessage.value!!.autoAdvance && currentStep < messageQueue.size - 1) {
 			viewModelScope.launch {
 				delay(latestMessage.value!!.autoAdvanceTime.toLong())
 				increaseCurrentStep()
@@ -46,17 +50,18 @@ class OnboardingViewModel @Inject constructor(
 		}
 	}
 
-	val messages: SnapshotStateList<Message> = mutableStateListOf(firstMessage)
+	val messageQueue: SnapshotStateList<Message> = mutableStateListOf(firstMessage)
+	val shownMessages: SnapshotStateList<Message> = mutableStateListOf(firstMessage)
 
 	init {
-		Log.d(TAG, "init: messages.size: ${messages.size}")
-		latestMessage.value!!.nextMessage?.let { messages.add(element = it) }
-		Log.d(TAG, "init: messages.size: ${messages.size}")
+		Log.d(TAG, "init: messages.size: ${messageQueue.size}")
+		latestMessage.value!!.nextMessage?.let { messageQueue.add(element = it) }
+		Log.d(TAG, "init: messages.size: ${messageQueue.size}")
 		checkAutoAdvance()
 	}
 
 	fun insertMessageAtNextPosition(message: Message) {
-		messages.add(index = currentStep + 1, element = message)
+		messageQueue.add(index = currentStep + 1, element = message)
 		// messages.add(element = message)
 		increaseCurrentStep()
 	}
@@ -65,6 +70,13 @@ class OnboardingViewModel @Inject constructor(
 	val goal: LiveData<Goal> = _goal
 	fun updateGoal(goal: Goal) {
 		_goal.value = goal
+	}
+
+	val scrollState: ScrollState = ScrollState(0)
+	fun scrollDown(scope: CoroutineScope) {
+		scope.launch {
+			scrollState.animateScrollTo(scrollState.value + 10000)
+		}
 	}
 }
 
@@ -89,7 +101,7 @@ data class Message(
 	fun debugString(): String = "text: $text, autoAdvance: $autoAdvance"
 }
 
-fun introMessage(): Message = Message(text = "Hey! Super awesome that you downloaded WorkoutPixel.", nextMessage = basicFeatures())
+val introMessage: Message = Message(text = "Hey! Super awesome that you downloaded WorkoutPixel.", nextMessage = basicFeatures())
 fun basicFeatures(): Message = Message(text = "With WorkoutPixel you can add widgets for your goals to your homescreen. They look like this:",
 	bottomArea = BottomArea.ShowNext, nextMessage = habits1())
 
@@ -135,7 +147,7 @@ fun waitingForCallback(): Message = Message(text = "Waiting until the widget get
 fun test(): Message = Message(text = "Test. ")
 
 val initialMessages: List<Message> = listOf(
-	introMessage(),
+	introMessage,
 	basicFeatures(),
 	nextByUser(),
 	habits1(),

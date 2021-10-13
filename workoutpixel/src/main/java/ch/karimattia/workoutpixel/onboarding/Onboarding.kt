@@ -35,6 +35,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import ch.karimattia.workoutpixel.core.testGoals
 import ch.karimattia.workoutpixel.data.Goal
 import ch.karimattia.workoutpixel.data.SettingsData
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 @Suppress("unused")
@@ -46,20 +47,19 @@ fun Onboarding(
 	settingsData: SettingsData,
 	addNewWidgetToHomeScreen: (Goal) -> Unit,
 	onboardingViewModel: OnboardingViewModel = viewModel(),
-	currentStep: Int = onboardingViewModel.currentStep,
-	messages: List<Message> = onboardingViewModel.messages,
-	latestMessage: State<Message> = onboardingViewModel.latestMessage.observeAsState(initial = introMessage()),
-	goal: State<Goal> = onboardingViewModel.goal.observeAsState(initial = Goal()),
 ) {
+	val scope: CoroutineScope = rememberCoroutineScope()
+
 	MessageList(
-		messageList = messages,
-		currentStep = currentStep,
+		messageList = onboardingViewModel.shownMessages,
 		increaseCurrentStep = { onboardingViewModel.increaseCurrentStep() },
-		latestMessage = latestMessage.value,
-		goal = goal.value,
+		latestMessage = onboardingViewModel.latestMessage.observeAsState(initial = introMessage).value,
+		goal = onboardingViewModel.goal.observeAsState(initial = Goal()).value,
 		updateGoal = { onboardingViewModel.updateGoal(it) },
 		addNewWidgetToHomeScreen = addNewWidgetToHomeScreen,
 		insertMessageAtNextPosition = { onboardingViewModel.insertMessageAtNextPosition(message = it) },
+		scrollState = onboardingViewModel.scrollState,
+		scrollDown = { onboardingViewModel.scrollDown(scope) }
 	)
 }
 
@@ -67,37 +67,24 @@ fun Onboarding(
 @Composable
 fun MessageList(
 	messageList: List<Message>,
-	currentStep: Int,
 	increaseCurrentStep: () -> Unit,
 	latestMessage: Message,
 	goal: Goal,
 	updateGoal: (Goal) -> Unit,
 	addNewWidgetToHomeScreen: (Goal) -> Unit,
 	insertMessageAtNextPosition: (Message) -> Unit,
+	scrollState: ScrollState,
+	scrollDown: () -> Unit,
 ) {
 	Column {
-		val scrollState: ScrollState = rememberScrollState()
-		val scope = rememberCoroutineScope()
-
-		// https://stackoverflow.com/questions/64050392/software-keyboard-overlaps-content-of-jetpack-compose-view
-		// https://google.github.io/accompanist/insets/
-		fun scrollDown() {
-			// Log.d(TAG, "scrollDown()")
-			scope.launch { scrollState.animateScrollTo(scrollState.value + 10000) }
-		}
-		// TODO: Is this the right way?
-		LaunchedEffect(key1 = currentStep, block = {
-			//Log.d(TAG, "LaunchedEffect")
-			scrollDown()
-		})
 		Column(
 			modifier = Modifier
 				.fillMaxWidth()
 				.verticalScroll(scrollState)
 				.weight(1f)
 		) {
-			for (i in 0..minOf(currentStep, messageList.size - 1)) {
-				MessageCard(message = messageList[i])
+			for (message in messageList) {
+				MessageCard(message = message)
 			}
 /*
 			for (i in 0..minOf(currentStep, messageList.size - 1)) {
@@ -322,12 +309,14 @@ fun TitleTextField(
 fun OnboardingPreview() {
 	MessageList(
 		messageList = initialMessages,
-		currentStep = 99,
+		// currentStep = 99,
 		increaseCurrentStep = { },
 		latestMessage = initialMessages[0],
 		goal = testGoals[0],
 		updateGoal = {},
 		addNewWidgetToHomeScreen = {},
 		insertMessageAtNextPosition = {},
+		scrollState = ScrollState(0),
+		scrollDown = {},
 	)
 }
