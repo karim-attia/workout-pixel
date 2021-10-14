@@ -16,8 +16,6 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.State
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -29,14 +27,10 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import ch.karimattia.workoutpixel.core.testGoals
 import ch.karimattia.workoutpixel.data.Goal
 import ch.karimattia.workoutpixel.data.SettingsData
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 
 @Suppress("unused")
 private const val TAG: String = "Onboarding"
@@ -48,33 +42,39 @@ fun Onboarding(
 	addNewWidgetToHomeScreen: (Goal) -> Unit,
 	onboardingViewModel: OnboardingViewModel = viewModel(),
 ) {
-	val scope: CoroutineScope = rememberCoroutineScope()
+	onboardingViewModel.scope = rememberCoroutineScope()
 
-	MessageList(
-		messageList = onboardingViewModel.shownMessages,
-		increaseCurrentStep = { onboardingViewModel.increaseCurrentStep() },
-		latestMessage = onboardingViewModel.latestMessage.observeAsState(initial = introMessage).value,
+	val shownMessages = onboardingViewModel.shownMessages
+
+	Onboarding(
+		shownMessages = shownMessages,
+		messageTemplates = onboardingViewModel.allMessagesClass,
+		// latestMessage = onboardingViewModel.latestMessage.observeAsState(initial = onboardingViewModel.introMessage()).value,
+		latestMessage = shownMessages.last(),
+		insertMessageAtNextPosition = { onboardingViewModel.insertMessageToMessageQueueAtNextPositionAndAdvance(messageBuilder = { it }) },
+		scrollState = onboardingViewModel.scrollState,
+		scrollDown = { onboardingViewModel.scrollDown() },
 		goal = onboardingViewModel.goal.observeAsState(initial = Goal()).value,
 		updateGoal = { onboardingViewModel.updateGoal(it) },
 		addNewWidgetToHomeScreen = addNewWidgetToHomeScreen,
-		insertMessageAtNextPosition = { onboardingViewModel.insertMessageAtNextPosition(message = it) },
-		scrollState = onboardingViewModel.scrollState,
-		scrollDown = { onboardingViewModel.scrollDown(scope) }
-	)
+		onboardingViewModel = onboardingViewModel,
+
+		)
 }
 
 @ExperimentalComposeUiApi
 @Composable
-fun MessageList(
-	messageList: List<Message>,
-	increaseCurrentStep: () -> Unit,
+fun Onboarding(
+	shownMessages: List<Message>,
 	latestMessage: Message,
+	messageTemplates: OnboardingViewModel.MessageTemplates,
 	goal: Goal,
 	updateGoal: (Goal) -> Unit,
 	addNewWidgetToHomeScreen: (Goal) -> Unit,
 	insertMessageAtNextPosition: (Message) -> Unit,
 	scrollState: ScrollState,
 	scrollDown: () -> Unit,
+	onboardingViewModel: OnboardingViewModel,
 ) {
 	Column {
 		Column(
@@ -83,7 +83,7 @@ fun MessageList(
 				.verticalScroll(scrollState)
 				.weight(1f)
 		) {
-			for (message in messageList) {
+			for (message in shownMessages) {
 				MessageCard(message = message)
 			}
 /*
@@ -106,13 +106,14 @@ fun MessageList(
 */
 		}
 		BottomArea(
-			increaseCurrentStep = increaseCurrentStep,
 			latestMessage = latestMessage,
+			messageTemplates = messageTemplates,
 			goal = goal,
 			updateGoal = updateGoal,
 			addNewWidgetToHomeScreen = addNewWidgetToHomeScreen,
 			insertMessageAtNextPosition = insertMessageAtNextPosition,
-			scrollDown = { scrollDown() }
+			scrollDown = { scrollDown() },
+			onboardingViewModel = onboardingViewModel,
 		)
 	}
 }
@@ -120,13 +121,14 @@ fun MessageList(
 @ExperimentalComposeUiApi
 @Composable
 fun BottomArea(
-	increaseCurrentStep: () -> Unit,
 	latestMessage: Message,
+	messageTemplates: OnboardingViewModel.MessageTemplates,
 	goal: Goal,
 	updateGoal: (Goal) -> Unit,
 	insertMessageAtNextPosition: (Message) -> Unit,
 	addNewWidgetToHomeScreen: (Goal) -> Unit,
 	scrollDown: () -> Unit,
+	onboardingViewModel: OnboardingViewModel,
 ) {
 	Box(
 		contentAlignment = Alignment.CenterEnd,
@@ -142,22 +144,28 @@ fun BottomArea(
 				.horizontalScroll(state = rememberScrollState())
 		)
 		{
+			Log.d(TAG, "1")
+			Log.d(TAG, "${latestMessage.debugString()}")
+
 			// Specific set of different proposals. Here for the add widget prompt.
 			AnimatedVisibility(visible = latestMessage.bottomArea == BottomArea.AddWidgetPrompt, enter = fadeIn(), exit = ExitTransition.None) {
+				Log.d(TAG, "2")
 				Row {
 					MessageProposal(onClick = {
-						insertMessageAtNextPosition(editGoalDescription())
+						insertMessageAtNextPosition(messageTemplates.editGoalDescription())
 					}, text = "Edit goal description")
-					MessageProposal(onClick = { insertMessageAtNextPosition(thumbsUpProposal()) }, text = latestMessage.proposal)
+					MessageProposal(onClick = { insertMessageAtNextPosition(messageTemplates.thumbsUpProposal()) }, text = latestMessage.proposal)
 				}
 			}
+
 
 			// Only proposal next available.
 			AnimatedVisibility(visible = latestMessage.showNextProposal,
 				enter = fadeIn(),
 				exit = ExitTransition.None) {
-				MessageProposal(onClick = { insertMessageAtNextPosition(nextByUser()) }, text = latestMessage.proposal)
+				MessageProposal(onClick = { insertMessageAtNextPosition(messageTemplates.nextByUser()) }, text = latestMessage.proposal)
 			}
+
 
 			// IntervalInput
 			AnimatedVisibility(visible = latestMessage.bottomArea == BottomArea.IntervalInput, enter = fadeIn(), exit = ExitTransition.None) {
@@ -165,24 +173,27 @@ fun BottomArea(
 					for (i in 1..31) {
 						MessageProposal(onClick = {
 							goal.intervalBlue = i
-							updateGoal(goal.copy(intervalBlue = i))
-							insertMessageAtNextPosition(intervalByUser(goal.intervalBlue))
+							// TODO: Veryfy no copy needed
+							updateGoal(goal)
+							insertMessageAtNextPosition(messageTemplates.intervalByUser())
 						}, text = i.toString())
 					}
 				}
 			}
 		}
+
 		// TitleInput
 		AnimatedVisibility(visible = latestMessage.bottomArea == BottomArea.TitleInput, enter = EnterTransition.None, exit = ExitTransition.None) {
 			TitleTextField(
 				value = goal.title,
 				onValueChange = { updateGoal(goal.copy(title = it)) },
 				action = {
-					insertMessageAtNextPosition(titleByUser(title = goal.title))
+					insertMessageAtNextPosition(messageTemplates.titleByUser())
 				},
 				scrollDown = scrollDown,
 			)
 		}
+
 		// AddWidget
 		if (latestMessage.bottomArea == BottomArea.AddWidget) {
 			addNewWidgetToHomeScreen(goal)
@@ -223,15 +234,14 @@ fun MessageCard(message: Message) {
 				else -> MaterialTheme.colors.primaryVariant
 			},
 		) {
-			Text(
-				modifier = Modifier.padding(horizontal = 8.dp, vertical = 8.dp),
-				text = message.text,
-				color = Color.White,
-				/*when {
-					message.isMine -> MaterialTheme.colors.onPrimary
-					else -> MaterialTheme.colors.onSecondary
-				}*/
-			)
+			Column {
+				Text(
+					modifier = Modifier.padding(horizontal = 8.dp, vertical = 8.dp),
+					text = message.text,
+					color = Color.White,
+				)
+				message.messageExtra()
+			}
 		}
 	}
 }
@@ -299,24 +309,5 @@ fun TitleTextField(
 				Log.d(TAG, "onFocusChanged")
 				scrollDown()
 			}
-	)
-}
-
-
-@ExperimentalComposeUiApi
-@Preview(name = "Onboarding preview", showBackground = true, heightDp = 768)
-@Composable
-fun OnboardingPreview() {
-	MessageList(
-		messageList = initialMessages,
-		// currentStep = 99,
-		increaseCurrentStep = { },
-		latestMessage = initialMessages[0],
-		goal = testGoals[0],
-		updateGoal = {},
-		addNewWidgetToHomeScreen = {},
-		insertMessageAtNextPosition = {},
-		scrollState = ScrollState(0),
-		scrollDown = {},
 	)
 }

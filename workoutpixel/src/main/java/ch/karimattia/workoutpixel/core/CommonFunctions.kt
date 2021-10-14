@@ -155,13 +155,23 @@ fun goalFromGoalsByUid(goalUid: Int, goals: List<Goal>): Goal? = goals.firstOrNu
 val testGoals: List<Goal> = listOf(
 	Goal(
 		uid = 1,
+		title = "Your goal \n(done) ",
+		statusOverride = Status.GREEN,
+	),
+	Goal(
+		uid = 2,
+		title = "Your goal \n(todo)",
+		statusOverride = Status.BLUE,
+	),
+	Goal(
+		uid = 3,
 		title = "Push ups",
 		lastWorkout = today3Am() - intervalInMilliseconds(1),
 		intervalBlue = 2,
 		//status = Status.GREEN
 	),
 	Goal(
-		uid = 2,
+		uid = 4,
 		title = "Back exercises",
 		lastWorkout = today3Am() - intervalInMilliseconds(2),
 		intervalBlue = 7,
@@ -169,7 +179,7 @@ val testGoals: List<Goal> = listOf(
 		//status = Status.GREEN
 	),
 	Goal(
-		uid = 3,
+		uid = 5,
 		title = "Visualize your day",
 		lastWorkout = today3Am() + (intervalInMilliseconds(1) * 0.259).roundToInt(),
 		intervalBlue = 1,
@@ -177,14 +187,14 @@ val testGoals: List<Goal> = listOf(
 		//status = Status.GREEN
 	),
 	Goal(
-		uid = 4,
+		uid = 6,
 		title = "Morning walk",
 		lastWorkout = today3Am(),
 		intervalBlue = 1,
 		//status = Status.GREEN
 	),
 	Goal(
-		uid = 5,
+		uid = 7,
 		title = "Water plants",
 		lastWorkout = today3Am() - intervalInMilliseconds(7),
 		intervalBlue = 7,
