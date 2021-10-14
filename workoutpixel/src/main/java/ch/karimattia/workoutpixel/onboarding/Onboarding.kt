@@ -38,7 +38,6 @@ private const val TAG: String = "Onboarding"
 @ExperimentalComposeUiApi
 @Composable
 fun Onboarding(
-	settingsData: SettingsData,
 	addNewWidgetToHomeScreen: (Goal) -> Unit,
 	onboardingViewModel: OnboardingViewModel = viewModel(),
 ) {
@@ -48,10 +47,10 @@ fun Onboarding(
 
 	Onboarding(
 		shownMessages = shownMessages,
+		lastMessage = shownMessages.last(),
 		messageTemplates = onboardingViewModel.allMessagesClass,
-		// latestMessage = onboardingViewModel.latestMessage.observeAsState(initial = onboardingViewModel.introMessage()).value,
-		latestMessage = shownMessages.last(),
-		insertMessageAtNextPosition = { onboardingViewModel.insertMessageToMessageQueueAtNextPositionAndAdvance(messageBuilder = { it }) },
+		// Convert message template to message builder.
+		insertMessageAtNextPosition = {messageTemplate -> onboardingViewModel.insertMessageBuilderToQueueAtNextPositionAndAdvance(messageBuilder = { messageTemplate }) },
 		scrollState = onboardingViewModel.scrollState,
 		scrollDown = { onboardingViewModel.scrollDown() },
 		goal = onboardingViewModel.goal.observeAsState(initial = Goal()).value,
@@ -66,7 +65,7 @@ fun Onboarding(
 @Composable
 fun Onboarding(
 	shownMessages: List<Message>,
-	latestMessage: Message,
+	lastMessage: Message,
 	messageTemplates: OnboardingViewModel.MessageTemplates,
 	goal: Goal,
 	updateGoal: (Goal) -> Unit,
@@ -106,7 +105,7 @@ fun Onboarding(
 */
 		}
 		BottomArea(
-			latestMessage = latestMessage,
+			lastMessage = lastMessage,
 			messageTemplates = messageTemplates,
 			goal = goal,
 			updateGoal = updateGoal,
@@ -121,7 +120,7 @@ fun Onboarding(
 @ExperimentalComposeUiApi
 @Composable
 fun BottomArea(
-	latestMessage: Message,
+	lastMessage: Message,
 	messageTemplates: OnboardingViewModel.MessageTemplates,
 	goal: Goal,
 	updateGoal: (Goal) -> Unit,
@@ -145,30 +144,30 @@ fun BottomArea(
 		)
 		{
 			Log.d(TAG, "1")
-			Log.d(TAG, "${latestMessage.debugString()}")
+			Log.d(TAG, "${lastMessage.debugString()}")
 
 			// Specific set of different proposals. Here for the add widget prompt.
-			AnimatedVisibility(visible = latestMessage.bottomArea == BottomArea.AddWidgetPrompt, enter = fadeIn(), exit = ExitTransition.None) {
+			AnimatedVisibility(visible = lastMessage.bottomArea == BottomArea.AddWidgetPrompt, enter = fadeIn(), exit = ExitTransition.None) {
 				Log.d(TAG, "2")
 				Row {
 					MessageProposal(onClick = {
 						insertMessageAtNextPosition(messageTemplates.editGoalDescription())
 					}, text = "Edit goal description")
-					MessageProposal(onClick = { insertMessageAtNextPosition(messageTemplates.thumbsUpProposal()) }, text = latestMessage.proposal)
+					MessageProposal(onClick = { insertMessageAtNextPosition(messageTemplates.thumbsUpProposal()) }, text = lastMessage.proposal)
 				}
 			}
 
 
 			// Only proposal next available.
-			AnimatedVisibility(visible = latestMessage.showNextProposal,
+			AnimatedVisibility(visible = lastMessage.showNextProposal,
 				enter = fadeIn(),
 				exit = ExitTransition.None) {
-				MessageProposal(onClick = { insertMessageAtNextPosition(messageTemplates.nextByUser()) }, text = latestMessage.proposal)
+				MessageProposal(onClick = { insertMessageAtNextPosition(messageTemplates.nextByUser()) }, text = lastMessage.proposal)
 			}
 
 
 			// IntervalInput
-			AnimatedVisibility(visible = latestMessage.bottomArea == BottomArea.IntervalInput, enter = fadeIn(), exit = ExitTransition.None) {
+			AnimatedVisibility(visible = lastMessage.bottomArea == BottomArea.IntervalInput, enter = fadeIn(), exit = ExitTransition.None) {
 				Row {
 					for (i in 1..31) {
 						MessageProposal(onClick = {
@@ -183,7 +182,7 @@ fun BottomArea(
 		}
 
 		// TitleInput
-		AnimatedVisibility(visible = latestMessage.bottomArea == BottomArea.TitleInput, enter = EnterTransition.None, exit = ExitTransition.None) {
+		AnimatedVisibility(visible = lastMessage.bottomArea == BottomArea.TitleInput, enter = EnterTransition.None, exit = ExitTransition.None) {
 			TitleTextField(
 				value = goal.title,
 				onValueChange = { updateGoal(goal.copy(title = it)) },
@@ -195,7 +194,7 @@ fun BottomArea(
 		}
 
 		// AddWidget
-		if (latestMessage.bottomArea == BottomArea.AddWidget) {
+		if (lastMessage.bottomArea == BottomArea.AddWidget) {
 			addNewWidgetToHomeScreen(goal)
 		}
 	}

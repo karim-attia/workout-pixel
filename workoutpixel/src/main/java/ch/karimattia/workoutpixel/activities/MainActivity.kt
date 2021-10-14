@@ -273,7 +273,7 @@ fun WorkoutPixelNavHost(
 			Log.d(TAG, "------------Instructions------------")
 			val appWidgetManager = AppWidgetManager.getInstance(LocalContext.current)
 			if (appWidgetManager.isRequestPinAppWidgetSupported) {
-				Onboarding(settingsData = settingsData, addNewWidgetToHomeScreen = { addWidgetToHomeScreen(it, true) })
+				Onboarding(addNewWidgetToHomeScreen = { addWidgetToHomeScreen(it, true) })
 			} else {
 				Instructions()
 			}

@@ -1,7 +1,6 @@
 package ch.karimattia.workoutpixel.onboarding
 
 import androidx.compose.foundation.ScrollState
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.lifecycle.LiveData
@@ -19,13 +18,14 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 private const val TAG: String = "OnboardingViewModel"
+typealias MessageBuilder = () -> Message
 
 @HiltViewModel
 class OnboardingViewModel @Inject constructor(
 	//private val goalRepository: GoalRepository,
 ) : ViewModel() {
 	/**
-	 * Class with all message builders
+	 * Class with all message templates
 	 * */
 	val allMessagesClass = MessageTemplates()
 
@@ -79,7 +79,7 @@ class OnboardingViewModel @Inject constructor(
 	 * Check if the latestMessage has an action and if yes, process it. I.e. adding follow-up messages and autoAdvancing.
 	 * */
 	private fun processLatestMessage(latestMessage: Message) {
-		latestMessage.nextMessage?.let { insertMessageToMessageQueueAtNextPosition(it) }
+		latestMessage.nextMessage?.let { insertMessageBuilderToQueueAtNextPosition(it) }
 		checkAutoAdvance(latestMessage)
 	}
 
@@ -95,12 +95,12 @@ class OnboardingViewModel @Inject constructor(
 		}
 	}
 
-	fun insertMessageToMessageQueueAtNextPositionAndAdvance(messageBuilder: MessageBuilder) {
-		insertMessageToMessageQueueAtNextPosition(messageBuilder = messageBuilder)
+	fun insertMessageBuilderToQueueAtNextPositionAndAdvance(messageBuilder: MessageBuilder) {
+		insertMessageBuilderToQueueAtNextPosition(messageBuilder = messageBuilder)
 		increaseCurrentStep()
 	}
 
-	private fun insertMessageToMessageQueueAtNextPosition(messageBuilder: MessageBuilder) {
+	private fun insertMessageBuilderToQueueAtNextPosition(messageBuilder: MessageBuilder) {
 		messageBuilderQueue.add(index = currentStep + 1, element = messageBuilder)
 	}
 
@@ -125,6 +125,7 @@ class OnboardingViewModel @Inject constructor(
 		}
 	}
 
+	// Could live in Onboarding.kt and also access goal data there.
 	inner class MessageTemplates {
 		fun introMessage(): Message =
 			Message(text = "Hey! Super awesome that you downloaded WorkoutPixel.", nextMessage = ::basicFeatures)
@@ -185,27 +186,4 @@ class OnboardingViewModel @Inject constructor(
 		fun waitingForCallback(): Message = Message(text = "Waiting until the widget gets added...")
 	}
 
-}
-
-data class Message(
-	val text: String = "",
-	val isMessageByUser: Boolean = false,
-	val bottomArea: BottomArea = BottomArea.AutoAdvance,
-	val autoAdvance: Boolean = bottomArea == BottomArea.AutoAdvance || bottomArea == BottomArea.AddWidget,
-	// TODO: Set reasonable values
-	val autoAdvanceTime: Int = 60,
-	val showNextProposal: Boolean = bottomArea == BottomArea.ShowNext,
-	val proposal: String = if (bottomArea == BottomArea.ShowNext) "Next" else "",
-	val nextMessage: (MessageBuilder)? = null,
-	// val nextMessages: List<MessageBuilder> = if (nextMessage != null) listOf(nextMessage) else emptyList(),
-	// TODO: Show below
-	val messageExtra: @Composable () -> Unit = {},
-) {
-	fun debugString(): String = "text: $text, autoAdvance: $autoAdvance"
-}
-
-typealias MessageBuilder = () -> Message
-
-enum class BottomArea {
-	AutoAdvance, ShowNext, AddWidgetPrompt, TitleInput, IntervalInput, AddWidget
 }
