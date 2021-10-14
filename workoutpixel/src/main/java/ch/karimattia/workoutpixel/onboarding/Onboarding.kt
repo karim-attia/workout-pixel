@@ -30,7 +30,6 @@ import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import ch.karimattia.workoutpixel.data.Goal
-import ch.karimattia.workoutpixel.data.SettingsData
 
 @Suppress("unused")
 private const val TAG: String = "Onboarding"
@@ -48,7 +47,7 @@ fun Onboarding(
 	Onboarding(
 		shownMessages = shownMessages,
 		lastMessage = shownMessages.last(),
-		messageTemplates = onboardingViewModel.allMessagesClass,
+		messageTemplates = onboardingViewModel.messageTemplates,
 		// Convert message template to message builder.
 		insertMessageAtNextPosition = {messageTemplate -> onboardingViewModel.insertMessageBuilderToQueueAtNextPositionAndAdvance(messageBuilder = { messageTemplate }) },
 		scrollState = onboardingViewModel.scrollState,
