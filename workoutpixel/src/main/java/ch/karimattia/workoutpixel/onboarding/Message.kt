@@ -12,7 +12,7 @@ data class Message(
 	val showNextProposal: Boolean = bottomArea == BottomArea.ShowNext,
 	val proposal: String = if (bottomArea == BottomArea.ShowNext) "Next" else "",
 	val nextMessage: (MessageBuilder)? = null,
-	// val nextMessages: List<MessageBuilder> = if (nextMessage != null) listOf(nextMessage) else emptyList(),
+	val nextMessages: List<MessageBuilder> = if (nextMessage != null) listOf(nextMessage) else emptyList(),
 	// TODO: Show below
 	val messageExtra: @Composable () -> Unit = {},
 ) {

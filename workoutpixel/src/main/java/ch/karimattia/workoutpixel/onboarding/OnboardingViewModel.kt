@@ -1,28 +1,21 @@
 package ch.karimattia.workoutpixel.onboarding
 
-import android.util.Log
-import androidx.compose.foundation.ScrollState
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import ch.karimattia.workoutpixel.composables.GoalPreview
-import ch.karimattia.workoutpixel.core.testGoals
+import ch.karimattia.workoutpixel.composables.GoalPreviewWithBackground
+import ch.karimattia.workoutpixel.composables.GoalPreviewsWithBackground
+import ch.karimattia.workoutpixel.core.Status
 import ch.karimattia.workoutpixel.data.Goal
-import ch.karimattia.workoutpixel.data.SettingsData
-import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 private const val TAG: String = "OnboardingViewModel"
 typealias MessageBuilder = () -> Message
 
-class OnboardingViewModel : ChatViewModel() {
+/*@HiltViewModel
+class OnboardingViewModel @Inject constructor(
+	private val settingsRepository: SettingsRepository,
+) : ChatViewModel() {*/
 
+class OnboardingViewModel : ChatViewModel() {
 	/**
 	 * Class with all message templates
 	 * */
@@ -33,7 +26,7 @@ class OnboardingViewModel : ChatViewModel() {
 	 * */
 	override var firstMessage: Message = messageTemplates.introMessage()
 
-	init{
+	init {
 		initialize()
 	}
 
@@ -43,6 +36,7 @@ class OnboardingViewModel : ChatViewModel() {
 		_goal.value = goal
 	}
 
+
 	// Could live in Onboarding.kt and also access goal data there.
 	inner class MessageTemplates {
 		fun introMessage(): Message =
@@ -50,7 +44,9 @@ class OnboardingViewModel : ChatViewModel() {
 
 		fun basicFeatures(): Message =
 			Message(text = "With WorkoutPixel you can add widgets for your goals to your homescreen. They look like this:",
-				bottomArea = BottomArea.ShowNext, nextMessage = ::habits1, messageExtra = { GoalPreview(goal = testGoals[0], settingsData = SettingsData()) })
+				bottomArea = BottomArea.ShowNext,
+				nextMessage = ::habits1,
+				messageExtra = { GoalPreviewsWithBackground() })
 
 		fun nextByUser(): Message = Message(text = "Next", isMessageByUser = true)
 		fun habits1(): Message =
@@ -70,17 +66,24 @@ class OnboardingViewModel : ChatViewModel() {
 			Message(text = "You can see in the preview below how the widget will look like.", nextMessage = ::setTitle)
 
 		fun setTitle(): Message =
-			Message(text = "Please describe your goal in 1-2 words.", bottomArea = BottomArea.TitleInput, nextMessage = ::setInterval)
+			Message(text = "Please describe your goal in 1-2 words.", bottomArea = BottomArea.TitleInput, nextMessage = ::goalPreview)
+
+		fun goalPreview(): Message =
+			Message(text = "Your goal will look like this:", bottomArea = BottomArea.AutoAdvance, nextMessage = ::setInterval, messageExtra = {
+				GoalPreviewWithBackground(
+					goal = goal.value!!.copy(statusOverride = Status.GREEN))
+			})
 
 		fun editGoalDescription(): Message = Message(text = "Edit goal description", nextMessage = ::editTitle, isMessageByUser = true)
 		fun editTitle(): Message =
 			Message(text = "Enter a new goal description", bottomArea = BottomArea.TitleInput, nextMessage = ::editTitleConfirm)
 
 		fun editTitleConfirm(): Message =
-			Message(text = "Alright, updated your goal description to: ${goal.value!!.title}", nextMessage = ::addToHomeScreen)
-
-		fun editTitleConfirmBasic(): Message =
-			Message(text = "Alright, updated your goal description.", nextMessage = ::addToHomeScreen)
+			Message(text = "Your goal now looks like this:", nextMessage = ::addToHomeScreen, messageExtra = {
+				GoalPreviewWithBackground(
+					goal = goal.value!!.copy(statusOverride = Status.GREEN))
+			}
+			)
 
 		fun titleByUser(): Message = Message(text = goal.value!!.title, isMessageByUser = true)
 		fun setInterval(): Message =

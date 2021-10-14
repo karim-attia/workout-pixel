@@ -49,15 +49,13 @@ fun Onboarding(
 		lastMessage = shownMessages.last(),
 		messageTemplates = onboardingViewModel.messageTemplates,
 		// Convert message template to message builder.
-		insertMessageAtNextPosition = {messageTemplate -> onboardingViewModel.insertMessageBuilderToQueueAtNextPositionAndAdvance(messageBuilder = { messageTemplate }) },
+		insertMessageAtNextPosition = { messageTemplate -> onboardingViewModel.insertMessageBuilderToQueueAtNextPositionAndAdvance(messageBuilder = { messageTemplate }) },
 		scrollState = onboardingViewModel.scrollState,
 		scrollDown = { onboardingViewModel.scrollDown() },
 		goal = onboardingViewModel.goal.observeAsState(initial = Goal()).value,
 		updateGoal = { onboardingViewModel.updateGoal(it) },
 		addNewWidgetToHomeScreen = addNewWidgetToHomeScreen,
-		onboardingViewModel = onboardingViewModel,
-
-		)
+	)
 }
 
 @ExperimentalComposeUiApi
@@ -72,7 +70,6 @@ fun Onboarding(
 	insertMessageAtNextPosition: (Message) -> Unit,
 	scrollState: ScrollState,
 	scrollDown: () -> Unit,
-	onboardingViewModel: OnboardingViewModel,
 ) {
 	Column {
 		Column(
@@ -111,7 +108,6 @@ fun Onboarding(
 			addNewWidgetToHomeScreen = addNewWidgetToHomeScreen,
 			insertMessageAtNextPosition = insertMessageAtNextPosition,
 			scrollDown = { scrollDown() },
-			onboardingViewModel = onboardingViewModel,
 		)
 	}
 }
@@ -126,7 +122,6 @@ fun BottomArea(
 	insertMessageAtNextPosition: (Message) -> Unit,
 	addNewWidgetToHomeScreen: (Goal) -> Unit,
 	scrollDown: () -> Unit,
-	onboardingViewModel: OnboardingViewModel,
 ) {
 	Box(
 		contentAlignment = Alignment.CenterEnd,

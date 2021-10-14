@@ -19,3 +19,4 @@ val GreenTest = Color(0xFF3DDC84)
 
 
 val GrayBackground: Int = rgb(250,250,250)
+val GrayBackgroundColor: Color = Color(GrayBackground)

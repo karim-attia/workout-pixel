@@ -28,8 +28,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import ch.karimattia.workoutpixel.core.getColorFromStatusColor
+import ch.karimattia.workoutpixel.core.testGoals
 import ch.karimattia.workoutpixel.data.Goal
 import ch.karimattia.workoutpixel.data.SettingsData
+import ch.karimattia.workoutpixel.ui.theme.GrayBackground
+import ch.karimattia.workoutpixel.ui.theme.GrayBackgroundColor
 import ch.karimattia.workoutpixel.ui.theme.InfoColor
 
 @Suppress("unused")
@@ -38,8 +41,8 @@ private const val TAG: String = "Reusables"
 @Composable
 fun GoalPreview(
 	goal: Goal,
-	settingsData: SettingsData,
 	modifier: Modifier = Modifier,
+	settingsData: SettingsData = SettingsData(),
 	backgroundColor: Color = getColorFromStatusColor(goal.status(), settingsData = settingsData),
 	onClick: () -> Unit = {},
 ) {
@@ -175,7 +178,7 @@ fun GoalTitleTextField(
 	val interactionSource = remember { MutableInteractionSource() }
 	BasicTextField(
 		value = title,
-		onValueChange = {			onValueChange(it)		},
+		onValueChange = { onValueChange(it) },
 		textStyle = LocalTextStyle.current.copy(
 			color = MaterialTheme.colors.onBackground,
 			fontSize = 20.sp
@@ -204,4 +207,30 @@ fun GoalTitleTextField(
 			.fillMaxWidth()
 			.padding(bottom = 10.dp)
 	)
+}
+
+@Composable
+fun GoalPreviewsWithBackground() {
+	Row(modifier = Modifier
+		.padding(start = 8.dp, bottom = 8.dp)
+		.background(GrayBackgroundColor)
+		.padding(all = 6.dp)
+		)
+		{
+			GoalPreview(goal = testGoals[0])
+			Spacer(modifier = Modifier.width(8.dp))
+			GoalPreview(goal = testGoals[1])
+		}
+}
+
+@Composable
+fun GoalPreviewWithBackground(goal: Goal) {
+	Row(modifier = Modifier
+		.padding(start = 8.dp, bottom = 8.dp)
+		.background(GrayBackgroundColor)
+		.padding(all = 6.dp)
+	)
+	{
+		GoalPreview(goal = goal)
+	}
 }
