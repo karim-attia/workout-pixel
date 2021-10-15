@@ -4,12 +4,8 @@ import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -21,14 +17,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.SolidColor
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -50,9 +42,7 @@ fun EditGoalView(
 	initialGoal: Goal,
 	isFirstConfigure: Boolean,
 	goalsWithoutWidget: List<Goal> = emptyList(),
-	updateGoal: (Goal) -> Unit,
-	insertGoal: (Goal) -> Unit = { },
-	settingsData: SettingsData,
+	lambdas: Lambdas,
 ) {
 	Log.d(TAG, "START")
 	Log.d(TAG, "isFirstConfigure: $isFirstConfigure")
@@ -95,7 +85,7 @@ fun EditGoalView(
 				goalsWithoutWidget = goalsWithoutWidget,
 				connectGoal = { updatedConnectedGoal ->
 					updatedConnectedGoal.appWidgetId = initialGoal.appWidgetId
-					updateGoal(updatedConnectedGoal)
+					lambdas.updateGoalFilledIn(updatedConnectedGoal, false)
 				},
 				modifier = modifier,
 			)
@@ -118,7 +108,7 @@ fun EditGoalView(
 		WidgetConfigurationPreview(
 			editGoalViewGoal = editGoalViewGoal,
 			isFirstConfigure = isFirstConfigure,
-			settingsData = settingsData,
+			settingsData = lambdas.settingsData,
 			modifier = modifier,
 		)
 		Spacer(
@@ -129,7 +119,7 @@ fun EditGoalView(
 		)
 		AddUpdateWidgetButton(
 			isFirstConfigure = isFirstConfigure,
-			insertUpdateWidget = { if (isFirstConfigure) insertGoal(editGoalViewGoal) else updateGoal(editGoalViewGoal) },
+			insertUpdateWidget = { if (isFirstConfigure) lambdas.insertGoal(editGoalViewGoal) else lambdas.updateGoalFilledIn(editGoalViewGoal, false) },
 			modifier = Modifier
 				.padding(top = 24.dp)
 				.align(Alignment.End),
@@ -317,7 +307,7 @@ fun SetUpYourWidget(
 	)
 
 	GoalTitleTextField(
-		title= setUpYourWidgetGoal.title,
+		title = setUpYourWidgetGoal.title,
 		onValueChange = {
 			setUpYourWidgetGoal.title = it
 			setUpYourWidgetGoalChange(setUpYourWidgetGoal)
@@ -462,7 +452,6 @@ fun EditGoalViewPreview() {
 	EditGoalView(
 		initialGoal = testGoals[0],
 		isFirstConfigure = false,
-		updateGoal = { },
-		settingsData = SettingsData(),
+		lambdas = Lambdas()
 	)
 }

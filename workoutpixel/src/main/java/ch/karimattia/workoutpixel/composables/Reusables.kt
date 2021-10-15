@@ -241,8 +241,10 @@ data class Lambdas(
 	val updateGoal: GoalFunction = {},
 	val updateGoalFilledIn: (goal: Goal, navigateUp: Boolean) -> Unit = { _, _ -> },
 	val deleteGoal: GoalFunction = {},
+	val insertGoal: GoalFunction = {},
 	val addWidgetToHomeScreen: suspend (goal: Goal, insertNewGoal: Boolean) -> Int = { _, _ -> 0 },
 	val addWidgetToHomeScreenFilledIn: suspend () -> Unit = { },
 	val settingsData: SettingsData = SettingsData(),
 	val settingChange: (SettingsData) -> Unit = {},
+	val navigateTo: (destination: String, goal: Goal?) -> Unit = {_, _ ->},
 )

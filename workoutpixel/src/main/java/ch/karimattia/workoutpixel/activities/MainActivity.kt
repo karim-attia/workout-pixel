@@ -49,7 +49,7 @@ class MainActivity : ComponentActivity() {
 	// Create a class that has those two and extend it (also in AppWidgetProvider, ConfigureActivity)?
 	@Inject
 	lateinit var widgetActionsFactory: WidgetActions.Factory
-	private fun goalActions(goal: Goal): WidgetActions = widgetActionsFactory.create(goal)
+	private fun widgetActions(goal: Goal): WidgetActions = widgetActionsFactory.create(goal)
 
 	// Or inject via constructor? Only for below. Doesn't work for AppWidgetProvider.
 	@Inject
@@ -71,13 +71,13 @@ class MainActivity : ComponentActivity() {
 				updateAfterClick = {
 					// contains updateGoal
 					lifecycleScope.launch {
-						goalActions(it).updateAfterClick()
+						widgetActions(it).updateAfterClick()
 					}
 				},
 				updateGoal = { goal ->
 					lifecycleScope.launch {
 						goalViewModel.updateGoal(goal)
-						goalActions(goal).runUpdate(true)
+						widgetActions(goal).runUpdate(true)
 					}
 				},
 				deleteGoal = { lifecycleScope.launch { goalViewModel.deleteGoal(it) } },
@@ -85,7 +85,7 @@ class MainActivity : ComponentActivity() {
 					// lifecycleScope.launch {
 					Log.d(TAG, "addWidgetToHomeScreen")
 					if (insertNewGoal) goal.uid = goalViewModel.insertGoal(goal)
-					goalActions(goal).pinAppWidget()
+					widgetActions(goal).pinAppWidget()
 					return@Lambdas goal.uid
 					// }
 				},
@@ -109,33 +109,16 @@ class MainActivity : ComponentActivity() {
 				updateAfterClick = {
 					// contains updateGoal
 					lifecycleScope.launch {
-						goalActions(it).updateAfterClick()
+						widgetActions(it).updateAfterClick()
 					}
 				},
 				updateGoal = { goal ->
 					lifecycleScope.launch {
 						goalViewModel.updateGoal(goal)
-						goalActions(goal).runUpdate(true)
+						widgetActions(goal).runUpdate(true)
 					}
-				},
-				deleteGoal = { lifecycleScope.launch { goalViewModel.deleteGoal(it) } },
-				addWidgetToHomeScreen = { goal, insertNewGoal ->
-					// lifecycleScope.launch {
-					if (insertNewGoal) goal.uid = goalViewModel.insertGoal(goal)
-					goalActions(goal).pinAppWidget()
-					goal.uid
-					// }
 				},
 				settingsData = settingsViewModel.settingsData.observeAsState().value,
-				settingChange = {
-					lifecycleScope.launch {
-						Log.d(TAG, "settingChange")
-						settingsViewModel.updateSettings(it)
-						// TODO: Could move to ViewModel
-						delay(200)
-						otherActions.updateAllWidgets()
-					}
-				},
 				lambdas = mainActivityLambdas,
 			)
 		}
@@ -160,12 +143,9 @@ fun WorkoutPixelApp(
 	pastClickViewModelAssistedFactory: PastClickViewModelAssistedFactory,
 	currentGoalUid: Int = goalViewModel.currentGoalUid.observeAsState(initial = Constants.INVALID_GOAL_UID).value,
 	settingsData: SettingsData?,
-	settingChange: (SettingsData) -> Unit,
 	goals: List<Goal>,
 	updateAfterClick: GoalFunction,
 	updateGoal: GoalFunction,
-	deleteGoal: GoalFunction,
-	addWidgetToHomeScreen: suspend (goal: Goal, insertNewGoal: Boolean) -> Int,
 	lambdas: Lambdas,
 ) {
 	WorkoutPixelTheme(
@@ -238,37 +218,22 @@ fun WorkoutPixelApp(
 					navController = navController,
 					goals = goals,
 					updateAfterClick = updateAfterClick,
-					navigateTo = { destination: String, goal: Goal? ->
-						Log.d(TAG, "navigateTo $goal")
-						goalViewModel.changeCurrentGoalUid(goal)
-						navController.navigate(destination)
-					},
-					updateGoal = { updatedGoal: Goal, navigateUp: Boolean ->
-						updateGoal(updatedGoal)
-						if (navigateUp) {
-							navController.navigateUp()
-						}
-
-					},
-					deleteGoal = { deletedGoal: Goal, navigateUp: Boolean ->
-						deleteGoal(deletedGoal)
-						if (navigateUp) {
-							// The goal uid of the deleted goal doesn't exist anymore. Removing it from the current goal removes sources of errors.
-							goalViewModel.changeCurrentGoalUid(null)
-							navController.navigateUp()
-						}
-					},
-					addWidgetToHomeScreen = addWidgetToHomeScreen,
 					currentGoal = currentGoal,
 					pastClickViewModelAssistedFactory = pastClickViewModelAssistedFactory,
-					settingsData = settingsData,
-					settingChange = settingChange,
 					// Make navigateUp a separate function?
-					lambdas = lambdas.copy( updateGoalFilledIn = { updatedGoal: Goal, navigateUp: Boolean ->
-						lambdas.updateGoal(updatedGoal)
-						if (navigateUp) {
-							navController.navigateUp()
-						}}),
+					lambdas = lambdas.copy(
+						updateGoalFilledIn = { updatedGoal: Goal, navigateUp: Boolean ->
+							lambdas.updateGoal(updatedGoal)
+							if (navigateUp) {
+								navController.navigateUp()
+							}
+						},
+						navigateTo = { destination: String, goal: Goal? ->
+							Log.d(TAG, "navigateTo $goal")
+							goalViewModel.changeCurrentGoalUid(goal)
+							navController.navigate(destination)
+						},
+					),
 					modifier = Modifier.padding(innerPadding),
 				)
 			}
@@ -285,15 +250,9 @@ fun WorkoutPixelNavHost(
 	navController: NavHostController,
 	goals: List<Goal>,
 	updateAfterClick: GoalFunction,
-	navigateTo: (destination: String, goal: Goal?) -> Unit,
-	updateGoal: (updatedGoal: Goal, navigateUp: Boolean) -> Unit,
-	deleteGoal: (updatedGoal: Goal, navigateUp: Boolean) -> Unit,
-	addWidgetToHomeScreen: suspend (goal: Goal, insertNewGoal: Boolean) -> Int,
 	currentGoal: Goal?,
 	pastClickViewModelAssistedFactory: PastClickViewModelAssistedFactory,
 	modifier: Modifier = Modifier,
-	settingsData: SettingsData,
-	settingChange: (SettingsData) -> Unit,
 	lambdas: Lambdas,
 ) {
 	NavHost(
@@ -309,9 +268,7 @@ fun WorkoutPixelNavHost(
 			Log.d(TAG, "------------GoalsList------------")
 			AllGoals(
 				goals = goals,
-				updateAfterClick = updateAfterClick,
-				navigateTo = navigateTo,
-				settingsData = settingsData,
+				lambdas = lambdas,
 			)
 		}
 		composable(route = WorkoutPixelScreen.Instructions.name) {
@@ -319,7 +276,7 @@ fun WorkoutPixelNavHost(
 			val appWidgetManager = AppWidgetManager.getInstance(LocalContext.current)
 			if (appWidgetManager.isRequestPinAppWidgetSupported) {
 				Onboarding(/*addNewWidgetToHomeScreen = { addWidgetToHomeScreen(it, true) }*/
-				lambdas = lambdas)
+					lambdas = lambdas)
 			} else {
 				Instructions()
 			}
@@ -344,8 +301,7 @@ fun WorkoutPixelNavHost(
 				EditGoalView(
 					initialGoal = currentGoal,
 					isFirstConfigure = false,
-					updateGoal = { updateGoal(it, true) },
-					settingsData = settingsData,
+					lambdas = lambdas,
 				)
 			} else (
 					Text("currentGoal = null")
@@ -357,8 +313,7 @@ fun WorkoutPixelNavHost(
 		) {
 			Log.d(TAG, "------------Settings------------")
 			Settings(
-				settingsData = settingsData,
-				settingChange = settingChange,
+				lambdas = lambdas,
 			)
 		}
 

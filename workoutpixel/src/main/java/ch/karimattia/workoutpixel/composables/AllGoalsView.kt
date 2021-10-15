@@ -34,25 +34,19 @@ private const val TAG: String = "AllGoals"
 @Composable
 fun AllGoals(
 	goals: List<Goal>,
-	updateAfterClick: (Goal) -> Unit,
-	navigateTo: (destination: String, goal: Goal?) -> Unit,
-	settingsData: SettingsData,
+	lambdas: Lambdas,
 ) {
 	GoalList(
 		goals = goals,
-		updateAfterClick = updateAfterClick,
-		navigateTo = navigateTo,
-		settingsData = settingsData,
+		lambdas = lambdas
 	)
 }
 
 @Composable
 fun GoalList(
 	goals: List<Goal>,
-	updateAfterClick: (Goal) -> Unit,
-	navigateTo: (destination: String, goal: Goal?) -> Unit,
-	settingsData: SettingsData,
-) {
+	lambdas: Lambdas,
+	) {
 	Column(
 		modifier = Modifier
 			.verticalScroll(rememberScrollState())
@@ -63,13 +57,12 @@ fun GoalList(
 				// contentPadding = PaddingValues(top = 6.dp, bottom = 40.dp),
 				GoalCard(
 					goal = goal,
-					updateAfterClick = { updateAfterClick(goal) },
-					navigateTo = navigateTo,
-					settingsData = settingsData,
+					updateAfterClick = { lambdas.updateGoal(goal) },
+					lambdas = lambdas
 				)
 			}
 		} else {
-			InstructionsCard(navigateTo = { navigateTo(WorkoutPixelScreen.Instructions.name, null) })
+			InstructionsCard(navigateTo = { lambdas.navigateTo(WorkoutPixelScreen.Instructions.name, null) })
 		}
 
 	}
@@ -79,9 +72,8 @@ fun GoalList(
 fun GoalCard(
 	goal: Goal,
 	updateAfterClick: () -> Unit,
-	navigateTo: (destination: String, goal: Goal?) -> Unit,
-	settingsData: SettingsData,
-) {
+	lambdas: Lambdas,
+	) {
 	Card(
 		backgroundColor = Color.White,
 		elevation = 4.dp,
@@ -89,7 +81,7 @@ fun GoalCard(
 			.padding(vertical = 4.dp, horizontal = 8.dp)
 			.fillMaxWidth()
 			.clickable {
-				navigateTo(WorkoutPixelScreen.GoalDetailView.name, goal)
+				lambdas.navigateTo(WorkoutPixelScreen.GoalDetailView.name, goal)
 			}
 	) {
 		// Preview and rest
@@ -100,7 +92,7 @@ fun GoalCard(
 			GoalPreview(
 				goal = goal,
 				onClick = updateAfterClick,
-				settingsData = settingsData,
+				settingsData = lambdas.settingsData,
 				modifier = Modifier.padding(all = 4.dp)
 			)
 			// Rest
@@ -109,7 +101,7 @@ fun GoalCard(
 				GoalTitle(goal)
 				Row(modifier = Modifier.padding(top = 1.dp)) {
 					IntervalIconAndText(goal = goal)
-					LastDoneIconAndText(goal = goal, settingsData = settingsData)
+					LastDoneIconAndText(goal = goal, settingsData = lambdas.settingsData)
 				}
 			}
 		}
@@ -182,8 +174,6 @@ fun InstructionsCard(
 fun AllGoalsPreview() {
 	AllGoals(
 		goals = testGoals,
-		updateAfterClick = {},
-		navigateTo = { _, _ -> },
-		settingsData = SettingsData(),
+		lambdas = Lambdas()
 	)
 }

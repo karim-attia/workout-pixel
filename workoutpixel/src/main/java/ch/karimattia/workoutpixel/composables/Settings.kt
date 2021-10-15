@@ -34,9 +34,10 @@ private const val TAG: String = "Settings"
 
 @Composable
 fun Settings(
-	settingsData: SettingsData,
-	settingChange: (SettingsData) -> Unit,
-) {
+	lambdas: Lambdas,
+	settingsData: SettingsData = lambdas.settingsData,
+	settingChange: (SettingsData) -> Unit = lambdas.settingChange,
+	) {
 	val goal = Goal(title = "Select\ncolor")
 	Log.d(TAG, "dateLanguage: ${settingsData.dateLanguage} / dateCountry: ${settingsData.dateCountry}")
 	Log.d(TAG, "timeLanguage: ${settingsData.timeLanguage} / timeCountry: ${settingsData.timeCountry}")
@@ -271,6 +272,6 @@ fun SettingsTitle(
 @Composable
 fun SettingsPreview() {
 	Settings(
-		settingsData = SettingsData(), settingChange = {}
+		lambdas = Lambdas()
 	)
 }

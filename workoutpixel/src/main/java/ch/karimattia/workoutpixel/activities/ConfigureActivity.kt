@@ -18,10 +18,12 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.lifecycle.lifecycleScope
 import ch.karimattia.workoutpixel.composables.EditGoalView
+import ch.karimattia.workoutpixel.composables.Lambdas
 import ch.karimattia.workoutpixel.core.WidgetActions
 import ch.karimattia.workoutpixel.data.*
 import ch.karimattia.workoutpixel.ui.theme.WorkoutPixelTheme
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -43,6 +45,8 @@ class ConfigureActivity : ComponentActivity() {
 		val goalViewModel by viewModels<GoalViewModel>()
 		val settingsViewModel: SettingsViewModel by viewModels()
 		val goal = Goal()
+
+
 
 		// Find the widget id and whether it is a reconfigure activity from the intent.
 		val extras = intent.extras
@@ -70,9 +74,15 @@ class ConfigureActivity : ComponentActivity() {
 			val isFirstConfigure = collectedGoal == goal
 			Log.d(TAG, "isFirstConfigure: $isFirstConfigure")
 
-			ConfigureActivityCompose(
-				initialGoal = if (isFirstConfigure) goal else collectedGoal,
-				isFirstConfigure = isFirstConfigure,
+			val configureActivityLambdas = Lambdas(
+				updateGoal = { updatedGoal ->
+					lifecycleScope.launch {
+						// Insert the goal into the DB and also update the widget.
+						goalViewModel.updateGoal(updatedGoal)
+						widgetActions(goal = updatedGoal).runUpdate(true)
+						setWidgetAndFinish(goal = updatedGoal, isFirstConfigure = isFirstConfigure)
+					}
+				},
 				insertGoal = { updatedGoal ->
 					lifecycleScope.launch {
 						// Insert the goal into the DB and also update the widget.
@@ -81,16 +91,14 @@ class ConfigureActivity : ComponentActivity() {
 						setWidgetAndFinish(goal = updatedGoal, isFirstConfigure = isFirstConfigure)
 					}
 				},
-				updateGoal = {updatedGoal ->
-					lifecycleScope.launch {
-						// Insert the goal into the DB and also update the widget.
-						goalViewModel.updateGoal(updatedGoal)
-						widgetActions(goal = updatedGoal).runUpdate(true)
-						setWidgetAndFinish(goal = updatedGoal, isFirstConfigure = isFirstConfigure)
-					}
-				},
+				settingsData = settingsViewModel.settingsData.observeAsState(SettingsData()).value,
+			)
+
+			ConfigureActivityCompose(
+				initialGoal = if (isFirstConfigure) goal else collectedGoal,
+				isFirstConfigure = isFirstConfigure,
 				goalsWithoutWidget = goalRepository.loadGoalsWithoutValidAppWidgetId().collectAsState(initial = emptyList()).value,
-				settingsData = settingsViewModel.settingsData.observeAsState(initial = SettingsData()).value,
+				lambdas = configureActivityLambdas,
 			)
 		}
 	}
@@ -115,9 +123,7 @@ fun ConfigureActivityCompose(
 	initialGoal: Goal,
 	isFirstConfigure: Boolean,
 	goalsWithoutWidget: List<Goal>,
-	updateGoal: (Goal) -> Unit,
-	insertGoal: (Goal) -> Unit,
-	settingsData: SettingsData,
+	lambdas: Lambdas,
 ) {
 	Log.d(TAG, "initialGoal.toString() $initialGoal")
 	Log.d(TAG, "initialGoal isFirstConfigure $isFirstConfigure")
@@ -131,9 +137,7 @@ fun ConfigureActivityCompose(
 				initialGoal = initialGoal,
 				isFirstConfigure = isFirstConfigure,
 				goalsWithoutWidget = goalsWithoutWidget,
-				updateGoal = updateGoal,
-				insertGoal = insertGoal,
-				settingsData = settingsData,
+				lambdas = lambdas
 				// modifier = Modifier.padding(innerPadding),
 			)
 		}
