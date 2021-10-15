@@ -56,7 +56,10 @@ fun GoalDetailView(
 	lambdas: Lambdas,
 ) {
 	val goalDetailViewlambdas = lambdas.copy(
-		addWidgetToHomeScreenFilledIn = { lambdas.addWidgetToHomeScreen(currentGoal, true) }, //{ suspend { lambdas.addWidgetToHomeScreen(currentGoal, false) }},
+		addWidgetToHomeScreenFilledIn = {
+			lambdas.addWidgetToHomeScreen(currentGoal,
+				true)
+		}, //{ suspend { lambdas.addWidgetToHomeScreen(currentGoal, false) }},
 		updateAfterClickFilledIn = { lambdas.updateAfterClick(currentGoal) },
 	)
 	GoalDetailView(
@@ -90,7 +93,7 @@ fun GoalDetailView(
 		)
 		AnimatedVisibility(!currentGoal.hasValidAppWidgetId()) {
 			GoalDetailNoWidgetCard(
-				currentGoal = currentGoal, lambdas = lambdas/*addWidgetToHomeScreen = addWidgetToHomeScreen*/,
+				currentGoal = currentGoal, lambdas = lambdas,/*addWidgetToHomeScreen = addWidgetToHomeScreen*/
 			)
 		}
 
@@ -153,7 +156,7 @@ fun GoalDetailNoWidgetCard(
 			Text(text = "Delete goal".uppercase(), modifier = Modifier.padding(end = 16.dp))
 		}
 		MaterialDialog(dialogState = dialogState, buttons = {
-			positiveButton(text = "Confirm", onClick = { lambdas.deleteGoal(currentGoal) })
+			positiveButton(text = "Confirm", onClick = { lambdas.deleteGoalAndNavigate(currentGoal, true) })
 			negativeButton(text = "Cancel")
 		}) {
 			title(text = "Do you really want to delete this goal?")
@@ -245,7 +248,7 @@ fun PastClickEntry(
 	pastClick: PastClick,
 	togglePastClick: (PastClick) -> Unit,
 	lambdas: Lambdas,
-	) {
+) {
 	PastClickEntry(
 		date = dateBeautiful(pastClick.workoutTime, lambdas.settingsData.dateLocale()),
 		time = timeBeautiful(pastClick.workoutTime, lambdas.settingsData.timeLocale()),

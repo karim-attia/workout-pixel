@@ -47,7 +47,6 @@ interface GoalDao {
 	suspend fun deleteGoal(goal: Goal)
 
 
-
 	// Past Workouts
 	@Query("SELECT * FROM pastWorkouts WHERE widgetUid=:goalUid ORDER BY workoutTime DESC")
 	fun loadAllPastWorkoutsFlow(goalUid: Int): Flow<List<PastClick>>

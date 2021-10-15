@@ -19,7 +19,6 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import java.lang.Integer.max
 import kotlin.math.ceil
 import kotlin.math.floor
-import kotlin.math.roundToInt
 
 private const val TAG: String = "GoalActions"
 

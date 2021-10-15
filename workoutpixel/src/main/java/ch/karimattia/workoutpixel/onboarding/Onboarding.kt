@@ -113,7 +113,7 @@ fun Onboarding(
 			scrollDown = { scrollDown() },
 			lambdas = lambdas,
 
-		)
+			)
 	}
 }
 
@@ -127,7 +127,7 @@ fun BottomArea(
 	insertMessageAtNextPosition: (Message) -> Unit,
 	scrollDown: () -> Unit,
 	lambdas: Lambdas,
-	) {
+) {
 	Box(
 		contentAlignment = Alignment.CenterEnd,
 		modifier = Modifier

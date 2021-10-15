@@ -54,7 +54,9 @@ data class Goal
 		var widgetText: String = title
 		if ((status() != Status.NONE)) {
 			// If statusOverride override is active, use currentTimeMillis to show how the widget will look in the preview.
-			val displayTime: Long = if (statusOverride == Status.GREEN) System.currentTimeMillis() else {lastWorkout}
+			val displayTime: Long = if (statusOverride == Status.GREEN) System.currentTimeMillis() else {
+				lastWorkout
+			}
 			if (showDate) widgetText += "\n${dateBeautiful(displayTime, settingsData.dateLocale())}"
 			if (showTime) widgetText += "\n${timeBeautiful(displayTime, settingsData.timeLocale())}"
 		}
