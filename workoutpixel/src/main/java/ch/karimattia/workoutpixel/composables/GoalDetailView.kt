@@ -1,10 +1,8 @@
 package ch.karimattia.workoutpixel.composables
 
 import android.appwidget.AppWidgetManager
-import android.content.ComponentName
 import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.expandVertically
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -17,6 +15,7 @@ import androidx.compose.material.icons.filled.Undo
 import androidx.compose.material.icons.filled.Widgets
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.key
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -31,7 +30,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import ch.karimattia.workoutpixel.R
-import ch.karimattia.workoutpixel.core.*
+import ch.karimattia.workoutpixel.core.dateBeautiful
+import ch.karimattia.workoutpixel.core.testGoals
+import ch.karimattia.workoutpixel.core.testPastClicks
+import ch.karimattia.workoutpixel.core.timeBeautiful
 import ch.karimattia.workoutpixel.data.*
 import ch.karimattia.workoutpixel.ui.theme.GreenTest
 import ch.karimattia.workoutpixel.ui.theme.TextBlack
@@ -39,45 +41,38 @@ import com.vanpra.composematerialdialogs.MaterialDialog
 import com.vanpra.composematerialdialogs.message
 import com.vanpra.composematerialdialogs.rememberMaterialDialogState
 import com.vanpra.composematerialdialogs.title
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.launch
 import java.util.stream.Collectors
 
 private const val TAG: String = "GoalDetailView"
 
 @Composable
 fun GoalDetailView(
-	goal: Goal,
-	updateAfterClick: () -> Unit,
-	deleteGoal: (Goal) -> Unit,
-	updateGoal: (updatedGoal: Goal, navigateUp: Boolean) -> Unit,
-	addWidgetToHomeScreen: (Goal) -> Unit,
-	settingsData: SettingsData,
+	currentGoal: Goal,
+	// Move into lambdas?
 	pastClickViewModelAssistedFactory: PastClickViewModelAssistedFactory,
-	pastClickViewModel: PastClickViewModel = viewModel(factory = provideFactory(pastClickViewModelAssistedFactory, goal.uid)),
+	pastClickViewModel: PastClickViewModel = viewModel(factory = provideFactory(pastClickViewModelAssistedFactory, currentGoal.uid)),
 	pastClicks: List<PastClick> = pastClickViewModel.pastClicks,
+	lambdas: Lambdas,
 ) {
+	val goalDetailViewlambdas = lambdas.copy(
+		addWidgetToHomeScreenFilledIn = { lambdas.addWidgetToHomeScreen(currentGoal, true) }, //{ suspend { lambdas.addWidgetToHomeScreen(currentGoal, false) }},
+		updateAfterClickFilledIn = { lambdas.updateAfterClick(currentGoal) },
+	)
 	GoalDetailView(
-		goal = goal,
-		updateAfterClick = updateAfterClick,
-		deleteGoal = deleteGoal,
-		updateGoal = updateGoal,
-		addWidgetToHomeScreen = { addWidgetToHomeScreen(goal) },
-		updatePastClick = { runBlocking { pastClickViewModel.updatePastClick(it)  }},
+		currentGoal = currentGoal,
+		updatePastClick = { suspend { pastClickViewModel.updatePastClick(it) } },
 		pastClicks = pastClicks,
-		settingsData = settingsData,
+		lambdas = goalDetailViewlambdas,
 	)
 }
 
 @Composable
 fun GoalDetailView(
-	goal: Goal,
-	updateAfterClick: () -> Unit,
-	deleteGoal: (Goal) -> Unit,
-	updateGoal: (updatedGoal: Goal, navigateUp: Boolean) -> Unit,
-	addWidgetToHomeScreen: () -> Unit,
+	currentGoal: Goal,
 	updatePastClick: (PastClick) -> Unit,
 	pastClicks: List<PastClick>,
-	settingsData: SettingsData,
+	lambdas: Lambdas,
 ) {
 
 	Log.d(TAG, "Recomposition Bottom")
@@ -90,22 +85,20 @@ fun GoalDetailView(
 	) {
 		Spacer(modifier = Modifier.height(6.dp))
 		GoalOverviewView(
-			goal = goal,
-			settingsData = settingsData,
-			updateAfterClick = updateAfterClick
+			currentGoal = currentGoal,
+			lambdas = lambdas,
 		)
-		AnimatedVisibility(!goal.hasValidAppWidgetId()) {
+		AnimatedVisibility(!currentGoal.hasValidAppWidgetId()) {
 			GoalDetailNoWidgetCard(
-				goal = goal, deleteGoal = deleteGoal, addWidgetToHomeScreen = addWidgetToHomeScreen,
+				currentGoal = currentGoal, lambdas = lambdas/*addWidgetToHomeScreen = addWidgetToHomeScreen*/,
 			)
 		}
 
 		PastClicks(
-			goal = goal,
-			updateGoal = updateGoal,
+			currentGoal = currentGoal,
 			updatePastClick = updatePastClick,
 			pastClicks = pastClicks,
-			settingsData = settingsData,
+			lambdas = lambdas,
 		)
 
 		Spacer(modifier = Modifier.height(40.dp))
@@ -114,9 +107,8 @@ fun GoalDetailView(
 
 @Composable
 fun GoalOverviewView(
-	goal: Goal,
-	settingsData: SettingsData,
-	updateAfterClick: () -> Unit,
+	currentGoal: Goal,
+	lambdas: Lambdas,
 ) {
 	CardWithTitle(
 		title = "Goal overview",
@@ -125,15 +117,15 @@ fun GoalOverviewView(
 		// Preview and rest
 		Row(verticalAlignment = Alignment.CenterVertically) {
 			GoalPreview(
-				goal = goal, settingsData = settingsData, onClick = updateAfterClick
+				goal = currentGoal, settingsData = lambdas.settingsData, onClick = lambdas.updateAfterClickFilledIn
 			)
 			// Rest
 			Column(
 				modifier = Modifier.padding(start = 6.dp, top = 3.dp)
 			)
 			{
-				IntervalIconAndText(goal = goal)
-				LastDoneIconAndText(goal = goal, settingsData = settingsData)
+				IntervalIconAndText(goal = currentGoal)
+				LastDoneIconAndText(goal = currentGoal, settingsData = lambdas.settingsData)
 			}
 		}
 	}
@@ -141,9 +133,8 @@ fun GoalOverviewView(
 
 @Composable
 fun GoalDetailNoWidgetCard(
-	goal: Goal,
-	deleteGoal: (Goal) -> Unit,
-	addWidgetToHomeScreen: () -> Unit,
+	currentGoal: Goal,
+	lambdas: Lambdas,
 ) {
 	CardWithTitle(
 		title = "No widget for this goal"
@@ -162,7 +153,7 @@ fun GoalDetailNoWidgetCard(
 			Text(text = "Delete goal".uppercase(), modifier = Modifier.padding(end = 16.dp))
 		}
 		MaterialDialog(dialogState = dialogState, buttons = {
-			positiveButton(text = "Confirm", onClick = { deleteGoal(goal) })
+			positiveButton(text = "Confirm", onClick = { lambdas.deleteGoal(currentGoal) })
 			negativeButton(text = "Cancel")
 		}) {
 			title(text = "Do you really want to delete this goal?")
@@ -170,9 +161,11 @@ fun GoalDetailNoWidgetCard(
 		}
 
 		val appWidgetManager = AppWidgetManager.getInstance(LocalContext.current)
+		val scope = rememberCoroutineScope()
+
 		if (appWidgetManager.isRequestPinAppWidgetSupported) {
 			Button(
-				onClick = addWidgetToHomeScreen,
+				onClick = { scope.launch { lambdas.addWidgetToHomeScreenFilledIn() } },
 				modifier = Modifier
 					.padding(top = 4.dp)
 					.fillMaxWidth(),
@@ -188,33 +181,30 @@ fun GoalDetailNoWidgetCard(
 
 @Composable
 fun PastClicks(
-	goal: Goal,
-	updateGoal: (updatedGoal: Goal, navigateUp: Boolean) -> Unit,
+	currentGoal: Goal,
 	updatePastClick: (PastClick) -> Unit,
 	pastClicks: List<PastClick>,
-	settingsData: SettingsData,
+	lambdas: Lambdas,
 ) {
 	CardWithTitle(
 		// TODO: If numberOfPastClicks > 50, declare it. Or implement some paging.
 		title = "Past clicks",
 	) {
 		PastClickList(
-			goal = goal,
-			updateGoal = updateGoal,
+			currentGoal = currentGoal,
 			updatePastClick = updatePastClick,
 			pastClicks = pastClicks,
-			settingsData = settingsData,
+			lambdas = lambdas,
 		)
 	}
 }
 
 @Composable
 fun PastClickList(
-	goal: Goal,
-	updateGoal: (updatedGoal: Goal, navigateUp: Boolean) -> Unit,
+	currentGoal: Goal,
 	updatePastClick: (PastClick) -> Unit,
 	pastClicks: List<PastClick>,
-	settingsData: SettingsData,
+	lambdas: Lambdas,
 ) {
 	val numberOfPastClicks = pastClicks.size
 	if (numberOfPastClicks > 0) {
@@ -225,23 +215,23 @@ fun PastClickList(
 			for (i in 0 until minOf(numberOfPastClicks, 50)) {
 				key(pastClicks[i].uid) {
 					PastClickEntry(
-						settingsData = settingsData,
 						pastClick = pastClicks[i],
 						togglePastClick = {
 							updatePastClick(it)
 							// If this change causes a new last workout time, do all the necessary updates.
 							// TODO: Move setNewLastWorkout to GoalSaveActions and directly save the updated goal there?
-							if (goal.setNewLastWorkout(lastClickBasedOnActiveClicks(pastClicks))) {
-								updateGoal(goal, false)
+							if (currentGoal.setNewLastWorkout(lastClickBasedOnActiveClicks(pastClicks))) {
+								lambdas.updateGoalFilledIn(currentGoal, false)
 							}
-						}
+						},
+						lambdas = lambdas,
 					)
 					Divider(color = Color(TextBlack), thickness = 0.5.dp)
 				}
 			}
 		}
-	} 
-	if(numberOfPastClicks == 0){
+	}
+	if (numberOfPastClicks == 0) {
 		Text(
 			text = stringResource(R.string.you_have_never_completed_this_goal_as_soon_as_you_click_on_the_widget_the_click_will_show_up_here),
 			fontSize = 14.sp
@@ -252,13 +242,13 @@ fun PastClickList(
 
 @Composable
 fun PastClickEntry(
-	settingsData: SettingsData,
 	pastClick: PastClick,
 	togglePastClick: (PastClick) -> Unit,
-) {
+	lambdas: Lambdas,
+	) {
 	PastClickEntry(
-		date = dateBeautiful(pastClick.workoutTime, settingsData.dateLocale()),
-		time = timeBeautiful(pastClick.workoutTime, settingsData.timeLocale()),
+		date = dateBeautiful(pastClick.workoutTime, lambdas.settingsData.dateLocale()),
+		time = timeBeautiful(pastClick.workoutTime, lambdas.settingsData.timeLocale()),
 		icon = if (pastClick.isActive) {
 			Icons.Filled.Delete
 		} else {
@@ -350,14 +340,10 @@ fun lastClickBasedOnActiveClicks(pastClicks: List<PastClick>): Long {
 @Composable
 fun GoalDetailViewPreview() {
 	GoalDetailView(
-		goal = testGoals[0],
-		updateAfterClick = {},
-		deleteGoal = {},
-		updateGoal = { _, _ -> },
-		addWidgetToHomeScreen = {},
+		currentGoal = testGoals[0],
 		updatePastClick = {},
 		pastClicks = testPastClicks,
-		settingsData = SettingsData(),
+		lambdas = Lambdas()
 	)
 }
 

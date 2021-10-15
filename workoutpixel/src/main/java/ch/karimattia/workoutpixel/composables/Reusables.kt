@@ -31,12 +31,12 @@ import ch.karimattia.workoutpixel.core.getColorFromStatusColor
 import ch.karimattia.workoutpixel.core.testGoals
 import ch.karimattia.workoutpixel.data.Goal
 import ch.karimattia.workoutpixel.data.SettingsData
-import ch.karimattia.workoutpixel.ui.theme.GrayBackground
 import ch.karimattia.workoutpixel.ui.theme.GrayBackgroundColor
 import ch.karimattia.workoutpixel.ui.theme.InfoColor
 
 @Suppress("unused")
 private const val TAG: String = "Reusables"
+typealias GoalFunction = (Goal) -> Unit
 
 @Composable
 fun GoalPreview(
@@ -215,12 +215,12 @@ fun GoalPreviewsWithBackground() {
 		.padding(start = 8.dp, bottom = 8.dp)
 		.background(GrayBackgroundColor)
 		.padding(all = 6.dp)
-		)
-		{
-			GoalPreview(goal = testGoals[0])
-			Spacer(modifier = Modifier.width(8.dp))
-			GoalPreview(goal = testGoals[1])
-		}
+	)
+	{
+		GoalPreview(goal = testGoals[0])
+		Spacer(modifier = Modifier.width(8.dp))
+		GoalPreview(goal = testGoals[1])
+	}
 }
 
 @Composable
@@ -234,3 +234,15 @@ fun GoalPreviewWithBackground(goal: Goal) {
 		GoalPreview(goal = goal)
 	}
 }
+
+data class Lambdas(
+	val updateAfterClick: GoalFunction = {},
+	val updateAfterClickFilledIn: () -> Unit = {},
+	val updateGoal: GoalFunction = {},
+	val updateGoalFilledIn: (goal: Goal, navigateUp: Boolean) -> Unit = { _, _ -> },
+	val deleteGoal: GoalFunction = {},
+	val addWidgetToHomeScreen: suspend (goal: Goal, insertNewGoal: Boolean) -> Int = { _, _ -> 0 },
+	val addWidgetToHomeScreenFilledIn: suspend () -> Unit = { },
+	val settingsData: SettingsData = SettingsData(),
+	val settingChange: (SettingsData) -> Unit = {},
+)

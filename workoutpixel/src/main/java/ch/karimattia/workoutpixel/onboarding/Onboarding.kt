@@ -16,6 +16,7 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -29,7 +30,10 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import ch.karimattia.workoutpixel.composables.Lambdas
+import ch.karimattia.workoutpixel.core.Constants
 import ch.karimattia.workoutpixel.data.Goal
+import kotlinx.coroutines.CoroutineScope
 
 @Suppress("unused")
 private const val TAG: String = "Onboarding"
@@ -37,10 +41,23 @@ private const val TAG: String = "Onboarding"
 @ExperimentalComposeUiApi
 @Composable
 fun Onboarding(
-	addNewWidgetToHomeScreen: (Goal) -> Unit,
+/*
+	addNewWidgetToHomeScreen: suspend (Goal) -> Int,
+*/
 	onboardingViewModel: OnboardingViewModel = viewModel(),
+	lambdas: Lambdas,
 ) {
-	onboardingViewModel.scope = rememberCoroutineScope()
+	val newGoal = onboardingViewModel.goal.observeAsState(initial = Goal())
+	val goalDetailViewlambdas = lambdas.copy(
+		addWidgetToHomeScreenFilledIn = {
+			val uid = lambdas.addWidgetToHomeScreen(newGoal.value, true)
+			Log.d(TAG, "uid: $uid")
+			onboardingViewModel.updateGoal(newGoal.value.copy(uid = uid))
+		}
+	)
+
+	val scope: CoroutineScope = rememberCoroutineScope()
+	onboardingViewModel.scope = scope
 
 	val shownMessages = onboardingViewModel.shownMessages
 
@@ -52,9 +69,9 @@ fun Onboarding(
 		insertMessageAtNextPosition = { messageTemplate -> onboardingViewModel.insertMessageBuilderToQueueAtNextPositionAndAdvance(messageBuilder = { messageTemplate }) },
 		scrollState = onboardingViewModel.scrollState,
 		scrollDown = { onboardingViewModel.scrollDown() },
-		goal = onboardingViewModel.goal.observeAsState(initial = Goal()).value,
-		updateGoal = { onboardingViewModel.updateGoal(it) },
-		addNewWidgetToHomeScreen = addNewWidgetToHomeScreen,
+		newGoal = newGoal.value,
+		updateGoal = { goal -> onboardingViewModel.updateGoal(goal) },
+		lambdas = goalDetailViewlambdas,
 	)
 }
 
@@ -64,13 +81,15 @@ fun Onboarding(
 	shownMessages: List<Message>,
 	lastMessage: Message,
 	messageTemplates: OnboardingViewModel.MessageTemplates,
-	goal: Goal,
+	newGoal: Goal,
 	updateGoal: (Goal) -> Unit,
-	addNewWidgetToHomeScreen: (Goal) -> Unit,
 	insertMessageAtNextPosition: (Message) -> Unit,
 	scrollState: ScrollState,
 	scrollDown: () -> Unit,
+	lambdas: Lambdas,
 ) {
+	Log.d(TAG, "goaluid: ${newGoal.uid}")
+
 	Column {
 		Column(
 			modifier = Modifier
@@ -81,33 +100,19 @@ fun Onboarding(
 			for (message in shownMessages) {
 				MessageCard(message = message)
 			}
-/*
-			for (i in 0..minOf(currentStep, messageList.size - 1)) {
-				Log.d(TAG, "currentStep: $currentStep")
-				Log.d(TAG, "i: $i")
-				if (messageList[i].messageExtra == null) MessageCard(message = messageList[i])
-				else Column(
-					horizontalAlignment = when { // 2
-						messageList[i].isMine -> Alignment.End
-						else -> Alignment.Start
-					},
-					modifier = Modifier
-						.fillMaxWidth()
-						.padding(horizontal = 8.dp, vertical = 4.dp),
-				) {
-					messageList[i].messageExtra!!()
-				}
-			}
-*/
 		}
 		BottomArea(
 			lastMessage = lastMessage,
 			messageTemplates = messageTemplates,
-			goal = goal,
+			goal = newGoal,
 			updateGoal = updateGoal,
+/*
 			addNewWidgetToHomeScreen = addNewWidgetToHomeScreen,
+*/
 			insertMessageAtNextPosition = insertMessageAtNextPosition,
 			scrollDown = { scrollDown() },
+			lambdas = lambdas,
+
 		)
 	}
 }
@@ -120,9 +125,9 @@ fun BottomArea(
 	goal: Goal,
 	updateGoal: (Goal) -> Unit,
 	insertMessageAtNextPosition: (Message) -> Unit,
-	addNewWidgetToHomeScreen: (Goal) -> Unit,
 	scrollDown: () -> Unit,
-) {
+	lambdas: Lambdas,
+	) {
 	Box(
 		contentAlignment = Alignment.CenterEnd,
 		modifier = Modifier
@@ -137,12 +142,8 @@ fun BottomArea(
 				.horizontalScroll(state = rememberScrollState())
 		)
 		{
-			Log.d(TAG, "1")
-			Log.d(TAG, "${lastMessage.debugString()}")
-
 			// Specific set of different proposals. Here for the add widget prompt.
 			AnimatedVisibility(visible = lastMessage.bottomArea == BottomArea.AddWidgetPrompt, enter = fadeIn(), exit = ExitTransition.None) {
-				Log.d(TAG, "2")
 				Row {
 					MessageProposal(onClick = {
 						insertMessageAtNextPosition(messageTemplates.editGoalDescription())
@@ -150,7 +151,6 @@ fun BottomArea(
 					MessageProposal(onClick = { insertMessageAtNextPosition(messageTemplates.thumbsUpProposal()) }, text = lastMessage.proposal)
 				}
 			}
-
 
 			// Only proposal next available.
 			AnimatedVisibility(visible = lastMessage.showNextProposal,
@@ -188,9 +188,19 @@ fun BottomArea(
 		}
 
 		// AddWidget
+		Log.d(TAG, "lastMessage.bottomArea: ${lastMessage.bottomArea}")
 		if (lastMessage.bottomArea == BottomArea.AddWidget) {
-			addNewWidgetToHomeScreen(goal)
+			Log.d(TAG, "${goal.uid}")
+			LaunchedEffect(key1 = true, block = {
+				Log.d(TAG, "LaunchedEffect(true) {")
+				lambdas.addWidgetToHomeScreenFilledIn()
+			})
 		}
+		LaunchedEffect(key1 = goal.uid, block = {
+			Log.d(TAG, "LaunchedEffect(goal) {")
+			if (goal.uid != Constants.INVALID_GOAL_UID) insertMessageAtNextPosition(messageTemplates.success())
+			// TODO: Observe if goal with this uid has gotten an AppWidgetId
+		})
 	}
 }
 

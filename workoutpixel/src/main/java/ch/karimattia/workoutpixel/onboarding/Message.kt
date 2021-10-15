@@ -20,5 +20,5 @@ data class Message(
 }
 
 enum class BottomArea {
-	AutoAdvance, ShowNext, AddWidgetPrompt, TitleInput, IntervalInput, AddWidget
+	AutoAdvance, ShowNext, AddWidgetPrompt, TitleInput, IntervalInput, AddWidget, End
 }

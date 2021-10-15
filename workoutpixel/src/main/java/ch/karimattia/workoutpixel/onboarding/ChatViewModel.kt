@@ -1,6 +1,5 @@
 package ch.karimattia.workoutpixel.onboarding
 
-import android.util.Log
 import androidx.compose.foundation.ScrollState
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
@@ -10,6 +9,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
+@Suppress("unused")
 private const val TAG: String = "ChatViewModel"
 
 abstract class ChatViewModel : ViewModel() {
@@ -34,12 +34,6 @@ abstract class ChatViewModel : ViewModel() {
 	 * Check if initially the firstMessage (=latestMessage at this point) has an action and if yes, process it.
 	 * */
 	fun initialize() {
-/*
-		Log.d(TAG, "initialize")
-		Log.d(TAG, firstMessage.debugString())
-		Log.d(TAG, "shownMessages: ${shownMessages.size}")
-		Log.d(TAG, "messageBuilderQueue: ${messageBuilderQueue.size}")
-*/
 		processLatestMessage(firstMessage)
 	}
 
@@ -64,7 +58,6 @@ abstract class ChatViewModel : ViewModel() {
 	 * Check if the latestMessage has an action and if yes, process it. I.e. adding follow-up messages and autoAdvancing.
 	 * */
 	private fun processLatestMessage(lastMessage: Message) {
-		Log.d(TAG, "processLatestMessage")
 		lastMessage.nextMessage?.let { nextMessage -> insertMessageBuilderToQueueAtNextPosition(nextMessage) }
 		checkAutoAdvance(lastMessage)
 	}

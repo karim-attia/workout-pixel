@@ -7,6 +7,7 @@ import ch.karimattia.workoutpixel.composables.GoalPreviewsWithBackground
 import ch.karimattia.workoutpixel.core.Status
 import ch.karimattia.workoutpixel.data.Goal
 
+@Suppress("unused")
 private const val TAG: String = "OnboardingViewModel"
 typealias MessageBuilder = () -> Message
 
@@ -105,6 +106,7 @@ class OnboardingViewModel : ChatViewModel() {
 				nextMessage = ::waitingForCallback)
 
 		fun waitingForCallback(): Message = Message(text = "Waiting until the widget gets added...")
+		fun success(): Message = Message(text = "Success", bottomArea = BottomArea.End)
 	}
 
 }

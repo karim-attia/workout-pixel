@@ -3,7 +3,6 @@ package ch.karimattia.workoutpixel.activities
 import android.appwidget.AppWidgetManager
 import android.os.Bundle
 import android.util.Log
-import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -38,6 +37,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 private const val TAG: String = "MainActivity"
+typealias GoalFunction = (Goal) -> Unit
 
 @AndroidEntryPoint
 @ExperimentalComposeUiApi
@@ -67,6 +67,41 @@ class MainActivity : ComponentActivity() {
 		val settingsViewModel: SettingsViewModel by viewModels()
 
 		setContent {
+			val mainActivityLambdas = Lambdas(
+				updateAfterClick = {
+					// contains updateGoal
+					lifecycleScope.launch {
+						goalActions(it).updateAfterClick()
+					}
+				},
+				updateGoal = { goal ->
+					lifecycleScope.launch {
+						goalViewModel.updateGoal(goal)
+						goalActions(goal).runUpdate(true)
+					}
+				},
+				deleteGoal = { lifecycleScope.launch { goalViewModel.deleteGoal(it) } },
+				addWidgetToHomeScreen = { goal: Goal, insertNewGoal: Boolean ->
+					// lifecycleScope.launch {
+					Log.d(TAG, "addWidgetToHomeScreen")
+					if (insertNewGoal) goal.uid = goalViewModel.insertGoal(goal)
+					goalActions(goal).pinAppWidget()
+					return@Lambdas goal.uid
+					// }
+				},
+				// Don't use this in highest level. Otherwise colors flicker.
+				settingsData = settingsViewModel.settingsData.observeAsState(SettingsData()).value,
+				settingChange = { settingsData: SettingsData ->
+					lifecycleScope.launch {
+						Log.d(TAG, "settingChange")
+						settingsViewModel.updateSettings(settingsData)
+						// TODO: Could move to ViewModel
+						delay(200)
+						otherActions.updateAllWidgets()
+					}
+				},
+			)
+
 			WorkoutPixelApp(
 				goalViewModel = goalViewModel,
 				pastClickViewModelAssistedFactory = pastClickViewModelAssistedFactory,
@@ -77,18 +112,19 @@ class MainActivity : ComponentActivity() {
 						goalActions(it).updateAfterClick()
 					}
 				},
-				updateGoal = {
+				updateGoal = { goal ->
 					lifecycleScope.launch {
-						goalViewModel.updateGoal(it)
-						goalActions(it).runUpdate(true)
+						goalViewModel.updateGoal(goal)
+						goalActions(goal).runUpdate(true)
 					}
 				},
 				deleteGoal = { lifecycleScope.launch { goalViewModel.deleteGoal(it) } },
 				addWidgetToHomeScreen = { goal, insertNewGoal ->
-					lifecycleScope.launch {
-						if (insertNewGoal) goal.uid = goalViewModel.insertGoal(goal)
-						goalActions(goal).pinAppWidget()
-					}
+					// lifecycleScope.launch {
+					if (insertNewGoal) goal.uid = goalViewModel.insertGoal(goal)
+					goalActions(goal).pinAppWidget()
+					goal.uid
+					// }
 				},
 				settingsData = settingsViewModel.settingsData.observeAsState().value,
 				settingChange = {
@@ -99,7 +135,8 @@ class MainActivity : ComponentActivity() {
 						delay(200)
 						otherActions.updateAllWidgets()
 					}
-				}
+				},
+				lambdas = mainActivityLambdas,
 			)
 		}
 
@@ -125,10 +162,11 @@ fun WorkoutPixelApp(
 	settingsData: SettingsData?,
 	settingChange: (SettingsData) -> Unit,
 	goals: List<Goal>,
-	updateAfterClick: (Goal) -> Unit,
-	updateGoal: (Goal) -> Unit,
-	deleteGoal: (Goal) -> Unit,
-	addWidgetToHomeScreen: (goal: Goal, insertNewGoal: Boolean) -> Unit,
+	updateAfterClick: GoalFunction,
+	updateGoal: GoalFunction,
+	deleteGoal: GoalFunction,
+	addWidgetToHomeScreen: suspend (goal: Goal, insertNewGoal: Boolean) -> Int,
+	lambdas: Lambdas,
 ) {
 	WorkoutPixelTheme(
 		darkTheme = false,
@@ -225,6 +263,12 @@ fun WorkoutPixelApp(
 					pastClickViewModelAssistedFactory = pastClickViewModelAssistedFactory,
 					settingsData = settingsData,
 					settingChange = settingChange,
+					// Make navigateUp a separate function?
+					lambdas = lambdas.copy( updateGoalFilledIn = { updatedGoal: Goal, navigateUp: Boolean ->
+						lambdas.updateGoal(updatedGoal)
+						if (navigateUp) {
+							navController.navigateUp()
+						}}),
 					modifier = Modifier.padding(innerPadding),
 				)
 			}
@@ -240,16 +284,17 @@ fun WorkoutPixelApp(
 fun WorkoutPixelNavHost(
 	navController: NavHostController,
 	goals: List<Goal>,
-	updateAfterClick: (Goal) -> Unit,
+	updateAfterClick: GoalFunction,
 	navigateTo: (destination: String, goal: Goal?) -> Unit,
 	updateGoal: (updatedGoal: Goal, navigateUp: Boolean) -> Unit,
 	deleteGoal: (updatedGoal: Goal, navigateUp: Boolean) -> Unit,
-	addWidgetToHomeScreen: (goal: Goal, insertNewGoal: Boolean) -> Unit,
+	addWidgetToHomeScreen: suspend (goal: Goal, insertNewGoal: Boolean) -> Int,
 	currentGoal: Goal?,
 	pastClickViewModelAssistedFactory: PastClickViewModelAssistedFactory,
 	modifier: Modifier = Modifier,
 	settingsData: SettingsData,
 	settingChange: (SettingsData) -> Unit,
+	lambdas: Lambdas,
 ) {
 	NavHost(
 		navController = navController,
@@ -273,7 +318,8 @@ fun WorkoutPixelNavHost(
 			Log.d(TAG, "------------Instructions------------")
 			val appWidgetManager = AppWidgetManager.getInstance(LocalContext.current)
 			if (appWidgetManager.isRequestPinAppWidgetSupported) {
-				Onboarding(addNewWidgetToHomeScreen = { addWidgetToHomeScreen(it, true) })
+				Onboarding(/*addNewWidgetToHomeScreen = { addWidgetToHomeScreen(it, true) }*/
+				lambdas = lambdas)
 			} else {
 				Instructions()
 			}
@@ -283,13 +329,9 @@ fun WorkoutPixelNavHost(
 			Log.d(TAG, "------------GoalDetail $currentGoal------------")
 			if (currentGoal != null) {
 				GoalDetailView(
-					goal = currentGoal,
-					updateAfterClick = { updateAfterClick(currentGoal) },
-					deleteGoal = { deleteGoal(it, true) },
-					updateGoal = updateGoal,
-					addWidgetToHomeScreen = { addWidgetToHomeScreen(it, false) },
-					settingsData = settingsData,
+					currentGoal = currentGoal,
 					pastClickViewModelAssistedFactory = pastClickViewModelAssistedFactory,
+					lambdas = lambdas,
 				)
 			} else (Text("currentGoal = null"))
 		}
