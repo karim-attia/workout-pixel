@@ -221,7 +221,7 @@ fun PastClickList(
 							// If this change causes a new last workout time, do all the necessary updates.
 							// TODO: Move setNewLastWorkout to GoalSaveActions and directly save the updated goal there?
 							if (currentGoal.setNewLastWorkout(lastClickBasedOnActiveClicks(pastClicks))) {
-								lambdas.updateGoalFilledIn(currentGoal, true)
+								lambdas.updateGoalFilledIn(currentGoal, false)
 							}
 						},
 						lambdas = lambdas,

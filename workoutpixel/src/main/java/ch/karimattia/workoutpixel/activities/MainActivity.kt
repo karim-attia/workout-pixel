@@ -207,6 +207,7 @@ fun WorkoutPixelApp(
 					lambdas = lambdas.copy(
 						updateGoalFilledIn = { updatedGoal: Goal, navigateUp: Boolean ->
 							lambdas.updateGoal(updatedGoal)
+							Log.d(TAG, "navigateUp: $navigateUp")
 							if (navigateUp) {
 								navController.navigateUp()
 							}
@@ -216,6 +217,14 @@ fun WorkoutPixelApp(
 							goalViewModel.changeCurrentGoalUid(goal)
 							navController.navigate(destination)
 						},
+						deleteGoalAndNavigate = { deletedGoal: Goal, navigateUp: Boolean ->
+							lambdas.deleteGoal(deletedGoal)
+							if (navigateUp) {
+								// The goal uid of the deleted goal doesn't exist anymore. Removing it from the current goal removes sources of errors.
+								goalViewModel.changeCurrentGoalUid(null)
+								navController.navigateUp()
+							}
+						}
 					),
 					modifier = Modifier.padding(innerPadding),
 				)
