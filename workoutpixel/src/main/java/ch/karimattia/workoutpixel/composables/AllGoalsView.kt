@@ -46,7 +46,7 @@ fun AllGoals(
 fun GoalList(
 	goals: List<Goal>,
 	lambdas: Lambdas,
-	) {
+) {
 	Column(
 		modifier = Modifier
 			.verticalScroll(rememberScrollState())
@@ -73,7 +73,7 @@ fun GoalCard(
 	goal: Goal,
 	updateAfterClick: () -> Unit,
 	lambdas: Lambdas,
-	) {
+) {
 	Card(
 		backgroundColor = Color.White,
 		elevation = 4.dp,

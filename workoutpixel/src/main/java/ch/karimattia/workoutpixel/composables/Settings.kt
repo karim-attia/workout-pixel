@@ -37,7 +37,7 @@ fun Settings(
 	lambdas: Lambdas,
 	settingsData: SettingsData = lambdas.settingsData,
 	settingChange: (SettingsData) -> Unit = lambdas.settingChange,
-	) {
+) {
 	val goal = Goal(title = "Select\ncolor")
 	Log.d(TAG, "dateLanguage: ${settingsData.dateLanguage} / dateCountry: ${settingsData.dateCountry}")
 	Log.d(TAG, "timeLanguage: ${settingsData.timeLanguage} / timeCountry: ${settingsData.timeCountry}")

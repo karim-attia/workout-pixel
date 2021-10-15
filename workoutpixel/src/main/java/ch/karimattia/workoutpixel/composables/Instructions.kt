@@ -35,7 +35,8 @@ import com.google.accompanist.pager.HorizontalPagerIndicator
 import com.google.accompanist.pager.rememberPagerState
 import java.util.*
 
-@Suppress("unused") private const val TAG: String = "Instructions"
+@Suppress("unused")
+private const val TAG: String = "Instructions"
 
 @ExperimentalCoilApi
 @ExperimentalAnimationGraphicsApi

@@ -23,7 +23,6 @@ import ch.karimattia.workoutpixel.core.WidgetActions
 import ch.karimattia.workoutpixel.data.*
 import ch.karimattia.workoutpixel.ui.theme.WorkoutPixelTheme
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -45,7 +44,6 @@ class ConfigureActivity : ComponentActivity() {
 		val goalViewModel by viewModels<GoalViewModel>()
 		val settingsViewModel: SettingsViewModel by viewModels()
 		val goal = Goal()
-
 
 
 		// Find the widget id and whether it is a reconfigure activity from the intent.

@@ -82,12 +82,10 @@ class MainActivity : ComponentActivity() {
 				},
 				deleteGoal = { lifecycleScope.launch { goalViewModel.deleteGoal(it) } },
 				addWidgetToHomeScreen = { goal: Goal, insertNewGoal: Boolean ->
-					// lifecycleScope.launch {
 					Log.d(TAG, "addWidgetToHomeScreen")
 					if (insertNewGoal) goal.uid = goalViewModel.insertGoal(goal)
 					widgetActions(goal).pinAppWidget()
 					return@Lambdas goal.uid
-					// }
 				},
 				// Don't use this in highest level. Otherwise colors flicker.
 				settingsData = settingsViewModel.settingsData.observeAsState(SettingsData()).value,
@@ -106,18 +104,6 @@ class MainActivity : ComponentActivity() {
 				goalViewModel = goalViewModel,
 				pastClickViewModelAssistedFactory = pastClickViewModelAssistedFactory,
 				goals = goalViewModel.allGoals,
-				updateAfterClick = {
-					// contains updateGoal
-					lifecycleScope.launch {
-						widgetActions(it).updateAfterClick()
-					}
-				},
-				updateGoal = { goal ->
-					lifecycleScope.launch {
-						goalViewModel.updateGoal(goal)
-						widgetActions(goal).runUpdate(true)
-					}
-				},
 				settingsData = settingsViewModel.settingsData.observeAsState().value,
 				lambdas = mainActivityLambdas,
 			)
@@ -144,8 +130,6 @@ fun WorkoutPixelApp(
 	currentGoalUid: Int = goalViewModel.currentGoalUid.observeAsState(initial = Constants.INVALID_GOAL_UID).value,
 	settingsData: SettingsData?,
 	goals: List<Goal>,
-	updateAfterClick: GoalFunction,
-	updateGoal: GoalFunction,
 	lambdas: Lambdas,
 ) {
 	WorkoutPixelTheme(
@@ -217,7 +201,6 @@ fun WorkoutPixelApp(
 				WorkoutPixelNavHost(
 					navController = navController,
 					goals = goals,
-					updateAfterClick = updateAfterClick,
 					currentGoal = currentGoal,
 					pastClickViewModelAssistedFactory = pastClickViewModelAssistedFactory,
 					// Make navigateUp a separate function?
@@ -249,7 +232,6 @@ fun WorkoutPixelApp(
 fun WorkoutPixelNavHost(
 	navController: NavHostController,
 	goals: List<Goal>,
-	updateAfterClick: GoalFunction,
 	currentGoal: Goal?,
 	pastClickViewModelAssistedFactory: PastClickViewModelAssistedFactory,
 	modifier: Modifier = Modifier,

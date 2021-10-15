@@ -119,7 +119,7 @@ fun EditGoalView(
 		)
 		AddUpdateWidgetButton(
 			isFirstConfigure = isFirstConfigure,
-			insertUpdateWidget = { if (isFirstConfigure) lambdas.insertGoal(editGoalViewGoal) else lambdas.updateGoalFilledIn(editGoalViewGoal, false) },
+			insertUpdateWidget = { if (isFirstConfigure) lambdas.insertGoal(editGoalViewGoal) else lambdas.updateGoalFilledIn(editGoalViewGoal, true) },
 			modifier = Modifier
 				.padding(top = 24.dp)
 				.align(Alignment.End),

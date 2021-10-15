@@ -246,5 +246,5 @@ data class Lambdas(
 	val addWidgetToHomeScreenFilledIn: suspend () -> Unit = { },
 	val settingsData: SettingsData = SettingsData(),
 	val settingChange: (SettingsData) -> Unit = {},
-	val navigateTo: (destination: String, goal: Goal?) -> Unit = {_, _ ->},
+	val navigateTo: (destination: String, goal: Goal?) -> Unit = { _, _ -> },
 )
