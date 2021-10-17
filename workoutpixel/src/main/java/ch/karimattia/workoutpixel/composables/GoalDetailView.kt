@@ -64,7 +64,7 @@ fun GoalDetailView(
 	)
 	GoalDetailView(
 		currentGoal = currentGoal,
-		updatePastClick = { suspend { pastClickViewModel.updatePastClick(it) } },
+		updatePastClick = { updatedPastClick -> pastClickViewModel.updatePastClick(updatedPastClick) },
 		pastClicks = pastClicks,
 		lambdas = goalDetailViewlambdas,
 	)
@@ -87,7 +87,7 @@ fun GoalDetailView(
 			.verticalScroll(rememberScrollState())
 	) {
 		Spacer(modifier = Modifier.height(6.dp))
-		GoalOverviewView(
+		GoalOverview(
 			currentGoal = currentGoal,
 			lambdas = lambdas,
 		)
@@ -109,7 +109,7 @@ fun GoalDetailView(
 }
 
 @Composable
-fun GoalOverviewView(
+fun GoalOverview(
 	currentGoal: Goal,
 	lambdas: Lambdas,
 ) {
@@ -185,8 +185,8 @@ fun GoalDetailNoWidgetCard(
 @Composable
 fun PastClicks(
 	currentGoal: Goal,
-	updatePastClick: (PastClick) -> Unit,
 	pastClicks: List<PastClick>,
+	updatePastClick: (PastClick) -> Unit,
 	lambdas: Lambdas,
 ) {
 	CardWithTitle(
@@ -205,8 +205,8 @@ fun PastClicks(
 @Composable
 fun PastClickList(
 	currentGoal: Goal,
-	updatePastClick: (PastClick) -> Unit,
 	pastClicks: List<PastClick>,
+	updatePastClick: (PastClick) -> Unit,
 	lambdas: Lambdas,
 ) {
 	val numberOfPastClicks = pastClicks.size
@@ -220,11 +220,19 @@ fun PastClickList(
 					PastClickEntry(
 						pastClick = pastClicks[i],
 						togglePastClick = {
-							updatePastClick(it)
+							val updatedPastClick = pastClicks[i].copy(isActive = !pastClicks[i].isActive)
+							updatePastClick(updatedPastClick)
+							// Copying to prevent changes on screen that are not driven by the viewmodel.
+							// This is all super explicit and unelegant, but there were some bugs here in the past.
+							val updatedPastClicks = pastClicks.toMutableList()
+							updatedPastClicks[i] = updatedPastClick
 							// If this change causes a new last workout time, do all the necessary updates.
 							// TODO: Move setNewLastWorkout to GoalSaveActions and directly save the updated goal there?
-							if (currentGoal.setNewLastWorkout(lastClickBasedOnActiveClicks(pastClicks))) {
-								lambdas.updateGoalFilledIn(currentGoal, false)
+							// TODO: lastWorkout <-> lastClick
+							// TODO: Also have goalRepository in this viewModel?
+							val lastWorkout = lastClickBasedOnActiveClicks(updatedPastClicks)
+							if (currentGoal.lastWorkout != lastWorkout) {
+								lambdas.updateGoalFilledIn(currentGoal.copy(lastWorkout = lastWorkout), false)
 							}
 						},
 						lambdas = lambdas,
@@ -246,7 +254,7 @@ fun PastClickList(
 @Composable
 fun PastClickEntry(
 	pastClick: PastClick,
-	togglePastClick: (PastClick) -> Unit,
+	togglePastClick: () -> Unit,
 	lambdas: Lambdas,
 ) {
 	PastClickEntry(
@@ -258,11 +266,7 @@ fun PastClickEntry(
 			Icons.Filled.Undo
 		},
 		active = pastClick.isActive,
-		togglePastClick = {
-			Log.d(TAG, "togglePastClick $pastClick")
-			pastClick.isActive = !pastClick.isActive
-			togglePastClick(pastClick)
-		},
+		togglePastClick = togglePastClick,
 	)
 }
 
