@@ -6,7 +6,7 @@ data class Message(
 	val text: String = "",
 	val isMessageByUser: Boolean = false,
 	val bottomArea: BottomArea = BottomArea.AutoAdvance,
-	val autoAdvance: Boolean = bottomArea == BottomArea.AutoAdvance || bottomArea == BottomArea.AddWidget,
+	val autoAdvance: Boolean = bottomArea == BottomArea.AutoAdvance, // || bottomArea == BottomArea.AddWidget,
 	// TODO: Set reasonable values
 	val autoAdvanceTime: Int = 60,
 	val showNextProposal: Boolean = bottomArea == BottomArea.ShowNext,

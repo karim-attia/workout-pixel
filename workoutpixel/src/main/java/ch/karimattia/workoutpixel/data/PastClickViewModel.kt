@@ -9,7 +9,7 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 @Suppress("unused")
@@ -21,14 +21,17 @@ class PastClickViewModel @AssistedInject constructor(
 	@Assisted var goalUid: Int,
 ) : ViewModel() {
 	private val pastClicksFlow: Flow<List<PastClick>> = repository.pastClicksByGoalUid(goalUid = goalUid)
-	suspend fun updatePastClick(pastClick: PastClick) = repository.updatePastClick(pastClick)
+	fun updatePastClick(pastClick: PastClick) = viewModelScope.launch {
+		repository.updatePastClick(pastClick)
+	}
+	// 	suspend fun updatePastClick(pastClick: PastClick) = repository.updatePastClick(pastClick)
 
 	val pastClicks: SnapshotStateList<PastClick> = mutableStateListOf()
 
 	// This is needed so the state of pastClicks and thus the UI updates.
 	init {
 		viewModelScope.launch {
-			pastClicksFlow.collect { newPastClicks ->
+			pastClicksFlow.collectLatest { newPastClicks ->
 				pastClicks.clear()
 				pastClicks.addAll(newPastClicks)
 			}

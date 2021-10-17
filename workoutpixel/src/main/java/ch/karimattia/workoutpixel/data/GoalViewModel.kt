@@ -33,9 +33,11 @@ class GoalViewModel @Inject constructor(
 	private val _currentGoalUid = MutableLiveData(Constants.INVALID_GOAL_UID)
 	val currentGoalUid: LiveData<Int> = _currentGoalUid
 	fun changeCurrentGoalUid(goal: Goal?) {
-		if (goal != null) _currentGoalUid.value = goal.uid
-		else _currentGoalUid.value = Constants.INVALID_GOAL_UID
+		if (goal != null) changeCurrentGoalUid(goal.uid)
+		else changeCurrentGoalUid(Constants.INVALID_GOAL_UID)
 	}
+
+	fun changeCurrentGoalUid(goalUid: Int) { _currentGoalUid.value = goalUid }
 
 	suspend fun deleteGoal(goal: Goal) = goalRepository.deleteGoal(goal)
 	suspend fun insertGoal(goal: Goal): Int = goalRepository.insertGoal(goal)

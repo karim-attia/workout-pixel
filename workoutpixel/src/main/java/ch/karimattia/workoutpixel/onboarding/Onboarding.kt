@@ -1,20 +1,16 @@
 package ch.karimattia.workoutpixel.onboarding
 
+import android.appwidget.AppWidgetManager
 import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.fadeIn
-import androidx.compose.foundation.*
+import androidx.compose.foundation.ScrollState
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.CornerSize
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Send
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.livedata.observeAsState
@@ -22,18 +18,12 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.onFocusChanged
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardCapitalization
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import ch.karimattia.workoutpixel.composables.Lambdas
 import ch.karimattia.workoutpixel.core.Constants
 import ch.karimattia.workoutpixel.data.Goal
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.delay
 
 @Suppress("unused")
 private const val TAG: String = "Onboarding"
@@ -41,13 +31,19 @@ private const val TAG: String = "Onboarding"
 @ExperimentalComposeUiApi
 @Composable
 fun Onboarding(
-/*
-	addNewWidgetToHomeScreen: suspend (Goal) -> Int,
-*/
 	onboardingViewModel: OnboardingViewModel = viewModel(),
+	currentGoal: Goal,
 	lambdas: Lambdas,
 ) {
+	val scope: CoroutineScope = rememberCoroutineScope()
+	onboardingViewModel.scope = scope
+
 	val newGoal = onboardingViewModel.goal.observeAsState(initial = Goal())
+	LaunchedEffect(key1 = currentGoal, block = {
+		if (currentGoal.uid != Constants.INVALID_GOAL_UID) onboardingViewModel.updateGoal(currentGoal)
+	})
+	val shownMessages = onboardingViewModel.shownMessages
+
 	val goalDetailViewlambdas = lambdas.copy(
 		addWidgetToHomeScreenFilledIn = {
 			val uid = lambdas.addWidgetToHomeScreen(newGoal.value, true)
@@ -55,11 +51,6 @@ fun Onboarding(
 			onboardingViewModel.updateGoal(newGoal.value.copy(uid = uid))
 		}
 	)
-
-	val scope: CoroutineScope = rememberCoroutineScope()
-	onboardingViewModel.scope = scope
-
-	val shownMessages = onboardingViewModel.shownMessages
 
 	Onboarding(
 		shownMessages = shownMessages,
@@ -71,6 +62,7 @@ fun Onboarding(
 		scrollDown = { onboardingViewModel.scrollDown() },
 		newGoal = newGoal.value,
 		updateGoal = { goal -> onboardingViewModel.updateGoal(goal) },
+		// currentGoal = currentGoal,
 		lambdas = goalDetailViewlambdas,
 	)
 }
@@ -82,6 +74,7 @@ fun Onboarding(
 	lastMessage: Message,
 	messageTemplates: OnboardingViewModel.MessageTemplates,
 	newGoal: Goal,
+	// currentGoal: Goal,
 	updateGoal: (Goal) -> Unit,
 	insertMessageAtNextPosition: (Message) -> Unit,
 	scrollState: ScrollState,
@@ -104,11 +97,9 @@ fun Onboarding(
 		BottomArea(
 			lastMessage = lastMessage,
 			messageTemplates = messageTemplates,
-			goal = newGoal,
+			newGoal = newGoal,
+			// currentGoal = currentGoal,
 			updateGoal = updateGoal,
-/*
-			addNewWidgetToHomeScreen = addNewWidgetToHomeScreen,
-*/
 			insertMessageAtNextPosition = insertMessageAtNextPosition,
 			scrollDown = { scrollDown() },
 			lambdas = lambdas,
@@ -122,7 +113,8 @@ fun Onboarding(
 fun BottomArea(
 	lastMessage: Message,
 	messageTemplates: OnboardingViewModel.MessageTemplates,
-	goal: Goal,
+	newGoal: Goal,
+	// currentGoal: Goal,
 	updateGoal: (Goal) -> Unit,
 	insertMessageAtNextPosition: (Message) -> Unit,
 	scrollDown: () -> Unit,
@@ -159,15 +151,14 @@ fun BottomArea(
 				MessageProposal(onClick = { insertMessageAtNextPosition(messageTemplates.nextByUser()) }, text = lastMessage.proposal)
 			}
 
-
 			// IntervalInput
 			AnimatedVisibility(visible = lastMessage.bottomArea == BottomArea.IntervalInput, enter = fadeIn(), exit = ExitTransition.None) {
 				Row {
 					for (i in 1..31) {
 						MessageProposal(onClick = {
-							goal.intervalBlue = i
+							newGoal.intervalBlue = i
 							// TODO: Veryfy no copy needed
-							updateGoal(goal)
+							updateGoal(newGoal)
 							insertMessageAtNextPosition(messageTemplates.intervalByUser())
 						}, text = i.toString())
 					}
@@ -178,8 +169,8 @@ fun BottomArea(
 		// TitleInput
 		AnimatedVisibility(visible = lastMessage.bottomArea == BottomArea.TitleInput, enter = EnterTransition.None, exit = ExitTransition.None) {
 			TitleTextField(
-				value = goal.title,
-				onValueChange = { updateGoal(goal.copy(title = it)) },
+				value = newGoal.title,
+				onValueChange = { updateGoal(newGoal.copy(title = it)) },
 				action = {
 					insertMessageAtNextPosition(messageTemplates.titleByUser())
 				},
@@ -190,127 +181,27 @@ fun BottomArea(
 		// AddWidget
 		Log.d(TAG, "lastMessage.bottomArea: ${lastMessage.bottomArea}")
 		if (lastMessage.bottomArea == BottomArea.AddWidget) {
-			Log.d(TAG, "${goal.uid}")
+			Log.d(TAG, "${newGoal.uid}")
+			// TODO: This block is not in anymore after inserted message because it's not bottom area
 			LaunchedEffect(key1 = true, block = {
 				Log.d(TAG, "LaunchedEffect(true) {")
 				lambdas.addWidgetToHomeScreenFilledIn()
+				delay(3000)
+				Log.d(TAG, "firstdelay")
+				Log.d(TAG, "newGoal.appWidgetId: ${newGoal.appWidgetId}")
+				Log.d(TAG, "newGoal.appWidgetId true: ${newGoal.appWidgetId == AppWidgetManager.INVALID_APPWIDGET_ID}")
+				if (newGoal.appWidgetId == AppWidgetManager.INVALID_APPWIDGET_ID) insertMessageAtNextPosition(messageTemplates.waitingForCallback())
+				delay(3000)
+				Log.d(TAG, "seconddelay")
+				// TODO: check and add messageproposal thumbs up
+				if (newGoal.appWidgetId == AppWidgetManager.INVALID_APPWIDGET_ID) insertMessageAtNextPosition(messageTemplates.retryPrompt())
+				Log.d(TAG, "endblock")
+
 			})
 		}
-		LaunchedEffect(key1 = goal.uid, block = {
+		LaunchedEffect(key1 = newGoal.appWidgetId, block = {
 			Log.d(TAG, "LaunchedEffect(goal) {")
-			if (goal.uid != Constants.INVALID_GOAL_UID) insertMessageAtNextPosition(messageTemplates.success())
-			// TODO: Observe if goal with this uid has gotten an AppWidgetId
+			if (newGoal.appWidgetId != AppWidgetManager.INVALID_APPWIDGET_ID) insertMessageAtNextPosition(messageTemplates.success())
 		})
 	}
-}
-
-@Composable
-fun MessageProposal(onClick: () -> Unit, text: String) {
-	Button(
-		onClick = onClick,
-		shape = cardShapeFor(isMine = true),
-		colors = ButtonDefaults.buttonColors(backgroundColor = Color.White, contentColor = MaterialTheme.colors.primary),
-		border = BorderStroke(width = 1.5.dp, color = MaterialTheme.colors.primary),
-		modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
-	) {
-		Text(text = text)
-	}
-}
-
-
-@Composable
-fun MessageCard(message: Message) {
-	Column(
-		modifier = Modifier
-			.fillMaxWidth()
-			.padding(horizontal = 8.dp, vertical = 4.dp),
-		horizontalAlignment = when { // 2
-			message.isMessageByUser -> Alignment.End
-			else -> Alignment.Start
-		},
-	) {
-		Card(
-			modifier = Modifier.widthIn(max = 340.dp),
-			shape = cardShapeFor(message), // 3
-			backgroundColor = when {
-				message.isMessageByUser -> MaterialTheme.colors.primary
-				else -> MaterialTheme.colors.primaryVariant
-			},
-		) {
-			Column {
-				Text(
-					modifier = Modifier.padding(horizontal = 8.dp, vertical = 8.dp),
-					text = message.text,
-					color = Color.White,
-				)
-				message.messageExtra()
-			}
-		}
-	}
-}
-
-@Composable
-fun cardShapeFor(message: Message): Shape = cardShapeFor(message.isMessageByUser)
-
-@Composable
-fun cardShapeFor(isMine: Boolean): Shape {
-	val roundedCorners = RoundedCornerShape(16.dp)
-	return when {
-		isMine -> roundedCorners.copy(bottomEnd = CornerSize(0))
-		else -> roundedCorners.copy(bottomStart = CornerSize(0))
-	}
-}
-
-@ExperimentalComposeUiApi
-@Composable
-fun TitleTextField(
-	value: String,
-	onValueChange: (String) -> Unit,
-	action: (String) -> Unit,
-	scrollDown: () -> Unit,
-) {
-
-	val keyboardController = LocalSoftwareKeyboardController.current
-
-	TextField(
-		value = value,
-		onValueChange = onValueChange,
-		trailingIcon = {
-			Icon(
-				imageVector = Icons.Filled.Send,
-				contentDescription = null,
-				modifier = Modifier.clickable {
-					action(value)
-				}
-			)
-		},
-		colors = TextFieldDefaults.textFieldColors(
-			textColor = MaterialTheme.colors.onBackground,
-			disabledTextColor = Color.Transparent,
-			backgroundColor = Color.White,
-			focusedIndicatorColor = Color.Transparent,
-			unfocusedIndicatorColor = Color.Transparent,
-			disabledIndicatorColor = Color.Transparent
-		),
-		placeholder = { Text(text = "E.g. Push ups") },
-		shape = CircleShape,
-		maxLines = 1,
-		keyboardOptions = KeyboardOptions(
-			capitalization = KeyboardCapitalization.Sentences,
-			imeAction = ImeAction.Next
-		),
-		keyboardActions = KeyboardActions(onNext = {
-			action(value)
-			keyboardController?.hide()
-		}
-		),
-		modifier = Modifier
-			.fillMaxWidth()
-			.background(Color.LightGray)
-			.padding(all = 8.dp)
-			.onFocusChanged {
-				Log.d(TAG, "onFocusChanged")
-				scrollDown()
-			}
-	)
 }

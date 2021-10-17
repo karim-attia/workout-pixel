@@ -67,6 +67,7 @@ class MainActivity : ComponentActivity() {
 		val settingsViewModel: SettingsViewModel by viewModels()
 
 		setContent {
+			val settingsData = settingsViewModel.settingsData.observeAsState().value
 			val mainActivityLambdas = Lambdas(
 				updateAfterClick = {
 					// contains updateGoal
@@ -88,11 +89,11 @@ class MainActivity : ComponentActivity() {
 					return@Lambdas goal.uid
 				},
 				// Don't use this in highest level. Otherwise colors flicker.
-				settingsData = settingsViewModel.settingsData.observeAsState(SettingsData()).value,
-				settingChange = { settingsData: SettingsData ->
+				settingsData = settingsData ?: SettingsData(),
+				settingChange = { updatedSettingsData: SettingsData ->
 					lifecycleScope.launch {
 						Log.d(TAG, "settingChange")
-						settingsViewModel.updateSettings(settingsData)
+						settingsViewModel.updateSettings(updatedSettingsData)
 						// TODO: Could move to ViewModel
 						delay(200)
 						otherActions.updateAllWidgets()
@@ -183,6 +184,7 @@ fun WorkoutPixelApp(
 							onClick = {
 								navController.navigate(screen.name) {
 									if (screen == WorkoutPixelScreen.GoalsList) {
+										// TODO: set current goal to null?
 										popUpTo(WorkoutPixelScreen.GoalsList.name) {
 											inclusive = true
 										}
@@ -224,6 +226,11 @@ fun WorkoutPixelApp(
 								goalViewModel.changeCurrentGoalUid(null)
 								navController.navigateUp()
 							}
+						},
+						addWidgetToHomeScreen = { goal: Goal, boolean: Boolean ->
+							val goalUid: Int = lambdas.addWidgetToHomeScreen(goal, boolean)
+							goalViewModel.changeCurrentGoalUid(goalUid)
+							goalUid
 						}
 					),
 					modifier = Modifier.padding(innerPadding),
@@ -267,6 +274,7 @@ fun WorkoutPixelNavHost(
 			val appWidgetManager = AppWidgetManager.getInstance(LocalContext.current)
 			if (appWidgetManager.isRequestPinAppWidgetSupported) {
 				Onboarding(/*addNewWidgetToHomeScreen = { addWidgetToHomeScreen(it, true) }*/
+					currentGoal = currentGoal ?: Goal(),
 					lambdas = lambdas)
 			} else {
 				Instructions()

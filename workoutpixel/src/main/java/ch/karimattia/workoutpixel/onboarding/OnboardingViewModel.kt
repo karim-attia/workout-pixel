@@ -37,8 +37,6 @@ class OnboardingViewModel : ChatViewModel() {
 		_goal.value = goal
 	}
 
-
-	// Could live in Onboarding.kt and also access goal data there.
 	inner class MessageTemplates {
 		fun introMessage(): Message =
 			Message(text = "Hey! Super awesome that you downloaded WorkoutPixel.", nextMessage = ::basicFeatures)
@@ -102,11 +100,13 @@ class OnboardingViewModel : ChatViewModel() {
 			Message(text = "\uD83D\uDC4D",
 				isMessageByUser = true,
 				bottomArea = BottomArea.AddWidget,
-				autoAdvanceTime = 3000,
-				nextMessage = ::waitingForCallback)
+				// autoAdvanceTime = 3000,
+				// nextMessage = ::waitingForCallback
+			)
 
-		fun waitingForCallback(): Message = Message(text = "Waiting until the widget gets added...")
-		fun success(): Message = Message(text = "Success", bottomArea = BottomArea.End)
+		fun waitingForCallback(): Message = Message(text = "Waiting until the widget gets added...", bottomArea = BottomArea.End)
+		fun retryPrompt(): Message = Message(text = "Do you want to retry?", bottomArea = BottomArea.End)
+		fun success(): Message = Message(text = "You successfully added your widget.", bottomArea = BottomArea.End)
 	}
 
 }
