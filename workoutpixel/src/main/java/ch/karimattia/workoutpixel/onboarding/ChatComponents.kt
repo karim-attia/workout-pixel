@@ -17,6 +17,7 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -33,11 +34,19 @@ private const val TAG: String = "ChatComponents"
 
 @ExperimentalComposeUiApi
 @Composable
-fun TitleTextField(
+fun ChatInputField(
+	chatInputField: ChatInputField,
+
+	value: String = chatInputField.value.observeAsState(initial = "").value,
+	onValueChange: (String) -> Unit = chatInputField.onValueChange,
+	action: (String) -> Unit = chatInputField.action,
+	scrollDown: () -> Unit = chatInputField.scrollDown,
+/*
 	value: String,
 	onValueChange: (String) -> Unit,
 	action: (String) -> Unit,
 	scrollDown: () -> Unit,
+*/
 ) {
 
 	val keyboardController = LocalSoftwareKeyboardController.current
@@ -87,15 +96,15 @@ fun TitleTextField(
 
 
 @Composable
-fun MessageProposal(onClick: () -> Unit, text: String) {
+fun MessageProposal(messageProposal: MessageProposal) {
 	Button(
-		onClick = onClick,
+		onClick = messageProposal.action,
 		shape = cardShapeFor(isMine = true),
 		colors = ButtonDefaults.buttonColors(backgroundColor = Color.White, contentColor = MaterialTheme.colors.primary),
 		border = BorderStroke(width = 1.5.dp, color = MaterialTheme.colors.primary),
 		modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
 	) {
-		Text(text = text)
+		Text(text = messageProposal.proposalText)
 	}
 }
 

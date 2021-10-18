@@ -3,6 +3,7 @@ package ch.karimattia.workoutpixel.onboarding
 import androidx.compose.foundation.ScrollState
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.CoroutineScope
@@ -34,7 +35,7 @@ abstract class ChatViewModel : ViewModel() {
 	 * Check if initially the firstMessage (=latestMessage at this point) has an action and if yes, process it.
 	 * */
 	fun initialize() {
-		processLatestMessage(firstMessage)
+		processLastMessage(firstMessage)
 	}
 
 	/**
@@ -51,13 +52,13 @@ abstract class ChatViewModel : ViewModel() {
 		shownMessages.add(latestMessage)
 		scrollDown()
 
-		processLatestMessage(latestMessage)
+		processLastMessage(latestMessage)
 	}
 
 	/**
 	 * Check if the latestMessage has an action and if yes, process it. I.e. adding follow-up messages and autoAdvancing.
 	 * */
-	private fun processLatestMessage(lastMessage: Message) {
+	private fun processLastMessage(lastMessage: Message) {
 		lastMessage.nextMessage?.let { nextMessage -> insertMessageBuilderToQueueAtNextPosition(nextMessage) }
 		checkAutoAdvance(lastMessage)
 	}
@@ -97,4 +98,27 @@ abstract class ChatViewModel : ViewModel() {
 			scrollState.animateScrollTo(scrollState.value + 10000)
 		}
 	}
+
+	fun messageProposalOf(
+		proposalText: String = "",
+		proposalAction: () -> Unit = {},
+		insertMessage: MessageBuilder,
+	): MessageProposal = MessageProposal(
+		proposalText = proposalText,
+		action = {
+			proposalAction()
+			insertMessageBuilderToQueueAtNextPositionAndAdvance(insertMessage)
+		},
+	)
+
+	fun chatInputFieldOf(
+		value: LiveData<String>,
+		onValueChange: (String) -> Unit,
+		insertMessage: MessageBuilder,
+	): ChatInputField = ChatInputField(
+		value = value,
+		onValueChange = onValueChange,
+		action = { insertMessageBuilderToQueueAtNextPositionAndAdvance(insertMessage) },
+		scrollDown = ::scrollDown,
+	)
 }

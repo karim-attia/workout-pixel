@@ -14,6 +14,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -39,8 +40,11 @@ fun Onboarding(
 	onboardingViewModel.scope = scope
 
 	val newGoal = onboardingViewModel.goal.observeAsState(initial = Goal())
-	LaunchedEffect(key1 = currentGoal, block = {
-		if (currentGoal.uid != Constants.INVALID_GOAL_UID) onboardingViewModel.updateGoal(currentGoal)
+	// TODO: Cases where there is a current goal to start with.
+	val firstGoalChange = remember { currentGoal.appWidgetId }
+	LaunchedEffect(key1 = currentGoal.appWidgetId, block = {
+		// The appWidgetId of the current goal changed.
+		if (currentGoal.appWidgetId != firstGoalChange || currentGoal.uid != Constants.INVALID_GOAL_UID) onboardingViewModel.updateGoal(currentGoal)
 	})
 	val shownMessages = onboardingViewModel.shownMessages
 
@@ -134,13 +138,23 @@ fun BottomArea(
 				.horizontalScroll(state = rememberScrollState())
 		)
 		{
+			// All messageProposals
+			AnimatedVisibility(visible = lastMessage.proposals.isNotEmpty(), enter = fadeIn(), exit = ExitTransition.None) {
+				Row {
+					for (proposal in lastMessage.proposals) {
+						MessageProposal(proposal)
+					}
+				}
+			}
+/*
 			// Specific set of different proposals. Here for the add widget prompt.
 			AnimatedVisibility(visible = lastMessage.bottomArea == BottomArea.AddWidgetPrompt, enter = fadeIn(), exit = ExitTransition.None) {
 				Row {
-					MessageProposal(onClick = {
-						insertMessageAtNextPosition(messageTemplates.editGoalDescription())
-					}, text = "Edit goal description")
-					MessageProposal(onClick = { insertMessageAtNextPosition(messageTemplates.thumbsUpProposal()) }, text = lastMessage.proposal)
+					MessageProposal(MessageProposal(
+						proposalAction = { insertMessageAtNextPosition(messageTemplates.proposalEditGoalDescription()) },
+						proposalText = "Edit goal description", insertMessage = { Message() }, insertMessageBuilderToQueueAtNextPositionAndAdvance = {}))
+					MessageProposal(MessageProposal(proposalAction = { insertMessageAtNextPosition(messageTemplates.proposalThumbsUp()) },
+						proposalText = lastMessage.proposalText, insertMessage = { Message() }, insertMessageBuilderToQueueAtNextPositionAndAdvance = {}))
 				}
 			}
 
@@ -148,27 +162,42 @@ fun BottomArea(
 			AnimatedVisibility(visible = lastMessage.showNextProposal,
 				enter = fadeIn(),
 				exit = ExitTransition.None) {
-				MessageProposal(onClick = { insertMessageAtNextPosition(messageTemplates.nextByUser()) }, text = lastMessage.proposal)
+
+				MessageProposal(MessageProposal(proposalAction = { insertMessageAtNextPosition(messageTemplates.proposalNextByUser()) },
+					proposalText = lastMessage.proposalText, insertMessage = { Message() }, insertMessageBuilderToQueueAtNextPositionAndAdvance = {}))
+
 			}
 
 			// IntervalInput
 			AnimatedVisibility(visible = lastMessage.bottomArea == BottomArea.IntervalInput, enter = fadeIn(), exit = ExitTransition.None) {
 				Row {
 					for (i in 1..31) {
-						MessageProposal(onClick = {
+						MessageProposal(MessageProposal(proposalAction = {
 							newGoal.intervalBlue = i
-							// TODO: Veryfy no copy needed
+							// TODO: Verify no copy needed
 							updateGoal(newGoal)
 							insertMessageAtNextPosition(messageTemplates.intervalByUser())
-						}, text = i.toString())
+						}, proposalText = i.toString(), insertMessage = { Message() }, insertMessageBuilderToQueueAtNextPositionAndAdvance = {}))
 					}
 				}
+			}*/
+		}
+
+		// TextInput
+		AnimatedVisibility(visible = lastMessage.chatInputField != null, enter = EnterTransition.None, exit = ExitTransition.None) {
+			if (lastMessage.chatInputField != null) {
+				// val value = lastMessage.chatInputField.value.observeAsState(initial = "")
+				// Log.d(TAG, "value: ${value.value}")
+				ChatInputField(
+					chatInputField = lastMessage.chatInputField,
+					// value = value.value,
+				)
 			}
 		}
 
-		// TitleInput
+/*		// TitleInput
 		AnimatedVisibility(visible = lastMessage.bottomArea == BottomArea.TitleInput, enter = EnterTransition.None, exit = ExitTransition.None) {
-			TitleTextField(
+			ChatInputField(
 				value = newGoal.title,
 				onValueChange = { updateGoal(newGoal.copy(title = it)) },
 				action = {
@@ -176,7 +205,7 @@ fun BottomArea(
 				},
 				scrollDown = scrollDown,
 			)
-		}
+		}*/
 
 		// AddWidget
 		Log.d(TAG, "lastMessage.bottomArea: ${lastMessage.bottomArea}")
