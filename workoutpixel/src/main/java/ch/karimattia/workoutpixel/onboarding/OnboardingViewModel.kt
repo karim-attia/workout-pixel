@@ -1,14 +1,19 @@
 package ch.karimattia.workoutpixel.onboarding
 
+import android.appwidget.AppWidgetManager
 import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.map
+import androidx.lifecycle.viewModelScope
 import ch.karimattia.workoutpixel.composables.GoalPreviewWithBackground
 import ch.karimattia.workoutpixel.composables.GoalPreviewsWithBackground
+import ch.karimattia.workoutpixel.composables.Lambdas
 import ch.karimattia.workoutpixel.core.Status
 import ch.karimattia.workoutpixel.data.Goal
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @Suppress("unused")
 private const val TAG: String = "OnboardingViewModel"
@@ -41,11 +46,16 @@ class OnboardingViewModel : ChatViewModel() {
 		_goal.value = goal
 	}
 
-	private fun getGoal(): Goal = _goal.value!!
-	private fun getGoalTitle(): String = _goal.value!!.title
+	/**
+	 * Needs to be initialized by activity in order that automatic scrolling works.
+	 * * */
+	var lambdas: Lambdas = Lambdas()
 
+	/**
+	 * All message templates.
+	 * */
 	inner class MessageTemplates {
-		private val proposalNext: List<MessageProposal> = listOf(
+		private val proposalsNext: List<MessageProposal> = listOf(
 			messageProposalOf(
 				proposalText = "Next",
 				insertMessage = ::proposalNextByUser,
@@ -59,10 +69,10 @@ class OnboardingViewModel : ChatViewModel() {
 
 		private fun basicFeatures(): Message = Message(
 			text = "With WorkoutPixel you can add widgets for your goals to your homescreen. They look like this:",
-			bottomArea = BottomArea.ShowNext,
+			autoAdvance = true,
 			nextMessage = ::habits1,
 			messageExtra = { GoalPreviewsWithBackground() },
-			proposals = proposalNext
+			proposals = proposalsNext
 		)
 
 		private fun proposalNextByUser(): Message = Message(
@@ -82,8 +92,9 @@ class OnboardingViewModel : ChatViewModel() {
 
 		private fun habits3(): Message = Message(
 			text = "Building new habits is hard. Seeing your progress - many times a day - makes it a little easier.",
-			bottomArea = BottomArea.ShowNext, nextMessage = ::createGoal,
-			proposals = proposalNext,
+			autoAdvance = true,
+			nextMessage = ::createGoal,
+			proposals = proposalsNext,
 		)
 
 		private fun createGoal(): Message = Message(
@@ -98,13 +109,12 @@ class OnboardingViewModel : ChatViewModel() {
 
 		private fun chatInputField(): ChatInputField = chatInputFieldOf(
 			value = goalTitle,
-			onValueChange = {				_goal.value = _goal.value!!.copy(title = it)			},
+			onValueChange = { _goal.value = _goal.value!!.copy(title = it) },
 			insertMessage = ::titleByUser,
 		)
 
 		private fun setTitle(): Message = Message(
 			text = "Please describe your goal in 1-2 words.",
-			bottomArea = BottomArea.TitleInput,
 			nextMessage = ::goalPreview,
 			chatInputField = chatInputField(),
 		)
@@ -116,7 +126,7 @@ class OnboardingViewModel : ChatViewModel() {
 
 		private fun goalPreview(): Message = Message(
 			text = "Your goal will look like this:",
-			bottomArea = BottomArea.AutoAdvance,
+			autoAdvance = true,
 			nextMessage = ::setInterval,
 			messageExtra = goalPreviewWithBackground(),
 		)
@@ -129,7 +139,6 @@ class OnboardingViewModel : ChatViewModel() {
 
 		private fun editTitle(): Message = Message(
 			text = "Enter a new goal description",
-			bottomArea = BottomArea.TitleInput,
 			nextMessage = ::editTitleConfirm,
 			chatInputField = chatInputField(),
 		)
@@ -147,7 +156,6 @@ class OnboardingViewModel : ChatViewModel() {
 
 		private fun setInterval(): Message = Message(
 			text = "How often do you want to reach your goal? Every ... days:",
-			bottomArea = BottomArea.IntervalInput,
 			nextMessage = ::addToHomeScreen,
 			proposals = intervalProposals()
 		)
@@ -174,8 +182,6 @@ class OnboardingViewModel : ChatViewModel() {
 
 		private fun addToHomeScreen(): Message = Message(
 			text = "Let's now add a widget for this goal to your homescreen. After clicking \uD83D\uDC4D, your phone will either automatically add the widget or ask you to place it.",
-			bottomArea = BottomArea.AddWidgetPrompt,
-			proposalText = "\uD83D\uDC4D",
 			proposals = listOf(
 				messageProposalOf(
 					proposalText = "Edit goal description",
@@ -191,25 +197,75 @@ class OnboardingViewModel : ChatViewModel() {
 		private fun proposalThumbsUp(): Message = Message(
 			text = "\uD83D\uDC4D",
 			isMessageByUser = true,
-			bottomArea = BottomArea.AddWidget,
-			// autoAdvanceTime = 3000,
-			// nextMessage = ::waitingForCallback
+			action = {
+				viewModelScope.launch {
+					Log.d(TAG, "proposalThumbsUp")
+					lambdas.addWidgetToHomeScreenFilledIn()
+					delay(3000)
+					Log.d(TAG, "firstdelay")
+					Log.d(TAG, "newGoal.appWidgetId: ${_goal.value!!.appWidgetId}")
+					Log.d(TAG, "newGoal.appWidgetId true: ${_goal.value!!.appWidgetId == AppWidgetManager.INVALID_APPWIDGET_ID}")
+					if (_goal.value!!.appWidgetId == AppWidgetManager.INVALID_APPWIDGET_ID) insertMessageBuilderToQueueAtNextPositionAndAdvance(::waitingForCallback)
+				}
+			}
 		)
 
-		fun waitingForCallback(): Message = Message(
+		private fun waitingForCallback(): Message = Message(
 			text = "Waiting until the widget gets added...",
-			bottomArea = BottomArea.End,
+			action = {
+				viewModelScope.launch {
+
+					delay(3000)
+					Log.d(TAG, "seconddelay")
+					// TODO: check and add messageproposal thumbs up
+					if (_goal.value!!.appWidgetId == AppWidgetManager.INVALID_APPWIDGET_ID) insertMessageBuilderToQueueAtNextPositionAndAdvance(::retryPrompt)
+					else {
+						insertMessageBuilderToQueueAtNextPositionAndAdvance(::success)
+					}
+					Log.d(TAG, "endblock")
+				}
+			}
 		)
 
-		fun retryPrompt(): Message = Message(
+		private fun retryPrompt(): Message = Message(
 			text = "Do you want to retry?",
-			bottomArea = BottomArea.End,
+			proposals = listOf(
+				messageProposalOf(
+					proposalText = "Edit goal description",
+					insertMessage = ::proposalEditGoalDescription,
+				),
+				messageProposalOf(
+					proposalText = "\uD83D\uDC4D",
+					insertMessage = ::proposalThumbsUp,
+				)
+			),
 		)
 
-		fun success(): Message = Message(
+		private fun success(): Message = Message(
 			text = "You successfully added your widget.",
-			bottomArea = BottomArea.End,
+			proposals = listOf(
+				messageProposalOf(
+					proposalText = "Edit",
+					insertMessage = ::proposalEdit
+				),
+				messageProposalOf(
+					proposalText = "Close",
+					insertMessage = ::proposalClose
+				),
+			),
 		)
-	}
 
+		private fun proposalClose(): Message = Message(
+			text = "Close",
+			isMessageByUser = true,
+			action = { }
+		)
+
+		private fun proposalEdit(): Message = Message(
+			text = "Edit",
+			isMessageByUser = true,
+			action = { }
+		)
+
+	}
 }

@@ -1,6 +1,5 @@
 package ch.karimattia.workoutpixel.onboarding
 
-import android.appwidget.AppWidgetManager
 import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.EnterTransition
@@ -11,11 +10,8 @@ import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -24,7 +20,6 @@ import ch.karimattia.workoutpixel.composables.Lambdas
 import ch.karimattia.workoutpixel.core.Constants
 import ch.karimattia.workoutpixel.data.Goal
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.delay
 
 @Suppress("unused")
 private const val TAG: String = "Onboarding"
@@ -55,6 +50,7 @@ fun Onboarding(
 			onboardingViewModel.updateGoal(newGoal.value.copy(uid = uid))
 		}
 	)
+	onboardingViewModel.lambdas = goalDetailViewlambdas
 
 	Onboarding(
 		shownMessages = shownMessages,
@@ -63,9 +59,7 @@ fun Onboarding(
 		// Convert message template to message builder.
 		insertMessageAtNextPosition = { messageTemplate -> onboardingViewModel.insertMessageBuilderToQueueAtNextPositionAndAdvance(messageBuilder = { messageTemplate }) },
 		scrollState = onboardingViewModel.scrollState,
-		scrollDown = { onboardingViewModel.scrollDown() },
 		newGoal = newGoal.value,
-		updateGoal = { goal -> onboardingViewModel.updateGoal(goal) },
 		// currentGoal = currentGoal,
 		lambdas = goalDetailViewlambdas,
 	)
@@ -79,10 +73,8 @@ fun Onboarding(
 	messageTemplates: OnboardingViewModel.MessageTemplates,
 	newGoal: Goal,
 	// currentGoal: Goal,
-	updateGoal: (Goal) -> Unit,
 	insertMessageAtNextPosition: (Message) -> Unit,
 	scrollState: ScrollState,
-	scrollDown: () -> Unit,
 	lambdas: Lambdas,
 ) {
 	Log.d(TAG, "goaluid: ${newGoal.uid}")
@@ -103,9 +95,7 @@ fun Onboarding(
 			messageTemplates = messageTemplates,
 			newGoal = newGoal,
 			// currentGoal = currentGoal,
-			updateGoal = updateGoal,
 			insertMessageAtNextPosition = insertMessageAtNextPosition,
-			scrollDown = { scrollDown() },
 			lambdas = lambdas,
 
 			)
@@ -119,9 +109,7 @@ fun BottomArea(
 	messageTemplates: OnboardingViewModel.MessageTemplates,
 	newGoal: Goal,
 	// currentGoal: Goal,
-	updateGoal: (Goal) -> Unit,
 	insertMessageAtNextPosition: (Message) -> Unit,
-	scrollDown: () -> Unit,
 	lambdas: Lambdas,
 ) {
 	Box(
@@ -146,91 +134,51 @@ fun BottomArea(
 					}
 				}
 			}
-/*
-			// Specific set of different proposals. Here for the add widget prompt.
-			AnimatedVisibility(visible = lastMessage.bottomArea == BottomArea.AddWidgetPrompt, enter = fadeIn(), exit = ExitTransition.None) {
-				Row {
-					MessageProposal(MessageProposal(
-						proposalAction = { insertMessageAtNextPosition(messageTemplates.proposalEditGoalDescription()) },
-						proposalText = "Edit goal description", insertMessage = { Message() }, insertMessageBuilderToQueueAtNextPositionAndAdvance = {}))
-					MessageProposal(MessageProposal(proposalAction = { insertMessageAtNextPosition(messageTemplates.proposalThumbsUp()) },
-						proposalText = lastMessage.proposalText, insertMessage = { Message() }, insertMessageBuilderToQueueAtNextPositionAndAdvance = {}))
-				}
-			}
-
-			// Only proposal next available.
-			AnimatedVisibility(visible = lastMessage.showNextProposal,
-				enter = fadeIn(),
-				exit = ExitTransition.None) {
-
-				MessageProposal(MessageProposal(proposalAction = { insertMessageAtNextPosition(messageTemplates.proposalNextByUser()) },
-					proposalText = lastMessage.proposalText, insertMessage = { Message() }, insertMessageBuilderToQueueAtNextPositionAndAdvance = {}))
-
-			}
-
-			// IntervalInput
-			AnimatedVisibility(visible = lastMessage.bottomArea == BottomArea.IntervalInput, enter = fadeIn(), exit = ExitTransition.None) {
-				Row {
-					for (i in 1..31) {
-						MessageProposal(MessageProposal(proposalAction = {
-							newGoal.intervalBlue = i
-							// TODO: Verify no copy needed
-							updateGoal(newGoal)
-							insertMessageAtNextPosition(messageTemplates.intervalByUser())
-						}, proposalText = i.toString(), insertMessage = { Message() }, insertMessageBuilderToQueueAtNextPositionAndAdvance = {}))
-					}
-				}
-			}*/
 		}
 
 		// TextInput
 		AnimatedVisibility(visible = lastMessage.chatInputField != null, enter = EnterTransition.None, exit = ExitTransition.None) {
 			if (lastMessage.chatInputField != null) {
-				// val value = lastMessage.chatInputField.value.observeAsState(initial = "")
-				// Log.d(TAG, "value: ${value.value}")
 				ChatInputField(
 					chatInputField = lastMessage.chatInputField,
-					// value = value.value,
 				)
 			}
 		}
 
-/*		// TitleInput
-		AnimatedVisibility(visible = lastMessage.bottomArea == BottomArea.TitleInput, enter = EnterTransition.None, exit = ExitTransition.None) {
-			ChatInputField(
-				value = newGoal.title,
-				onValueChange = { updateGoal(newGoal.copy(title = it)) },
-				action = {
-					insertMessageAtNextPosition(messageTemplates.titleByUser())
-				},
-				scrollDown = scrollDown,
-			)
-		}*/
-
-		// AddWidget
-		Log.d(TAG, "lastMessage.bottomArea: ${lastMessage.bottomArea}")
-		if (lastMessage.bottomArea == BottomArea.AddWidget) {
-			Log.d(TAG, "${newGoal.uid}")
-			// TODO: This block is not in anymore after inserted message because it's not bottom area
-			LaunchedEffect(key1 = true, block = {
-				Log.d(TAG, "LaunchedEffect(true) {")
-				lambdas.addWidgetToHomeScreenFilledIn()
-				delay(3000)
-				Log.d(TAG, "firstdelay")
-				Log.d(TAG, "newGoal.appWidgetId: ${newGoal.appWidgetId}")
-				Log.d(TAG, "newGoal.appWidgetId true: ${newGoal.appWidgetId == AppWidgetManager.INVALID_APPWIDGET_ID}")
-				if (newGoal.appWidgetId == AppWidgetManager.INVALID_APPWIDGET_ID) insertMessageAtNextPosition(messageTemplates.waitingForCallback())
-				delay(3000)
-				Log.d(TAG, "seconddelay")
-				// TODO: check and add messageproposal thumbs up
-				if (newGoal.appWidgetId == AppWidgetManager.INVALID_APPWIDGET_ID) insertMessageAtNextPosition(messageTemplates.retryPrompt())
-				Log.d(TAG, "endblock")
-
-			})
+		// MessageAction
+		// For every new lastMessage, execute its action once if there is one.
+		val lastValueOfLastMessage = remember { mutableStateOf(lastMessage) }
+		if (lastValueOfLastMessage.value != lastMessage) {
+			lastMessage.action?.let { it() }
+			lastValueOfLastMessage.value = lastMessage
 		}
+
+	/*// AddWidget
+	Log.d(TAG, "lastMessage.bottomArea: ${lastMessage.bottomArea}")
+	if (lastMessage.bottomArea == BottomArea.AddWidget) {
+		Log.d(TAG, "${newGoal.uid}")
+		// TODO: This block is not in anymore after inserted message because it's not bottom area
+		LaunchedEffect(key1 = true, block = {
+			Log.d(TAG, "LaunchedEffect(true) {")
+			lambdas.addWidgetToHomeScreenFilledIn()
+			delay(3000)
+			Log.d(TAG, "firstdelay")
+			Log.d(TAG, "newGoal.appWidgetId: ${newGoal.appWidgetId}")
+			Log.d(TAG, "newGoal.appWidgetId true: ${newGoal.appWidgetId == AppWidgetManager.INVALID_APPWIDGET_ID}")
+			if (newGoal.appWidgetId == AppWidgetManager.INVALID_APPWIDGET_ID) insertMessageAtNextPosition(messageTemplates.waitingForCallback())
+			delay(3000)
+			Log.d(TAG, "seconddelay")
+			// TODO: check and add messageproposal thumbs up
+			if (newGoal.appWidgetId == AppWidgetManager.INVALID_APPWIDGET_ID) insertMessageAtNextPosition(messageTemplates.retryPrompt())
+			Log.d(TAG, "endblock")
+
+		})
+	}*/
+/*
 		LaunchedEffect(key1 = newGoal.appWidgetId, block = {
 			Log.d(TAG, "LaunchedEffect(goal) {")
 			if (newGoal.appWidgetId != AppWidgetManager.INVALID_APPWIDGET_ID) insertMessageAtNextPosition(messageTemplates.success())
 		})
-	}
+*/
+}
 }

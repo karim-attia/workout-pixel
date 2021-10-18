@@ -6,17 +6,14 @@ import androidx.lifecycle.LiveData
 data class Message(
 	val text: String = "",
 	val isMessageByUser: Boolean = false,
-	val bottomArea: BottomArea = BottomArea.AutoAdvance,
-	val autoAdvance: Boolean = bottomArea == BottomArea.AutoAdvance, // || bottomArea == BottomArea.AddWidget,
+	val autoAdvance: Boolean = false,
 	// TODO: Set reasonable values
 	val autoAdvanceTime: Int = 60,
-	val showNextProposal: Boolean = bottomArea == BottomArea.ShowNext,
-	val proposalText: String = if (bottomArea == BottomArea.ShowNext) "Next" else "",
 	val proposals: List<MessageProposal> = emptyList(),
 	val chatInputField: ChatInputField? = null,
 	val nextMessage: (MessageBuilder)? = null,
 	val nextMessages: List<MessageBuilder> = if (nextMessage != null) listOf(nextMessage) else emptyList(),
-	// TODO: Show below
+	val action: (() -> Unit)? = null,
 	val messageExtra: @Composable () -> Unit = {},
 ) {
 	fun debugString(): String = "text: $text, autoAdvance: $autoAdvance"

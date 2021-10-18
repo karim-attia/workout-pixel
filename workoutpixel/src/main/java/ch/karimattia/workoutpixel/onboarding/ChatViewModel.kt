@@ -75,6 +75,9 @@ abstract class ChatViewModel : ViewModel() {
 		}
 	}
 
+	/**
+	 * Insert a new message to the queue, e.g. when a user clicks on a message proposal.
+	 * * */
 	fun insertMessageBuilderToQueueAtNextPositionAndAdvance(messageBuilder: MessageBuilder) {
 		insertMessageBuilderToQueueAtNextPosition(messageBuilder = messageBuilder)
 		increaseCurrentStep()
