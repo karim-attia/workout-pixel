@@ -36,18 +36,11 @@ private const val TAG: String = "ChatComponents"
 @Composable
 fun ChatInputField(
 	chatInputField: ChatInputField,
-
-	value: String = chatInputField.value.observeAsState(initial = "").value,
-	onValueChange: (String) -> Unit = chatInputField.onValueChange,
-	action: (String) -> Unit = chatInputField.action,
-	scrollDown: () -> Unit = chatInputField.scrollDown,
-/*
-	value: String,
-	onValueChange: (String) -> Unit,
-	action: (String) -> Unit,
-	scrollDown: () -> Unit,
-*/
 ) {
+	val value: String = chatInputField.value.observeAsState(initial = "").value
+	val onValueChange: (String) -> Unit = chatInputField.onValueChange
+	val action: (String) -> Unit = chatInputField.action
+	val scrollDown: () -> Unit = chatInputField.scrollDown
 
 	val keyboardController = LocalSoftwareKeyboardController.current
 
@@ -109,7 +102,7 @@ fun MessageProposal(messageProposal: MessageProposal) {
 }
 
 @Composable
-fun MessageCard(message: Message) {
+fun MessageCard(message: ChatMessage) {
 	Column(
 		modifier = Modifier
 			.fillMaxWidth()
@@ -140,7 +133,7 @@ fun MessageCard(message: Message) {
 }
 
 @Composable
-fun cardShapeFor(message: Message): Shape = cardShapeFor(message.isMessageByUser)
+fun cardShapeFor(message: ChatMessage): Shape = cardShapeFor(message.isMessageByUser)
 
 @Composable
 fun cardShapeFor(isMine: Boolean): Shape {

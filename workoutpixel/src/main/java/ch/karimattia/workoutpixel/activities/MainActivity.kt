@@ -227,6 +227,8 @@ fun WorkoutPixelApp(
 								navController.navigateUp()
 							}
 						},
+						// Getting UID to Onboarding through currentGoal through changeCurrentGoalUid(goalUid)
+						// With this UID, get the AppWidgetId
 						addWidgetToHomeScreen = { goal: Goal, boolean: Boolean ->
 							val goalUid: Int = lambdas.addWidgetToHomeScreen(goal, boolean)
 							goalViewModel.changeCurrentGoalUid(goalUid)
@@ -273,9 +275,10 @@ fun WorkoutPixelNavHost(
 			Log.d(TAG, "------------Instructions------------")
 			val appWidgetManager = AppWidgetManager.getInstance(LocalContext.current)
 			if (appWidgetManager.isRequestPinAppWidgetSupported) {
-				Onboarding(/*addNewWidgetToHomeScreen = { addWidgetToHomeScreen(it, true) }*/
+				Onboarding(
 					currentGoal = currentGoal ?: Goal(),
-					lambdas = lambdas)
+					lambdas = lambdas,
+				)
 			} else {
 				Instructions()
 			}

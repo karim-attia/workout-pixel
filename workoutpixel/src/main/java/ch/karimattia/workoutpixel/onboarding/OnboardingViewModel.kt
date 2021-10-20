@@ -3,53 +3,97 @@ package ch.karimattia.workoutpixel.onboarding
 import android.appwidget.AppWidgetManager
 import android.util.Log
 import androidx.compose.runtime.Composable
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.map
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import ch.karimattia.workoutpixel.composables.GoalPreviewWithBackground
 import ch.karimattia.workoutpixel.composables.GoalPreviewsWithBackground
 import ch.karimattia.workoutpixel.composables.Lambdas
 import ch.karimattia.workoutpixel.core.Status
 import ch.karimattia.workoutpixel.data.Goal
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 @Suppress("unused")
 private const val TAG: String = "OnboardingViewModel"
-typealias MessageBuilder = () -> Message
-
-/*@HiltViewModel
-class OnboardingViewModel @Inject constructor(
-	private val settingsRepository: SettingsRepository,
-) : ChatViewModel() {*/
+typealias MessageBuilder = () -> ChatMessage
 
 class OnboardingViewModel : ChatViewModel() {
 	/**
 	 * Class with all message templates
 	 * */
-	val messageTemplates: MessageTemplates = MessageTemplates()
+	private val messageTemplates: MessageTemplates = MessageTemplates()
 
 	/**
 	 * Specifies the first message of the message chain
 	 * */
-	override var firstMessage: Message = messageTemplates.introMessage()
+	override var firstMessage: ChatMessage = messageTemplates.introMessage()
 
+	/**
+	 * Initialize the ChatViewModel: Process the first message.
+	 * */
 	init {
 		initialize()
 	}
 
-	private val _goal: MutableLiveData<Goal> = MutableLiveData(Goal())
-	val goal: LiveData<Goal> = _goal
-	val goalTitle: LiveData<String> = _goal.map { it.title }
-	fun updateGoal(goal: Goal) {
-		_goal.value = goal
+	private val editableGoal: MutableLiveData<Goal> = MutableLiveData(Goal())
+	private var isGoalSaved: Boolean = false
+	val savedGoal: MutableLiveData<Goal> = MutableLiveData(Goal())
+	val goalTitle: LiveData<String> = editableGoal.map { it.title }
+
+	var widgetPinSuccessful: Boolean = false
+
+	// Reset editableGoal and flags when a new goal is created.
+	fun newGoal() {
+		editableGoal.value = Goal()
+		isGoalSaved = false
+		widgetPinSuccessful = false
 	}
 
 	/**
-	 * Needs to be initialized by activity in order that automatic scrolling works.
+	 * As soon as the pin dialog is shown, check whether the pin was successful.
+	 * */
+	private fun checkIfPinWasSuccessful() {
+		viewModelScope.launch {
+			savedGoal.asFlow().collectLatest { savedGoal ->
+				Log.d(TAG, "checkIfPinWasSuccessful")
+				if (
+					// Check if goal got saved through addWidgetToHomeScreenFilledIn and thus the uid in editableGoal was set
+					isGoalSaved &&
+					// Check if the current goal from the main activity has the same uid as editableGoal
+					savedGoal.uid == editableGoal.value!!.uid &&
+					// Check if it has a valid appWidgetId
+					savedGoal.appWidgetId != AppWidgetManager.INVALID_APPWIDGET_ID
+				) {
+					// As soon as the goal has a valid appWidgetId, the pin was successful.
+					widgetPinSuccessful = true
+					// Also update the appWidgetId in the editableGoal (currently not needed, but maybe I will enable updates from the chat later.
+					editableGoal.value = savedGoal
+				}
+			}
+		}
+	}
+
+	/**
+	 * Needs to be initialized by activity in order that lambdas work.
 	 * * */
-	var lambdas: Lambdas = Lambdas()
+	private var lambdas: Lambdas = Lambdas()
+	fun insertLambdas(lambdas: Lambdas) {
+		this.lambdas = lambdas.copy(
+			addWidgetToHomeScreenFilledIn = {
+				// Save the widget to the DB
+				// Get the generated uid in return
+				// Open the pin dialog
+				val uid = lambdas.addWidgetToHomeScreen(editableGoal.value!!, true)
+				Log.d(TAG, "uid: $uid")
+				// Save the generated uid to editableGoal
+				editableGoal.value = editableGoal.value!!.copy(uid = uid)
+				// Flag to checkIfPinWasSuccessful that the goal was saved and the generated uid saved to editableGoal
+				isGoalSaved = true
+				// Start to listen whether the pin was successful and update widgetPinSuccessful accordingly
+				checkIfPinWasSuccessful()
+			}
+		)
+	}
 
 	/**
 	 * All message templates.
@@ -62,58 +106,62 @@ class OnboardingViewModel : ChatViewModel() {
 			)
 		)
 
-		fun introMessage(): Message = Message(
+		fun introMessage(): ChatMessage = ChatMessage(
 			text = "Hey! Super awesome that you downloaded WorkoutPixel.",
+			autoAdvance = true,
 			nextMessage = ::basicFeatures
 		)
 
-		private fun basicFeatures(): Message = Message(
+		private fun basicFeatures(): ChatMessage = ChatMessage(
 			text = "With WorkoutPixel you can add widgets for your goals to your homescreen. They look like this:",
-			autoAdvance = true,
 			nextMessage = ::habits1,
 			messageExtra = { GoalPreviewsWithBackground() },
 			proposals = proposalsNext
 		)
 
-		private fun proposalNextByUser(): Message = Message(
+		private fun proposalNextByUser(): ChatMessage = ChatMessage(
 			text = "Next",
-			isMessageByUser = true
+			isMessageByUser = true,
 		)
 
-		private fun habits1(): Message = Message(
+		private fun habits1(): ChatMessage = ChatMessage(
 			text = "You probably look at your homescreen dozens of time per day. The widget will remind you to work on your goal when it’s blue.",
-			nextMessage = ::habits2
-		)
-
-		private fun habits2(): Message = Message(
-			text = "But more importantly, you start to notice that your goals are green/done. Usually, we have a negative association with our goals because we always notice them when we are behind them.",
-			nextMessage = ::habits3
-		)
-
-		private fun habits3(): Message = Message(
-			text = "Building new habits is hard. Seeing your progress - many times a day - makes it a little easier.",
+			nextMessage = ::habits2,
 			autoAdvance = true,
+		)
+
+		private fun habits2(): ChatMessage = ChatMessage(
+			text = "But more importantly, you start to notice that your goals are green/done. Usually, we have a negative association with our goals because we always notice them when we are behind them.",
+			nextMessage = ::habits3,
+			autoAdvance = true,
+		)
+
+		private fun habits3(): ChatMessage = ChatMessage(
+			text = "Building new habits is hard. Seeing your progress - many times a day - makes it a little easier.",
 			nextMessage = ::createGoal,
 			proposals = proposalsNext,
 		)
 
-		private fun createGoal(): Message = Message(
+		private fun createGoal(): ChatMessage = ChatMessage(
 			text = "Let’s create your first goal.",
-			nextMessage = ::previewInstructions
+			nextMessage = ::setTitle,
+			autoAdvance = true,
 		)
 
-		private fun previewInstructions(): Message = Message(
+/*		// TODO: Remove
+		private fun previewInstructions(): ChatMessage = ChatMessage(
 			text = "You can see in the preview below how the widget will look like.",
-			nextMessage = ::setTitle
-		)
+			nextMessage = ::setTitle,
+			autoAdvance = true,
+		)*/
 
 		private fun chatInputField(): ChatInputField = chatInputFieldOf(
 			value = goalTitle,
-			onValueChange = { _goal.value = _goal.value!!.copy(title = it) },
+			onValueChange = { editableGoal.value = editableGoal.value!!.copy(title = it) },
 			insertMessage = ::titleByUser,
 		)
 
-		private fun setTitle(): Message = Message(
+		private fun setTitle(): ChatMessage = ChatMessage(
 			text = "Please describe your goal in 1-2 words.",
 			nextMessage = ::goalPreview,
 			chatInputField = chatInputField(),
@@ -121,40 +169,41 @@ class OnboardingViewModel : ChatViewModel() {
 
 		private fun goalPreviewWithBackground(): @Composable () -> Unit = {
 			GoalPreviewWithBackground(
-				goal = goal.value!!.copy(statusOverride = Status.GREEN))
+				goal = editableGoal.value!!.copy(statusOverride = Status.GREEN))
 		}
 
-		private fun goalPreview(): Message = Message(
+		private fun goalPreview(): ChatMessage = ChatMessage(
 			text = "Your goal will look like this:",
 			autoAdvance = true,
 			nextMessage = ::setInterval,
 			messageExtra = goalPreviewWithBackground(),
 		)
 
-		private fun proposalEditGoalDescription(): Message = Message(
+		private fun proposalEditGoalDescription(): ChatMessage = ChatMessage(
 			text = "Edit goal description",
 			nextMessage = ::editTitle,
 			isMessageByUser = true
 		)
 
-		private fun editTitle(): Message = Message(
+		private fun editTitle(): ChatMessage = ChatMessage(
 			text = "Enter a new goal description",
 			nextMessage = ::editTitleConfirm,
 			chatInputField = chatInputField(),
 		)
 
-		private fun editTitleConfirm(): Message = Message(
+		private fun editTitleConfirm(): ChatMessage = ChatMessage(
 			text = "Your goal now looks like this:",
 			nextMessage = ::addToHomeScreen,
+			autoAdvance = true,
 			messageExtra = goalPreviewWithBackground(),
 		)
 
-		private fun titleByUser(): Message = Message(
-			text = goal.value!!.title,
+		private fun titleByUser(): ChatMessage = ChatMessage(
+			text = editableGoal.value!!.title,
 			isMessageByUser = true,
 		)
 
-		private fun setInterval(): Message = Message(
+		private fun setInterval(): ChatMessage = ChatMessage(
 			text = "How often do you want to reach your goal? Every ... days:",
 			nextMessage = ::addToHomeScreen,
 			proposals = intervalProposals()
@@ -166,7 +215,7 @@ class OnboardingViewModel : ChatViewModel() {
 			for (i in 1..31) {
 				proposals.add(
 					messageProposalOf(
-						proposalAction = { _goal.value!!.intervalBlue = i },
+						proposalAction = { editableGoal.value!!.intervalBlue = i },
 						proposalText = i.toString(),
 						insertMessage = ::intervalByUser,
 					)
@@ -175,12 +224,12 @@ class OnboardingViewModel : ChatViewModel() {
 			return proposals
 		}
 
-		private fun intervalByUser(): Message = Message(
-			text = goal.value!!.intervalBlue.toString(),
+		private fun intervalByUser(): ChatMessage = ChatMessage(
+			text = editableGoal.value!!.intervalBlue.toString(),
 			isMessageByUser = true
 		)
 
-		private fun addToHomeScreen(): Message = Message(
+		private fun addToHomeScreen(): ChatMessage = ChatMessage(
 			text = "Let's now add a widget for this goal to your homescreen. After clicking \uD83D\uDC4D, your phone will either automatically add the widget or ask you to place it.",
 			proposals = listOf(
 				messageProposalOf(
@@ -194,40 +243,64 @@ class OnboardingViewModel : ChatViewModel() {
 			),
 		)
 
-		private fun proposalThumbsUp(): Message = Message(
+		private fun proposalThumbsUp(): ChatMessage = ChatMessage(
 			text = "\uD83D\uDC4D",
 			isMessageByUser = true,
 			action = {
 				viewModelScope.launch {
-					Log.d(TAG, "proposalThumbsUp")
 					lambdas.addWidgetToHomeScreenFilledIn()
-					delay(3000)
-					Log.d(TAG, "firstdelay")
-					Log.d(TAG, "newGoal.appWidgetId: ${_goal.value!!.appWidgetId}")
-					Log.d(TAG, "newGoal.appWidgetId true: ${_goal.value!!.appWidgetId == AppWidgetManager.INVALID_APPWIDGET_ID}")
-					if (_goal.value!!.appWidgetId == AppWidgetManager.INVALID_APPWIDGET_ID) insertMessageBuilderToQueueAtNextPositionAndAdvance(::waitingForCallback)
 				}
+				delayAndSendMessage(::success, ::waitingForCallback)()
 			}
 		)
 
-		private fun waitingForCallback(): Message = Message(
+		private fun waitingForCallback(): ChatMessage = ChatMessage(
 			text = "Waiting until the widget gets added...",
-			action = {
-				viewModelScope.launch {
-
-					delay(3000)
-					Log.d(TAG, "seconddelay")
-					// TODO: check and add messageproposal thumbs up
-					if (_goal.value!!.appWidgetId == AppWidgetManager.INVALID_APPWIDGET_ID) insertMessageBuilderToQueueAtNextPositionAndAdvance(::retryPrompt)
-					else {
-						insertMessageBuilderToQueueAtNextPositionAndAdvance(::success)
-					}
-					Log.d(TAG, "endblock")
-				}
-			}
+			action = delayAndSendMessage(::success, ::retryPrompt)
 		)
 
-		private fun retryPrompt(): Message = Message(
+		private fun delayAndSendMessage2(successMessage: MessageBuilder, noSuccessMessage: MessageBuilder?, totalDelay: Long = 3000): () -> Unit = {
+			viewModelScope.launch {
+				Log.d(TAG, "delayAndSendMessage2")
+				val fail = collectLatestGoalAndInsertMessage(successMessage = successMessage)
+				if (fail) noSuccessMessage?.let { insertMessageBuilderToQueueAtNextPositionAndAdvance(it) }
+			}
+		}
+
+		private suspend fun collectLatestGoalAndInsertMessage(successMessage: MessageBuilder): Boolean {
+			var scxx = false
+			savedGoal.asFlow().collectLatest {
+				if (it.appWidgetId != AppWidgetManager.INVALID_APPWIDGET_ID) {
+					scxx = true
+					insertMessageBuilderToQueueAtNextPositionAndAdvance(successMessage)
+				}
+			}
+			delay(3000)
+			return scxx
+		}
+
+		private fun delayAndSendMessage(successMessage: MessageBuilder, noSuccessMessage: MessageBuilder?, totalDelay: Long = 3000): () -> Unit = {
+			viewModelScope.launch {
+				Log.d(TAG, "delayAndSendMessage: widgetPinSuccessful: $widgetPinSuccessful")
+				delayUntilWidgetPinSuccessful(totalDelay = totalDelay)
+				Log.d(TAG, "delayAndSendMessage: widgetPinSuccessful: $widgetPinSuccessful")
+				if (widgetPinSuccessful) insertMessageBuilderToQueueAtNextPositionAndAdvance(successMessage)
+				else noSuccessMessage?.let { insertMessageBuilderToQueueAtNextPositionAndAdvance(it) }
+			}
+		}
+
+		private suspend fun delayUntilWidgetPinSuccessful(
+			totalDelay: Long = 3000,
+		) {
+			var i = 0
+			val delaySteps = 12
+			while (!widgetPinSuccessful && i < delaySteps) {
+				delay(totalDelay / delaySteps)
+				i++
+			}
+		}
+
+		private fun retryPrompt(): ChatMessage = ChatMessage(
 			text = "Do you want to retry?",
 			proposals = listOf(
 				messageProposalOf(
@@ -239,9 +312,10 @@ class OnboardingViewModel : ChatViewModel() {
 					insertMessage = ::proposalThumbsUp,
 				)
 			),
+			action = delayAndSendMessage(::success, null)
 		)
 
-		private fun success(): Message = Message(
+		private fun success(): ChatMessage = ChatMessage(
 			text = "You successfully added your widget.",
 			proposals = listOf(
 				messageProposalOf(
@@ -252,19 +326,30 @@ class OnboardingViewModel : ChatViewModel() {
 					proposalText = "Close",
 					insertMessage = ::proposalClose
 				),
+				messageProposalOf(
+					proposalText = "Add another goal",
+					insertMessage = ::proposalAnotherGoal,
+				),
 			),
 		)
 
-		private fun proposalClose(): Message = Message(
+		private fun proposalClose(): ChatMessage = ChatMessage(
 			text = "Close",
 			isMessageByUser = true,
 			action = { }
 		)
 
-		private fun proposalEdit(): Message = Message(
+		private fun proposalEdit(): ChatMessage = ChatMessage(
 			text = "Edit",
 			isMessageByUser = true,
 			action = { }
+		)
+
+		private fun proposalAnotherGoal(): ChatMessage = ChatMessage(
+			text = "Add another goal",
+			isMessageByUser = true,
+			nextMessage = ::setTitle,
+			action = { newGoal() },
 		)
 
 	}

@@ -35,14 +35,14 @@ data class Goal
 		}
 	}
 
-	fun setNewLastWorkout(lastWorkout: Long): Boolean {
+/*	fun setNewLastWorkout(lastWorkout: Long): Boolean {
 		return if (this.lastWorkout == lastWorkout) {
 			false
 		} else {
 			this.lastWorkout = lastWorkout
 			true
 		}
-	}
+	}*/
 
 	fun hasValidAppWidgetId(): Boolean = appWidgetId != AppWidgetManager.INVALID_APPWIDGET_ID
 	override fun toString(): String = title + ": " + everyWording()
