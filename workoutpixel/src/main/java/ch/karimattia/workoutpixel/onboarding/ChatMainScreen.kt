@@ -6,11 +6,13 @@ import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.fadeIn
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.horizontalScroll
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 
@@ -54,35 +56,27 @@ fun ChatMainScreen(
 fun BottomArea(
 	lastMessage: ChatMessage,
 ) {
-	Box(
-		contentAlignment = Alignment.CenterEnd,
-		modifier = Modifier
-			.fillMaxWidth()
-	)
-	{
-		// Message proposals
-
-		// All messageProposals
-		AnimatedVisibility(visible = lastMessage.proposals.isNotEmpty(), enter = fadeIn(), exit = ExitTransition.None) {
-			Row(
-				horizontalArrangement = Arrangement.End,
-				modifier = Modifier
-					.fillMaxWidth()
-					.horizontalScroll(state = rememberScrollState())
-			) {
-				for (proposal in lastMessage.proposals) {
-					MessageProposal(proposal)
-				}
+	// Message proposals
+	// All messageProposals
+	AnimatedVisibility(visible = lastMessage.proposals.isNotEmpty(), enter = fadeIn(), exit = ExitTransition.None) {
+		Row(
+			horizontalArrangement = Arrangement.End,
+			modifier = Modifier
+				.fillMaxWidth()
+				.horizontalScroll(state = rememberScrollState())
+		) {
+			for (proposal in lastMessage.proposals) {
+				MessageProposal(proposal)
 			}
 		}
+	}
 
-		// TextInput
-		AnimatedVisibility(visible = lastMessage.chatInputField != null, enter = EnterTransition.None, exit = ExitTransition.None) {
-			if (lastMessage.chatInputField != null) {
-				ChatInputField(
-					chatInputField = lastMessage.chatInputField,
-				)
-			}
+	// TextInput
+	AnimatedVisibility(visible = lastMessage.chatInputField != null, enter = EnterTransition.None, exit = ExitTransition.None) {
+		if (lastMessage.chatInputField != null) {
+			ChatInputField(
+				chatInputField = lastMessage.chatInputField,
+			)
 		}
 	}
 }

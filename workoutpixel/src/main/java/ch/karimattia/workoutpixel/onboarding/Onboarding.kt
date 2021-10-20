@@ -32,15 +32,6 @@ fun Onboarding(
 		lastValueOfCurrentGoal.value = currentGoal
 	}
 
-/*	// TODO: Cases where there is a current goal to start with.
-	val initialGoal = remember { currentGoal }
-	LaunchedEffect(key1 = currentGoal.appWidgetId, block = {
-		// The appWidgetId of the current goal changed.
-		Log.d(TAG, "LaunchedEffect goalSwitch. firstGoalChange: ${initialGoal.appWidgetId}")
-		Log.d(TAG, "LaunchedEffect goalSwitch. currentGoal: ${currentGoal.appWidgetId}")
-		if (currentGoal.appWidgetId != initialGoal.appWidgetId || currentGoal.uid != Constants.INVALID_GOAL_UID) onboardingViewModel.updateGoal(currentGoal)
-	})*/
-
 	ChatMainScreen(
 		chatViewModel = onboardingViewModel,
 	)

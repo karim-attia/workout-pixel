@@ -1,10 +1,7 @@
 package ch.karimattia.workoutpixel.onboarding
 
-import android.util.Log
 import androidx.compose.foundation.ScrollState
 import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
@@ -107,19 +104,18 @@ abstract class ChatViewModel : ViewModel() {
 	private fun scrollDown() {
 		scope?.launch {
 			scrollState.animateScrollTo(scrollState.maxValue + 5000)
-			// Log.d(TAG, "scrollState.value: ${scrollState.maxValue}, scrollState.maxValue: ${scrollState.maxValue}")
 		}
 	}
 
 	fun messageProposalOf(
 		proposalText: String = "",
 		proposalAction: () -> Unit = {},
-		insertMessage: MessageBuilder,
+		insertsMessage: MessageBuilder,
 	): MessageProposal = MessageProposal(
 		proposalText = proposalText,
 		action = {
 			proposalAction()
-			insertMessageBuilderToQueueAtNextPositionAndAdvance(insertMessage)
+			insertMessageBuilderToQueueAtNextPositionAndAdvance(insertsMessage)
 		},
 	)
 

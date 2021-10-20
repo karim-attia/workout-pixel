@@ -10,6 +10,7 @@ import ch.karimattia.workoutpixel.composables.Lambdas
 import ch.karimattia.workoutpixel.core.Status
 import ch.karimattia.workoutpixel.data.Goal
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -50,10 +51,9 @@ class OnboardingViewModel : ChatViewModel() {
 		widgetPinSuccessful = false
 	}
 
-/**
+	/**
 	 * As soon as the pin dialog is shown, check whether the pin was successful.
 	 * */
-
 /*
 	private fun checkIfPinWasSuccessful() {
 		viewModelScope.launch {
@@ -92,8 +92,6 @@ class OnboardingViewModel : ChatViewModel() {
 				editableGoal.value = editableGoal.value!!.copy(uid = uid)
 				// Flag to checkIfPinWasSuccessful that the goal was saved and the generated uid saved to editableGoal
 				isGoalSaved = true
-				// Start to listen whether the pin was successful and update widgetPinSuccessful accordingly
-				// checkIfPinWasSuccessful()
 			}
 		)
 	}
@@ -105,7 +103,7 @@ class OnboardingViewModel : ChatViewModel() {
 		private val proposalsNext: List<MessageProposal> = listOf(
 			messageProposalOf(
 				proposalText = "Next",
-				insertMessage = ::proposalNextByUser,
+				insertsMessage = ::proposalNextByUser,
 			)
 		)
 
@@ -213,7 +211,7 @@ class OnboardingViewModel : ChatViewModel() {
 					messageProposalOf(
 						proposalAction = { editableGoal.value!!.intervalBlue = i },
 						proposalText = i.toString(),
-						insertMessage = ::intervalByUser,
+						insertsMessage = ::intervalByUser,
 					)
 				)
 			}
@@ -226,15 +224,15 @@ class OnboardingViewModel : ChatViewModel() {
 		)
 
 		private fun addToHomeScreen(): ChatMessage = ChatMessage(
-			text = "Let's now add a widget for this goal to your homescreen. After clicking \uD83D\uDC4D, your phone will either automatically add the widget or ask you to place it.",
+			text = "Let's now add the widget for this goal to your homescreen. After clicking \uD83D\uDC4D, your phone will either automatically add the widget or ask you to place it.",
 			proposals = listOf(
 				messageProposalOf(
 					proposalText = "Edit goal description",
-					insertMessage = ::proposalEditGoalDescription,
+					insertsMessage = ::proposalEditGoalDescription,
 				),
 				messageProposalOf(
 					proposalText = "\uD83D\uDC4D",
-					insertMessage = ::proposalThumbsUp,
+					insertsMessage = ::proposalThumbsUp,
 				)
 			),
 		)
@@ -242,71 +240,59 @@ class OnboardingViewModel : ChatViewModel() {
 		private fun proposalThumbsUp(): ChatMessage = ChatMessage(
 			text = "\uD83D\uDC4D",
 			isMessageByUser = true,
-			action = {
-				viewModelScope.launch {
-					lambdas.addWidgetToHomeScreen()
-				}
-				delayAndSendMessage(::success, ::waitingForCallback)()
-			}
+			action = checkIfPinWasSuccessfulAndSendAccordingMessage(showPinDialog = true, successMessage = ::success, noSuccessMessage = ::waitingForCallback)
+
 		)
 
-		private fun delayAndSendMessage(successMessage: MessageBuilder, noSuccessMessage: MessageBuilder?, totalDelay: Long = 3000): () -> Unit = {
+		private val checkIfPinWasSuccessfulJobs = mutableListOf<Job>()
+
+		private fun checkIfPinWasSuccessfulAndSendAccordingMessage(
+			showPinDialog: Boolean = false,
+			successMessage: MessageBuilder,
+			noSuccessMessage: MessageBuilder?,
+			timeout: Long? = 3000,
+		): () -> Unit = {
 			viewModelScope.launch {
-				Log.d(TAG, "delayAndSendMessage")
+				if (showPinDialog) lambdas.addWidgetToHomeScreen()
 				var success = false
+				// Cancel job if retry is clicked.
+				for (job in checkIfPinWasSuccessfulJobs) job.cancel()
+
 				val job: Job = launch {
-					Log.d(TAG, "launch 1")
-					savedGoal.asFlow().collectLatest {
-						Log.d(TAG, "launch 2")
-						if (it.appWidgetId != AppWidgetManager.INVALID_APPWIDGET_ID) {
+					savedGoal.asFlow().collectLatest { savedGoal ->
+						if (
+						// Check if goal got saved through addWidgetToHomeScreenFilledIn and thus the uid in editableGoal was set
+							isGoalSaved &&
+							// Check if the current goal from the main activity has the same uid as editableGoal
+							savedGoal.uid == editableGoal.value!!.uid &&
+							// Check if it has a valid appWidgetId
+							savedGoal.appWidgetId != AppWidgetManager.INVALID_APPWIDGET_ID
+						) {
 							success = true
 							insertMessageBuilderToQueueAtNextPositionAndAdvance(successMessage)
+							editableGoal.value = savedGoal
+							// Observing the savedGoal is no longer needed.
+							this.cancel()
 						}
 					}
 				}
-				delay(3000)
-				// val fail = collectLatestGoalAndInsertMessage(successMessage = successMessage)
-				if (!success) noSuccessMessage?.let { insertMessageBuilderToQueueAtNextPositionAndAdvance(it) }
-				job.cancel()
-			}
-		}
-
-/*		private suspend fun collectLatestGoalAndInsertMessage(successMessage: MessageBuilder): Boolean {
-			var scxx = false
-			savedGoal.asFlow().collectLatest {
-				if (it.appWidgetId != AppWidgetManager.INVALID_APPWIDGET_ID) {
-					scxx = true
-					insertMessageBuilderToQueueAtNextPositionAndAdvance(successMessage)
+				// After a certain amount of time without pinning success, cancel the job and move to the next message.
+				// There should not be a timeout on the retry screen - if the widget is added 10min later, the success message should still be shown.
+				if (timeout != null) {
+					delay(timeout)
+					if (!success) noSuccessMessage?.let { insertMessageBuilderToQueueAtNextPositionAndAdvance(it) }
+					// The next message will observe the savedGoal.
+					job.cancel()
+				} else {
+					// Add still running job to array of still running jobs, so they can get cancelled before the next job starts.
+					checkIfPinWasSuccessfulJobs.add(job)
 				}
 			}
-			delay(3000)
-			return scxx
-		}*/
-
-/*		private fun delayAndSendMessage(successMessage: MessageBuilder, noSuccessMessage: MessageBuilder?, totalDelay: Long = 3000): () -> Unit = {
-			viewModelScope.launch {
-				Log.d(TAG, "delayAndSendMessage: widgetPinSuccessful: $widgetPinSuccessful")
-				delayUntilWidgetPinSuccessful(totalDelay = totalDelay)
-				Log.d(TAG, "delayAndSendMessage: widgetPinSuccessful: $widgetPinSuccessful")
-				if (widgetPinSuccessful) insertMessageBuilderToQueueAtNextPositionAndAdvance(successMessage)
-				else noSuccessMessage?.let { insertMessageBuilderToQueueAtNextPositionAndAdvance(it) }
-			}
 		}
-
-		private suspend fun delayUntilWidgetPinSuccessful(
-			totalDelay: Long = 3000,
-		) {
-			var i = 0
-			val delaySteps = 12
-			while (!widgetPinSuccessful && i < delaySteps) {
-				delay(totalDelay / delaySteps)
-				i++
-			}
-		}*/
 
 		private fun waitingForCallback(): ChatMessage = ChatMessage(
 			text = "Waiting until the widget gets added...",
-			action = delayAndSendMessage(::success, ::retryPrompt)
+			action = checkIfPinWasSuccessfulAndSendAccordingMessage(successMessage = ::success, noSuccessMessage = ::retryPrompt)
 		)
 
 		private fun retryPrompt(): ChatMessage = ChatMessage(
@@ -314,19 +300,20 @@ class OnboardingViewModel : ChatViewModel() {
 			proposals = listOf(
 				messageProposalOf(
 					proposalText = "Edit goal description",
-					insertMessage = ::proposalEditGoalDescription,
+					insertsMessage = ::proposalEditGoalDescription,
 				),
 				messageProposalOf(
 					proposalText = "\uD83D\uDC4D",
-					insertMessage = ::proposalThumbsUp,
+					insertsMessage = ::proposalThumbsUp,
 				)
 			),
-			action = delayAndSendMessage(::success, null)
+			action = checkIfPinWasSuccessfulAndSendAccordingMessage(successMessage = ::success, noSuccessMessage = null, timeout = null)
 		)
 
 		private fun success(): ChatMessage = ChatMessage(
 			text = "You successfully added your widget.",
 			proposals = listOf(
+/*
 				messageProposalOf(
 					proposalText = "Edit",
 					insertMessage = ::proposalEdit
@@ -335,9 +322,10 @@ class OnboardingViewModel : ChatViewModel() {
 					proposalText = "Close",
 					insertMessage = ::proposalClose
 				),
+*/
 				messageProposalOf(
 					proposalText = "Add another goal",
-					insertMessage = ::proposalAnotherGoal,
+					insertsMessage = ::proposalAnotherGoal,
 				),
 			),
 		)
