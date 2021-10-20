@@ -10,9 +10,7 @@ import androidx.compose.animation.graphics.ExperimentalAnimationGraphicsApi
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -37,7 +35,6 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 private const val TAG: String = "MainActivity"
-typealias GoalFunction = (Goal) -> Unit
 
 @AndroidEntryPoint
 @ExperimentalComposeUiApi
@@ -77,6 +74,7 @@ class MainActivity : ComponentActivity() {
 				},
 				updateGoal = { goal ->
 					lifecycleScope.launch {
+						Log.d(TAG, "updateGoal top main")
 						goalViewModel.updateGoal(goal)
 						widgetActions(goal).runUpdate(true)
 					}
@@ -196,7 +194,21 @@ fun WorkoutPixelApp(
 						)
 					}
 				}
+			},
+			floatingActionButton = {
+				if (currentScreen == WorkoutPixelScreen.GoalsList) {
+					FloatingActionButton(onClick = {
+						navController.navigate(WorkoutPixelScreen.Instructions.name)
+					}) {
+						Icon(
+							imageVector = Icons.Filled.Add,
+							contentDescription = null,
+						)
+						/* FAB content */
+					}
+				}
 			}
+
 		) { innerPadding ->
 
 			if (settingsData != null) {
@@ -207,7 +219,7 @@ fun WorkoutPixelApp(
 					pastClickViewModelAssistedFactory = pastClickViewModelAssistedFactory,
 					// Make navigateUp a separate function?
 					lambdas = lambdas.copy(
-						updateGoalFilledIn = { updatedGoal: Goal, navigateUp: Boolean ->
+						updateGoalAndNavigate = { updatedGoal: Goal, navigateUp: Boolean ->
 							lambdas.updateGoal(updatedGoal)
 							Log.d(TAG, "navigateUp: $navigateUp")
 							if (navigateUp) {
@@ -266,7 +278,7 @@ fun WorkoutPixelNavHost(
 	) {
 		composable(route = WorkoutPixelScreen.GoalsList.name) {
 			Log.d(TAG, "------------GoalsList------------")
-			AllGoals(
+			GoalList(
 				goals = goals,
 				lambdas = lambdas,
 			)

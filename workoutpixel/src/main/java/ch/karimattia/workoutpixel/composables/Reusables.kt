@@ -27,6 +27,7 @@ import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.ui.AppBarConfiguration
 import ch.karimattia.workoutpixel.core.getColorFromStatusColor
 import ch.karimattia.workoutpixel.core.testGoals
 import ch.karimattia.workoutpixel.data.Goal
@@ -239,7 +240,7 @@ data class Lambdas(
 	val updateAfterClickFilledIn: GoalFunction = {},
 	val updateAfterClick: () -> Unit = {},
 	val updateGoal: GoalFunction = {},
-	val updateGoalFilledIn: (goal: Goal, navigateUp: Boolean) -> Unit = { _, _ -> },
+	val updateGoalAndNavigate: (goal: Goal, navigateUp: Boolean) -> Unit = { _, _ -> },
 	val deleteGoal: GoalFunction = {},
 	val deleteGoalAndNavigate: (goal: Goal, navigateUp: Boolean) -> Unit = { _, _ -> },
 	val insertGoal: GoalFunction = {},

@@ -84,8 +84,9 @@ fun EditGoalView(
 			ConnectExistingGoal(
 				goalsWithoutWidget = goalsWithoutWidget,
 				connectGoal = { updatedConnectedGoal ->
+					Log.d(TAG, "ConnectExistingGoal top")
 					updatedConnectedGoal.appWidgetId = initialGoal.appWidgetId
-					lambdas.updateGoalFilledIn(updatedConnectedGoal, false)
+					lambdas.updateGoal(updatedConnectedGoal)
 				},
 				modifier = modifier,
 			)
@@ -119,7 +120,7 @@ fun EditGoalView(
 		)
 		AddUpdateWidgetButton(
 			isFirstConfigure = isFirstConfigure,
-			insertUpdateWidget = { if (isFirstConfigure) lambdas.insertGoal(editGoalViewGoal) else lambdas.updateGoalFilledIn(editGoalViewGoal, true) },
+			insertUpdateWidget = { if (isFirstConfigure) lambdas.insertGoal(editGoalViewGoal) else lambdas.updateGoalAndNavigate(editGoalViewGoal, true) },
 			modifier = Modifier
 				.padding(top = 24.dp)
 				.align(Alignment.End),
@@ -188,7 +189,6 @@ fun ConnectExistingGoal(
 
 }
 
-@ExperimentalComposeUiApi
 @Composable
 fun ConnectDropdown(
 	goalsWithoutWidget: List<Goal>,
@@ -201,7 +201,7 @@ fun ConnectDropdown(
 
 	Box {
 		// https://stackoverflow.com/questions/67902919/jetpack-compose-textfield-clickable-does-not-work
-		val (focusRequester) = FocusRequester.createRefs()
+		// val (focusRequester) = FocusRequester.createRefs()
 		val interactionSource = remember { MutableInteractionSource() }
 
 		OutlinedTextField(
@@ -222,7 +222,7 @@ fun ConnectDropdown(
 			modifier = modifier
 				.fillMaxWidth()
 				//.clickable(onClick = { expanded = !expanded })
-				.focusRequester(focusRequester)
+			//	.focusRequester(focusRequester)
 			// .background(Color.Gray)
 		)
 		if (!expanded) {
@@ -233,7 +233,7 @@ fun ConnectDropdown(
 					.clickable(
 						onClick = {
 							expanded = !expanded
-							focusRequester.requestFocus() //to give the focus to the TextField
+		//					focusRequester.requestFocus() //to give the focus to the TextField
 						},
 						interactionSource = interactionSource,
 						indication = null //to avoid the ripple on the Box
@@ -269,7 +269,10 @@ fun ConnectButton(
 	modifier: Modifier = Modifier,
 ) {
 	Button(
-		onClick = { connectWidget() },
+		onClick = {
+			Log.d(TAG, "ConnectButton")
+			connectWidget()
+					 },
 		modifier = modifier
 	) {
 		Text(text = "Connect widget".uppercase())

@@ -232,7 +232,7 @@ fun PastClickList(
 							// TODO: Also have goalRepository in this viewModel?
 							val lastWorkout = lastClickBasedOnActiveClicks(updatedPastClicks)
 							if (currentGoal.lastWorkout != lastWorkout) {
-								lambdas.updateGoalFilledIn(currentGoal.copy(lastWorkout = lastWorkout), false)
+								lambdas.updateGoal(currentGoal.copy(lastWorkout = lastWorkout))
 							}
 						},
 						lambdas = lambdas,

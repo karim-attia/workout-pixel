@@ -15,6 +15,7 @@ enum class WorkoutPixelScreen(
 	val showBackNavigation: Boolean = false,
 	val showEditIcon: Boolean = false,
 	val showSettingsIcon: Boolean = false,
+	val showFloatingActionButton: Boolean = false,
 ) {
 	Instructions(
 		icon = Icons.Filled.Info,
@@ -26,6 +27,7 @@ enum class WorkoutPixelScreen(
 		bottomNavigation = true,
 		displayName = "Your goals",
 		showSettingsIcon = true,
+		showFloatingActionButton = true,
 	),
 	GoalDetailView(
 		showBackNavigation = true,

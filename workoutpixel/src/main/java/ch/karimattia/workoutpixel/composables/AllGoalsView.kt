@@ -32,17 +32,6 @@ import java.util.*
 private const val TAG: String = "AllGoals"
 
 @Composable
-fun AllGoals(
-	goals: List<Goal>,
-	lambdas: Lambdas,
-) {
-	GoalList(
-		goals = goals,
-		lambdas = lambdas
-	)
-}
-
-@Composable
 fun GoalList(
 	goals: List<Goal>,
 	lambdas: Lambdas,
@@ -50,7 +39,7 @@ fun GoalList(
 	Column(
 		modifier = Modifier
 			.verticalScroll(rememberScrollState())
-			.padding(top = 6.dp, bottom = 40.dp)
+			.padding(top = 6.dp, bottom = 90.dp)
 	) {
 		if (goals.isNotEmpty()) {
 			for (goal in goals) {
@@ -172,7 +161,7 @@ fun InstructionsCard(
 @Preview(name = "MyScreen preview")
 @Composable
 fun AllGoalsPreview() {
-	AllGoals(
+	GoalList(
 		goals = testGoals,
 		lambdas = Lambdas()
 	)
