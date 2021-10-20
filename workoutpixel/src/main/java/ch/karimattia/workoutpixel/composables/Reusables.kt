@@ -236,15 +236,15 @@ fun GoalPreviewWithBackground(goal: Goal) {
 }
 
 data class Lambdas(
-	val updateAfterClick: GoalFunction = {},
-	val updateAfterClickFilledIn: () -> Unit = {},
+	val updateAfterClickFilledIn: GoalFunction = {},
+	val updateAfterClick: () -> Unit = {},
 	val updateGoal: GoalFunction = {},
 	val updateGoalFilledIn: (goal: Goal, navigateUp: Boolean) -> Unit = { _, _ -> },
 	val deleteGoal: GoalFunction = {},
 	val deleteGoalAndNavigate: (goal: Goal, navigateUp: Boolean) -> Unit = { _, _ -> },
 	val insertGoal: GoalFunction = {},
-	val addWidgetToHomeScreen: suspend (goal: Goal, insertNewGoal: Boolean) -> Int = { _, _ -> 0 },
-	val addWidgetToHomeScreenFilledIn: suspend () -> Unit = { },
+	val addWidgetToHomeScreenFilledIn: suspend (goal: Goal, insertNewGoal: Boolean) -> Int = { _, _ -> 0 },
+	val addWidgetToHomeScreen: suspend () -> Unit = { },
 	val settingsData: SettingsData = SettingsData(),
 	val settingChange: (SettingsData) -> Unit = {},
 	val navigateTo: (destination: String, goal: Goal?) -> Unit = { _, _ -> },

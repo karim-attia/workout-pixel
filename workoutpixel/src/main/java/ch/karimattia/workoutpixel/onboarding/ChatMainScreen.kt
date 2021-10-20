@@ -44,19 +44,9 @@ fun ChatMainScreen(
 		}
 		BottomArea(lastMessage = lastMessage)
 /*
-		BottomArea(
-			lastMessage = lastMessage,
-		)*/
+		lastMessage.BottomArea()
+		*/
 	}
-
-/*	// TODO: Move to ChatViewModel
-	// MessageAction
-	// For every new lastMessage, execute its action once if there is one.
-	val lastValueOfLastMessage = remember { mutableStateOf(lastMessage) }
-	if (lastValueOfLastMessage.value != lastMessage) {
-		lastMessage.action?.let { it() }
-		lastValueOfLastMessage.value = lastMessage
-	}*/
 }
 
 @ExperimentalComposeUiApi

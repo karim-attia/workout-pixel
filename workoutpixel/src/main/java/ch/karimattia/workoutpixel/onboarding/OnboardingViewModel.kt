@@ -9,6 +9,7 @@ import ch.karimattia.workoutpixel.composables.GoalPreviewsWithBackground
 import ch.karimattia.workoutpixel.composables.Lambdas
 import ch.karimattia.workoutpixel.core.Status
 import ch.karimattia.workoutpixel.data.Goal
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -49,9 +50,11 @@ class OnboardingViewModel : ChatViewModel() {
 		widgetPinSuccessful = false
 	}
 
-	/**
+/**
 	 * As soon as the pin dialog is shown, check whether the pin was successful.
 	 * */
+
+/*
 	private fun checkIfPinWasSuccessful() {
 		viewModelScope.launch {
 			savedGoal.asFlow().collectLatest { savedGoal ->
@@ -72,25 +75,25 @@ class OnboardingViewModel : ChatViewModel() {
 			}
 		}
 	}
-
+	*/
 	/**
 	 * Needs to be initialized by activity in order that lambdas work.
 	 * * */
 	private var lambdas: Lambdas = Lambdas()
 	fun insertLambdas(lambdas: Lambdas) {
 		this.lambdas = lambdas.copy(
-			addWidgetToHomeScreenFilledIn = {
+			addWidgetToHomeScreen = {
 				// Save the widget to the DB
 				// Get the generated uid in return
 				// Open the pin dialog
-				val uid = lambdas.addWidgetToHomeScreen(editableGoal.value!!, true)
+				val uid = lambdas.addWidgetToHomeScreenFilledIn(editableGoal.value!!, true)
 				Log.d(TAG, "uid: $uid")
 				// Save the generated uid to editableGoal
 				editableGoal.value = editableGoal.value!!.copy(uid = uid)
 				// Flag to checkIfPinWasSuccessful that the goal was saved and the generated uid saved to editableGoal
 				isGoalSaved = true
 				// Start to listen whether the pin was successful and update widgetPinSuccessful accordingly
-				checkIfPinWasSuccessful()
+				// checkIfPinWasSuccessful()
 			}
 		)
 	}
@@ -148,12 +151,11 @@ class OnboardingViewModel : ChatViewModel() {
 			autoAdvance = true,
 		)
 
-/*		// TODO: Remove
-		private fun previewInstructions(): ChatMessage = ChatMessage(
-			text = "You can see in the preview below how the widget will look like.",
-			nextMessage = ::setTitle,
-			autoAdvance = true,
-		)*/
+		private fun setTitle(): ChatMessage = ChatMessage(
+			text = "Please describe your goal in 1-2 words.",
+			nextMessage = ::goalPreview,
+			chatInputField = chatInputField(),
+		)
 
 		private fun chatInputField(): ChatInputField = chatInputFieldOf(
 			value = goalTitle,
@@ -161,10 +163,9 @@ class OnboardingViewModel : ChatViewModel() {
 			insertMessage = ::titleByUser,
 		)
 
-		private fun setTitle(): ChatMessage = ChatMessage(
-			text = "Please describe your goal in 1-2 words.",
-			nextMessage = ::goalPreview,
-			chatInputField = chatInputField(),
+		private fun titleByUser(): ChatMessage = ChatMessage(
+			text = editableGoal.value!!.title,
+			isMessageByUser = true,
 		)
 
 		private fun goalPreviewWithBackground(): @Composable () -> Unit = {
@@ -196,11 +197,6 @@ class OnboardingViewModel : ChatViewModel() {
 			nextMessage = ::addToHomeScreen,
 			autoAdvance = true,
 			messageExtra = goalPreviewWithBackground(),
-		)
-
-		private fun titleByUser(): ChatMessage = ChatMessage(
-			text = editableGoal.value!!.title,
-			isMessageByUser = true,
 		)
 
 		private fun setInterval(): ChatMessage = ChatMessage(
@@ -248,26 +244,34 @@ class OnboardingViewModel : ChatViewModel() {
 			isMessageByUser = true,
 			action = {
 				viewModelScope.launch {
-					lambdas.addWidgetToHomeScreenFilledIn()
+					lambdas.addWidgetToHomeScreen()
 				}
 				delayAndSendMessage(::success, ::waitingForCallback)()
 			}
 		)
 
-		private fun waitingForCallback(): ChatMessage = ChatMessage(
-			text = "Waiting until the widget gets added...",
-			action = delayAndSendMessage(::success, ::retryPrompt)
-		)
-
-		private fun delayAndSendMessage2(successMessage: MessageBuilder, noSuccessMessage: MessageBuilder?, totalDelay: Long = 3000): () -> Unit = {
+		private fun delayAndSendMessage(successMessage: MessageBuilder, noSuccessMessage: MessageBuilder?, totalDelay: Long = 3000): () -> Unit = {
 			viewModelScope.launch {
-				Log.d(TAG, "delayAndSendMessage2")
-				val fail = collectLatestGoalAndInsertMessage(successMessage = successMessage)
-				if (fail) noSuccessMessage?.let { insertMessageBuilderToQueueAtNextPositionAndAdvance(it) }
+				Log.d(TAG, "delayAndSendMessage")
+				var success = false
+				val job: Job = launch {
+					Log.d(TAG, "launch 1")
+					savedGoal.asFlow().collectLatest {
+						Log.d(TAG, "launch 2")
+						if (it.appWidgetId != AppWidgetManager.INVALID_APPWIDGET_ID) {
+							success = true
+							insertMessageBuilderToQueueAtNextPositionAndAdvance(successMessage)
+						}
+					}
+				}
+				delay(3000)
+				// val fail = collectLatestGoalAndInsertMessage(successMessage = successMessage)
+				if (!success) noSuccessMessage?.let { insertMessageBuilderToQueueAtNextPositionAndAdvance(it) }
+				job.cancel()
 			}
 		}
 
-		private suspend fun collectLatestGoalAndInsertMessage(successMessage: MessageBuilder): Boolean {
+/*		private suspend fun collectLatestGoalAndInsertMessage(successMessage: MessageBuilder): Boolean {
 			var scxx = false
 			savedGoal.asFlow().collectLatest {
 				if (it.appWidgetId != AppWidgetManager.INVALID_APPWIDGET_ID) {
@@ -277,9 +281,9 @@ class OnboardingViewModel : ChatViewModel() {
 			}
 			delay(3000)
 			return scxx
-		}
+		}*/
 
-		private fun delayAndSendMessage(successMessage: MessageBuilder, noSuccessMessage: MessageBuilder?, totalDelay: Long = 3000): () -> Unit = {
+/*		private fun delayAndSendMessage(successMessage: MessageBuilder, noSuccessMessage: MessageBuilder?, totalDelay: Long = 3000): () -> Unit = {
 			viewModelScope.launch {
 				Log.d(TAG, "delayAndSendMessage: widgetPinSuccessful: $widgetPinSuccessful")
 				delayUntilWidgetPinSuccessful(totalDelay = totalDelay)
@@ -298,7 +302,12 @@ class OnboardingViewModel : ChatViewModel() {
 				delay(totalDelay / delaySteps)
 				i++
 			}
-		}
+		}*/
+
+		private fun waitingForCallback(): ChatMessage = ChatMessage(
+			text = "Waiting until the widget gets added...",
+			action = delayAndSendMessage(::success, ::retryPrompt)
+		)
 
 		private fun retryPrompt(): ChatMessage = ChatMessage(
 			text = "Do you want to retry?",

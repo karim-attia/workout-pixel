@@ -69,7 +69,7 @@ class MainActivity : ComponentActivity() {
 		setContent {
 			val settingsData = settingsViewModel.settingsData.observeAsState().value
 			val mainActivityLambdas = Lambdas(
-				updateAfterClick = {
+				updateAfterClickFilledIn = {
 					// contains updateGoal
 					lifecycleScope.launch {
 						widgetActions(it).updateAfterClick()
@@ -82,7 +82,7 @@ class MainActivity : ComponentActivity() {
 					}
 				},
 				deleteGoal = { lifecycleScope.launch { goalViewModel.deleteGoal(it) } },
-				addWidgetToHomeScreen = { goal: Goal, insertNewGoal: Boolean ->
+				addWidgetToHomeScreenFilledIn = { goal: Goal, insertNewGoal: Boolean ->
 					Log.d(TAG, "addWidgetToHomeScreen")
 					if (insertNewGoal) goal.uid = goalViewModel.insertGoal(goal)
 					widgetActions(goal).pinAppWidget()
@@ -229,8 +229,8 @@ fun WorkoutPixelApp(
 						},
 						// Getting UID to Onboarding through currentGoal through changeCurrentGoalUid(goalUid)
 						// With this UID, get the AppWidgetId
-						addWidgetToHomeScreen = { goal: Goal, boolean: Boolean ->
-							val goalUid: Int = lambdas.addWidgetToHomeScreen(goal, boolean)
+						addWidgetToHomeScreenFilledIn = { goal: Goal, boolean: Boolean ->
+							val goalUid: Int = lambdas.addWidgetToHomeScreenFilledIn(goal, boolean)
 							goalViewModel.changeCurrentGoalUid(goalUid)
 							goalUid
 						}

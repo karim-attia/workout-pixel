@@ -56,11 +56,11 @@ fun GoalDetailView(
 	lambdas: Lambdas,
 ) {
 	val goalDetailViewlambdas = lambdas.copy(
-		addWidgetToHomeScreenFilledIn = {
-			lambdas.addWidgetToHomeScreen(currentGoal,
+		addWidgetToHomeScreen = {
+			lambdas.addWidgetToHomeScreenFilledIn(currentGoal,
 				true)
 		}, //{ suspend { lambdas.addWidgetToHomeScreen(currentGoal, false) }},
-		updateAfterClickFilledIn = { lambdas.updateAfterClick(currentGoal) },
+		updateAfterClick = { lambdas.updateAfterClickFilledIn(currentGoal) },
 	)
 	GoalDetailView(
 		currentGoal = currentGoal,
@@ -120,7 +120,7 @@ fun GoalOverview(
 		// Preview and rest
 		Row(verticalAlignment = Alignment.CenterVertically) {
 			GoalPreview(
-				goal = currentGoal, settingsData = lambdas.settingsData, onClick = lambdas.updateAfterClickFilledIn
+				goal = currentGoal, settingsData = lambdas.settingsData, onClick = lambdas.updateAfterClick
 			)
 			// Rest
 			Column(
@@ -168,7 +168,7 @@ fun GoalDetailNoWidgetCard(
 
 		if (appWidgetManager.isRequestPinAppWidgetSupported) {
 			Button(
-				onClick = { scope.launch { lambdas.addWidgetToHomeScreenFilledIn() } },
+				onClick = { scope.launch { lambdas.addWidgetToHomeScreen() } },
 				modifier = Modifier
 					.padding(top = 4.dp)
 					.fillMaxWidth(),
