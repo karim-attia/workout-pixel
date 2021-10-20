@@ -1,6 +1,7 @@
 package ch.karimattia.workoutpixel.composables
 
 import android.util.Log
+import androidx.compose.animation.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -14,9 +15,8 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -163,28 +163,48 @@ fun ConnectExistingGoal(
 	connectGoal: (Goal) -> Unit,
 	modifier: Modifier = Modifier,
 ) {
-	// TODO: Expando
-	FreeStandingTitle(text = "Connect an existing goal")
-	Infobox(
-		text = stringResource(R.string.connect_widget_instructions),
-		modifier = modifier,
-	)
-	// Row {
-	var selectedIndex: Int by remember { mutableStateOf(0) }
-	ConnectDropdown(
-		goalsWithoutWidget = goalsWithoutWidget,
-		selectedIndex = selectedIndex,
-		changeSelectedIndex = { selectedIndex = it },
-		modifier = modifier,
-	)
-	ConnectButton(
-		connectWidget = {
-			// Need to check if it is null and if it is, make the selection red?
-			// connectSpinner.setBackgroundColor(Color.RED)
-			connectGoal(goalsWithoutWidget[selectedIndex])
-		},
-		modifier = modifier,
-	)
+	var expando: Boolean by remember { mutableStateOf(false) }
+	Row(
+		verticalAlignment = Alignment.CenterVertically,
+		modifier = Modifier
+			.fillMaxWidth()
+			.clickable { expando = !expando }
+	) {
+		FreeStandingTitle(text = "Connect an existing goal", Modifier.weight(1f))
+		Icon(
+			imageVector = if (!expando) Icons.Filled.ExpandMore else Icons.Filled.ExpandLess,
+			contentDescription = null,
+			modifier = Modifier.padding(top = 16.dp)
+		)
+	}
+
+	AnimatedVisibility(visible = expando, enter = fadeIn(), exit = shrinkOut()) {
+		Column {
+
+			Infobox(
+				text = stringResource(R.string.connect_widget_instructions),
+				modifier = modifier,
+			)
+			// Row {
+			var selectedIndex: Int by remember { mutableStateOf(0) }
+			ConnectDropdown(
+				goalsWithoutWidget = goalsWithoutWidget,
+				selectedIndex = selectedIndex,
+				changeSelectedIndex = { selectedIndex = it },
+				modifier = modifier,
+			)
+			ConnectButton(
+				connectWidget = {
+					// Need to check if it is null and if it is, make the selection red?
+					// connectSpinner.setBackgroundColor(Color.RED)
+					connectGoal(goalsWithoutWidget[selectedIndex])
+				},
+				modifier = modifier,
+			)
+		}
+	}
+
+
 	// }
 
 }
@@ -200,8 +220,6 @@ fun ConnectDropdown(
 	val icon = if (expanded) Icons.Filled.ArrowDropUp else Icons.Filled.ArrowDropDown
 
 	Box {
-		// https://stackoverflow.com/questions/67902919/jetpack-compose-textfield-clickable-does-not-work
-		// val (focusRequester) = FocusRequester.createRefs()
 		val interactionSource = remember { MutableInteractionSource() }
 
 		OutlinedTextField(
@@ -221,8 +239,6 @@ fun ConnectDropdown(
 			singleLine = true,
 			modifier = modifier
 				.fillMaxWidth()
-				//.clickable(onClick = { expanded = !expanded })
-			//	.focusRequester(focusRequester)
 			// .background(Color.Gray)
 		)
 		if (!expanded) {
@@ -233,7 +249,6 @@ fun ConnectDropdown(
 					.clickable(
 						onClick = {
 							expanded = !expanded
-		//					focusRequester.requestFocus() //to give the focus to the TextField
 						},
 						interactionSource = interactionSource,
 						indication = null //to avoid the ripple on the Box
@@ -272,7 +287,7 @@ fun ConnectButton(
 		onClick = {
 			Log.d(TAG, "ConnectButton")
 			connectWidget()
-					 },
+		},
 		modifier = modifier
 	) {
 		Text(text = "Connect widget".uppercase())

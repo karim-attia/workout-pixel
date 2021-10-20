@@ -204,7 +204,6 @@ fun WorkoutPixelApp(
 							imageVector = Icons.Filled.Add,
 							contentDescription = null,
 						)
-						/* FAB content */
 					}
 				}
 			}
