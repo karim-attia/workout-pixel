@@ -7,6 +7,7 @@ import ch.karimattia.workoutpixel.composables.GoalPreviewWithBackground
 import ch.karimattia.workoutpixel.composables.GoalPreviewsWithBackground
 import ch.karimattia.workoutpixel.composables.Lambdas
 import ch.karimattia.workoutpixel.core.Status
+import ch.karimattia.workoutpixel.core.WorkoutPixelScreen
 import ch.karimattia.workoutpixel.data.Goal
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
@@ -20,16 +21,11 @@ typealias MessageBuilder = () -> ChatMessage
 
 class OnboardingViewModel : ChatViewModel() {
 	/**
-	 * Specifies the first message of the message chain
-	 * */
-	override var firstMessage: ChatMessage = introMessage()
-
-	/**
 	 * Initialize the ChatViewModel: Process the first message.
 	 * */
-	init {
-		initialize()
-	}
+/*	fun initialize(firstMessage: MessageBuilder) {
+		initialize(firstMessage)
+	}*/
 
 	private val editableGoal: MutableLiveData<Goal> = MutableLiveData(Goal())
 	private var isGoalSaved: Boolean = false
@@ -66,7 +62,7 @@ class OnboardingViewModel : ChatViewModel() {
 	/**
 	 * All message templates.
 	 * */
-	private fun introMessage(): ChatMessage = ChatMessage(
+	fun introMessage(): ChatMessage = ChatMessage(
 		text = "Hey! Super awesome that you downloaded WorkoutPixel.",
 		autoAdvance = true,
 		nextMessage = ::basicFeatures
@@ -203,13 +199,13 @@ class OnboardingViewModel : ChatViewModel() {
 /*
 				messageProposalOf(
 					proposalText = "Edit",
-					insertMessage = ::proposalEdit
-				),
-				messageProposalOf(
-					proposalText = "Close",
-					insertMessage = ::proposalClose
+					insertsMessage = ::proposalEdit
 				),
 */
+			messageProposalOf(
+				proposalText = "Close chat",
+				insertsMessage = ::proposalClose
+			),
 			messageProposalOf(
 				proposalText = "Add another goal",
 				insertsMessage = ::proposalAnotherGoal,
@@ -218,9 +214,9 @@ class OnboardingViewModel : ChatViewModel() {
 	)
 
 	private fun proposalClose(): ChatMessage = ChatMessage(
-		text = "Close",
+		text = "Close chat",
 		isMessageByUser = true,
-		action = { }
+		action = { lambdas.navigateTo(WorkoutPixelScreen.GoalsList.name, null, true) }
 	)
 
 	private fun proposalEdit(): ChatMessage = ChatMessage(
@@ -239,7 +235,6 @@ class OnboardingViewModel : ChatViewModel() {
 	/**
 	 * Message template helpers.
 	 * */
-
 	private fun goalPreviewWithBackground(): @Composable () -> Unit = {
 		GoalPreviewWithBackground(
 			goal = editableGoal.value!!.copy(statusOverride = Status.GREEN))

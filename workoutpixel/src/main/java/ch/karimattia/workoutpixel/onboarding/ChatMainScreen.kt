@@ -6,24 +6,27 @@ import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.fadeIn
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.horizontalScroll
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.modifier.modifierLocalConsumer
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 
 @ExperimentalComposeUiApi
 @Composable
 fun ChatMainScreen(
 	chatViewModel: ChatViewModel,
+	spacerTop: Dp = 8.dp,
 ) {
 	ChatMainScreen(
 		shownMessages = chatViewModel.shownMessages,
-		scrollState = chatViewModel.scrollState)
+		scrollState = chatViewModel.scrollState,
+		spacerTop = spacerTop,
+	)
 }
 
 @ExperimentalComposeUiApi
@@ -31,7 +34,8 @@ fun ChatMainScreen(
 fun ChatMainScreen(
 	shownMessages: List<ChatMessage>,
 	scrollState: ScrollState,
-) {
+	spacerTop: Dp,
+	) {
 	val lastMessage = shownMessages.last()
 	Column {
 		Column(
@@ -40,6 +44,7 @@ fun ChatMainScreen(
 				.verticalScroll(scrollState)
 				.weight(1f)
 		) {
+			Spacer(Modifier.height(spacerTop))
 			for (message in shownMessages) {
 				MessageCard(message = message)
 			}

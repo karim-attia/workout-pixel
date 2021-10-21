@@ -16,7 +16,12 @@ enum class WorkoutPixelScreen(
 	val showEditIcon: Boolean = false,
 	val showSettingsIcon: Boolean = false,
 	val showFloatingActionButton: Boolean = false,
+	val fullScreen: Boolean = false,
 ) {
+	Onboarding(
+		displayName = "Onboarding",
+		fullScreen = true,
+		),
 	Instructions(
 		icon = Icons.Filled.Info,
 		bottomNavigation = true,
@@ -25,7 +30,7 @@ enum class WorkoutPixelScreen(
 	GoalsList(
 		icon = Icons.Filled.Done,
 		bottomNavigation = true,
-		displayName = "Your goals",
+		displayName = "Your Goals",
 		showSettingsIcon = true,
 		showFloatingActionButton = true,
 	),
@@ -46,6 +51,7 @@ enum class WorkoutPixelScreen(
 		fun fromRoute(route: String?): WorkoutPixelScreen =
 			when (route?.substringBefore("/")) {
 				GoalsList.name -> GoalsList
+				Onboarding.name -> Onboarding
 				Instructions.name -> Instructions
 				GoalDetailView.name -> GoalDetailView
 				EditGoalView.name -> EditGoalView

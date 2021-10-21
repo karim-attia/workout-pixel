@@ -51,6 +51,7 @@ fun GoalPreview(
 		text = goal.widgetText(settingsData),
 		textAlign = TextAlign.Center,
 		fontSize = 12.sp,
+		fontWeight = FontWeight(500),
 		color = Color.White,
 		modifier = modifier
 			.clickable { onClick() }
@@ -213,7 +214,7 @@ fun GoalTitleTextField(
 @Composable
 fun GoalPreviewsWithBackground() {
 	Row(modifier = Modifier
-		.padding(start = 8.dp, bottom = 8.dp)
+		.padding(start = 0.dp, top = 8.dp, bottom = 0.dp)
 		.background(GrayBackgroundColor)
 		.padding(all = 6.dp)
 	)
@@ -227,7 +228,7 @@ fun GoalPreviewsWithBackground() {
 @Composable
 fun GoalPreviewWithBackground(goal: Goal) {
 	Row(modifier = Modifier
-		.padding(start = 8.dp, bottom = 8.dp)
+		.padding(start = 0.dp, top = 8.dp, bottom = 0.dp)
 		.background(GrayBackgroundColor)
 		.padding(all = 6.dp)
 	)
@@ -248,5 +249,6 @@ data class Lambdas(
 	val addWidgetToHomeScreen: suspend () -> Unit = { },
 	val settingsData: SettingsData = SettingsData(),
 	val settingChange: (SettingsData) -> Unit = {},
-	val navigateTo: (destination: String, goal: Goal?) -> Unit = { _, _ -> },
+	val navigateTo: (destination: String, goal: Goal?, popUpTo: Boolean) -> Unit = { _, _, _ -> },
+	val widgetPinningPossible: Boolean = true,
 )

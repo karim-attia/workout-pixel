@@ -76,7 +76,7 @@ fun Settings(
 			subtitleText = "Color of goals that you never clicked",
 			goal = goal,
 			currentColor = settingsData.colorInitial(),
-			resetColor = Color(Purple),
+			resetColor = Color(Grey),
 			onColorSelected = { settingChange(settingsData.copy(colorInitialInt = colorToInt(it))) },
 			settingsData = settingsData,
 		)

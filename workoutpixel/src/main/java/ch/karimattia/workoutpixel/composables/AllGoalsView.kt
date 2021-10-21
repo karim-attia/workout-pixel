@@ -46,12 +46,11 @@ fun GoalList(
 				// contentPadding = PaddingValues(top = 6.dp, bottom = 40.dp),
 				GoalCard(
 					goal = goal,
-					updateAfterClick = { lambdas.updateGoal(goal) },
 					lambdas = lambdas
 				)
 			}
 		} else {
-			InstructionsCard(navigateTo = { lambdas.navigateTo(WorkoutPixelScreen.Instructions.name, null) })
+			InstructionsCard(navigateTo = { lambdas.navigateTo(WorkoutPixelScreen.Instructions.name, null, true) })
 		}
 
 	}
@@ -60,7 +59,6 @@ fun GoalList(
 @Composable
 fun GoalCard(
 	goal: Goal,
-	updateAfterClick: () -> Unit,
 	lambdas: Lambdas,
 ) {
 	Card(
@@ -70,7 +68,7 @@ fun GoalCard(
 			.padding(vertical = 4.dp, horizontal = 8.dp)
 			.fillMaxWidth()
 			.clickable {
-				lambdas.navigateTo(WorkoutPixelScreen.GoalDetailView.name, goal)
+				lambdas.navigateTo(WorkoutPixelScreen.GoalDetailView.name, goal, false)
 			}
 	) {
 		// Preview and rest
@@ -80,7 +78,7 @@ fun GoalCard(
 		) {
 			GoalPreview(
 				goal = goal,
-				onClick = updateAfterClick,
+				onClick = { lambdas.updateGoal(goal.copy(lastWorkout = System.currentTimeMillis())) }, // Earlier: UpdateAfterClick
 				settingsData = lambdas.settingsData,
 				modifier = Modifier.padding(all = 4.dp)
 			)

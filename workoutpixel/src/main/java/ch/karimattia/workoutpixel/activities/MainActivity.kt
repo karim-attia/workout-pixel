@@ -8,6 +8,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.animation.graphics.ExperimentalAnimationGraphicsApi
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
@@ -15,7 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -36,10 +37,10 @@ import javax.inject.Inject
 
 private const val TAG: String = "MainActivity"
 
-@AndroidEntryPoint
-@ExperimentalComposeUiApi
-@ExperimentalCoilApi
 @ExperimentalAnimationGraphicsApi
+@ExperimentalComposeUiApi
+@AndroidEntryPoint
+@ExperimentalCoilApi
 @ExperimentalPagerApi
 class MainActivity : ComponentActivity() {
 
@@ -65,6 +66,7 @@ class MainActivity : ComponentActivity() {
 
 		setContent {
 			val settingsData = settingsViewModel.settingsData.observeAsState().value
+			val appWidgetManager = AppWidgetManager.getInstance(this)
 			val mainActivityLambdas = Lambdas(
 				updateAfterClickFilledIn = {
 					// contains updateGoal
@@ -97,12 +99,13 @@ class MainActivity : ComponentActivity() {
 						otherActions.updateAllWidgets()
 					}
 				},
+				widgetPinningPossible = appWidgetManager.isRequestPinAppWidgetSupported,
 			)
 
 			WorkoutPixelApp(
 				goalViewModel = goalViewModel,
 				pastClickViewModelAssistedFactory = pastClickViewModelAssistedFactory,
-				goals = goalViewModel.allGoals,
+				goals = goalViewModel.allGoals, // emptyList(), to test
 				settingsData = settingsViewModel.settingsData.observeAsState().value,
 				lambdas = mainActivityLambdas,
 			)
@@ -118,10 +121,10 @@ class MainActivity : ComponentActivity() {
 	}
 }
 
+@ExperimentalComposeUiApi
 @ExperimentalCoilApi
 @ExperimentalAnimationGraphicsApi
 @ExperimentalPagerApi
-@ExperimentalComposeUiApi
 @Composable
 fun WorkoutPixelApp(
 	goalViewModel: GoalViewModel,
@@ -142,67 +145,74 @@ fun WorkoutPixelApp(
 
 		Scaffold(
 			topBar = {
-				TopAppBar(
-					title = {
-						Text(
-							text =
-							currentScreen.displayName ?: (currentGoal?.title ?: "")
-						)
-					},
-					navigationIcon =
-					if (currentScreen.showBackNavigation) {
-						{
-							IconButton(onClick = { navController.navigateUp() }) {
-								Icon(Icons.Filled.ArrowBack, "Back")
-							}
-						}
-					} else null,
-					actions = {
-						if (currentScreen.showEditIcon) {
-							IconButton(onClick = { navController.navigate(WorkoutPixelScreen.EditGoalView.name) }) {
-								Icon(Icons.Filled.Edit, contentDescription = "Edit goal")
-							}
-						}
-						if (currentScreen.showSettingsIcon) {
-							IconButton(onClick = { navController.navigate(WorkoutPixelScreen.Settings.name) }) {
-								Icon(Icons.Filled.Settings, contentDescription = "Settings")
-							}
-						}
-					}
-				)
-			},
-			bottomBar = {
-				BottomNavigation {
-					// Only show entries that have bottomNavigation == true.
-					allScreens.filter { it.bottomNavigation }.forEach { screen ->
-						BottomNavigationItem(
-							icon = { screen.icon?.let { Icon(it, contentDescription = null) } },
-							label = { Text(text = screen.displayName ?: "") },
-							selected = currentScreen == screen,
-							onClick = {
-								navController.navigate(screen.name) {
-									if (screen == WorkoutPixelScreen.GoalsList) {
-										// TODO: set current goal to null?
-										popUpTo(WorkoutPixelScreen.GoalsList.name) {
-											inclusive = true
-										}
-									} else {
-										popUpTo(WorkoutPixelScreen.GoalsList.name)
-									}
+				if (!currentScreen.fullScreen) {
+					TopAppBar(
+						title = {
+							Text(
+								text =
+								currentScreen.displayName ?: (currentGoal?.title ?: "")
+							)
+						},
+						navigationIcon =
+						if (currentScreen.showBackNavigation) {
+							{
+								IconButton(onClick = {
+									// TODO: Set current goal to null if back to main screen
+									navController.navigateUp()
+								}) {
+									Icon(Icons.Filled.ArrowBack, "Back")
 								}
 							}
-						)
+						} else null,
+						actions = {
+							if (currentScreen.showEditIcon) {
+								IconButton(onClick = { navController.navigate(WorkoutPixelScreen.EditGoalView.name) }) {
+									Icon(Icons.Filled.Edit, contentDescription = "Edit goal")
+								}
+							}
+							if (currentScreen.showSettingsIcon) {
+								IconButton(onClick = { navController.navigate(WorkoutPixelScreen.Settings.name) }) {
+									Icon(Icons.Filled.Settings, contentDescription = "Settings")
+								}
+							}
+						}
+					)
+				}
+			},
+			bottomBar = {
+				// If pinning is possible, don't show the Instructions and thus there is only one entry. As soon as there are more entries, revert.
+				if (!lambdas.widgetPinningPossible) {
+					BottomNavigation {
+						// Only show entries that have bottomNavigation == true.
+						allScreens.filter { it.bottomNavigation }.forEach { screen ->
+							BottomNavigationItem(
+								icon = { screen.icon?.let { Icon(it, contentDescription = null, modifier = Modifier.size(24.dp)) } },
+								label = { Text(text = screen.displayName ?: "") },
+								selected = currentScreen == screen,
+								onClick = {
+									navController.navigate(screen.name) {
+										if (screen == WorkoutPixelScreen.GoalsList) {
+											// TODO: set current goal to null?
+											popUpTo(WorkoutPixelScreen.GoalsList.name) { inclusive = true }
+										} else {
+											popUpTo(WorkoutPixelScreen.GoalsList.name)
+										}
+									}
+								}
+							)
+						}
 					}
 				}
 			},
 			floatingActionButton = {
-				if (currentScreen == WorkoutPixelScreen.GoalsList) {
+				if (lambdas.widgetPinningPossible && currentScreen.showFloatingActionButton) {
 					FloatingActionButton(onClick = {
-						navController.navigate(WorkoutPixelScreen.Instructions.name)
+						navController.navigate(WorkoutPixelScreen.Onboarding.name)
 					}) {
 						Icon(
 							imageVector = Icons.Filled.Add,
 							contentDescription = null,
+							modifier = Modifier.size(36.dp)
 						)
 					}
 				}
@@ -225,10 +235,12 @@ fun WorkoutPixelApp(
 								navController.navigateUp()
 							}
 						},
-						navigateTo = { destination: String, goal: Goal? ->
+						navigateTo = { destination: String, goal: Goal?, popUpTo: Boolean ->
 							Log.d(TAG, "navigateTo $goal")
 							goalViewModel.changeCurrentGoalUid(goal)
-							navController.navigate(destination)
+							navController.navigate(destination) {
+								if (popUpTo) popUpTo(destination) { inclusive = true }
+							}
 						},
 						deleteGoalAndNavigate = { deletedGoal: Goal, navigateUp: Boolean ->
 							lambdas.deleteGoal(deletedGoal)
@@ -268,10 +280,16 @@ fun WorkoutPixelNavHost(
 ) {
 	NavHost(
 		navController = navController,
-		startDestination = if (goals.isNotEmpty()) {
-			WorkoutPixelScreen.GoalsList.name
-		} else {
-			WorkoutPixelScreen.Instructions.name
+		startDestination = when {
+			goals.isNotEmpty() -> {
+				WorkoutPixelScreen.GoalsList.name
+			}
+			lambdas.widgetPinningPossible -> {
+				WorkoutPixelScreen.Onboarding.name
+			}
+			else -> {
+				WorkoutPixelScreen.Instructions.name
+			}
 		},
 		modifier = modifier
 	) {
@@ -282,17 +300,20 @@ fun WorkoutPixelNavHost(
 				lambdas = lambdas,
 			)
 		}
-		composable(route = WorkoutPixelScreen.Instructions.name) {
-			Log.d(TAG, "------------Instructions------------")
-			val appWidgetManager = AppWidgetManager.getInstance(LocalContext.current)
-			if (appWidgetManager.isRequestPinAppWidgetSupported) {
+		composable(route = WorkoutPixelScreen.Onboarding.name) {
+			Log.d(TAG, "------------Onboarding------------")
+			if (lambdas.widgetPinningPossible) {
 				Onboarding(
 					currentGoal = currentGoal ?: Goal(),
 					lambdas = lambdas,
 				)
 			} else {
-				Instructions()
+				lambdas.navigateTo(WorkoutPixelScreen.Instructions.name, null, true)
 			}
+		}
+		composable(route = WorkoutPixelScreen.Instructions.name) {
+			Log.d(TAG, "------------Instructions------------")
+			Instructions()
 		}
 		// GoalDetailView
 		composable(route = WorkoutPixelScreen.GoalDetailView.name) {
@@ -329,7 +350,6 @@ fun WorkoutPixelNavHost(
 				lambdas = lambdas,
 			)
 		}
-
 	}
 }
 

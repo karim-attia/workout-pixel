@@ -17,24 +17,26 @@ abstract class ChatViewModel : ViewModel() {
 	/**
 	 * Specifies the first message of the message chain
 	 * */
-	abstract val firstMessage: ChatMessage
+	// abstract val firstMessage: ChatMessage
 
 	/**
 	 * The backlog of the message builders to be shown to the user (as soon as the currentStep allows for it)
 	 * */
-	private val messageBuilderQueue: MutableList<MessageBuilder> by lazy { mutableStateListOf({ firstMessage }) }
+	private val messageBuilderQueue: MutableList<MessageBuilder> = mutableStateListOf()
 
 	/**
 	 * The subset of messages in messageQueue that are shown to the user. Determined by currentStep.
 	 * */
-	val shownMessages: SnapshotStateList<ChatMessage> by lazy { mutableStateListOf(firstMessage) }
+	val shownMessages: SnapshotStateList<ChatMessage> = mutableStateListOf()
 
 	private fun currentStep() = shownMessages.size
 
 	/**
 	 * Check if initially the firstMessage (=latestMessage at this point) has an action and if yes, process it.
 	 * */
-	fun initialize() {
+	fun initialize(firstMessage: ChatMessage, scope: CoroutineScope) {
+		this.scope = scope
+		insertMessageBuilderToQueueAtNextPosition { firstMessage }
 		processLastMessage(firstMessage)
 	}
 
@@ -95,7 +97,7 @@ abstract class ChatViewModel : ViewModel() {
 	/**
 	 * Needs to be initialized by activity in order that automatic scrolling works.
 	 * * */
-	var scope: CoroutineScope? = null
+	private var scope: CoroutineScope? = null
 	val scrollState: ScrollState = ScrollState(0)
 
 	/**
