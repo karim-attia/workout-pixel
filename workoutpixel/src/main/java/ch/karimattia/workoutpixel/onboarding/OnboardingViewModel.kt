@@ -9,23 +9,34 @@ import ch.karimattia.workoutpixel.composables.Lambdas
 import ch.karimattia.workoutpixel.core.Status
 import ch.karimattia.workoutpixel.core.WorkoutPixelScreen
 import ch.karimattia.workoutpixel.data.Goal
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.cancel
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 
 @Suppress("unused")
 private const val TAG: String = "OnboardingViewModel"
 typealias MessageBuilder = () -> ChatMessage
 
-class OnboardingViewModel : ChatViewModel() {
+enum class Chatvariant {
+	Onboarding, NewGoalOnly
+}
+
+class OnboardingViewModelFactory(private val chatvariant: Chatvariant, private val scope: CoroutineScope, private val lambdas: Lambdas) :
+	ViewModelProvider.NewInstanceFactory() {
+	override fun <T : ViewModel?> create(modelClass: Class<T>): T = OnboardingViewModel(chatvariant, scope, lambdas) as T
+}
+
+class OnboardingViewModel(chatvariant: Chatvariant, scope: CoroutineScope, private val lambdas: Lambdas) : ChatViewModel() {
 	/**
 	 * Initialize the ChatViewModel: Process the first message.
 	 * */
-/*	fun initialize(firstMessage: MessageBuilder) {
-		initialize(firstMessage)
-	}*/
+	init {
+		initialize(
+			firstMessage = when (chatvariant) {
+				Chatvariant.Onboarding -> introMessage()
+				else -> setTitle()
+			},
+			scope = scope)
+	}
 
 	private val editableGoal: MutableLiveData<Goal> = MutableLiveData(Goal())
 	private var isGoalSaved: Boolean = false
@@ -40,9 +51,12 @@ class OnboardingViewModel : ChatViewModel() {
 		isGoalSaved = false
 	}
 
+/*
+	*/
 	/**
 	 * Needs to be initialized by activity in order that lambdas work.
-	 * * */
+	 * * *//*
+
 	private var lambdas: Lambdas = Lambdas()
 	fun insertLambdas(lambdas: Lambdas) {
 		this.lambdas = lambdas.copy(
@@ -58,11 +72,12 @@ class OnboardingViewModel : ChatViewModel() {
 			}
 		)
 	}
+*/
 
 	/**
 	 * All message templates.
 	 * */
-	fun introMessage(): ChatMessage = ChatMessage(
+	private fun introMessage(): ChatMessage = ChatMessage(
 		text = "Hey! Super awesome that you downloaded WorkoutPixel.",
 		autoAdvance = true,
 		nextMessage = ::basicFeatures

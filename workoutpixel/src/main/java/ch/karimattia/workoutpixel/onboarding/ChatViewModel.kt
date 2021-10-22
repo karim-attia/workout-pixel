@@ -1,5 +1,6 @@
 package ch.karimattia.workoutpixel.onboarding
 
+import android.util.Log
 import androidx.compose.foundation.ScrollState
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
@@ -29,15 +30,18 @@ abstract class ChatViewModel : ViewModel() {
 	 * */
 	val shownMessages: SnapshotStateList<ChatMessage> = mutableStateListOf()
 
+	// TODO: Replace inline
 	private fun currentStep() = shownMessages.size
 
 	/**
 	 * Check if initially the firstMessage (=latestMessage at this point) has an action and if yes, process it.
 	 * */
 	fun initialize(firstMessage: ChatMessage, scope: CoroutineScope) {
+		Log.d(TAG, "initialize: ${firstMessage.text}")
 		this.scope = scope
-		insertMessageBuilderToQueueAtNextPosition { firstMessage }
-		processLastMessage(firstMessage)
+		insertMessageBuilderToQueueAtNextPositionAndAdvance { firstMessage }
+		// shownMessages.add(firstMessage)
+		// processLastMessage(firstMessage)
 	}
 
 	/**
@@ -50,17 +54,19 @@ abstract class ChatViewModel : ViewModel() {
 		 * The last message of the shown messages.
 		 * Used to triage what should be done next, e.g. autoAdvance, show message proposals or input fields to the user.
 		 * */
-		val latestMessage: ChatMessage = messageBuilderQueue[currentStep()]()
-		shownMessages.add(latestMessage)
+		val lastMessage: ChatMessage = messageBuilderQueue[currentStep()]()
+		Log.d(TAG, "increaseCurrentStep: ${lastMessage.text}")
+		shownMessages.add(lastMessage)
 		scrollDown()
 
-		processLastMessage(latestMessage)
+		processLastMessage(lastMessage)
 	}
 
 	/**
 	 * Check if the latestMessage has an action and if yes, process it. I.e. adding follow-up messages and autoAdvancing.
 	 * */
 	private fun processLastMessage(lastMessage: ChatMessage) {
+		Log.d(TAG, "processLastMessage: ${lastMessage.text}")
 		lastMessage.nextMessage?.let { nextMessage -> insertMessageBuilderToQueueAtNextPosition(nextMessage) }
 
 		// MessageAction
@@ -73,10 +79,12 @@ abstract class ChatViewModel : ViewModel() {
 	/**
 	 * If the latestMessage has an autoAdvance flag, wait and then autoAdvance.
 	 * * */
-	private fun checkAutoAdvance(latestMessage: ChatMessage) {
-		if (latestMessage.autoAdvance && currentStep() < messageBuilderQueue.size) {
+	private fun checkAutoAdvance(lastMessage: ChatMessage) {
+		Log.d(TAG, "checkAutoAdvance: ${lastMessage.text}")
+		if (lastMessage.autoAdvance && currentStep() < messageBuilderQueue.size) {
+			Log.d(TAG, "checkAutoAdvance: true")
 			viewModelScope.launch {
-				delay(latestMessage.autoAdvanceTime.toLong())
+				delay(lastMessage.autoAdvanceTime.toLong())
 				increaseCurrentStep()
 			}
 		}

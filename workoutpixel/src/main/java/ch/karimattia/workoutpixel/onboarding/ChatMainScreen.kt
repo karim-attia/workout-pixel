@@ -36,7 +36,7 @@ fun ChatMainScreen(
 	scrollState: ScrollState,
 	spacerTop: Dp,
 	) {
-	val lastMessage = shownMessages.last()
+	val lastMessage = shownMessages.lastOrNull()
 	Column {
 		Column(
 			modifier = Modifier
@@ -49,7 +49,7 @@ fun ChatMainScreen(
 				MessageCard(message = message)
 			}
 		}
-		BottomArea(lastMessage = lastMessage)
+		lastMessage?.let { BottomArea(lastMessage = lastMessage) }
 /*
 		lastMessage.BottomArea()
 		*/

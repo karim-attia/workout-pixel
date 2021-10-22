@@ -1,5 +1,6 @@
 package ch.karimattia.workoutpixel.onboarding
 
+import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -16,13 +17,11 @@ private const val TAG: String = "Onboarding"
 @ExperimentalComposeUiApi
 @Composable
 fun Onboarding(
-	onboardingViewModel: OnboardingViewModel = viewModel(),
 	// First with uid, then with appwidgetid
 	currentGoal: Goal,
 	lambdas: Lambdas,
-) {
-	onboardingViewModel.initialize(firstMessage = onboardingViewModel.introMessage(), scope = rememberCoroutineScope())
-	onboardingViewModel.insertLambdas(lambdas = lambdas)
+	onboardingViewModel: OnboardingViewModel = viewModel(factory = OnboardingViewModelFactory(Chatvariant.Onboarding, rememberCoroutineScope(), lambdas = lambdas)),
+	) {
 
 	// If the caller sends a new currentGoal, update the viewModel with it. If it's the same one (e.g. through a recomposition), do not update.
 	val lastValueOfCurrentGoal = remember { mutableStateOf(currentGoal) }
