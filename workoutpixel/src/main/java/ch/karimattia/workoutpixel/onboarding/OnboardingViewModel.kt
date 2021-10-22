@@ -20,12 +20,12 @@ enum class Chatvariant {
 	Onboarding, NewGoalOnly
 }
 
-class OnboardingViewModelFactory(private val chatvariant: Chatvariant, private val scope: CoroutineScope, private val lambdas: Lambdas) :
+class OnboardingViewModelFactory(private val chatvariant: Chatvariant, private val scope: CoroutineScope, private var lambdas: Lambdas) :
 	ViewModelProvider.NewInstanceFactory() {
 	override fun <T : ViewModel?> create(modelClass: Class<T>): T = OnboardingViewModel(chatvariant, scope, lambdas) as T
 }
 
-class OnboardingViewModel(chatvariant: Chatvariant, scope: CoroutineScope, private val lambdas: Lambdas) : ChatViewModel() {
+class OnboardingViewModel(chatvariant: Chatvariant, scope: CoroutineScope, private var lambdas: Lambdas) : ChatViewModel() {
 	/**
 	 * Initialize the ChatViewModel: Process the first message.
 	 * */
@@ -36,6 +36,19 @@ class OnboardingViewModel(chatvariant: Chatvariant, scope: CoroutineScope, priva
 				else -> setTitle()
 			},
 			scope = scope)
+
+		lambdas = lambdas.copy(
+			addWidgetToHomeScreen = {
+				// Save the widget to the DB
+				// Get the generated uid in return
+				// Open the pin dialog
+				val uid = lambdas.addWidgetToHomeScreenFilledIn(editableGoal.value!!, true)
+				// Save the generated uid to editableGoal
+				editableGoal.value = editableGoal.value!!.copy(uid = uid)
+				// Flag to checkIfPinWasSuccessful that the goal was saved and the generated uid saved to editableGoal
+				isGoalSaved = true
+			}
+		)
 	}
 
 	private val editableGoal: MutableLiveData<Goal> = MutableLiveData(Goal())
