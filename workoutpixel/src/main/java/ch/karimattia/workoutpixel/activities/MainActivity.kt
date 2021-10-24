@@ -1,11 +1,13 @@
 package ch.karimattia.workoutpixel.activities
 
+// import androidx.navigation.compose.composable
 import android.appwidget.AppWidgetManager
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.graphics.ExperimentalAnimationGraphicsApi
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -13,11 +15,14 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -26,6 +31,7 @@ import androidx.navigation.compose.rememberNavController
 import ch.karimattia.workoutpixel.composables.*
 import ch.karimattia.workoutpixel.core.*
 import ch.karimattia.workoutpixel.data.*
+import ch.karimattia.workoutpixel.onboarding.Chatvariant
 import ch.karimattia.workoutpixel.onboarding.Onboarding
 import ch.karimattia.workoutpixel.ui.theme.WorkoutPixelTheme
 import coil.annotation.ExperimentalCoilApi
@@ -37,6 +43,7 @@ import javax.inject.Inject
 
 private const val TAG: String = "MainActivity"
 
+@ExperimentalAnimationApi
 @ExperimentalAnimationGraphicsApi
 @ExperimentalComposeUiApi
 @AndroidEntryPoint
@@ -121,6 +128,7 @@ class MainActivity : ComponentActivity() {
 	}
 }
 
+@ExperimentalAnimationApi
 @ExperimentalComposeUiApi
 @ExperimentalCoilApi
 @ExperimentalAnimationGraphicsApi
@@ -138,21 +146,17 @@ fun WorkoutPixelApp(
 		darkTheme = false,
 	) {
 		val allScreens = WorkoutPixelScreen.values().toList()
-		val navController = rememberNavController()
-		val backstackEntry = navController.currentBackStackEntryAsState()
-		val currentScreen = WorkoutPixelScreen.fromRoute(backstackEntry.value?.destination?.route)
+		val navController: NavHostController = rememberNavController()
+		val backstackEntry: State<NavBackStackEntry?> = navController.currentBackStackEntryAsState()
+		val currentScreen: WorkoutPixelScreen = WorkoutPixelScreen.fromRoute(backstackEntry.value?.destination?.route)
 		val currentGoal: Goal? = goalFromGoalsByUid(goalUid = currentGoalUid, goals = goals)
 
 		Scaffold(
 			topBar = {
-				if (!currentScreen.fullScreen) {
+				// If goals is empty, there is a redirect to the Onboarding screen. Adding && goals.isNotEmpty() removed jank from this switch on first start.
+				if (!currentScreen.fullScreen && goals.isNotEmpty()) {
 					TopAppBar(
-						title = {
-							Text(
-								text =
-								currentScreen.displayName ?: (currentGoal?.title ?: "")
-							)
-						},
+						title = { Text(text = currentScreen.displayName ?: (currentGoal?.title ?: "")) },
 						navigationIcon =
 						if (currentScreen.showBackNavigation) {
 							{
@@ -226,7 +230,6 @@ fun WorkoutPixelApp(
 					goals = goals,
 					currentGoal = currentGoal,
 					pastClickViewModelAssistedFactory = pastClickViewModelAssistedFactory,
-					// Make navigateUp a separate function?
 					lambdas = lambdas.copy(
 						updateGoalAndNavigate = { updatedGoal: Goal, navigateUp: Boolean ->
 							lambdas.updateGoal(updatedGoal)
@@ -245,7 +248,7 @@ fun WorkoutPixelApp(
 						deleteGoalAndNavigate = { deletedGoal: Goal, navigateUp: Boolean ->
 							lambdas.deleteGoal(deletedGoal)
 							if (navigateUp) {
-								// The goal uid of the deleted goal doesn't exist anymore. Removing it from the current goal removes sources of errors.
+								// The goal uid of the deleted goal doesn't exist anymore. Removing it from the current goal removes potential sources of errors.
 								goalViewModel.changeCurrentGoalUid(null)
 								navController.navigateUp()
 							}
@@ -265,6 +268,7 @@ fun WorkoutPixelApp(
 	}
 }
 
+@ExperimentalAnimationApi
 @ExperimentalCoilApi
 @ExperimentalAnimationGraphicsApi
 @ExperimentalPagerApi
@@ -280,18 +284,22 @@ fun WorkoutPixelNavHost(
 ) {
 	NavHost(
 		navController = navController,
-		startDestination = when {
-			goals.isNotEmpty() -> {
-				WorkoutPixelScreen.GoalsList.name
-			}
-			lambdas.widgetPinningPossible -> {
-				WorkoutPixelScreen.Onboarding.name
-			}
-			else -> {
-				WorkoutPixelScreen.Instructions.name
+		// remember, because otherwise adding the first goal causes a recomposition and exits the Onboarding screen.
+		startDestination = remember {
+			when {
+				goals.isNotEmpty() -> {
+					Log.d(TAG, "goals.isNotEmpty() -> {n")
+					WorkoutPixelScreen.GoalsList.name
+				}
+				lambdas.widgetPinningPossible -> {
+					WorkoutPixelScreen.Onboarding.name
+				}
+				else -> {
+					WorkoutPixelScreen.Instructions.name
+				}
 			}
 		},
-		modifier = modifier
+		modifier = modifier,
 	) {
 		composable(route = WorkoutPixelScreen.GoalsList.name) {
 			Log.d(TAG, "------------GoalsList------------")
@@ -305,6 +313,7 @@ fun WorkoutPixelNavHost(
 			if (lambdas.widgetPinningPossible) {
 				Onboarding(
 					currentGoal = currentGoal ?: Goal(),
+					chatvariant = if (goals.isEmpty()) Chatvariant.Onboarding else Chatvariant.NewGoalOnly,
 					lambdas = lambdas,
 				)
 			} else {

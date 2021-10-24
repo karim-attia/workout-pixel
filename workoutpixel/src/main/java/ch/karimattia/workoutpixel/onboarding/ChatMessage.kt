@@ -1,74 +1,35 @@
 package ch.karimattia.workoutpixel.onboarding
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.EnterTransition
-import androidx.compose.animation.ExitTransition
-import androidx.compose.animation.fadeIn
-import androidx.compose.foundation.horizontalScroll
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.ExperimentalComposeUiApi
-import androidx.compose.ui.Modifier
 import androidx.lifecycle.LiveData
 
-data class ChatMessage(
+@ExperimentalComposeUiApi
+data class ChatMessage (
+	// Text in the chat bubble of this message.
 	val text: String = "",
+	// Whether this message is by the user or by the app. Determines color, whether the message is shown on the left or the right of the screen.
 	val isMessageByUser: Boolean = false,
-	val autoAdvance: Boolean = isMessageByUser,
-	// TODO: Set reasonable values
-	val autoAdvanceTime: Int = 100,
-	val proposals: List<MessageProposal> = emptyList(),
-	val chatInputField: ChatInputField? = null,
+	// This message is added to the messageBuilderQueue in ChatViewModel at the next position.
+	// Since it's a MessageBuilder, all functions are only evaluated at the time when it is actually inserted.
 	val nextMessage: (MessageBuilder)? = null,
 	// One next message should be sufficient - the next one can be put into the next message.
 	// val nextMessages: List<MessageBuilder> = if (nextMessage != null) listOf(nextMessage) else emptyList(),
+	// This action is executed as soon as the message is shown on the screen.
 	val action: (() -> Unit)? = null,
-	val messageExtra: @Composable () -> Unit = {},
-) {
-	@ExperimentalComposeUiApi
-	@Composable
-	fun BottomArea() {
-		Column {
-			MessageProposals()
-			ChatInputField()
-		}
-	}
-
-	@Composable
-	fun MessageProposals() {
-		// All messageProposals
-		AnimatedVisibility(visible = proposals.isNotEmpty(), enter = fadeIn(), exit = ExitTransition.None) {
-			Row(
-				horizontalArrangement = Arrangement.End,
-				modifier = Modifier
-					.fillMaxWidth()
-					.horizontalScroll(state = rememberScrollState())
-			) {
-				for (proposal in proposals) {
-					MessageProposal(proposal)
-				}
-			}
-		}
-	}
-
-	@ExperimentalComposeUiApi
-	@Composable
-	fun ChatInputField() {
-		// All messageProposals
-		// TextInput
-		AnimatedVisibility(visible = chatInputField != null, enter = EnterTransition.None, exit = ExitTransition.None) {
-			if (chatInputField != null) {
-				ChatInputField(
-					chatInputField = chatInputField,
-				)
-			}
-		}
-	}
-}
+	// Composable shown below the text in the message bubble.
+	val messageExtra: (@Composable () -> Unit)? = null,
+	// Automatically continue to the next message after showing this message.
+	val autoAdvance: Boolean = isMessageByUser,
+	val autoAdvanceTime: Int = if (isMessageByUser) 600 else 1200,
+	// A list of proposals that are shown to the user.
+	val messageProposals: List<MessageProposal> = emptyList(),
+	// The configuration of the user text input field if there is one.
+	val chatInputField: ChatInputField? = null,
+	// Show the messageProposals and chatInputField on the bottom of the screens if they are defined.
+	// Can be replaced with a custom implementation per message.
+	val bottomArea: (@Composable () -> Unit)? = if (messageProposals.isNotEmpty() || chatInputField != null) {{ BottomArea(messageProposals = messageProposals, chatInputField = chatInputField) }} else null,
+)
 
 data class MessageProposal(
 	val proposalText: String = "",
@@ -80,4 +41,5 @@ data class ChatInputField(
 	val onValueChange: (String) -> Unit,
 	val action: (String) -> Unit = {},
 	val scrollDown: () -> Unit,
+	val placeholder: String = "",
 )

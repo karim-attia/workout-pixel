@@ -4,6 +4,8 @@ import android.util.Log
 import androidx.compose.foundation.ScrollState
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.compose.ui.ExperimentalComposeUiApi
+import androidx.compose.ui.text.Placeholder
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -14,6 +16,7 @@ import kotlinx.coroutines.launch
 @Suppress("unused")
 private const val TAG: String = "ChatViewModel"
 
+@ExperimentalComposeUiApi
 abstract class ChatViewModel : ViewModel() {
 	/**
 	 * Specifies the first message of the message chain
@@ -36,12 +39,9 @@ abstract class ChatViewModel : ViewModel() {
 	/**
 	 * Check if initially the firstMessage (=latestMessage at this point) has an action and if yes, process it.
 	 * */
-	fun initialize(firstMessage: ChatMessage, scope: CoroutineScope) {
-		Log.d(TAG, "initialize: ${firstMessage.text}")
+	fun initialize(firstMessage: MessageBuilder, scope: CoroutineScope) {
 		this.scope = scope
-		insertMessageBuilderToQueueAtNextPositionAndAdvance { firstMessage }
-		// shownMessages.add(firstMessage)
-		// processLastMessage(firstMessage)
+		insertMessageBuilderToQueueAtNextPositionAndAdvance (firstMessage)
 	}
 
 	/**
@@ -133,10 +133,12 @@ abstract class ChatViewModel : ViewModel() {
 		value: LiveData<String>,
 		onValueChange: (String) -> Unit,
 		insertMessage: MessageBuilder,
+		placeholder: String
 	): ChatInputField = ChatInputField(
 		value = value,
 		onValueChange = onValueChange,
 		action = { insertMessageBuilderToQueueAtNextPositionAndAdvance(insertMessage) },
 		scrollDown = ::scrollDown,
+		placeholder = placeholder,
 	)
 }

@@ -1,7 +1,9 @@
 package ch.karimattia.workoutpixel.composables
 
 import android.util.Log
-import androidx.compose.animation.*
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.shrinkOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -16,7 +18,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -53,6 +54,7 @@ fun EditGoalView(
 	// This original goal is then also shown if the back button is clicked.
 	// This doesn't happen if the reflected data is saved via the update button.
 	// Copying the goal values fixes this...
+	// TODO: Save all changes directly to the DB to simplify this.
 
 	// https://stackoverflow.com/questions/63956058/jetpack-compose-state-modify-class-property (Last answer for policy)
 	val (editGoalViewGoal: Goal, setValueEditGoalViewGoal: (Goal) -> Unit) = remember {

@@ -30,7 +30,7 @@ enum class WorkoutPixelScreen(
 	GoalsList(
 		icon = Icons.Filled.Done,
 		bottomNavigation = true,
-		displayName = "Your Goals",
+		displayName = "Workout Pixel",
 		showSettingsIcon = true,
 		showFloatingActionButton = true,
 	),

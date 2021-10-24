@@ -28,6 +28,6 @@ class GoalRepository @Inject constructor(
 	fun loadGoalsWithoutValidAppWidgetId(): Flow<List<Goal>> = goalDao.loadGoalsWithoutValidAppWidgetId()
 	suspend fun loadGoalsWithValidAppWidgetId(): List<Goal> = goalDao.loadGoalsWithValidAppWidgetId()
 	suspend fun setAppWidgetIdToNullByAppwidgetId(appWidgetId: Int) = goalDao.setAppWidgetIdToNullByAppwidgetId(appWidgetId = appWidgetId)
-	suspend fun loadGoalByAppWidgetId(appWidgetId: Int): Goal = goalDao.loadGoalByAppWidgetId(appWidgetId = appWidgetId)
+	suspend fun loadGoalByAppWidgetId(appWidgetId: Int): Goal? = goalDao.loadGoalByAppWidgetId(appWidgetId = appWidgetId)
 	suspend fun setAppWidgetIdToNullByUid(uid: Int) = goalDao.setAppWidgetIdToNullByUid(uid = uid)
 }

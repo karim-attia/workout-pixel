@@ -1,18 +1,14 @@
 package ch.karimattia.workoutpixel.onboarding
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.EnterTransition
-import androidx.compose.animation.ExitTransition
-import androidx.compose.animation.fadeIn
 import androidx.compose.foundation.ScrollState
-import androidx.compose.foundation.horizontalScroll
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
@@ -35,7 +31,7 @@ fun ChatMainScreen(
 	shownMessages: List<ChatMessage>,
 	scrollState: ScrollState,
 	spacerTop: Dp,
-	) {
+) {
 	val lastMessage = shownMessages.lastOrNull()
 	Column {
 		Column(
@@ -49,13 +45,11 @@ fun ChatMainScreen(
 				MessageCard(message = message)
 			}
 		}
-		lastMessage?.let { BottomArea(lastMessage = lastMessage) }
-/*
-		lastMessage.BottomArea()
-		*/
+		lastMessage?.bottomArea?.invoke()
 	}
 }
 
+/*
 @ExperimentalComposeUiApi
 @Composable
 fun BottomArea(
@@ -63,14 +57,14 @@ fun BottomArea(
 ) {
 	// Message proposals
 	// All messageProposals
-	AnimatedVisibility(visible = lastMessage.proposals.isNotEmpty(), enter = fadeIn(), exit = ExitTransition.None) {
+	AnimatedVisibility(visible = lastMessage.messageProposals.isNotEmpty(), enter = fadeIn(), exit = ExitTransition.None) {
 		Row(
 			horizontalArrangement = Arrangement.End,
 			modifier = Modifier
 				.fillMaxWidth()
 				.horizontalScroll(state = rememberScrollState())
 		) {
-			for (proposal in lastMessage.proposals) {
+			for (proposal in lastMessage.messageProposals) {
 				MessageProposal(proposal)
 			}
 		}
@@ -85,3 +79,4 @@ fun BottomArea(
 		}
 	}
 }
+*/

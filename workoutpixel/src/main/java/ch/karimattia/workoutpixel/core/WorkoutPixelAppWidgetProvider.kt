@@ -123,8 +123,9 @@ class WorkoutPixelAppWidgetProvider : AppWidgetProvider() {
 
 	override fun onAppWidgetOptionsChanged(context: Context, appWidgetManager: AppWidgetManager, appWidgetId: Int, bundle: Bundle) {
 		runBlocking {
-			val goal = repository.loadGoalByAppWidgetId(appWidgetId)
-			goalActions(goal).runUpdate(false)
+			val goal: Goal? = repository.loadGoalByAppWidgetId(appWidgetId = appWidgetId)
+			// There may be no goal with this appWidgetId, e.g. if the app data was deleted.
+			if (goal != null) goalActions(goal).runUpdate(false)
 			saveTimeWithStringToSharedPreferences(context, "onAppWidgetOptionsChanged ${dateTimeBeautiful(System.currentTimeMillis())}")
 		}
 	}

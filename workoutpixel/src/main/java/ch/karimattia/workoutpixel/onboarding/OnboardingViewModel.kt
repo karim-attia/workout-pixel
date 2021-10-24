@@ -2,6 +2,7 @@ package ch.karimattia.workoutpixel.onboarding
 
 import android.appwidget.AppWidgetManager
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.lifecycle.*
 import ch.karimattia.workoutpixel.composables.GoalPreviewWithBackground
 import ch.karimattia.workoutpixel.composables.GoalPreviewsWithBackground
@@ -14,28 +15,38 @@ import kotlinx.coroutines.flow.collectLatest
 
 @Suppress("unused")
 private const val TAG: String = "OnboardingViewModel"
+@OptIn(ExperimentalComposeUiApi::class)
 typealias MessageBuilder = () -> ChatMessage
 
 enum class Chatvariant {
 	Onboarding, NewGoalOnly
 }
 
+@ExperimentalComposeUiApi
 class OnboardingViewModelFactory(private val chatvariant: Chatvariant, private val scope: CoroutineScope, private var lambdas: Lambdas) :
 	ViewModelProvider.NewInstanceFactory() {
 	override fun <T : ViewModel?> create(modelClass: Class<T>): T = OnboardingViewModel(chatvariant, scope, lambdas) as T
 }
 
+@ExperimentalComposeUiApi
 class OnboardingViewModel(chatvariant: Chatvariant, scope: CoroutineScope, private var lambdas: Lambdas) : ChatViewModel() {
-	/**
-	 * Initialize the ChatViewModel: Process the first message.
-	 * */
+
+	private val editableGoal: MutableLiveData<Goal> = MutableLiveData(Goal())
+	private var isGoalSaved: Boolean = false
+	val savedGoal: MutableLiveData<Goal> = MutableLiveData(Goal())
+	private val goalTitle: LiveData<String> = editableGoal.map { it.title }
+
 	init {
+		/**
+		 * Initialize the ChatViewModel: Process the first message.
+		 * */
 		initialize(
 			firstMessage = when (chatvariant) {
-				Chatvariant.Onboarding -> introMessage()
-				else -> setTitle()
+				Chatvariant.Onboarding -> ::introMessage
+				Chatvariant.NewGoalOnly -> ::setTitle
 			},
-			scope = scope)
+			scope = scope
+		)
 
 		lambdas = lambdas.copy(
 			addWidgetToHomeScreen = {
@@ -51,11 +62,6 @@ class OnboardingViewModel(chatvariant: Chatvariant, scope: CoroutineScope, priva
 		)
 	}
 
-	private val editableGoal: MutableLiveData<Goal> = MutableLiveData(Goal())
-	private var isGoalSaved: Boolean = false
-	val savedGoal: MutableLiveData<Goal> = MutableLiveData(Goal())
-	private val goalTitle: LiveData<String> = editableGoal.map { it.title }
-
 	/**
 	 * Reset editableGoal and flags when a new goal is created.
 	 * * */
@@ -64,28 +70,6 @@ class OnboardingViewModel(chatvariant: Chatvariant, scope: CoroutineScope, priva
 		isGoalSaved = false
 	}
 
-/*
-	*/
-	/**
-	 * Needs to be initialized by activity in order that lambdas work.
-	 * * *//*
-
-	private var lambdas: Lambdas = Lambdas()
-	fun insertLambdas(lambdas: Lambdas) {
-		this.lambdas = lambdas.copy(
-			addWidgetToHomeScreen = {
-				// Save the widget to the DB
-				// Get the generated uid in return
-				// Open the pin dialog
-				val uid = lambdas.addWidgetToHomeScreenFilledIn(editableGoal.value!!, true)
-				// Save the generated uid to editableGoal
-				editableGoal.value = editableGoal.value!!.copy(uid = uid)
-				// Flag to checkIfPinWasSuccessful that the goal was saved and the generated uid saved to editableGoal
-				isGoalSaved = true
-			}
-		)
-	}
-*/
 
 	/**
 	 * All message templates.
@@ -100,7 +84,7 @@ class OnboardingViewModel(chatvariant: Chatvariant, scope: CoroutineScope, priva
 		text = "With WorkoutPixel you can add widgets for your goals to your homescreen. They look like this:",
 		nextMessage = ::habits1,
 		messageExtra = { GoalPreviewsWithBackground() },
-		proposals = proposalsNext
+		messageProposals = proposalsNext
 	)
 
 	private fun proposalNextByUser(): ChatMessage = ChatMessage(
@@ -123,7 +107,7 @@ class OnboardingViewModel(chatvariant: Chatvariant, scope: CoroutineScope, priva
 	private fun habits3(): ChatMessage = ChatMessage(
 		text = "Building new habits is hard. Seeing your progress - many times a day - makes it a little easier.",
 		nextMessage = ::createGoal,
-		proposals = proposalsNext,
+		messageProposals = proposalsNext,
 	)
 
 	private fun createGoal(): ChatMessage = ChatMessage(
@@ -172,7 +156,7 @@ class OnboardingViewModel(chatvariant: Chatvariant, scope: CoroutineScope, priva
 	private fun setInterval(): ChatMessage = ChatMessage(
 		text = "How often do you want to reach your goal? Every ... days:",
 		nextMessage = ::addToHomeScreen,
-		proposals = intervalProposals()
+		messageProposals = intervalProposals()
 	)
 
 
@@ -183,7 +167,7 @@ class OnboardingViewModel(chatvariant: Chatvariant, scope: CoroutineScope, priva
 
 	private fun addToHomeScreen(): ChatMessage = ChatMessage(
 		text = "Let's now add the widget for this goal to your homescreen. After clicking \uD83D\uDC4D, your phone will either automatically add the widget or ask you to place it.",
-		proposals = listOf(
+		messageProposals = listOf(
 			messageProposalOf(
 				proposalText = "Edit goal description",
 				insertsMessage = ::proposalEditGoalDescription,
@@ -208,7 +192,7 @@ class OnboardingViewModel(chatvariant: Chatvariant, scope: CoroutineScope, priva
 
 	private fun retryPrompt(): ChatMessage = ChatMessage(
 		text = "Do you want to retry?",
-		proposals = listOf(
+		messageProposals = listOf(
 			messageProposalOf(
 				proposalText = "Edit goal description",
 				insertsMessage = ::proposalEditGoalDescription,
@@ -223,7 +207,7 @@ class OnboardingViewModel(chatvariant: Chatvariant, scope: CoroutineScope, priva
 
 	private fun success(): ChatMessage = ChatMessage(
 		text = "You successfully added your widget.",
-		proposals = listOf(
+		messageProposals = listOf(
 /*
 				messageProposalOf(
 					proposalText = "Edit",
@@ -247,11 +231,13 @@ class OnboardingViewModel(chatvariant: Chatvariant, scope: CoroutineScope, priva
 		action = { lambdas.navigateTo(WorkoutPixelScreen.GoalsList.name, null, true) }
 	)
 
+/*
 	private fun proposalEdit(): ChatMessage = ChatMessage(
 		text = "Edit",
 		isMessageByUser = true,
 		action = { }
 	)
+*/
 
 	private fun proposalAnotherGoal(): ChatMessage = ChatMessage(
 		text = "Add another goal",
@@ -279,6 +265,7 @@ class OnboardingViewModel(chatvariant: Chatvariant, scope: CoroutineScope, priva
 		value = goalTitle,
 		onValueChange = { editableGoal.value = editableGoal.value!!.copy(title = it) },
 		insertMessage = ::titleByUser,
+		placeholder = "E.g. Push ups",
 	)
 
 	// Could be val

@@ -1,13 +1,12 @@
 package ch.karimattia.workoutpixel.onboarding
 
 import android.util.Log
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.widthIn
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.fadeIn
+import androidx.compose.foundation.*
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -33,6 +32,7 @@ import androidx.compose.ui.unit.dp
 @Suppress("unused")
 private const val TAG: String = "ChatComponents"
 
+@ExperimentalComposeUiApi
 @Composable
 fun MessageCard(message: ChatMessage) {
 	Column(
@@ -63,7 +63,7 @@ fun MessageCard(message: ChatMessage) {
 						else -> MaterialTheme.colors.onPrimary
 					},
 				)
-				message.messageExtra()
+				message.messageExtra?.invoke()
 			}
 		}
 	}
@@ -82,6 +82,7 @@ fun MessageProposal(messageProposal: MessageProposal) {
 	}
 }
 
+@ExperimentalComposeUiApi
 @Composable
 fun cardShapeFor(message: ChatMessage): Shape = cardShapeFor(message.isMessageByUser)
 
@@ -96,13 +97,14 @@ fun cardShapeFor(isMine: Boolean): Shape {
 
 @ExperimentalComposeUiApi
 @Composable
-fun ChatInputField(
+fun ChatInputFieldImpl(
 	chatInputField: ChatInputField,
 ) {
 	val value: String = chatInputField.value.observeAsState(initial = "").value
 	val onValueChange: (String) -> Unit = chatInputField.onValueChange
 	val action: (String) -> Unit = chatInputField.action
 	val scrollDown: () -> Unit = chatInputField.scrollDown
+	val placeholder: String = chatInputField.placeholder
 
 	val keyboardController = LocalSoftwareKeyboardController.current
 
@@ -126,7 +128,7 @@ fun ChatInputField(
 			unfocusedIndicatorColor = Color.Transparent,
 			disabledIndicatorColor = Color.Transparent
 		),
-		placeholder = { Text(text = "E.g. Push ups") },
+		placeholder = { Text(text = placeholder) },
 		shape = CircleShape,
 		maxLines = 1,
 		keyboardOptions = KeyboardOptions(
@@ -149,3 +151,42 @@ fun ChatInputField(
 	)
 }
 
+@ExperimentalComposeUiApi
+@Composable
+fun BottomArea(messageProposals: List<MessageProposal>, chatInputField: ChatInputField?) {
+	Column {
+		MessageProposals(messageProposals)
+		ChatInputField(chatInputField)
+	}
+}
+
+@Composable
+fun MessageProposals(messageProposals: List<MessageProposal>) {
+	// All messageProposals
+	AnimatedVisibility(visible = messageProposals.isNotEmpty(), enter = fadeIn(), exit = ExitTransition.None) {
+		Row(
+			horizontalArrangement = Arrangement.End,
+			modifier = Modifier
+				.fillMaxWidth()
+				.horizontalScroll(state = rememberScrollState())
+		) {
+			for (proposal in messageProposals) {
+				MessageProposal(proposal)
+			}
+		}
+	}
+}
+
+@ExperimentalComposeUiApi
+@Composable
+fun ChatInputField(chatInputField: ChatInputField?) {
+	// All messageProposals
+	// TextInput
+	AnimatedVisibility(visible = chatInputField != null, enter = EnterTransition.None, exit = ExitTransition.None) {
+		if (chatInputField != null) {
+			ChatInputFieldImpl(
+				chatInputField = chatInputField,
+			)
+		}
+	}
+}
