@@ -1,10 +1,7 @@
 package ch.karimattia.workoutpixel.onboarding
 
 import android.util.Log
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.EnterTransition
-import androidx.compose.animation.ExitTransition
-import androidx.compose.animation.fadeIn
+import androidx.compose.animation.*
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -163,7 +160,7 @@ fun BottomArea(messageProposals: List<MessageProposal>, chatInputField: ChatInpu
 @Composable
 fun MessageProposals(messageProposals: List<MessageProposal>) {
 	// All messageProposals
-	AnimatedVisibility(visible = messageProposals.isNotEmpty(), enter = fadeIn(), exit = ExitTransition.None) {
+	AnimatedVisibility(visible = messageProposals.isNotEmpty(), enter = fadeIn(), exit = fadeOut()) {
 		Row(
 			horizontalArrangement = Arrangement.End,
 			modifier = Modifier
@@ -180,9 +177,8 @@ fun MessageProposals(messageProposals: List<MessageProposal>) {
 @ExperimentalComposeUiApi
 @Composable
 fun ChatInputField(chatInputField: ChatInputField?) {
-	// All messageProposals
 	// TextInput
-	AnimatedVisibility(visible = chatInputField != null, enter = EnterTransition.None, exit = ExitTransition.None) {
+	AnimatedVisibility(visible = chatInputField != null, enter = fadeIn(), exit = fadeOut()) {
 		if (chatInputField != null) {
 			ChatInputFieldImpl(
 				chatInputField = chatInputField,

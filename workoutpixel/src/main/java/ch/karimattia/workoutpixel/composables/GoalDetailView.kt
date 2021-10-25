@@ -43,6 +43,7 @@ import com.vanpra.composematerialdialogs.title
 import kotlinx.coroutines.launch
 import java.util.stream.Collectors
 
+@Suppress("unused")
 private const val TAG: String = "GoalDetailView"
 
 @Composable
@@ -54,17 +55,11 @@ fun GoalDetailView(
 	pastClicks: List<PastClick> = pastClickViewModel.pastClicks,
 	lambdas: Lambdas,
 ) {
-	val goalDetailViewlambdas = lambdas.copy(
-		addWidgetToHomeScreen = {
-			lambdas.addWidgetToHomeScreenFilledIn(currentGoal,
-				true)
-		}, //{ suspend { lambdas.addWidgetToHomeScreen(currentGoal, false) }},
-	)
 	GoalDetailView(
 		currentGoal = currentGoal,
 		updatePastClick = { updatedPastClick -> pastClickViewModel.updatePastClick(updatedPastClick) },
 		pastClicks = pastClicks,
-		lambdas = goalDetailViewlambdas,
+		lambdas = lambdas,
 	)
 }
 
@@ -151,7 +146,10 @@ fun GoalDetailNoWidgetCard(
 			Text(text = "Delete goal".uppercase(), modifier = Modifier.padding(end = 16.dp))
 		}
 		MaterialDialog(dialogState = dialogState, buttons = {
-			positiveButton(text = "Confirm", onClick = { lambdas.deleteGoalAndNavigate(currentGoal, true) })
+			positiveButton(text = "Confirm") {
+				lambdas.deleteGoal(currentGoal)
+				lambdas.navigateUp(true)
+			}
 			negativeButton(text = "Cancel")
 		}) {
 			title(text = "Do you really want to delete this goal?")
@@ -163,7 +161,7 @@ fun GoalDetailNoWidgetCard(
 
 		if (appWidgetManager.isRequestPinAppWidgetSupported) {
 			Button(
-				onClick = { scope.launch { lambdas.addWidgetToHomeScreen() } },
+				onClick = { scope.launch { lambdas.addWidgetToHomeScreen(currentGoal, true) } },
 				modifier = Modifier
 					.padding(top = 4.dp)
 					.fillMaxWidth(),

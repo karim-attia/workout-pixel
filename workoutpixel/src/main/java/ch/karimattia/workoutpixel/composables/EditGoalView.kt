@@ -35,6 +35,7 @@ import ch.karimattia.workoutpixel.data.Goal
 import ch.karimattia.workoutpixel.data.SettingsData
 import java.util.*
 
+@Suppress("unused")
 private const val TAG: String = "EditGoalView"
 
 @ExperimentalComposeUiApi
@@ -87,7 +88,8 @@ fun EditGoalView(
 				goalsWithoutWidget = goalsWithoutWidget,
 				connectGoal = { updatedConnectedGoal ->
 					updatedConnectedGoal.appWidgetId = initialGoal.appWidgetId
-					lambdas.updateGoalAndNavigate(updatedConnectedGoal, true)
+					lambdas.updateGoal(updatedConnectedGoal)
+					lambdas.navigateUp(false)
 				},
 				modifier = modifier,
 			)
@@ -121,7 +123,13 @@ fun EditGoalView(
 		)
 		AddUpdateWidgetButton(
 			isFirstConfigure = isFirstConfigure,
-			insertUpdateWidget = { if (isFirstConfigure) lambdas.insertGoal(editGoalViewGoal) else lambdas.updateGoalAndNavigate(editGoalViewGoal, true) },
+			insertUpdateWidget = {
+				if (isFirstConfigure) lambdas.insertGoal(editGoalViewGoal)
+				else {
+					lambdas.updateGoal(editGoalViewGoal)
+					lambdas.navigateUp(false)
+				}
+			},
 			modifier = Modifier
 				.padding(top = 24.dp)
 				.align(Alignment.End),
@@ -288,8 +296,8 @@ fun ConnectButton(
 		onClick = {
 			connectWidget()
 		},
-		modifier = modifier
-	) {
+		modifier = modifier.fillMaxWidth(),
+		) {
 		Text(text = "Connect widget".uppercase())
 		Icon(
 			imageVector = Icons.Filled.Cable,

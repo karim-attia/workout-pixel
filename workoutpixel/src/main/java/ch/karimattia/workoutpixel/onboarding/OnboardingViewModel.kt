@@ -25,16 +25,18 @@ enum class Chatvariant {
 @ExperimentalComposeUiApi
 class OnboardingViewModelFactory(private val chatvariant: Chatvariant, private val scope: CoroutineScope, private var lambdas: Lambdas) :
 	ViewModelProvider.NewInstanceFactory() {
-	override fun <T : ViewModel?> create(modelClass: Class<T>): T = OnboardingViewModel(chatvariant, scope, lambdas) as T
+	override fun <T : ViewModel?> create(modelClass: Class<T>): T =
+		OnboardingViewModel(chatvariant = chatvariant, scope = scope, receivedLambdas = lambdas) as T
 }
 
 @ExperimentalComposeUiApi
-class OnboardingViewModel(chatvariant: Chatvariant, scope: CoroutineScope, private var lambdas: Lambdas) : ChatViewModel() {
+class OnboardingViewModel(chatvariant: Chatvariant, scope: CoroutineScope, private var receivedLambdas: Lambdas) : ChatViewModel() {
 
 	private val editableGoal: MutableLiveData<Goal> = MutableLiveData(Goal())
 	private var isGoalSaved: Boolean = false
 	val savedGoal: MutableLiveData<Goal> = MutableLiveData(Goal())
 	private val goalTitle: LiveData<String> = editableGoal.map { it.title }
+	private var lambdas: Lambdas
 
 	init {
 		/**
@@ -48,16 +50,17 @@ class OnboardingViewModel(chatvariant: Chatvariant, scope: CoroutineScope, priva
 			scope = scope
 		)
 
-		lambdas = lambdas.copy(
-			addWidgetToHomeScreen = {
+		lambdas = receivedLambdas.copy(
+			addWidgetToHomeScreen = { goal: Goal, insertNewGoal: Boolean ->
 				// Save the widget to the DB
 				// Get the generated uid in return
 				// Open the pin dialog
-				val uid = lambdas.addWidgetToHomeScreenFilledIn(editableGoal.value!!, true)
+				val uid = receivedLambdas.addWidgetToHomeScreen(goal, insertNewGoal)
 				// Save the generated uid to editableGoal
 				editableGoal.value = editableGoal.value!!.copy(uid = uid)
 				// Flag to checkIfPinWasSuccessful that the goal was saved and the generated uid saved to editableGoal
 				isGoalSaved = true
+				return@copy 0
 			}
 		)
 	}
@@ -291,7 +294,7 @@ class OnboardingViewModel(chatvariant: Chatvariant, scope: CoroutineScope, priva
 		timeout: Long? = 3000,
 	): () -> Unit = {
 		viewModelScope.launch {
-			if (showPinDialog) lambdas.addWidgetToHomeScreen()
+			if (showPinDialog) lambdas.addWidgetToHomeScreen(editableGoal.value!!, true)
 			var success = false
 			// Cancel job if retry is clicked.
 			for (job in checkIfPinWasSuccessfulJobs) job.cancel()

@@ -89,7 +89,7 @@ class MainActivity : ComponentActivity() {
 					}
 				},
 				deleteGoal = { lifecycleScope.launch { goalViewModel.deleteGoal(it) } },
-				addWidgetToHomeScreenFilledIn = { goal: Goal, insertNewGoal: Boolean ->
+				addWidgetToHomeScreen = { goal: Goal, insertNewGoal: Boolean ->
 					Log.d(TAG, "addWidgetToHomeScreen")
 					if (insertNewGoal) goal.uid = goalViewModel.insertGoal(goal)
 					widgetActions(goal).pinAppWidget()
@@ -231,34 +231,21 @@ fun WorkoutPixelApp(
 					currentGoal = currentGoal,
 					pastClickViewModelAssistedFactory = pastClickViewModelAssistedFactory,
 					lambdas = lambdas.copy(
-						updateGoalAndNavigate = { updatedGoal: Goal, navigateUp: Boolean ->
-							Log.d(TAG, "updateGoalAndNavigate")
-
-							lambdas.updateGoal(updatedGoal)
-							Log.d(TAG, "navigateUp: $navigateUp")
-							if (navigateUp) {
-								navController.navigateUp()
-							}
-						},
-						navigateTo = { destination: String, goal: Goal?, popUpTo: Boolean ->
+						navigateTo = { destination: String, goal: Goal?, popBackStack: Boolean ->
 							Log.d(TAG, "navigateTo $goal")
 							goalViewModel.changeCurrentGoalUid(goal)
 							navController.navigate(destination) {
-								if (popUpTo) popUpTo(destination) { inclusive = true }
+								if (popBackStack) popUpTo(destination) { inclusive = true }
 							}
 						},
-						deleteGoalAndNavigate = { deletedGoal: Goal, navigateUp: Boolean ->
-							lambdas.deleteGoal(deletedGoal)
-							if (navigateUp) {
-								// The goal uid of the deleted goal doesn't exist anymore. Removing it from the current goal removes potential sources of errors.
-								goalViewModel.changeCurrentGoalUid(null)
-								navController.navigateUp()
-							}
+						navigateUp = { setGoalToNull: Boolean ->
+							if (setGoalToNull) goalViewModel.changeCurrentGoalUid(Constants.INVALID_GOAL_UID)
+							navController.navigateUp()
 						},
 						// Getting UID to Onboarding through currentGoal through changeCurrentGoalUid(goalUid)
 						// With this UID, get the AppWidgetId
-						addWidgetToHomeScreenFilledIn = { goal: Goal, boolean: Boolean ->
-							val goalUid: Int = lambdas.addWidgetToHomeScreenFilledIn(goal, boolean)
+						addWidgetToHomeScreen = { goal: Goal, boolean: Boolean ->
+							val goalUid: Int = lambdas.addWidgetToHomeScreen(goal, boolean)
 							goalViewModel.changeCurrentGoalUid(goalUid)
 							goalUid
 						}

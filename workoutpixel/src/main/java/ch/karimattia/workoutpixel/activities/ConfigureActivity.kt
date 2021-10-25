@@ -73,7 +73,7 @@ class ConfigureActivity : ComponentActivity() {
 			Log.d(TAG, "isFirstConfigure: $isFirstConfigure")
 
 			val configureActivityLambdas = Lambdas(
-				updateGoalAndNavigate = { updatedGoal, _ ->
+				updateGoal = { updatedGoal ->
 					lifecycleScope.launch {
 						// Insert the goal into the DB and also update the widget.
 						goalViewModel.updateGoal(updatedGoal)
