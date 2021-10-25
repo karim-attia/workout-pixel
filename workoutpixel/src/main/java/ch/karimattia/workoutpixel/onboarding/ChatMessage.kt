@@ -21,7 +21,7 @@ data class ChatMessage (
 	val messageExtra: (@Composable () -> Unit)? = null,
 	// Automatically continue to the next message after showing this message.
 	val autoAdvance: Boolean = isMessageByUser,
-	val autoAdvanceTime: Int = if (isMessageByUser) 400 else 800,
+	val autoAdvanceTime: Int = if (isMessageByUser) 500 else 1000,
 	// A list of proposals that are shown to the user.
 	val messageProposals: List<MessageProposal> = emptyList(),
 	// The configuration of the user text input field if there is one.
