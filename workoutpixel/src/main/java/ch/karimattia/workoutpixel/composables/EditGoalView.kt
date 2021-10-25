@@ -87,7 +87,7 @@ fun EditGoalView(
 				goalsWithoutWidget = goalsWithoutWidget,
 				connectGoal = { updatedConnectedGoal ->
 					updatedConnectedGoal.appWidgetId = initialGoal.appWidgetId
-					lambdas.updateGoal(updatedConnectedGoal)
+					lambdas.updateGoalAndNavigate(updatedConnectedGoal, true)
 				},
 				modifier = modifier,
 			)
