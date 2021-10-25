@@ -24,14 +24,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import ch.karimattia.workoutpixel.R
 import ch.karimattia.workoutpixel.core.dateBeautiful
-import ch.karimattia.workoutpixel.core.testGoals
-import ch.karimattia.workoutpixel.core.testPastClicks
 import ch.karimattia.workoutpixel.core.timeBeautiful
 import ch.karimattia.workoutpixel.data.*
 import ch.karimattia.workoutpixel.ui.theme.GreenTest
@@ -161,7 +158,7 @@ fun GoalDetailNoWidgetCard(
 
 		if (appWidgetManager.isRequestPinAppWidgetSupported) {
 			Button(
-				onClick = { scope.launch { lambdas.addWidgetToHomeScreen(currentGoal, true) } },
+				onClick = { scope.launch { lambdas.addWidgetToHomeScreen(currentGoal, false) } },
 				modifier = Modifier
 					.padding(top = 4.dp)
 					.fillMaxWidth(),
@@ -183,7 +180,6 @@ fun PastClicks(
 	lambdas: Lambdas,
 ) {
 	CardWithTitle(
-		// TODO: If numberOfPastClicks > 50, declare it. Or implement some paging.
 		title = "Past clicks",
 	) {
 		PastClickList(
@@ -208,17 +204,19 @@ fun PastClickList(
 			PastClickEntry(date = "Date", time = "Time", bold = true)
 			Divider(color = Color(TextBlack), thickness = 1.dp)
 
-			for (i in 0 until minOf(numberOfPastClicks, 50)) {
-				key(pastClicks[i].uid) {
+			// TODO: Limit number of numberOfPastClicks, declare it. Or implement some paging.
+			for (pastClick in pastClicks) {
+				key(pastClick.uid) {
 					PastClickEntry(
-						pastClick = pastClicks[i],
+						pastClick = pastClick,
 						togglePastClick = {
-							val updatedPastClick = pastClicks[i].copy(isActive = !pastClicks[i].isActive)
+							val updatedPastClick = pastClick.copy(isActive = !pastClick.isActive)
 							updatePastClick(updatedPastClick)
 							// Copying to prevent changes on screen that are not driven by the viewmodel.
 							// This is all super explicit and unelegant, but there were some bugs here in the past.
 							val updatedPastClicks = pastClicks.toMutableList()
-							updatedPastClicks[i] = updatedPastClick
+							updatedPastClicks[updatedPastClicks.indexOfFirst { click -> click.uid == updatedPastClick.uid }] = updatedPastClick
+							// updatedPastClicks.replaceAll{click -> if (click.uid == updatedPastClick.uid) updatedPastClick else click }
 							// If this change causes a new last workout time, do all the necessary updates.
 							// TODO: Move setNewLastWorkout to GoalSaveActions and directly save the updated goal there?
 							// TODO: lastWorkout <-> lastClick
@@ -243,6 +241,7 @@ fun PastClickList(
 	}
 	Spacer(modifier = Modifier.padding(end = 6.dp))
 }
+
 
 @Composable
 fun PastClickEntry(
@@ -316,28 +315,3 @@ fun PastClickEntry(
 		}
 	}
 }
-
-fun lastClickBasedOnActiveClicks(pastClicks: List<PastClick>): Long {
-	val activeWorkoutsOrderedByWorkoutTime = pastClicks.stream()
-		.filter { clickedClick: PastClick -> clickedClick.isActive }.collect(
-			Collectors.toList()
-		)
-
-	// If there still is an active past workout, take the latest one to set the last workout time
-	return if (activeWorkoutsOrderedByWorkoutTime.isNotEmpty()) activeWorkoutsOrderedByWorkoutTime[0].workoutTime
-	// Otherwise, set it to 0.
-	else 0L
-}
-
-
-@Preview("GoalDetailViewPreview")
-@Composable
-fun GoalDetailViewPreview() {
-	GoalDetailView(
-		currentGoal = testGoals[0],
-		updatePastClick = {},
-		pastClicks = testPastClicks,
-		lambdas = Lambdas()
-	)
-}
-

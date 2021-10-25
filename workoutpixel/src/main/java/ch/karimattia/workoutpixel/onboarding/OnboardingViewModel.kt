@@ -8,7 +8,7 @@ import ch.karimattia.workoutpixel.composables.GoalPreviewWithBackground
 import ch.karimattia.workoutpixel.composables.GoalPreviewsWithBackground
 import ch.karimattia.workoutpixel.composables.Lambdas
 import ch.karimattia.workoutpixel.core.Status
-import ch.karimattia.workoutpixel.core.WorkoutPixelScreen
+import ch.karimattia.workoutpixel.core.Screens
 import ch.karimattia.workoutpixel.data.Goal
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collectLatest
@@ -231,7 +231,7 @@ class OnboardingViewModel(chatvariant: Chatvariant, scope: CoroutineScope, priva
 	private fun proposalClose(): ChatMessage = ChatMessage(
 		text = "Close chat",
 		isMessageByUser = true,
-		action = { lambdas.navigateTo(WorkoutPixelScreen.GoalsList.name, null, true) }
+		action = { lambdas.navigateTo(Screens.GoalsList.name, null, true) }
 	)
 
 /*

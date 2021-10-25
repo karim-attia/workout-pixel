@@ -3,15 +3,18 @@ package ch.karimattia.workoutpixel.core
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.TrendingUp
 import androidx.compose.ui.graphics.vector.ImageVector
 
 /**
  * Screen metadata for WorkoutPixel.
  */
-enum class WorkoutPixelScreen(
+enum class Screens(
 	val icon: ImageVector? = null,
 	val bottomNavigation: Boolean = false,
+	val showWhenPinningPossible: Boolean = true,
 	val displayName: String? = null,
+	val topAppBarName: String? = null,
 	val showBackNavigation: Boolean = false,
 	val showEditIcon: Boolean = false,
 	val showSettingsIcon: Boolean = false,
@@ -21,18 +24,28 @@ enum class WorkoutPixelScreen(
 	Onboarding(
 		displayName = "Onboarding",
 		fullScreen = true,
-		),
+	),
 	Instructions(
 		icon = Icons.Filled.Info,
 		bottomNavigation = true,
+		showWhenPinningPossible = false,
 		displayName = "Instructions",
+		topAppBarName = "Workout Pixel",
 	),
 	GoalsList(
 		icon = Icons.Filled.Done,
 		bottomNavigation = true,
-		displayName = "Workout Pixel",
+		displayName = "Goals",
 		showSettingsIcon = true,
 		showFloatingActionButton = true,
+		topAppBarName = "Workout Pixel",
+	),
+	Progress(
+		icon = Icons.Filled.TrendingUp,
+		bottomNavigation = true,
+		displayName = "Progress",
+		showSettingsIcon = true,
+		topAppBarName = "Workout Pixel",
 	),
 	GoalDetailView(
 		showBackNavigation = true,
@@ -48,7 +61,7 @@ enum class WorkoutPixelScreen(
 	;
 
 	companion object {
-		fun fromRoute(route: String?): WorkoutPixelScreen =
+		fun fromRoute(route: String?): Screens =
 			when (route?.substringBefore("/")) {
 				GoalsList.name -> GoalsList
 				Onboarding.name -> Onboarding
@@ -56,6 +69,7 @@ enum class WorkoutPixelScreen(
 				GoalDetailView.name -> GoalDetailView
 				EditGoalView.name -> EditGoalView
 				Settings.name -> Settings
+				Progress.name -> Progress
 				null -> GoalsList
 				else -> throw IllegalArgumentException("Route $route is not recognized.")
 			}

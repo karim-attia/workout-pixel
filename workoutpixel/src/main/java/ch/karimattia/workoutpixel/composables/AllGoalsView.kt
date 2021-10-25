@@ -21,7 +21,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import ch.karimattia.workoutpixel.R
-import ch.karimattia.workoutpixel.core.WorkoutPixelScreen
+import ch.karimattia.workoutpixel.core.Screens
 import ch.karimattia.workoutpixel.core.dateBeautiful
 import ch.karimattia.workoutpixel.core.testGoals
 import ch.karimattia.workoutpixel.data.Goal
@@ -50,7 +50,7 @@ fun GoalList(
 				)
 			}
 		} else {
-			InstructionsCard(navigateTo = { lambdas.navigateTo(WorkoutPixelScreen.Instructions.name, null, true) })
+			InstructionsCard(navigateTo = { lambdas.navigateTo(Screens.Instructions.name, null, true) })
 		}
 
 	}
@@ -68,7 +68,7 @@ fun GoalCard(
 			.padding(vertical = 4.dp, horizontal = 8.dp)
 			.fillMaxWidth()
 			.clickable {
-				lambdas.navigateTo(WorkoutPixelScreen.GoalDetailView.name, goal, false)
+				lambdas.navigateTo(Screens.GoalDetailView.name, goal, false)
 			}
 	) {
 		// Preview and rest

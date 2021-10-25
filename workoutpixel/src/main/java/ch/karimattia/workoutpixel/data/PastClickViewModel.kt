@@ -5,6 +5,7 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import ch.karimattia.workoutpixel.core.Constants
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -20,11 +21,12 @@ class PastClickViewModel @AssistedInject constructor(
 	private val repository: PastClickRepository,
 	@Assisted var goalUid: Int,
 ) : ViewModel() {
-	private val pastClicksFlow: Flow<List<PastClick>> = repository.pastClicksByGoalUid(goalUid = goalUid)
+	private val pastClicksFlow: Flow<List<PastClick>> =
+		if (goalUid != Constants.INVALID_GOAL_UID) repository.pastClicksByGoalUid(goalUid = goalUid) else repository.allPastClicks()
+
 	fun updatePastClick(pastClick: PastClick) = viewModelScope.launch {
 		repository.updatePastClick(pastClick)
 	}
-	// 	suspend fun updatePastClick(pastClick: PastClick) = repository.updatePastClick(pastClick)
 
 	val pastClicks: SnapshotStateList<PastClick> = mutableStateListOf()
 

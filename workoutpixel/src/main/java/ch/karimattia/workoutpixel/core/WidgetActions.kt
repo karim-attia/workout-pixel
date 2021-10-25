@@ -51,6 +51,7 @@ class WidgetActions @AssistedInject constructor(
 		// Instruct the widget manager to update the widget with the latest widget data
 		runUpdate(false)
 
+		// TODO: Handle as transaction: 3. here: https://medium.com/androiddevelopers/7-pro-tips-for-room-fbadea4bfbd1
 		// Add the workout to the database. Technicalities are taken care of in PastWorkoutsViewModel.
 		pastClickRepository.insertPastClick(PastClick(widgetUid = goal.uid, workoutTime = goal.lastWorkout))
 

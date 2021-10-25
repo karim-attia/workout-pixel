@@ -145,10 +145,10 @@ fun WorkoutPixelApp(
 	WorkoutPixelTheme(
 		darkTheme = false,
 	) {
-		val allScreens = WorkoutPixelScreen.values().toList()
+		val allScreens = Screens.values().toList()
 		val navController: NavHostController = rememberNavController()
 		val backstackEntry: State<NavBackStackEntry?> = navController.currentBackStackEntryAsState()
-		val currentScreen: WorkoutPixelScreen = WorkoutPixelScreen.fromRoute(backstackEntry.value?.destination?.route)
+		val currentScreen: Screens = Screens.fromRoute(backstackEntry.value?.destination?.route)
 		val currentGoal: Goal? = goalFromGoalsByUid(goalUid = currentGoalUid, goals = goals)
 
 		Scaffold(
@@ -156,7 +156,7 @@ fun WorkoutPixelApp(
 				// If goals is empty, there is a redirect to the Onboarding screen. Adding && goals.isNotEmpty() removed jank from this switch on first start.
 				if (!currentScreen.fullScreen && goals.isNotEmpty()) {
 					TopAppBar(
-						title = { Text(text = currentScreen.displayName ?: (currentGoal?.title ?: "")) },
+						title = { Text(text = currentScreen.topAppBarName ?: (currentGoal?.title ?: "")) },
 						navigationIcon =
 						if (currentScreen.showBackNavigation) {
 							{
@@ -170,12 +170,12 @@ fun WorkoutPixelApp(
 						} else null,
 						actions = {
 							if (currentScreen.showEditIcon) {
-								IconButton(onClick = { navController.navigate(WorkoutPixelScreen.EditGoalView.name) }) {
+								IconButton(onClick = { navController.navigate(Screens.EditGoalView.name) }) {
 									Icon(Icons.Filled.Edit, contentDescription = "Edit goal")
 								}
 							}
 							if (currentScreen.showSettingsIcon) {
-								IconButton(onClick = { navController.navigate(WorkoutPixelScreen.Settings.name) }) {
+								IconButton(onClick = { navController.navigate(Screens.Settings.name) }) {
 									Icon(Icons.Filled.Settings, contentDescription = "Settings")
 								}
 							}
@@ -184,22 +184,21 @@ fun WorkoutPixelApp(
 				}
 			},
 			bottomBar = {
-				// If pinning is possible, don't show the Instructions and thus there is only one entry. As soon as there are more entries, revert.
-				if (!lambdas.widgetPinningPossible) {
+				if (!currentScreen.fullScreen && goals.isNotEmpty()) {
 					BottomNavigation {
 						// Only show entries that have bottomNavigation == true.
-						allScreens.filter { it.bottomNavigation }.forEach { screen ->
+						allScreens.filter { it.bottomNavigation && (it.showWhenPinningPossible || !lambdas.widgetPinningPossible)}.forEach { screen ->
 							BottomNavigationItem(
 								icon = { screen.icon?.let { Icon(it, contentDescription = null, modifier = Modifier.size(24.dp)) } },
 								label = { Text(text = screen.displayName ?: "") },
 								selected = currentScreen == screen,
 								onClick = {
 									navController.navigate(screen.name) {
-										if (screen == WorkoutPixelScreen.GoalsList) {
+										if (screen == Screens.GoalsList) {
 											// TODO: set current goal to null?
-											popUpTo(WorkoutPixelScreen.GoalsList.name) { inclusive = true }
+											popUpTo(Screens.GoalsList.name) { inclusive = true }
 										} else {
-											popUpTo(WorkoutPixelScreen.GoalsList.name)
+											popUpTo(Screens.GoalsList.name)
 										}
 									}
 								}
@@ -211,7 +210,7 @@ fun WorkoutPixelApp(
 			floatingActionButton = {
 				if (lambdas.widgetPinningPossible && currentScreen.showFloatingActionButton) {
 					FloatingActionButton(onClick = {
-						navController.navigate(WorkoutPixelScreen.Onboarding.name)
+						navController.navigate(Screens.Onboarding.name)
 					}) {
 						Icon(
 							imageVector = Icons.Filled.Add,
@@ -244,8 +243,8 @@ fun WorkoutPixelApp(
 						},
 						// Getting UID to Onboarding through currentGoal through changeCurrentGoalUid(goalUid)
 						// With this UID, get the AppWidgetId
-						addWidgetToHomeScreen = { goal: Goal, boolean: Boolean ->
-							val goalUid: Int = lambdas.addWidgetToHomeScreen(goal, boolean)
+						addWidgetToHomeScreen = { goal: Goal, insertNewGoal: Boolean ->
+							val goalUid: Int = lambdas.addWidgetToHomeScreen(goal, insertNewGoal)
 							goalViewModel.changeCurrentGoalUid(goalUid)
 							goalUid
 						}
@@ -278,26 +277,26 @@ fun WorkoutPixelNavHost(
 			when {
 				goals.isNotEmpty() -> {
 					Log.d(TAG, "goals.isNotEmpty() -> {n")
-					WorkoutPixelScreen.GoalsList.name
+					Screens.GoalsList.name
 				}
 				lambdas.widgetPinningPossible -> {
-					WorkoutPixelScreen.Onboarding.name
+					Screens.Onboarding.name
 				}
 				else -> {
-					WorkoutPixelScreen.Instructions.name
+					Screens.Instructions.name
 				}
 			}
 		},
 		modifier = modifier,
 	) {
-		composable(route = WorkoutPixelScreen.GoalsList.name) {
+		composable(route = Screens.GoalsList.name) {
 			Log.d(TAG, "------------GoalsList------------")
 			GoalList(
 				goals = goals,
 				lambdas = lambdas,
 			)
 		}
-		composable(route = WorkoutPixelScreen.Onboarding.name) {
+		composable(route = Screens.Onboarding.name) {
 			Log.d(TAG, "------------Onboarding------------")
 			if (lambdas.widgetPinningPossible) {
 				Onboarding(
@@ -306,16 +305,15 @@ fun WorkoutPixelNavHost(
 					lambdas = lambdas,
 				)
 			} else {
-				lambdas.navigateTo(WorkoutPixelScreen.Instructions.name, null, true)
+				lambdas.navigateTo(Screens.Instructions.name, null, true)
 			}
 		}
-		composable(route = WorkoutPixelScreen.Instructions.name) {
+		composable(route = Screens.Instructions.name) {
 			Log.d(TAG, "------------Instructions------------")
 			Instructions()
 		}
 		// GoalDetailView
-		composable(route = WorkoutPixelScreen.GoalDetailView.name) {
-			Log.d(TAG, "------------GoalDetail $currentGoal------------")
+		composable(route = Screens.GoalDetailView.name) {
 			if (currentGoal != null) {
 				GoalDetailView(
 					currentGoal = currentGoal,
@@ -324,9 +322,17 @@ fun WorkoutPixelNavHost(
 				)
 			} else (Text("currentGoal = null"))
 		}
+		// Your Progress
+		composable(route = Screens.Progress.name) {
+			Progress(
+				pastClickViewModelAssistedFactory = pastClickViewModelAssistedFactory,
+				goals = goals,
+				lambdas = lambdas,
+			)
+		}
 		// Edit goal
 		composable(
-			route = WorkoutPixelScreen.EditGoalView.name,
+			route = Screens.EditGoalView.name,
 		) {
 			Log.d(TAG, "------------EditGoal $currentGoal------------")
 			if (currentGoal != null) {
@@ -341,7 +347,7 @@ fun WorkoutPixelNavHost(
 		}
 		// Settings
 		composable(
-			route = WorkoutPixelScreen.Settings.name,
+			route = Screens.Settings.name,
 		) {
 			Log.d(TAG, "------------Settings------------")
 			Settings(

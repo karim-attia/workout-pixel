@@ -1,9 +1,6 @@
 package ch.karimattia.workoutpixel.data
 
-import androidx.room.ColumnInfo
-import androidx.room.Entity
-import androidx.room.ForeignKey
-import androidx.room.PrimaryKey
+import androidx.room.*
 
 @Entity(
 	tableName = "pastWorkouts",
@@ -23,4 +20,26 @@ data class PastClick(
 	var workoutTime: Long,
 	@ColumnInfo(name = "active")
 	var isActive: Boolean = true,
+)
+
+data class GoalAndPastClicks (
+	@Embedded
+	var goal: Goal? = null,
+
+	@Relation(
+		parentColumn = "uid",
+		entityColumn = "widgetUid",
+	)
+	var pastClicks: List<PastClick> = ArrayList()
+)
+
+data class PastClickAndGoal (
+	@Embedded
+	var pastClick: PastClick,
+
+	@Relation(
+		parentColumn = "widgetUid",
+		entityColumn = "uid",
+	)
+	var goal: Goal,
 )
