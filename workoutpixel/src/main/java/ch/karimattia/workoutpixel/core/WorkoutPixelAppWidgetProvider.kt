@@ -47,15 +47,17 @@ class WorkoutPixelAppWidgetProvider : AppWidgetProvider() {
 				// TODO: If goal can't be loaded show error instead of crash
 				intent.action.equals(ACTION_DONE_EXERCISE) -> {
 					val uid = intent.getIntExtra(Constants.GOAL_UID, 0)
-					val goal = repository.loadGoalByUid(uid)
-					goalActions(goal).updateAfterClick()
+					val goal: Goal? = repository.loadGoalByUid(uid)
+					if (goal != null) 						goalActions(goal).updateAfterClick()
 				}
 				intent.action.equals(ACTION_SETUP_WIDGET) -> {
 					val uid = intent.getIntExtra(Constants.GOAL_UID, 0)
-					val goal = repository.loadGoalByUid(uid)
-					goal.appWidgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID)
-					goalActions(goal).runUpdate(true)
-					repository.updateGoal(goal)
+					val goal: Goal? = repository.loadGoalByUid(uid)
+					if (goal != null) {
+						goal.appWidgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID)
+						goalActions(goal).runUpdate(true)
+						repository.updateGoal(goal)
+					}
 				}
 				intent.action.equals(ACTION_ALARM_UPDATE) -> {
 					// Do this when the alarm hits

@@ -18,7 +18,7 @@ class GoalRepository @Inject constructor(
 	suspend fun deleteGoal(goal: Goal) = goalDao.deleteGoal(goal = goal)
 	suspend fun insertGoal(goal: Goal): Int = goalDao.insertGoal(goal = goal).toInt()
 	suspend fun updateGoal(goal: Goal) = goalDao.updateGoal(goal = goal)
-	suspend fun loadGoalByUid(uid: Int): Goal = goalDao.loadGoalByUid(uid = uid)
+	suspend fun loadGoalByUid(uid: Int): Goal? = goalDao.loadGoalByUid(uid = uid)
 	fun loadGoalByAppWidgetIdFlow(goal: Goal): Flow<Goal> = goalDao.loadGoalByAppWidgetIdFlow(goal.appWidgetId)
 
 	/*{

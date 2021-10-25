@@ -13,7 +13,7 @@ interface GoalDao {
 
 	// Get goal by uid
 	@Query("SELECT * FROM goals WHERE uid=:uid")
-	suspend fun loadGoalByUid(uid: Int): Goal
+	suspend fun loadGoalByUid(uid: Int): Goal?
 
 	// Get goal by uid
 	@Query("SELECT * FROM goals WHERE appWidgetId=:appWidgetId")
