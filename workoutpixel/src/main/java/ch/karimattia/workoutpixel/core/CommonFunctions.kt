@@ -28,7 +28,7 @@ object Constants {
 }
 
 enum class Status {
-	NONE, GREEN, BLUE, RED
+	GREEN, BLUE, RED, NONE
 }
 
 /**
@@ -79,10 +79,10 @@ fun intervalInMilliseconds(intervalInDays: Int): Long {
 /**
  * Color stuff
  */
-fun getColorFromStatusColor(status: Status, settingsData: SettingsData): Color =
-	Color(getColorFromStatus(status = status, settingsData = settingsData))
+fun getColorFromStatus(status: Status, settingsData: SettingsData): Color =
+	Color(getColorIntFromStatus(status = status, settingsData = settingsData))
 
-fun getColorFromStatus(status: Status, settingsData: SettingsData): Int {
+fun getColorIntFromStatus(status: Status, settingsData: SettingsData): Int {
 	return when (status) {
 		Status.GREEN -> settingsData.colorDoneInt
 		Status.BLUE -> settingsData.colorFirstIntervalInt

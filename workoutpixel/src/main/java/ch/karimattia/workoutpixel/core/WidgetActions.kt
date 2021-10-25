@@ -84,7 +84,7 @@ class WidgetActions @AssistedInject constructor(
 		widgetView.setTextViewText(R.id.appwidget_text, goal.widgetText(settingsData = settingsData))
 
 		// widgetView.setInt(R.id.appwidget_text, "setBackgroundResource", R.drawable.rounded_corner_green)
-		widgetView.setInt(R.id.appwidget_text, "setBackgroundColor", getColorFromStatus(status = goal.status(), settingsData = settingsData))
+		widgetView.setInt(R.id.appwidget_text, "setBackgroundColor", getColorIntFromStatus(status = goal.status(), settingsData = settingsData))
 
 		// Set size if available
 		// https://stackoverflow.com/questions/25153604/get-the-size-of-my-homescreen-widget

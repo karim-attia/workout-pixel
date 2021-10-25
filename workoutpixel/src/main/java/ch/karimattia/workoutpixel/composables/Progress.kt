@@ -1,16 +1,12 @@
 package ch.karimattia.workoutpixel.composables
 
 import android.util.Log
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Divider
-import androidx.compose.material.Icon
 import androidx.compose.material.Text
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Undo
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.key
 import androidx.compose.ui.Alignment
@@ -20,15 +16,13 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import ch.karimattia.workoutpixel.R
-import ch.karimattia.workoutpixel.core.Constants
-import ch.karimattia.workoutpixel.core.dateBeautiful
-import ch.karimattia.workoutpixel.core.goalFromGoalsByUid
-import ch.karimattia.workoutpixel.core.timeBeautiful
+import ch.karimattia.workoutpixel.core.*
 import ch.karimattia.workoutpixel.data.*
 import ch.karimattia.workoutpixel.ui.theme.TextBlack
 
@@ -50,6 +44,7 @@ fun Progress(
 		PastClickAndGoal(pastClick, goalFromGoalsByUid(goalUid = pastClick.widgetUid, goals = goals)!!)
 	}
 	Progress(
+		goals = goals,
 		updatePastClick = { updatedPastClick -> pastClickViewModel.updatePastClick(updatedPastClick) },
 		pastClicksAndGoal = pastClicksAndGoal,
 		lambdas = lambdas,
@@ -58,6 +53,7 @@ fun Progress(
 
 @Composable
 fun Progress(
+	goals: List<Goal>,
 	updatePastClick: (PastClick) -> Unit,
 	pastClicksAndGoal: List<PastClickAndGoal>,
 	lambdas: Lambdas,
@@ -68,6 +64,12 @@ fun Progress(
 			// TODO
 			.verticalScroll(rememberScrollState())
 	) {
+		Spacer(modifier = Modifier.height(6.dp))
+
+		ProgressBar(
+			goals = goals,
+			lambdas = lambdas,
+		)
 		Spacer(modifier = Modifier.height(6.dp))
 
 		ProgressPastClicks(
@@ -81,13 +83,44 @@ fun Progress(
 }
 
 @Composable
+fun ProgressBar(
+	goals: List<Goal>,
+	lambdas: Lambdas,
+) {
+	CardWithTitle(
+		title = "Your progress today",
+	) {
+		val statusDistribution = enumValues<Status>().associateWith { goals.filter { goal -> goal.status() == it }.size }
+		Row(modifier = Modifier
+			.fillMaxWidth()
+		) {
+			statusDistribution.forEach {
+				if (it.value > 0) Text(
+					text = it.value.toString(),
+					textAlign = TextAlign.Center,
+					fontWeight = FontWeight(500),
+					color = Color.White,
+					modifier = Modifier
+						.background(color = getColorFromStatus(it.key, settingsData = lambdas.settingsData))
+						.padding(vertical = 2.dp)
+						.fillMaxSize()
+						.weight(it.value.toFloat())//it.value.toFloat())
+						.align(Alignment.CenterVertically)
+						//.wrapContentSize(Alignment.Center)
+				)
+			}
+		}
+	}
+}
+
+
+@Composable
 fun ProgressPastClicks(
 	pastClicksAndGoal: List<PastClickAndGoal>,
 	updatePastClick: (PastClick) -> Unit,
 	lambdas: Lambdas,
 ) {
 	CardWithTitle(
-		// TODO: If numberOfPastClicks > 50, declare it. Or implement some paging.
 		title = "Past clicks",
 	) {
 		ProgressPastClickList(

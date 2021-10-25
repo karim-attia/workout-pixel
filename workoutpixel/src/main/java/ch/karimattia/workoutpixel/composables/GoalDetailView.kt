@@ -205,6 +205,7 @@ fun PastClickList(
 			Divider(color = Color(TextBlack), thickness = 1.dp)
 
 			// TODO: Limit number of numberOfPastClicks, declare it. Or implement some paging.
+			// https://developer.android.com/topic/libraries/architecture/paging.html
 			for (pastClick in pastClicks) {
 				key(pastClick.uid) {
 					PastClickEntry(

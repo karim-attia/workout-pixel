@@ -27,7 +27,7 @@ import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import ch.karimattia.workoutpixel.core.getColorFromStatusColor
+import ch.karimattia.workoutpixel.core.getColorFromStatus
 import ch.karimattia.workoutpixel.core.testGoals
 import ch.karimattia.workoutpixel.data.Goal
 import ch.karimattia.workoutpixel.data.SettingsData
@@ -43,7 +43,7 @@ fun GoalPreview(
 	goal: Goal,
 	modifier: Modifier = Modifier,
 	settingsData: SettingsData = SettingsData(),
-	backgroundColor: Color = getColorFromStatusColor(goal.status(), settingsData = settingsData),
+	backgroundColor: Color = getColorFromStatus(goal.status(), settingsData = settingsData),
 	onClick: () -> Unit = {},
 ) {
 	Text(
