@@ -52,8 +52,11 @@ interface GoalDao {
 	@Query("SELECT * FROM pastWorkouts WHERE widgetUid=:goalUid ORDER BY workoutTime DESC")
 	fun loadPastWorkoutsByGoalUid(goalUid: Int): Flow<List<PastClick>>
 
-	@Query("SELECT * FROM pastWorkouts WHERE workoutTime > :lastWeek ORDER BY workoutTime DESC")
-	fun pastClicksLastWeek(lastWeek: Long = System.currentTimeMillis() - intervalInMilliseconds(7)): Flow<List<PastClick>>
+	@Query("SELECT * FROM pastWorkouts WHERE workoutTime > :lastWeek AND active ORDER BY workoutTime DESC")
+	fun activePastClicksLastWeek(lastWeek: Long = System.currentTimeMillis() - intervalInMilliseconds(7)): Flow<List<PastClick>>
+
+	@Query("SELECT * FROM pastWorkouts WHERE workoutTime > :lastWeek AND active ORDER BY workoutTime DESC")
+	fun activePastClicksAndGoalLastWeek(lastWeek: Long = System.currentTimeMillis() - intervalInMilliseconds(7)): Flow<List<PastClickAndGoal>>
 
 	// Return number of active workouts by appWidgetId
 	@Query("SELECT COUNT() FROM pastWorkouts WHERE widgetUid=:goalUid AND active='1'")

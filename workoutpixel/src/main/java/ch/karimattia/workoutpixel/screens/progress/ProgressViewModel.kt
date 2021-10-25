@@ -4,11 +4,15 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import ch.karimattia.workoutpixel.core.goalFromGoalsByUid
+import ch.karimattia.workoutpixel.data.Goal
 import ch.karimattia.workoutpixel.data.PastClick
+import ch.karimattia.workoutpixel.data.PastClickAndGoal
 import ch.karimattia.workoutpixel.data.PastClickRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -17,9 +21,9 @@ private const val TAG: String = "ProgressViewModel"
 
 @HiltViewModel
 class ProgressViewModel @Inject constructor(
-	var pastClickRepository: PastClickRepository,
+	pastClickRepository: PastClickRepository,
 ) : ViewModel() {
-	private val pastClicksFlow: Flow<List<PastClick>> = pastClickRepository.pastClicksLastWeek()
+	private val activePastClicksAndGoalLastWeekFlow: Flow<List<PastClickAndGoal>> = pastClickRepository.activePastClicksAndGoalLastWeek()
 
 /*
 	fun updatePastClick(pastClick: PastClick) = viewModelScope.launch {
@@ -27,14 +31,23 @@ class ProgressViewModel @Inject constructor(
 	}
 */
 
-	val pastClicks: SnapshotStateList<PastClick> = mutableStateListOf()
+	val activePastClicksAndGoalLastWeek: SnapshotStateList<PastClickAndGoal> = mutableStateListOf()
+
+/*
+	fun pastClicksAndGoal(goals: List<Goal>): Flow<List<PastClickAndGoal>> = activePastClicksLastWeekFlow.map { activePastClicksLastWeek ->
+		activePastClicksLastWeek.map { pastClick ->
+			// Null assertion is safe since DB deletes pastClicks when goal is deleted.
+			PastClickAndGoal(pastClick, goalFromGoalsByUid(goalUid = pastClick.widgetUid, goals = goals)!!)
+		}
+	}
+*/
 
 	// This is needed so the state of pastClicks and thus the UI updates.
 	init {
 		viewModelScope.launch {
-			pastClicksFlow.collectLatest { newPastClicks ->
-				pastClicks.clear()
-				pastClicks.addAll(newPastClicks)
+			activePastClicksAndGoalLastWeekFlow.collectLatest { newPastClickAndGoal ->
+				activePastClicksAndGoalLastWeek.clear()
+				activePastClicksAndGoalLastWeek.addAll(newPastClickAndGoal)
 			}
 		}
 	}

@@ -1,6 +1,5 @@
 package ch.karimattia.workoutpixel.screens.progress
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -8,6 +7,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Divider
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.key
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -36,18 +36,13 @@ private const val TAG: String = "Progress"
 @Composable
 fun Progress(
 	progressViewModel: ProgressViewModel = hiltViewModel(),
-	pastClicks: List<PastClick> = progressViewModel.pastClicks,
 	goals: List<Goal>,
+	pastClicksAndGoal: List<PastClickAndGoal> = progressViewModel.activePastClicksAndGoalLastWeek,
 	lambdas: Lambdas,
 ) {
-	Log.d(TAG, "pastClicks: ${pastClicks.size}")
-	val pastClicksAndGoal: List<PastClickAndGoal> = pastClicks.map { pastClick ->
-		// Null assertion is safe since DB deletes pastClicks when goal is deleted.
-		PastClickAndGoal(pastClick, goalFromGoalsByUid(goalUid = pastClick.widgetUid, goals = goals)!!)
-	}
+
 	Progress(
 		goals = goals,
-		// updatePastClick = { updatedPastClick -> progressViewModel.updatePastClick(updatedPastClick) },
 		pastClicksAndGoal = pastClicksAndGoal,
 		lambdas = lambdas,
 	)
@@ -56,13 +51,11 @@ fun Progress(
 @Composable
 fun Progress(
 	goals: List<Goal>,
-	// updatePastClick: (PastClick) -> Unit,
 	pastClicksAndGoal: List<PastClickAndGoal>,
 	lambdas: Lambdas,
 ) {
 	Column(
 		modifier = Modifier
-			//.padding(PaddingValues(top = 6.dp, bottom = 40.dp))
 			// TODO
 			.verticalScroll(rememberScrollState())
 	) {
@@ -75,7 +68,6 @@ fun Progress(
 		Spacer(modifier = Modifier.height(6.dp))
 
 		ProgressPastClicks(
-			// updatePastClick = updatePastClick,
 			pastClicksAndGoal = pastClicksAndGoal,
 			lambdas = lambdas,
 		)
@@ -92,7 +84,7 @@ fun ProgressBar(
 	CardWithTitle(
 		title = "Your progress today",
 	) {
-		val statusDistribution = enumValues<Status>().associateWith { goals.filter { goal -> goal.status() == it }.size }
+		val statusDistribution: Map<Status, Int> = enumValues<Status>().associateWith { goals.filter { goal -> goal.status() == it }.size }
 		Row(modifier = Modifier
 			.fillMaxWidth()
 		) {
@@ -108,7 +100,6 @@ fun ProgressBar(
 						.fillMaxSize()
 						.weight(it.value.toFloat())//it.value.toFloat())
 						.align(Alignment.CenterVertically)
-					//.wrapContentSize(Alignment.Center)
 				)
 			}
 		}
@@ -119,14 +110,12 @@ fun ProgressBar(
 @Composable
 fun ProgressPastClicks(
 	pastClicksAndGoal: List<PastClickAndGoal>,
-	// updatePastClick: (PastClick) -> Unit,
 	lambdas: Lambdas,
 ) {
 	CardWithTitle(
 		title = "Activities this week",
 	) {
 		ProgressPastClickList(
-			// updatePastClick = updatePastClick,
 			pastClicksAndGoal = pastClicksAndGoal,
 			lambdas = lambdas,
 		)
@@ -136,7 +125,6 @@ fun ProgressPastClicks(
 @Composable
 fun ProgressPastClickList(
 	pastClicksAndGoal: List<PastClickAndGoal>,
-	// updatePastClick: (PastClick) -> Unit,
 	lambdas: Lambdas,
 ) {
 	val numberOfPastClicks = pastClicksAndGoal.size
@@ -149,7 +137,6 @@ fun ProgressPastClickList(
 				key(pastClickAndGoal.pastClick.uid) {
 					ProgressPastClickEntry(
 						pastClickAndGoal = pastClickAndGoal,
-						togglePastClick = {},
 						lambdas = lambdas,
 					)
 					Divider(color = Color(TextBlack), thickness = 0.5.dp)
@@ -170,20 +157,13 @@ fun ProgressPastClickList(
 @Composable
 fun ProgressPastClickEntry(
 	pastClickAndGoal: PastClickAndGoal,
-	togglePastClick: () -> Unit,
 	lambdas: Lambdas,
 ) {
 	ProgressPastClickEntry(
 		goal = pastClickAndGoal.goal.title,
 		date = dateBeautiful(pastClickAndGoal.pastClick.workoutTime, lambdas.settingsData.dateLocale()),
 		time = timeBeautiful(pastClickAndGoal.pastClick.workoutTime, lambdas.settingsData.timeLocale()),
-		icon = null, /*if (pastClickAndGoal.pastClick.isActive) {
-			Icons.Filled.Delete
-		} else {
-			Icons.Filled.Undo
-		}*/
 		active = pastClickAndGoal.pastClick.isActive,
-		togglePastClick = togglePastClick,
 	)
 }
 
@@ -192,10 +172,8 @@ fun ProgressPastClickEntry(
 	goal: String,
 	date: String,
 	time: String,
-	icon: ImageVector? = null,
 	bold: Boolean = false,
 	active: Boolean = true,
-	togglePastClick: () -> Unit = { },
 ) {
 	Row {
 		val fontWeight = if (bold) {
