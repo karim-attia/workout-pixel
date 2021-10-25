@@ -1,4 +1,4 @@
-package ch.karimattia.workoutpixel.composables
+package ch.karimattia.workoutpixel.screens.progress
 
 import android.util.Log
 import androidx.compose.foundation.background
@@ -20,10 +20,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import ch.karimattia.workoutpixel.R
 import ch.karimattia.workoutpixel.core.*
-import ch.karimattia.workoutpixel.data.*
+import ch.karimattia.workoutpixel.data.Goal
+import ch.karimattia.workoutpixel.data.PastClick
+import ch.karimattia.workoutpixel.data.PastClickAndGoal
+import ch.karimattia.workoutpixel.screens.CardWithTitle
+import ch.karimattia.workoutpixel.screens.Lambdas
 import ch.karimattia.workoutpixel.ui.theme.TextBlack
 
 @Suppress("unused")
@@ -31,10 +35,8 @@ private const val TAG: String = "Progress"
 
 @Composable
 fun Progress(
-	// Move into lambdas?
-	pastClickViewModelAssistedFactory: PastClickViewModelAssistedFactory,
-	pastClickViewModel: PastClickViewModel = viewModel(factory = provideFactory(pastClickViewModelAssistedFactory, Constants.INVALID_GOAL_UID)),
-	pastClicks: List<PastClick> = pastClickViewModel.pastClicks,
+	progressViewModel: ProgressViewModel = hiltViewModel(),
+	pastClicks: List<PastClick> = progressViewModel.pastClicks,
 	goals: List<Goal>,
 	lambdas: Lambdas,
 ) {
@@ -45,7 +47,7 @@ fun Progress(
 	}
 	Progress(
 		goals = goals,
-		updatePastClick = { updatedPastClick -> pastClickViewModel.updatePastClick(updatedPastClick) },
+		// updatePastClick = { updatedPastClick -> progressViewModel.updatePastClick(updatedPastClick) },
 		pastClicksAndGoal = pastClicksAndGoal,
 		lambdas = lambdas,
 	)
@@ -54,7 +56,7 @@ fun Progress(
 @Composable
 fun Progress(
 	goals: List<Goal>,
-	updatePastClick: (PastClick) -> Unit,
+	// updatePastClick: (PastClick) -> Unit,
 	pastClicksAndGoal: List<PastClickAndGoal>,
 	lambdas: Lambdas,
 ) {
@@ -73,7 +75,7 @@ fun Progress(
 		Spacer(modifier = Modifier.height(6.dp))
 
 		ProgressPastClicks(
-			updatePastClick = updatePastClick,
+			// updatePastClick = updatePastClick,
 			pastClicksAndGoal = pastClicksAndGoal,
 			lambdas = lambdas,
 		)
@@ -106,7 +108,7 @@ fun ProgressBar(
 						.fillMaxSize()
 						.weight(it.value.toFloat())//it.value.toFloat())
 						.align(Alignment.CenterVertically)
-						//.wrapContentSize(Alignment.Center)
+					//.wrapContentSize(Alignment.Center)
 				)
 			}
 		}
@@ -117,14 +119,14 @@ fun ProgressBar(
 @Composable
 fun ProgressPastClicks(
 	pastClicksAndGoal: List<PastClickAndGoal>,
-	updatePastClick: (PastClick) -> Unit,
+	// updatePastClick: (PastClick) -> Unit,
 	lambdas: Lambdas,
 ) {
 	CardWithTitle(
-		title = "Past clicks",
+		title = "Activities this week",
 	) {
 		ProgressPastClickList(
-			updatePastClick = updatePastClick,
+			// updatePastClick = updatePastClick,
 			pastClicksAndGoal = pastClicksAndGoal,
 			lambdas = lambdas,
 		)
@@ -134,7 +136,7 @@ fun ProgressPastClicks(
 @Composable
 fun ProgressPastClickList(
 	pastClicksAndGoal: List<PastClickAndGoal>,
-	updatePastClick: (PastClick) -> Unit,
+	// updatePastClick: (PastClick) -> Unit,
 	lambdas: Lambdas,
 ) {
 	val numberOfPastClicks = pastClicksAndGoal.size

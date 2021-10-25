@@ -1,4 +1,4 @@
-package ch.karimattia.workoutpixel.composables
+package ch.karimattia.workoutpixel.screens.goalDetail
 
 import android.appwidget.AppWidgetManager
 import androidx.compose.animation.AnimatedVisibility
@@ -31,6 +31,9 @@ import ch.karimattia.workoutpixel.R
 import ch.karimattia.workoutpixel.core.dateBeautiful
 import ch.karimattia.workoutpixel.core.timeBeautiful
 import ch.karimattia.workoutpixel.data.*
+import ch.karimattia.workoutpixel.screens.*
+import ch.karimattia.workoutpixel.screens.allGoals.IntervalIconAndText
+import ch.karimattia.workoutpixel.screens.allGoals.LastDoneIconAndText
 import ch.karimattia.workoutpixel.ui.theme.GreenTest
 import ch.karimattia.workoutpixel.ui.theme.TextBlack
 import com.vanpra.composematerialdialogs.MaterialDialog
@@ -38,7 +41,6 @@ import com.vanpra.composematerialdialogs.message
 import com.vanpra.composematerialdialogs.rememberMaterialDialogState
 import com.vanpra.composematerialdialogs.title
 import kotlinx.coroutines.launch
-import java.util.stream.Collectors
 
 @Suppress("unused")
 private const val TAG: String = "GoalDetailView"
@@ -48,13 +50,13 @@ fun GoalDetailView(
 	currentGoal: Goal,
 	// Move into lambdas?
 	pastClickViewModelAssistedFactory: PastClickViewModelAssistedFactory,
-	pastClickViewModel: PastClickViewModel = viewModel(factory = provideFactory(pastClickViewModelAssistedFactory, currentGoal.uid)),
-	pastClicks: List<PastClick> = pastClickViewModel.pastClicks,
+	goalDetailViewModel: GoalDetailViewModel = viewModel(factory = provideFactory(pastClickViewModelAssistedFactory, currentGoal.uid)),
+	pastClicks: List<PastClick> = goalDetailViewModel.pastClicks,
 	lambdas: Lambdas,
 ) {
 	GoalDetailView(
 		currentGoal = currentGoal,
-		updatePastClick = { updatedPastClick -> pastClickViewModel.updatePastClick(updatedPastClick) },
+		updatePastClick = { updatedPastClick -> goalDetailViewModel.updatePastClick(updatedPastClick) },
 		pastClicks = pastClicks,
 		lambdas = lambdas,
 	)

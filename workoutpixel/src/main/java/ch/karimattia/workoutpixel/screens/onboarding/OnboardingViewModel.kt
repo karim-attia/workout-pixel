@@ -1,12 +1,16 @@
-package ch.karimattia.workoutpixel.onboarding
+package ch.karimattia.workoutpixel.screens.onboarding
 
 import android.appwidget.AppWidgetManager
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.lifecycle.*
-import ch.karimattia.workoutpixel.composables.GoalPreviewWithBackground
-import ch.karimattia.workoutpixel.composables.GoalPreviewsWithBackground
-import ch.karimattia.workoutpixel.composables.Lambdas
+import ch.karimattia.workoutpixel.chat.ChatInputField
+import ch.karimattia.workoutpixel.chat.ChatMessage
+import ch.karimattia.workoutpixel.chat.ChatViewModel
+import ch.karimattia.workoutpixel.chat.MessageProposal
+import ch.karimattia.workoutpixel.screens.GoalPreviewWithBackground
+import ch.karimattia.workoutpixel.screens.GoalPreviewsWithBackground
+import ch.karimattia.workoutpixel.screens.Lambdas
 import ch.karimattia.workoutpixel.core.Status
 import ch.karimattia.workoutpixel.core.Screens
 import ch.karimattia.workoutpixel.data.Goal

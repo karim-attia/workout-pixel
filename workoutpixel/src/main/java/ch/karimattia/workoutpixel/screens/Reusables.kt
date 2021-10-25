@@ -1,4 +1,4 @@
-package ch.karimattia.workoutpixel.composables
+package ch.karimattia.workoutpixel.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable

@@ -1,8 +1,9 @@
-package ch.karimattia.workoutpixel.onboarding
+package ch.karimattia.workoutpixel.chat
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.lifecycle.LiveData
+import ch.karimattia.workoutpixel.screens.onboarding.MessageBuilder
 
 @ExperimentalComposeUiApi
 data class ChatMessage (

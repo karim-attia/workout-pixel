@@ -1,4 +1,4 @@
-package ch.karimattia.workoutpixel.composables
+package ch.karimattia.workoutpixel.screens
 
 import android.os.Build.VERSION.SDK_INT
 import androidx.compose.animation.graphics.ExperimentalAnimationGraphicsApi

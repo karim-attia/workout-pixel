@@ -1,14 +1,14 @@
-package ch.karimattia.workoutpixel.onboarding
+package ch.karimattia.workoutpixel.chat
 
 import android.util.Log
 import androidx.compose.foundation.ScrollState
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.ExperimentalComposeUiApi
-import androidx.compose.ui.text.Placeholder
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import ch.karimattia.workoutpixel.screens.onboarding.MessageBuilder
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch

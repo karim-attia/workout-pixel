@@ -1,4 +1,4 @@
-package ch.karimattia.workoutpixel.onboarding
+package ch.karimattia.workoutpixel.chat
 
 import android.util.Log
 import androidx.compose.animation.*

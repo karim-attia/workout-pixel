@@ -17,10 +17,12 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.lifecycle.lifecycleScope
-import ch.karimattia.workoutpixel.composables.EditGoalView
-import ch.karimattia.workoutpixel.composables.Lambdas
+import ch.karimattia.workoutpixel.screens.EditGoalView
+import ch.karimattia.workoutpixel.screens.Lambdas
 import ch.karimattia.workoutpixel.core.WidgetActions
 import ch.karimattia.workoutpixel.data.*
+import ch.karimattia.workoutpixel.screens.allGoals.GoalViewModel
+import ch.karimattia.workoutpixel.screens.settings.SettingsViewModel
 import ch.karimattia.workoutpixel.ui.theme.WorkoutPixelTheme
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch

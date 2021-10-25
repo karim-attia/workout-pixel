@@ -28,11 +28,17 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import ch.karimattia.workoutpixel.composables.*
+import ch.karimattia.workoutpixel.screens.*
 import ch.karimattia.workoutpixel.core.*
 import ch.karimattia.workoutpixel.data.*
-import ch.karimattia.workoutpixel.onboarding.Chatvariant
-import ch.karimattia.workoutpixel.onboarding.Onboarding
+import ch.karimattia.workoutpixel.screens.onboarding.Chatvariant
+import ch.karimattia.workoutpixel.screens.onboarding.Onboarding
+import ch.karimattia.workoutpixel.screens.allGoals.GoalList
+import ch.karimattia.workoutpixel.screens.allGoals.GoalViewModel
+import ch.karimattia.workoutpixel.screens.goalDetail.GoalDetailView
+import ch.karimattia.workoutpixel.screens.goalDetail.PastClickViewModelAssistedFactory
+import ch.karimattia.workoutpixel.screens.progress.Progress
+import ch.karimattia.workoutpixel.screens.settings.SettingsViewModel
 import ch.karimattia.workoutpixel.ui.theme.WorkoutPixelTheme
 import coil.annotation.ExperimentalCoilApi
 import com.google.accompanist.pager.ExperimentalPagerApi
@@ -325,7 +331,6 @@ fun WorkoutPixelNavHost(
 		// Your Progress
 		composable(route = Screens.Progress.name) {
 			Progress(
-				pastClickViewModelAssistedFactory = pastClickViewModelAssistedFactory,
 				goals = goals,
 				lambdas = lambdas,
 			)

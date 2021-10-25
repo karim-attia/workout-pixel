@@ -1,4 +1,4 @@
-package ch.karimattia.workoutpixel.onboarding
+package ch.karimattia.workoutpixel.chat
 
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.Column

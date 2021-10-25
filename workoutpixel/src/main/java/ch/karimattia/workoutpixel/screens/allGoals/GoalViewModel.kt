@@ -1,4 +1,4 @@
-package ch.karimattia.workoutpixel.data
+package ch.karimattia.workoutpixel.screens.allGoals
 
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
@@ -7,6 +7,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ch.karimattia.workoutpixel.core.Constants
+import ch.karimattia.workoutpixel.data.Goal
+import ch.karimattia.workoutpixel.data.GoalRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect

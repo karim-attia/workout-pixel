@@ -1,4 +1,4 @@
-package ch.karimattia.workoutpixel.onboarding
+package ch.karimattia.workoutpixel.screens.onboarding
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -6,7 +6,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.lifecycle.viewmodel.compose.viewModel
-import ch.karimattia.workoutpixel.composables.Lambdas
+import ch.karimattia.workoutpixel.chat.ChatMainScreen
+import ch.karimattia.workoutpixel.screens.Lambdas
 import ch.karimattia.workoutpixel.data.Goal
 
 @Suppress("unused")

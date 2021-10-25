@@ -1,4 +1,4 @@
-package ch.karimattia.workoutpixel.composables
+package ch.karimattia.workoutpixel.screens.allGoals
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -26,6 +26,9 @@ import ch.karimattia.workoutpixel.core.dateBeautiful
 import ch.karimattia.workoutpixel.core.testGoals
 import ch.karimattia.workoutpixel.data.Goal
 import ch.karimattia.workoutpixel.data.SettingsData
+import ch.karimattia.workoutpixel.screens.CardWithTitle
+import ch.karimattia.workoutpixel.screens.GoalPreview
+import ch.karimattia.workoutpixel.screens.Lambdas
 import java.util.*
 
 @Suppress("unused")

@@ -1,11 +1,12 @@
-package ch.karimattia.workoutpixel.data
+package ch.karimattia.workoutpixel.screens.goalDetail
 
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import ch.karimattia.workoutpixel.core.Constants
+import ch.karimattia.workoutpixel.data.PastClick
+import ch.karimattia.workoutpixel.data.PastClickRepository
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -17,12 +18,11 @@ import kotlinx.coroutines.launch
 private const val TAG: String = "PastClickViewModel"
 
 // @HiltViewModel //: https://stackoverflow.com/questions/68649447/viewmodel-constructor-should-be-annotated-with-inject-instead-of-assistedinjec
-class PastClickViewModel @AssistedInject constructor(
+class GoalDetailViewModel @AssistedInject constructor(
 	private val repository: PastClickRepository,
 	@Assisted var goalUid: Int,
 ) : ViewModel() {
-	private val pastClicksFlow: Flow<List<PastClick>> =
-		if (goalUid != Constants.INVALID_GOAL_UID) repository.pastClicksByGoalUid(goalUid = goalUid) else repository.allPastClicks()
+	private val pastClicksFlow: Flow<List<PastClick>> = repository.pastClicksByGoalUid(goalUid = goalUid)
 
 	fun updatePastClick(pastClick: PastClick) = viewModelScope.launch {
 		repository.updatePastClick(pastClick)
@@ -43,7 +43,7 @@ class PastClickViewModel @AssistedInject constructor(
 
 @AssistedFactory
 interface PastClickViewModelAssistedFactory {
-	fun create(goalUid: Int): PastClickViewModel
+	fun create(goalUid: Int): GoalDetailViewModel
 }
 
 fun provideFactory(
