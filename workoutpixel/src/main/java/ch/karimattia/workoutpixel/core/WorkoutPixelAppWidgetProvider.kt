@@ -48,7 +48,7 @@ class WorkoutPixelAppWidgetProvider : AppWidgetProvider() {
 				intent.action.equals(ACTION_DONE_EXERCISE) -> {
 					val uid = intent.getIntExtra(Constants.GOAL_UID, 0)
 					val goal: Goal? = repository.loadGoalByUid(uid)
-					if (goal != null) 						goalActions(goal).updateAfterClick()
+					if (goal != null) goalActions(goal).updateAfterClick()
 				}
 				intent.action.equals(ACTION_SETUP_WIDGET) -> {
 					val uid = intent.getIntExtra(Constants.GOAL_UID, 0)

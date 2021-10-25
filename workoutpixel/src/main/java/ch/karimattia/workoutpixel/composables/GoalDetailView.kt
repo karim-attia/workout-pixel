@@ -1,7 +1,6 @@
 package ch.karimattia.workoutpixel.composables
 
 import android.appwidget.AppWidgetManager
-import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -60,7 +59,6 @@ fun GoalDetailView(
 			lambdas.addWidgetToHomeScreenFilledIn(currentGoal,
 				true)
 		}, //{ suspend { lambdas.addWidgetToHomeScreen(currentGoal, false) }},
-		updateAfterClick = { lambdas.updateAfterClickFilledIn(currentGoal) },
 	)
 	GoalDetailView(
 		currentGoal = currentGoal,
@@ -77,9 +75,6 @@ fun GoalDetailView(
 	pastClicks: List<PastClick>,
 	lambdas: Lambdas,
 ) {
-
-	Log.d(TAG, "Recomposition Bottom")
-
 	Column(
 		modifier = Modifier
 			//.padding(PaddingValues(top = 6.dp, bottom = 40.dp))
@@ -120,7 +115,7 @@ fun GoalOverview(
 		// Preview and rest
 		Row(verticalAlignment = Alignment.CenterVertically) {
 			GoalPreview(
-				goal = currentGoal, settingsData = lambdas.settingsData, onClick = lambdas.updateAfterClick
+				goal = currentGoal, settingsData = lambdas.settingsData, onClick = { lambdas.updateAfterClick(currentGoal) }
 			)
 			// Rest
 			Column(
@@ -331,15 +326,9 @@ fun lastClickBasedOnActiveClicks(pastClicks: List<PastClick>): Long {
 		)
 
 	// If there still is an active past workout, take the latest one to set the last workout time
-	return if (activeWorkoutsOrderedByWorkoutTime.isNotEmpty()) {
-		Log.v(TAG, "Size: " + activeWorkoutsOrderedByWorkoutTime.size)
-		activeWorkoutsOrderedByWorkoutTime[0].workoutTime
-	}
+	return if (activeWorkoutsOrderedByWorkoutTime.isNotEmpty()) activeWorkoutsOrderedByWorkoutTime[0].workoutTime
 	// Otherwise, set it to 0.
-	else {
-		Log.v(TAG, "Size: " + activeWorkoutsOrderedByWorkoutTime.size + ", no remaining workout")
-		0L
-	}
+	else 0L
 }
 
 

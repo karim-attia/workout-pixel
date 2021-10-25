@@ -68,12 +68,12 @@ class ConfigureActivity : ComponentActivity() {
 		setContent {
 			// collectedGoal can return null despite of what lint says.
 			@Suppress("KotlinDeprecation")
-			val collectedGoal: Goal = goalRepository.loadGoalByAppWidgetIdFlow(goal).collectAsState(initial = goal).value ?: goal
+			val collectedGoal: Goal = goalRepository.loadGoalByAppWidgetIdFlow(goal.appWidgetId).collectAsState(initial = goal).value ?: goal
 			val isFirstConfigure = collectedGoal == goal
 			Log.d(TAG, "isFirstConfigure: $isFirstConfigure")
 
 			val configureActivityLambdas = Lambdas(
-				updateGoal = { updatedGoal ->
+				updateGoalAndNavigate = { updatedGoal, _ ->
 					lifecycleScope.launch {
 						// Insert the goal into the DB and also update the widget.
 						goalViewModel.updateGoal(updatedGoal)

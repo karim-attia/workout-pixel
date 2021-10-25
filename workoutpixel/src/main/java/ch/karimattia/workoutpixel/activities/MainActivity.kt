@@ -75,7 +75,7 @@ class MainActivity : ComponentActivity() {
 			val settingsData = settingsViewModel.settingsData.observeAsState().value
 			val appWidgetManager = AppWidgetManager.getInstance(this)
 			val mainActivityLambdas = Lambdas(
-				updateAfterClickFilledIn = {
+				updateAfterClick = {
 					// contains updateGoal
 					lifecycleScope.launch {
 						widgetActions(it).updateAfterClick()
@@ -232,6 +232,8 @@ fun WorkoutPixelApp(
 					pastClickViewModelAssistedFactory = pastClickViewModelAssistedFactory,
 					lambdas = lambdas.copy(
 						updateGoalAndNavigate = { updatedGoal: Goal, navigateUp: Boolean ->
+							Log.d(TAG, "updateGoalAndNavigate")
+
 							lambdas.updateGoal(updatedGoal)
 							Log.d(TAG, "navigateUp: $navigateUp")
 							if (navigateUp) {

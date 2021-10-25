@@ -86,7 +86,6 @@ fun EditGoalView(
 			ConnectExistingGoal(
 				goalsWithoutWidget = goalsWithoutWidget,
 				connectGoal = { updatedConnectedGoal ->
-					Log.d(TAG, "ConnectExistingGoal top")
 					updatedConnectedGoal.appWidgetId = initialGoal.appWidgetId
 					lambdas.updateGoal(updatedConnectedGoal)
 				},
@@ -287,7 +286,6 @@ fun ConnectButton(
 ) {
 	Button(
 		onClick = {
-			Log.d(TAG, "ConnectButton")
 			connectWidget()
 		},
 		modifier = modifier

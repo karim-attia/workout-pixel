@@ -78,7 +78,7 @@ fun GoalCard(
 		) {
 			GoalPreview(
 				goal = goal,
-				onClick = { lambdas.updateGoal(goal.copy(lastWorkout = System.currentTimeMillis())) }, // Earlier: UpdateAfterClick
+				onClick = { lambdas.updateAfterClick(goal) },
 				settingsData = lambdas.settingsData,
 				modifier = Modifier.padding(all = 4.dp)
 			)

@@ -93,13 +93,13 @@ class OnboardingViewModel(chatvariant: Chatvariant, scope: CoroutineScope, priva
 	)
 
 	private fun habits1(): ChatMessage = ChatMessage(
-		text = "You probably look at your homescreen dozens of time per day. The widget will remind you to work on your goal when it’s blue.",
+		text = "You probably look at your homescreen dozens of times per day. The widget will remind you to work on your goal when it’s blue.",
 		nextMessage = ::habits2,
 		autoAdvance = true,
 	)
 
 	private fun habits2(): ChatMessage = ChatMessage(
-		text = "But more importantly, you start to notice that your goals are green/done. Usually, we have a negative association with our goals because we always notice them when we are behind them.",
+		text = "But more importantly, you will start to notice that your goals are green/done. Usually, we have a negative association with our goals because we always notice them when we are falling behind.",
 		nextMessage = ::habits3,
 		autoAdvance = true,
 	)

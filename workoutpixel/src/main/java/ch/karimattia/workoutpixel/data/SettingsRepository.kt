@@ -5,10 +5,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.datastore.core.CorruptionException
 import androidx.datastore.core.Serializer
 import androidx.datastore.dataStore
-import ch.karimattia.workoutpixel.ui.theme.Blue
-import ch.karimattia.workoutpixel.ui.theme.Green
-import ch.karimattia.workoutpixel.ui.theme.Purple
-import ch.karimattia.workoutpixel.ui.theme.Red
+import ch.karimattia.workoutpixel.ui.theme.*
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -42,7 +39,7 @@ data class SettingsData(
 	val colorDoneInt: Int = Green,
 	val colorFirstIntervalInt: Int = Blue,
 	val colorSecondIntervalInt: Int = Red,
-	val colorInitialInt: Int = Purple,
+	val colorInitialInt: Int = Grey,
 	val dateLanguage: String? = Locale.getDefault().language,
 	val dateCountry: String? = Locale.getDefault().country,
 	val timeLanguage: String? = Locale.getDefault().language,

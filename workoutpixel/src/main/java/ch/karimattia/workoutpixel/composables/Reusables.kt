@@ -238,8 +238,7 @@ fun GoalPreviewWithBackground(goal: Goal) {
 }
 
 data class Lambdas(
-	val updateAfterClickFilledIn: GoalFunction = {},
-	val updateAfterClick: () -> Unit = {},
+	val updateAfterClick: GoalFunction = {},
 	val updateGoal: GoalFunction = {},
 	val updateGoalAndNavigate: (goal: Goal, navigateUp: Boolean) -> Unit = { _, _ -> },
 	val deleteGoal: GoalFunction = {},

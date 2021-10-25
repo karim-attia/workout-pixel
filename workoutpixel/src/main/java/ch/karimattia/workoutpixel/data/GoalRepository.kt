@@ -13,18 +13,12 @@ class GoalRepository @Inject constructor(
 	// Observed Flow will notify the observer when the data has changed.
 
 	val allGoals: Flow<List<Goal>> = goalDao.loadAllGoalsFlow()
-	//val goalsWithInvalidOrNullAppWidgetId: Flow<List<Goal>> = goalDao.loadGoalsWithInvalidOrNullAppWidgetId()
 
 	suspend fun deleteGoal(goal: Goal) = goalDao.deleteGoal(goal = goal)
 	suspend fun insertGoal(goal: Goal): Int = goalDao.insertGoal(goal = goal).toInt()
 	suspend fun updateGoal(goal: Goal) = goalDao.updateGoal(goal = goal)
 	suspend fun loadGoalByUid(uid: Int): Goal? = goalDao.loadGoalByUid(uid = uid)
-	fun loadGoalByAppWidgetIdFlow(goal: Goal): Flow<Goal> = goalDao.loadGoalByAppWidgetIdFlow(goal.appWidgetId)
-
-	/*{
-		return if (goal.appWidgetId == AppWidgetManager.INVALID_APPWIDGET_ID) flowOf(goal)
-		else goalDao.loadGoalByAppWidgetIdFlow(goal.appWidgetId)
-	}*/
+	fun loadGoalByAppWidgetIdFlow(appWidgetId: Int): Flow<Goal> = goalDao.loadGoalByAppWidgetIdFlow(appWidgetId)
 	fun loadGoalsWithoutValidAppWidgetId(): Flow<List<Goal>> = goalDao.loadGoalsWithoutValidAppWidgetId()
 	suspend fun loadGoalsWithValidAppWidgetId(): List<Goal> = goalDao.loadGoalsWithValidAppWidgetId()
 	suspend fun setAppWidgetIdToNullByAppwidgetId(appWidgetId: Int) = goalDao.setAppWidgetIdToNullByAppwidgetId(appWidgetId = appWidgetId)
