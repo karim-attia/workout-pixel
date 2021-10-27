@@ -1,6 +1,5 @@
 package ch.karimattia.workoutpixel.activities
 
-// import androidx.navigation.compose.composable
 import android.appwidget.AppWidgetManager
 import android.os.Bundle
 import android.util.Log
@@ -28,20 +27,21 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import ch.karimattia.workoutpixel.screens.*
 import ch.karimattia.workoutpixel.core.*
 import ch.karimattia.workoutpixel.data.*
-import ch.karimattia.workoutpixel.screens.onboarding.Chatvariant
-import ch.karimattia.workoutpixel.screens.onboarding.Onboarding
+import ch.karimattia.workoutpixel.screens.*
 import ch.karimattia.workoutpixel.screens.allGoals.GoalList
 import ch.karimattia.workoutpixel.screens.allGoals.GoalViewModel
 import ch.karimattia.workoutpixel.screens.goalDetail.GoalDetailView
 import ch.karimattia.workoutpixel.screens.goalDetail.PastClickViewModelAssistedFactory
+import ch.karimattia.workoutpixel.screens.onboarding.Chatvariant
+import ch.karimattia.workoutpixel.screens.onboarding.Onboarding
 import ch.karimattia.workoutpixel.screens.progress.Progress
 import ch.karimattia.workoutpixel.screens.settings.SettingsViewModel
 import ch.karimattia.workoutpixel.ui.theme.WorkoutPixelTheme
 import coil.annotation.ExperimentalCoilApi
 import com.google.accompanist.pager.ExperimentalPagerApi
+import com.google.firebase.analytics.FirebaseAnalytics
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -62,6 +62,9 @@ class MainActivity : ComponentActivity() {
 	lateinit var widgetActionsFactory: WidgetActions.Factory
 	private fun widgetActions(goal: Goal): WidgetActions = widgetActionsFactory.create(goal)
 
+	@Inject
+	lateinit var otherActions: OtherActions
+
 	// Or inject via constructor? Only for below. Doesn't work for AppWidgetProvider.
 	@Inject
 	lateinit var widgetAlarm: WidgetAlarm
@@ -69,13 +72,20 @@ class MainActivity : ComponentActivity() {
 	@Inject
 	lateinit var pastClickViewModelAssistedFactory: PastClickViewModelAssistedFactory
 
-	@Inject
-	lateinit var otherActions: OtherActions
+
+	private lateinit var firebaseAnalytics: FirebaseAnalytics
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 		val goalViewModel: GoalViewModel by viewModels()
 		val settingsViewModel: SettingsViewModel by viewModels()
+
+		firebaseAnalytics = FirebaseAnalytics.getInstance(this)
+		val bundle = Bundle()
+		bundle.putString(FirebaseAnalytics.Param.ITEM_ID, "my_item_id")
+
+		firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle)
+
 
 		setContent {
 			val settingsData = settingsViewModel.settingsData.observeAsState().value
@@ -193,7 +203,7 @@ fun WorkoutPixelApp(
 				if (!currentScreen.fullScreen && goals.isNotEmpty()) {
 					BottomNavigation {
 						// Only show entries that have bottomNavigation == true.
-						allScreens.filter { it.bottomNavigation && (it.showWhenPinningPossible || !lambdas.widgetPinningPossible)}.forEach { screen ->
+						allScreens.filter { it.bottomNavigation && (it.showWhenPinningPossible || !lambdas.widgetPinningPossible) }.forEach { screen ->
 							BottomNavigationItem(
 								icon = { screen.icon?.let { Icon(it, contentDescription = null, modifier = Modifier.size(24.dp)) } },
 								label = { Text(text = screen.displayName ?: "") },

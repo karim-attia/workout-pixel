@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "351754073741",
+    "project_id": "workout-pixel",
+    "storage_bucket": "workout-pixel.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:351754073741:android:0a72fb7f3dfadf97aa14c4",
+        "android_client_info": {
+          "package_name": "ch.karimattia.workoutpixel"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "351754073741-6oalc1dcmse7ia2f06lq9utos13kqeag.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAC_I-rDRB9RaQOijGwKFjVVULbfg6skhg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "351754073741-6oalc1dcmse7ia2f06lq9utos13kqeag.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

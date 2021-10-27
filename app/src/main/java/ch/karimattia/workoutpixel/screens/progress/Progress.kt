@@ -2,29 +2,28 @@ package ch.karimattia.workoutpixel.screens.progress
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyVerticalGrid
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Divider
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.key
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import ch.karimattia.workoutpixel.R
-import ch.karimattia.workoutpixel.core.*
+import ch.karimattia.workoutpixel.core.Status
+import ch.karimattia.workoutpixel.core.dateBeautiful
+import ch.karimattia.workoutpixel.core.getColorFromStatus
+import ch.karimattia.workoutpixel.core.timeBeautiful
 import ch.karimattia.workoutpixel.data.Goal
-import ch.karimattia.workoutpixel.data.PastClick
 import ch.karimattia.workoutpixel.data.PastClickAndGoal
 import ch.karimattia.workoutpixel.screens.CardWithTitle
 import ch.karimattia.workoutpixel.screens.Lambdas
@@ -130,7 +129,7 @@ fun ProgressPastClickList(
 	val numberOfPastClicks = pastClicksAndGoal.size
 	if (numberOfPastClicks > 0) {
 		Column {
-			ProgressPastClickEntry(goal = "Goal", date = "Date", time = "Time", bold = true)
+			ProgressPastClickEntry(goal = "Goal", date = "Date", time = "Time", isTitle = true)
 			Divider(color = Color(TextBlack), thickness = 1.dp)
 
 			for (pastClickAndGoal in pastClicksAndGoal) {
@@ -163,7 +162,6 @@ fun ProgressPastClickEntry(
 		goal = pastClickAndGoal.goal.title,
 		date = dateBeautiful(pastClickAndGoal.pastClick.workoutTime, lambdas.settingsData.dateLocale()),
 		time = timeBeautiful(pastClickAndGoal.pastClick.workoutTime, lambdas.settingsData.timeLocale()),
-		active = pastClickAndGoal.pastClick.isActive,
 	)
 }
 
@@ -172,36 +170,25 @@ fun ProgressPastClickEntry(
 	goal: String,
 	date: String,
 	time: String,
-	bold: Boolean = false,
-	active: Boolean = true,
+	isTitle: Boolean = false,
 ) {
-	Row {
-		val fontWeight = if (bold) {
-			FontWeight.Bold
-		} else {
-			null
-		}
-		val textDecoration = if (!active) {
-			TextDecoration.LineThrough
-		} else {
-			null
-		}
+	Row(modifier = Modifier.fillMaxWidth()) {
+		val fontWeight = if (isTitle) FontWeight.Bold else null
+		//val textAlign = TextAlign.Right
 		Text(
 			text = goal,
 			fontSize = 14.sp,
 			fontWeight = fontWeight,
-			style = TextStyle(textDecoration = textDecoration),
 			modifier = Modifier
-				.width(90.dp)
 				.padding(start = 4.dp, end = 12.dp)
 				.align(Alignment.CenterVertically)
+				.weight(weight = 1f)
 		)
-		Spacer(modifier = Modifier.weight(1f))
 		Text(
 			text = date,
 			fontSize = 14.sp,
 			fontWeight = fontWeight,
-			style = TextStyle(textDecoration = textDecoration),
+			//textAlign = textAlign,
 			modifier = Modifier
 				.width(90.dp)
 				.padding(start = 4.dp, end = 12.dp)
@@ -211,7 +198,7 @@ fun ProgressPastClickEntry(
 			text = time,
 			fontSize = 14.sp,
 			fontWeight = fontWeight,
-			style = TextStyle(textDecoration = textDecoration),
+			//textAlign = textAlign,
 			modifier = Modifier
 				.width(50.dp)
 				.padding(end = 12.dp)

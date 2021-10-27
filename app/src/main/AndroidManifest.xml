@@ -4,9 +4,6 @@
 
     <uses-permission android:name="android.permission.WAKE_LOCK" />
 
-    <!--
-    android:theme="@style/AppTheme"
-    -->
     <application
         android:allowBackup="false"
         android:fullBackupContent="false"
@@ -43,19 +40,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-<!--
-        <activity
-            android:name=".activities.MainActivityNavTest"
-            android:label="Workout Pixel"
-            android:windowSoftInputMode="adjustResize"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
--->
         <activity
             android:name=".activities.ConfigureActivity"
             android:label="Add a widget for your goal"

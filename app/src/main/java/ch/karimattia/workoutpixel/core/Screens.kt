@@ -57,6 +57,7 @@ enum class Screens(
 	Settings(
 		showBackNavigation = true,
 		displayName = "Settings",
+		topAppBarName = "Settings",
 	),
 	;
 
