@@ -81,6 +81,8 @@ class MainActivity : ComponentActivity() {
 		val settingsViewModel: SettingsViewModel by viewModels()
 
 		firebaseAnalytics = FirebaseAnalytics.getInstance(this)
+		// https://firebase.google.com/docs/analytics/get-started?platform=android#kotlin+ktx
+		firebaseAnalytics = Firebase.analytics
 		val bundle = Bundle()
 		bundle.putString(FirebaseAnalytics.Param.ITEM_ID, "my_item_id")
 

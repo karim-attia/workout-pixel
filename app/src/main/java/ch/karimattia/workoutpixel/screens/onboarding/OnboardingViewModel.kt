@@ -29,7 +29,7 @@ enum class Chatvariant {
 @ExperimentalComposeUiApi
 class OnboardingViewModelFactory(private val chatvariant: Chatvariant, private val scope: CoroutineScope, private var lambdas: Lambdas) :
 	ViewModelProvider.NewInstanceFactory() {
-	override fun <T : ViewModel?> create(modelClass: Class<T>): T =
+	override fun <T : ViewModel> create(modelClass: Class<T>): T =
 		OnboardingViewModel(chatvariant = chatvariant, scope = scope, receivedLambdas = lambdas) as T
 }
 
