@@ -4,15 +4,11 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import ch.karimattia.workoutpixel.core.goalFromGoalsByUid
-import ch.karimattia.workoutpixel.data.Goal
-import ch.karimattia.workoutpixel.data.PastClick
 import ch.karimattia.workoutpixel.data.PastClickAndGoal
 import ch.karimattia.workoutpixel.data.PastClickRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 

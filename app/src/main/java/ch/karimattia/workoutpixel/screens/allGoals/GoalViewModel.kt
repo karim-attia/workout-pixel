@@ -11,7 +11,6 @@ import ch.karimattia.workoutpixel.data.Goal
 import ch.karimattia.workoutpixel.data.GoalRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 

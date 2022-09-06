@@ -69,10 +69,10 @@ class TestNewStatus {
 		val lastWorkout = today2Am - intervalInMilliseconds(0)
 		val intervalBlue = 1
 		val expectedStatus: Status
-		if (hourOfDay > 3) {
-			expectedStatus = Status.BLUE
+		expectedStatus = if (hourOfDay > 3) {
+			Status.BLUE
 		} else {
-			expectedStatus = Status.GREEN
+			Status.GREEN
 		}
 		testNewStatus(lastWorkout, intervalBlue, expectedStatus)
 	}

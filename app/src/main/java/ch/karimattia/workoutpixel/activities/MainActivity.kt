@@ -37,6 +37,7 @@ import ch.karimattia.workoutpixel.screens.goalDetail.PastClickViewModelAssistedF
 import ch.karimattia.workoutpixel.screens.onboarding.Chatvariant
 import ch.karimattia.workoutpixel.screens.onboarding.Onboarding
 import ch.karimattia.workoutpixel.screens.progress.Progress
+import ch.karimattia.workoutpixel.screens.settings.Settings
 import ch.karimattia.workoutpixel.screens.settings.SettingsViewModel
 import ch.karimattia.workoutpixel.ui.theme.WorkoutPixelTheme
 import coil.annotation.ExperimentalCoilApi

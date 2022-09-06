@@ -1,4 +1,4 @@
-package ch.karimattia.workoutpixel.screens
+package ch.karimattia.workoutpixel.screens.settings
 
 import android.util.Log
 import androidx.compose.foundation.clickable
@@ -19,6 +19,8 @@ import ch.karimattia.workoutpixel.core.dateBeautiful
 import ch.karimattia.workoutpixel.core.timeBeautiful
 import ch.karimattia.workoutpixel.data.Goal
 import ch.karimattia.workoutpixel.data.SettingsData
+import ch.karimattia.workoutpixel.screens.GoalPreview
+import ch.karimattia.workoutpixel.screens.Lambdas
 import ch.karimattia.workoutpixel.ui.theme.*
 import com.vanpra.composematerialdialogs.MaterialDialog
 import com.vanpra.composematerialdialogs.color.ARGBPickerState

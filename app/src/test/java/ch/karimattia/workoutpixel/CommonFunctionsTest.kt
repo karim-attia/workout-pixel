@@ -11,7 +11,7 @@ import java.util.*
 class CommonFunctionsTest {
 	@Test
 	fun next3AmTest() {
-		val locale: Locale = Locale("ch", "de")
+		val locale = Locale("ch", "de")
 		Assert.assertEquals(timeBeautiful(next3Am(), locale = locale), "03:00")
 		Assert.assertEquals(timeBeautiful(today3Am(), locale = locale), "03:00")
 		Assert.assertEquals(timeBeautiful(last3Am(), locale = locale), "03:00")
