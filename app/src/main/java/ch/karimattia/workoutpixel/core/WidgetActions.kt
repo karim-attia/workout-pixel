@@ -100,6 +100,8 @@ class WidgetActions @AssistedInject constructor(
             try {
                 val glanceAppWidgetManager = GlanceAppWidgetManager(context)
                 val glanceId: GlanceId = glanceAppWidgetManager.getGlanceIdBy(goal.appWidgetId)
+
+                // TODO: Create updatePrefs(goal: Goal)
                 updateAppWidgetState(context = context, glanceId = glanceId) {
                     it[intPreferencesKey("uid")] = goal.uid
                     it[intPreferencesKey("appWidgetId")] = goal.appWidgetId
@@ -145,7 +147,7 @@ class WidgetActions @AssistedInject constructor(
         widgetView.setInt(
             R.id.appwidget_text,
             "setBackgroundColor",
-            getColorIntFromStatus(status = goal.status(), settingsData = settingsData)
+            goal.colorInt(settingsData = settingsData)
         )
 
         // Set size if available

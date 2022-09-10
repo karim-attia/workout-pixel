@@ -27,7 +27,6 @@ import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import ch.karimattia.workoutpixel.core.getColorFromStatus
 import ch.karimattia.workoutpixel.core.testGoals
 import ch.karimattia.workoutpixel.data.Goal
 import ch.karimattia.workoutpixel.data.SettingsData
@@ -40,211 +39,222 @@ typealias GoalFunction = (Goal) -> Unit
 
 @Composable
 fun GoalPreview(
-	goal: Goal,
-	modifier: Modifier = Modifier,
-	settingsData: SettingsData = SettingsData(),
-	backgroundColor: Color = getColorFromStatus(goal.status(), settingsData = settingsData),
-	onClick: () -> Unit = {},
+    goal: Goal,
+    modifier: Modifier = Modifier,
+    settingsData: SettingsData = SettingsData(),
+    backgroundColor: Color = goal.color(settingsData = settingsData),
+    onClick: () -> Unit = {},
 ) {
-	Text(
-		text = goal.widgetText(settingsData),
-		textAlign = TextAlign.Center,
-		fontSize = 12.sp,
-		fontWeight = FontWeight(500),
-		color = Color.White,
-		modifier = modifier
+    Text(
+        text = goal.widgetText(settingsData),
+        textAlign = TextAlign.Center,
+        fontSize = 12.sp,
+        fontWeight = FontWeight(500),
+        color = Color.White,
+        modifier = modifier
 			.clickable { onClick() }
 			.width(66.dp)
 			.height(44.dp)
 			.clip(shape = RoundedCornerShape(4.dp))
 			.background(backgroundColor)
 			.wrapContentSize(Alignment.Center)
-	)
+    )
 }
 
 @Composable
 fun CardWithTitle(
-	title: String,
-	onClick: () -> Unit = {},
-	content: @Composable () -> Unit,
+    title: String,
+    onClick: () -> Unit = {},
+    content: @Composable () -> Unit,
 ) {
-	FormattedCard(
-		paddingOutsideOfCard = PaddingValues(vertical = 4.dp, horizontal = 8.dp),
-		onClick = onClick,
-	) {
-		CardTitle(
-			text = title
-		)
-		content()
-	}
+    FormattedCard(
+        paddingOutsideOfCard = PaddingValues(vertical = 4.dp, horizontal = 8.dp),
+        onClick = onClick,
+    ) {
+        CardTitle(
+            text = title
+        )
+        content()
+    }
 }
 
 @Composable
 fun FormattedCard(
-	paddingBetweenCardAndContent: PaddingValues = PaddingValues(all = 8.dp),
-	paddingOutsideOfCard: PaddingValues = PaddingValues(vertical = 4.dp, horizontal = 8.dp),
-	onClick: () -> Unit = {},
-	content: @Composable () -> Unit,
+    paddingBetweenCardAndContent: PaddingValues = PaddingValues(all = 8.dp),
+    paddingOutsideOfCard: PaddingValues = PaddingValues(vertical = 4.dp, horizontal = 8.dp),
+    onClick: () -> Unit = {},
+    content: @Composable () -> Unit,
 ) {
-	Card(
-		backgroundColor = Color.White,
-		elevation = 4.dp,
-		modifier = Modifier
+    Card(
+        backgroundColor = Color.White,
+        elevation = 4.dp,
+        modifier = Modifier
 			.fillMaxWidth()
 			.padding(paddingOutsideOfCard)
 			.clickable { onClick() }
-	) {
-		Column(
-			modifier = Modifier
-				.padding(paddingBetweenCardAndContent)
-		) {
-			content()
-		}
-	}
+    ) {
+        Column(
+            modifier = Modifier
+                .padding(paddingBetweenCardAndContent)
+        ) {
+            content()
+        }
+    }
 }
 
 @Composable
 fun CardTitle(
-	text: String,
+    text: String,
 ) {
-	Text(
-		text = text,
-		fontSize = 20.sp,
-		fontWeight = FontWeight.Bold,
-		modifier = Modifier.padding(bottom = 8.dp)
-	)
+    Text(
+        text = text,
+        fontSize = 20.sp,
+        fontWeight = FontWeight.Bold,
+        modifier = Modifier.padding(bottom = 8.dp)
+    )
 
 }
 
 @Composable
 fun Infobox(
-	text: String,
-	modifier: Modifier = Modifier,
+    text: String,
+    modifier: Modifier = Modifier,
 ) {
-	Row(
-		verticalAlignment = Alignment.CenterVertically,
-		modifier = modifier
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = modifier
 			.clip(shape = RoundedCornerShape(4.dp))
 			.background(Color(InfoColor))
 			.padding(4.dp)
-	) {
-		Icon(
-			imageVector = Icons.Filled.Info,
-			contentDescription = "Info icon",
-			modifier = Modifier
-				.size(32.dp)
-		)
-		Text(
-			text = text,
-			fontSize = 14.sp,
-			modifier = Modifier.padding(start = 4.dp)
-		)
-	}
+    ) {
+        Icon(
+            imageVector = Icons.Filled.Info,
+            contentDescription = "Info icon",
+            modifier = Modifier
+                .size(32.dp)
+        )
+        Text(
+            text = text,
+            fontSize = 14.sp,
+            modifier = Modifier.padding(start = 4.dp)
+        )
+    }
 }
 
 
 @Composable
 fun CheckboxWithText(
-	description: String,
-	checked: Boolean,
-	onCheckedChange: (Boolean) -> Unit,
-	modifier: Modifier = Modifier,
+    description: String,
+    checked: Boolean,
+    onCheckedChange: (Boolean) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
-	Row(
-		verticalAlignment = Alignment.CenterVertically,
-		modifier = modifier
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = modifier
 			.fillMaxWidth()
 			.clickable { onCheckedChange(!checked) }
 			.padding(vertical = 4.dp)
-	) {
-		Checkbox(
-			checked = checked,
-			onCheckedChange = null // {onCheckedChange(it) }
-		)
-		Text(
-			text = description,
-			modifier = Modifier.padding(start = 6.dp),
-		)
-	}
+    ) {
+        Checkbox(
+            checked = checked,
+            onCheckedChange = null // {onCheckedChange(it) }
+        )
+        Text(
+            text = description,
+            modifier = Modifier.padding(start = 6.dp),
+        )
+    }
 }
 
 @ExperimentalComposeUiApi
 @Composable
 fun GoalTitleTextField(
-	title: String,
-	onValueChange: (String) -> Unit,
-	modifier: Modifier = Modifier,
+    title: String,
+    onValueChange: (String) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
-	val keyboardController = LocalSoftwareKeyboardController.current
-	val interactionSource = remember { MutableInteractionSource() }
-	BasicTextField(
-		value = title,
-		onValueChange = { onValueChange(it) },
-		textStyle = LocalTextStyle.current.copy(
-			color = MaterialTheme.colors.onBackground,
-			fontSize = 20.sp
-		),
-		interactionSource = interactionSource,
-		decorationBox = { innerTextField ->
-			Column(
-				modifier = Modifier
-					.fillMaxWidth()
-			) {
-				val isFocused = interactionSource.collectIsFocusedAsState().value
-				Box(modifier = Modifier.padding(start = 4.dp, end = 4.dp, bottom = 4.dp)) { innerTextField() }
-				Divider(thickness = 1.5.dp, color = if (isFocused) MaterialTheme.colors.primary else Color.Gray)
-			}
-		},
-		cursorBrush = SolidColor(MaterialTheme.colors.primary),
-		singleLine = true,
-		keyboardOptions = KeyboardOptions(
-			capitalization = KeyboardCapitalization.Sentences,
-			imeAction = ImeAction.Done
-		),
-		keyboardActions = KeyboardActions(onDone = {
-			keyboardController?.hide()
-		}),
-		modifier = modifier
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val interactionSource = remember { MutableInteractionSource() }
+    BasicTextField(
+        value = title,
+        onValueChange = { onValueChange(it) },
+        textStyle = LocalTextStyle.current.copy(
+            color = MaterialTheme.colors.onBackground,
+            fontSize = 20.sp
+        ),
+        interactionSource = interactionSource,
+        decorationBox = { innerTextField ->
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+            ) {
+                val isFocused = interactionSource.collectIsFocusedAsState().value
+                Box(
+                    modifier = Modifier.padding(
+                        start = 4.dp,
+                        end = 4.dp,
+                        bottom = 4.dp
+                    )
+                ) { innerTextField() }
+                Divider(
+                    thickness = 1.5.dp,
+                    color = if (isFocused) MaterialTheme.colors.primary else Color.Gray
+                )
+            }
+        },
+        cursorBrush = SolidColor(MaterialTheme.colors.primary),
+        singleLine = true,
+        keyboardOptions = KeyboardOptions(
+            capitalization = KeyboardCapitalization.Sentences,
+            imeAction = ImeAction.Done
+        ),
+        keyboardActions = KeyboardActions(onDone = {
+            keyboardController?.hide()
+        }),
+        modifier = modifier
 			.fillMaxWidth()
 			.padding(bottom = 10.dp)
-	)
+    )
 }
 
 @Composable
 fun GoalPreviewsWithBackground() {
-	Row(modifier = Modifier
-		.padding(start = 0.dp, top = 8.dp, bottom = 0.dp)
-		.background(GrayBackgroundColor)
-		.padding(all = 6.dp)
-	)
-	{
-		GoalPreview(goal = testGoals[0])
-		Spacer(modifier = Modifier.width(8.dp))
-		GoalPreview(goal = testGoals[1])
-	}
+    Row(
+        modifier = Modifier
+			.padding(start = 0.dp, top = 8.dp, bottom = 0.dp)
+			.background(GrayBackgroundColor)
+			.padding(all = 6.dp)
+    )
+    {
+        GoalPreview(goal = testGoals[0])
+        Spacer(modifier = Modifier.width(8.dp))
+        GoalPreview(goal = testGoals[1])
+    }
 }
 
 @Composable
 fun GoalPreviewWithBackground(goal: Goal) {
-	Row(modifier = Modifier
-		.padding(start = 0.dp, top = 8.dp, bottom = 0.dp)
-		.background(GrayBackgroundColor)
-		.padding(all = 6.dp)
-	)
-	{
-		GoalPreview(goal = goal)
-	}
+    Row(
+        modifier = Modifier
+			.padding(start = 0.dp, top = 8.dp, bottom = 0.dp)
+			.background(GrayBackgroundColor)
+			.padding(all = 6.dp)
+    )
+    {
+        GoalPreview(goal = goal)
+    }
 }
 
 data class Lambdas(
-	val updateAfterClick: GoalFunction = {},
-	val updateGoal: GoalFunction = {},
-	val deleteGoal: GoalFunction = {},
-	val insertGoal: GoalFunction = {},
-	val widgetPinningPossible: Boolean = true,
-	val addWidgetToHomeScreen: suspend (goal: Goal, insertNewGoal: Boolean) -> Int = { _, _ -> 0 },
-	val settingsData: SettingsData = SettingsData(),
-	val settingChange: (SettingsData) -> Unit = {},
-	val navigateTo: (destination: String, goal: Goal?, popBackStack: Boolean) -> Unit = { _, _, _ -> },
-	val navigateUp: (setGoalToNull: Boolean) -> Unit = { },
+    val updateAfterClick: GoalFunction = {},
+    val updateGoal: GoalFunction = {},
+    val deleteGoal: GoalFunction = {},
+    val insertGoal: GoalFunction = {},
+    val widgetPinningPossible: Boolean = true,
+    val addWidgetToHomeScreen: suspend (goal: Goal, insertNewGoal: Boolean) -> Int = { _, _ -> 0 },
+    val settingsData: SettingsData = SettingsData(),
+    val settingChange: (SettingsData) -> Unit = {},
+    val navigateTo: (destination: String, goal: Goal?, popBackStack: Boolean) -> Unit = { _, _, _ -> },
+    val navigateUp: (setGoalToNull: Boolean) -> Unit = { },
 )

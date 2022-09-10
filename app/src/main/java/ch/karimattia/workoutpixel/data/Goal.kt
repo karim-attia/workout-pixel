@@ -40,14 +40,7 @@ data class Goal
 	fun color(settingsData: SettingsData): Color =
 		Color(colorInt(settingsData = settingsData))
 
-	fun colorInt(settingsData: SettingsData): Int {
-		return when (status()) {
-			Status.GREEN -> settingsData.colorDoneInt
-			Status.BLUE -> settingsData.colorFirstIntervalInt
-			Status.RED -> settingsData.colorSecondIntervalInt
-			Status.NONE -> settingsData.colorInitialInt
-		}
-	}
+	fun colorInt(settingsData: SettingsData): Int = getColorIntFromStatus(status(), settingsData)
 
 /*	fun setNewLastWorkout(lastWorkout: Long): Boolean {
 		return if (this.lastWorkout == lastWorkout) {

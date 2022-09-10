@@ -31,6 +31,7 @@ import androidx.glance.text.TextStyle
 import ch.karimattia.workoutpixel.core.Constants.INVALID_GOAL_UID
 import ch.karimattia.workoutpixel.data.Goal
 import ch.karimattia.workoutpixel.data.SettingsData
+import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 private const val TAG = "GlanceWidget"
@@ -47,6 +48,8 @@ class GlanceWidget : GlanceAppWidget() {
     override fun Content() {
         val prefs: Preferences = currentState<Preferences>()
         val goal: Goal = Goal()
+
+        // TODO: Create Goal(prefs: Preferences)
         goal.uid = prefs[intPreferencesKey("uid")] ?: goal.uid
         goal.appWidgetId = prefs[intPreferencesKey("appWidgetId")] ?: goal.appWidgetId
         goal.title = (prefs[stringPreferencesKey("title")] ?: goal.title)
@@ -59,10 +62,6 @@ class GlanceWidget : GlanceAppWidget() {
         Log.d(TAG, goal.debugString())
         WidgetContent(goal = goal)
     }
-}
-
-class GlanceWidgetReceiver : GlanceAppWidgetReceiver() {
-    override val glanceAppWidget: GlanceAppWidget = GlanceWidget()
 }
 
 @Composable
@@ -110,6 +109,7 @@ fun WidgetContent(
 //@AndroidEntryPoint
 class ClickAction : ActionCallback {
 
+    // TODO: Only logic analog to onClickListener here. Update logic in receiver in override fun onReceive
     // TODO: Make goalActions work
     @Inject
     lateinit var widgetActionsFactory: WidgetActions.Factory
@@ -139,4 +139,9 @@ class ClickAction : ActionCallback {
 
         if (goal.uid != INVALID_GOAL_UID) goalActions(goal).updateAfterClick()
     }
+}
+
+@AndroidEntryPoint
+class GlanceWidgetReceiver : GlanceAppWidgetReceiver() {
+    override val glanceAppWidget: GlanceAppWidget = GlanceWidget()
 }
