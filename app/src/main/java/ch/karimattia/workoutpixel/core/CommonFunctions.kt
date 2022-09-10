@@ -25,6 +25,7 @@ object Constants {
 	const val PREFERENCE_NAME = "SharedPreferences"
 	const val GOAL_UID = "goalUid"
 	const val INVALID_GOAL_UID = 0
+	const val GOAL = "goal"
 }
 
 enum class Status {
