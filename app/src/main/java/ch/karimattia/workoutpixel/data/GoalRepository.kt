@@ -24,4 +24,6 @@ class GoalRepository @Inject constructor(
 	suspend fun setAppWidgetIdToNullByAppwidgetId(appWidgetId: Int) = goalDao.setAppWidgetIdToNullByAppwidgetId(appWidgetId = appWidgetId)
 	suspend fun loadGoalByAppWidgetId(appWidgetId: Int): Goal? = goalDao.loadGoalByAppWidgetId(appWidgetId = appWidgetId)
 	suspend fun setAppWidgetIdToNullByUid(uid: Int) = goalDao.setAppWidgetIdToNullByUid(uid = uid)
+
+	suspend fun allGoals(): List<Goal> = goalDao.loadAllGoals()
 }

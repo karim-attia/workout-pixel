@@ -1,9 +1,9 @@
 package ch.karimattia.workoutpixel.core
 
-import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
 import android.content.Context
 import android.content.Intent
+import android.os.Bundle
 import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
@@ -21,7 +21,6 @@ import androidx.glance.appwidget.action.ActionCallback
 import androidx.glance.appwidget.action.actionRunCallback
 import androidx.glance.appwidget.background
 import androidx.glance.appwidget.cornerRadius
-import androidx.glance.appwidget.state.updateAppWidgetState
 import androidx.glance.appwidget.unit.ColorProvider
 import androidx.glance.currentState
 import androidx.glance.layout.Alignment.Companion.CenterVertically
@@ -32,12 +31,11 @@ import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
 import androidx.glance.text.TextAlign
 import androidx.glance.text.TextStyle
-import ch.karimattia.workoutpixel.core.Constants.GOAL
 import ch.karimattia.workoutpixel.core.Constants.GOAL_UID
-import ch.karimattia.workoutpixel.core.Constants.INVALID_GOAL_UID
 import ch.karimattia.workoutpixel.data.Goal
 import ch.karimattia.workoutpixel.data.GoalRepository
 import ch.karimattia.workoutpixel.data.SettingsData
+import ch.karimattia.workoutpixel.data.SettingsRepository
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
@@ -46,37 +44,46 @@ private const val TAG = "GlanceWidget"
 
 class GlanceWidget : GlanceAppWidget() {
 
-    // TODO: Which goal is getting displayed? -> From prefs
-    // TODO: Get this goal. -> NO, see below
-    // TODO: Draw widget based on prefs: Preferences -> below
-    // TODO: Update prefs: Preferences whenever Room is getting updated and call a widget update.
+    @Inject
+    lateinit var settingsRepository: SettingsRepository
 
 
     @Composable
     override fun Content() {
         val prefs: Preferences = currentState<Preferences>()
-        val goal = Goal()
+        val settingsData = SettingsData()
+        settingsData.colorDoneInt = prefs[intPreferencesKey("colorDoneInt")] ?: settingsData.colorDoneInt
+        settingsData.colorFirstIntervalInt = prefs[intPreferencesKey("colorFirstIntervalInt")] ?: settingsData.colorFirstIntervalInt
+        settingsData.colorSecondIntervalInt = prefs[intPreferencesKey("colorSecondIntervalInt")] ?: settingsData.colorSecondIntervalInt
+        settingsData.colorInitialInt = prefs[intPreferencesKey("colorInitialInt")] ?: settingsData.colorInitialInt
+        settingsData.dateLanguage = prefs[stringPreferencesKey("dateLanguage")] ?: settingsData.dateLanguage
+        settingsData.dateCountry = prefs[stringPreferencesKey("dateCountry")] ?: settingsData.dateCountry
+        settingsData.timeLanguage = prefs[stringPreferencesKey("timeLanguage")] ?: settingsData.timeLanguage
+        settingsData.timeCountry = prefs[stringPreferencesKey("timeCountry")] ?: settingsData.timeCountry
+        Log.d(TAG, "settingsData: $settingsData")
 
         // TODO: Create Goal(prefs: Preferences)
+        val goal = Goal()
         goal.uid = prefs[intPreferencesKey("uid")] ?: goal.uid
         goal.appWidgetId = prefs[intPreferencesKey("appWidgetId")] ?: goal.appWidgetId
-        goal.title = (prefs[stringPreferencesKey("title")] ?: goal.title)
+        goal.title = prefs[stringPreferencesKey("title")] ?: goal.title
         goal.lastWorkout = prefs[longPreferencesKey("lastWorkout")] ?: goal.lastWorkout
         goal.intervalBlue = prefs[intPreferencesKey("intervalBlue")] ?: goal.intervalBlue
         goal.intervalRed = prefs[intPreferencesKey("intervalRed")] ?: goal.intervalRed
-        goal.showDate = (prefs[booleanPreferencesKey("showDate")] ?: goal.showDate)
-        goal.showTime = (prefs[booleanPreferencesKey("showTime")] ?: goal.showTime)
-        WidgetContent(goal = goal)
+        goal.showDate = prefs[booleanPreferencesKey("showDate")] ?: goal.showDate
+        goal.showTime = prefs[booleanPreferencesKey("showTime")] ?: goal.showTime
+        WidgetContent(goal = goal, settingsData = settingsData)
     }
 }
 
 @Composable
 fun WidgetContent(
-    goal: Goal
+    goal: Goal,
+    settingsData: SettingsData
 ) {
     Log.d(TAG, "WidgetContent $goal")
     // TODO: Get settingsData
-    val backgroundColor = goal.color(SettingsData())
+    val backgroundColor = goal.color(settingsData)
 
     // TODO: Styling seems unelegant
     Row(
@@ -86,18 +93,17 @@ fun WidgetContent(
             .fillMaxWidth()
             .clickable(onClick = actionRunCallback<ClickAction>(parameters = actionParametersOf(actionGoal to goal.uid)))
             .background(backgroundColor, backgroundColor)
-                // actionParametersOf: https://proandroiddev.com/building-app-widgets-with-glance-8278cb455afa
+            // actionParametersOf: https://proandroiddev.com/building-app-widgets-with-glance-8278cb455afa
             .cornerRadius(8.dp),
         verticalAlignment = CenterVertically
     ) {
         Text(
-            text = goal.widgetText(SettingsData()),
+            text = goal.widgetText(settingsData),
             // .wrapContentSize(Alignment.Center)
             modifier = GlanceModifier
                 .fillMaxWidth()
                 // Do I really need this in the row and the text? Seems like it from testing. ð¤·ð
-                .clickable(onClick = actionRunCallback<ClickAction>(parameters = actionParametersOf(actionGoal to goal.uid)))
-            ,
+                .clickable(onClick = actionRunCallback<ClickAction>(parameters = actionParametersOf(actionGoal to goal.uid))),
 
             style = TextStyle(
                 fontWeight = FontWeight.Medium,
@@ -114,17 +120,7 @@ fun WidgetContent(
 
 // On widget click
 // Same as ACTION_DONE_EXERCISE
-//@AndroidEntryPoint
 class ClickAction : ActionCallback {
-
-    // TODO: Only logic analog to onClickListener here. Update logic in receiver in override fun onReceive
-
-/*
-    // TODO: Make goalActions work
-    @Inject
-    lateinit var widgetActionsFactory: WidgetActions.Factory
-    private fun goalActions(goal: Goal): WidgetActions = widgetActionsFactory.create(goal)
-*/
 
     override suspend fun onAction(
         context: Context,
@@ -159,7 +155,7 @@ class GlanceWidgetReceiver : GlanceAppWidgetReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         runBlocking {
             super.onReceive(context, intent)
-            Log.d(TAG, "ON_RECEIVE ${intent.action}------------------------------------------------------------------------")
+            Log.d(TAG, "[Glance] ON_RECEIVE ${intent.action}------------------------------------------------------------------------")
             when {
                 // Do this if the widget has been clicked
                 // TODO: If goal can't be loaded show error instead of crash
@@ -173,16 +169,82 @@ class GlanceWidgetReceiver : GlanceAppWidgetReceiver() {
                     val goal: Goal? = repository.loadGoalByUid(uid)
                     if (goal != null) {
                         goal.appWidgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID)
-                        goalActions(goal).runUpdate(true)
+                        goalActions(goal).runUpdate()
                         repository.updateGoal(goal)
                     }
                 }
                 intent.action.equals(Constants.ACTION_ALARM_UPDATE) -> {
                     // Do this when the alarm hits
-                    saveTimeWithStringToSharedPreferences(context, "ACTION_ALARM_UPDATE ${dateTimeBeautiful(System.currentTimeMillis())}")
+                    saveTimeWithStringToSharedPreferences(
+                        context,
+                        "[Glance] ACTION_ALARM_UPDATE ${dateTimeBeautiful(System.currentTimeMillis())}"
+                    )
                     otherActions.updateAllWidgets()
                 }
             }
+        }
+    }
+
+    override fun onUpdate(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray) {
+        runBlocking {
+            Log.d(TAG, "ON_UPDATE\n------------------------------------------------------------------------")
+            // Start alarm
+            widgetAlarm.startAlarm()
+            otherActions.updateAllWidgets()
+            saveTimeWithStringToSharedPreferences(context, "[Glance] onUpdate ${dateTimeBeautiful(System.currentTimeMillis())}")
+        }
+    }
+
+    override fun onDeleted(context: Context, appWidgetIds: IntArray) {
+        runBlocking {
+            // When the user deletes the widget, delete the preference associated with it.
+            Log.d(TAG, "ON_DELETED")
+
+            // TODO: This is also called if the configuration is aborted. Then, this database call is useless.
+            for (appWidgetId in appWidgetIds) repository.setAppWidgetIdToNullByAppwidgetId(appWidgetId)
+
+            saveTimeWithStringToSharedPreferences(context, "onDeleted ${dateTimeBeautiful(System.currentTimeMillis())}")
+        }
+    }
+
+    override fun onEnabled(context: Context) {
+        runBlocking {
+
+            // Enter relevant functionality for when the first widget is created
+            Log.d(TAG, "ON_ENABLED")
+            super.onEnabled(context)
+
+            otherActions.updateAllWidgets()
+
+            // Start alarm
+            Log.v(TAG, "START_ALARM")
+            widgetAlarm.startAlarm()
+            Log.v(TAG, "ALARM_STARTED")
+            saveTimeWithStringToSharedPreferences(context, "onEnabled ${dateTimeBeautiful(System.currentTimeMillis())}")
+        }
+    }
+
+    override fun onDisabled(context: Context) {
+        runBlocking {
+            // Enter relevant functionality for when the last widget is disabled
+            // Stop alarm only if all widgets have been disabled
+            Log.d(TAG, "ON_DISABLED")
+            if (otherActions.appWidgetIds.isEmpty()) {
+                // stop alarm
+                Log.v(TAG, "STOP_ALARM")
+                widgetAlarm.stopAlarm()
+                Log.v(TAG, "STOPPED_ALARM")
+            }
+            saveTimeWithStringToSharedPreferences(context, "onDisabled ${dateTimeBeautiful(System.currentTimeMillis())}")
+        }
+    }
+
+    override fun onAppWidgetOptionsChanged(context: Context, appWidgetManager: AppWidgetManager, appWidgetId: Int, newOptions: Bundle) {
+        runBlocking {
+            val goal: Goal? = repository.loadGoalByAppWidgetId(appWidgetId = appWidgetId)
+            // There may be no goal with this appWidgetId, e.g. if the app data was deleted.
+            if (goal != null) goalActions(goal).runUpdate()
+            saveTimeWithStringToSharedPreferences(context, "onAppWidgetOptionsChanged ${dateTimeBeautiful(System.currentTimeMillis())}")
         }
     }
 }

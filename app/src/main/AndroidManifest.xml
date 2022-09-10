@@ -8,25 +8,11 @@
         android:allowBackup="false"
         android:fullBackupContent="false"
         android:name=".core.MyApplication"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@android:style/Theme.DeviceDefault.NoActionBar"
         android:windowNoTitle="true"
         >
-
-        <receiver android:name=".core.WorkoutPixelAppWidgetProvider"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="AUTO_UPDATE" />
-            </intent-filter>
-
-            <meta-data
-                android:name="android.appwidget.provider"
-                android:resource="@xml/workout_pixel_info" />
-        </receiver>
 
         <receiver
             android:name=".core.GlanceWidgetReceiver"
@@ -38,7 +24,7 @@
 
             <meta-data
                 android:name="android.appwidget.provider"
-                android:resource="@xml/glance_widget_info" />
+                android:resource="@xml/workout_pixel_widget" />
 
         </receiver>
 

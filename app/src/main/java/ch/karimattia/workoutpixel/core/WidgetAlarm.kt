@@ -47,7 +47,7 @@ class WidgetAlarm @Inject constructor(
 	private val alarmManager: AlarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
 	private fun pendingIntent(context: Context, action: String): PendingIntent {
-		val alarmIntent = Intent(context, WorkoutPixelAppWidgetProvider::class.java)
+		val alarmIntent = Intent(context, GlanceWidgetReceiver::class.java)
 		alarmIntent.action = action
 		return PendingIntent.getBroadcast(context, 0, alarmIntent, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
 	}

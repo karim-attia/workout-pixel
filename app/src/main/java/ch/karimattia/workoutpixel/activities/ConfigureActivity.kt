@@ -16,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.ExperimentalComposeUiApi
+import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.lifecycle.lifecycleScope
 import ch.karimattia.workoutpixel.screens.EditGoalView
 import ch.karimattia.workoutpixel.screens.Lambdas
@@ -56,6 +57,13 @@ class ConfigureActivity : ComponentActivity() {
 		setResult(RESULT_CANCELED)
 		if (extras != null) {
 			goal.appWidgetId = extras.getInt(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID)
+			try {
+				val glanceAppWidgetManager = GlanceAppWidgetManager(this)
+				goal.glanceId = glanceAppWidgetManager.getGlanceIdBy(goal.appWidgetId).toString()
+				Log.d(TAG, "goal.glanceId: ${goal.glanceId}")
+			} catch (e: IllegalArgumentException) {
+				Log.d(TAG, "No GlanceId found for this appWidgetId.")
+			}
 		} else {
 			Log.d(TAG, "extras = null")
 		}
@@ -69,26 +77,29 @@ class ConfigureActivity : ComponentActivity() {
 
 		setContent {
 			// collectedGoal can return null despite of what lint says.
-			@Suppress("KotlinDeprecation")
 			val collectedGoal: Goal = goalRepository.loadGoalByAppWidgetIdFlow(goal.appWidgetId).collectAsState(initial = goal).value ?: goal
 			val isFirstConfigure = collectedGoal == goal
 			Log.d(TAG, "isFirstConfigure: $isFirstConfigure")
 
 			val configureActivityLambdas = Lambdas(
+				// Case reconfigure or connect existing goal
 				updateGoal = { updatedGoal ->
 					lifecycleScope.launch {
 						// Insert the goal into the DB and also update the widget.
 						goalViewModel.updateGoal(updatedGoal)
-						widgetActions(goal = updatedGoal).runUpdate(true)
-						setWidgetAndFinish(goal = updatedGoal, isFirstConfigure = isFirstConfigure)
+						widgetActions(goal = updatedGoal).runUpdate()
+						if (isFirstConfigure) setWidgetResult(goal = updatedGoal)
+						finishAndRemoveTask()
 					}
 				},
+				// Case new goal
 				insertGoal = { updatedGoal ->
 					lifecycleScope.launch {
 						// Insert the goal into the DB and also update the widget.
 						updatedGoal.uid = goalViewModel.insertGoal(updatedGoal)
-						widgetActions(goal = updatedGoal).runUpdate(true)
-						setWidgetAndFinish(goal = updatedGoal, isFirstConfigure = isFirstConfigure)
+						widgetActions(goal = updatedGoal).runUpdate()
+						if (isFirstConfigure) setWidgetResult(goal = updatedGoal)
+						finishAndRemoveTask()
 					}
 				},
 				settingsData = settingsViewModel.settingsData.observeAsState(SettingsData()).value,
@@ -103,17 +114,18 @@ class ConfigureActivity : ComponentActivity() {
 		}
 	}
 
-	private fun setWidgetAndFinish(goal: Goal, isFirstConfigure: Boolean, context: Context = this) {
+	private fun setWidgetResult(goal: Goal, context: Context = this) {
 		// Make sure we pass back the original appWidgetId.
-		val resultValue = Intent()
-		resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, goal.appWidgetId)
-		setResult(RESULT_OK, resultValue)
-		if (isFirstConfigure) Toast.makeText(
-			context,
-			"Widget created. Click on it to register a workout.",
-			Toast.LENGTH_LONG
-		).show()
-		finishAndRemoveTask()
+			val resultValue = Intent()
+			resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, goal.appWidgetId)
+			setResult(RESULT_OK, resultValue)
+
+			Toast
+				.makeText(
+					context,
+					"Widget created. Click on it to register a workout.",
+					Toast.LENGTH_LONG
+				).show()
 	}
 }
 

@@ -104,7 +104,7 @@ class MainActivity : ComponentActivity() {
 					lifecycleScope.launch {
 						Log.d(TAG, "updateGoal top main")
 						goalViewModel.updateGoal(goal)
-						widgetActions(goal).runUpdate(true)
+						widgetActions(goal).runUpdate()
 					}
 				},
 				deleteGoal = { lifecycleScope.launch { goalViewModel.deleteGoal(it) } },

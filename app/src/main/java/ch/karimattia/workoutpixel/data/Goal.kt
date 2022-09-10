@@ -2,6 +2,7 @@ package ch.karimattia.workoutpixel.data
 
 import android.appwidget.AppWidgetManager
 import androidx.compose.ui.graphics.Color
+import androidx.glance.GlanceId
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Ignore
@@ -9,10 +10,10 @@ import androidx.room.PrimaryKey
 import ch.karimattia.workoutpixel.core.*
 
 @Entity(tableName = "goals")
-data class Goal
-	(
+data class Goal(
 	@PrimaryKey(autoGenerate = true) var uid: Int = 0,
 	@ColumnInfo(name = "appWidgetId") var appWidgetId: Int = AppWidgetManager.INVALID_APPWIDGET_ID,
+	@ColumnInfo(name = "glanceId", defaultValue = "") var glanceId: String = "",
 	@ColumnInfo(name = "title") var title: String = "",
 	@ColumnInfo(name = "lastWorkout") var lastWorkout: Long = 0,
 	@ColumnInfo(name = "intervalBlue") var intervalBlue: Int = 2,

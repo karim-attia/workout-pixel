@@ -19,6 +19,14 @@ import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.glance.appwidget.state.updateAppWidgetState
 import ch.karimattia.workoutpixel.R
+import ch.karimattia.workoutpixel.core.Constants.colorDoneInt
+import ch.karimattia.workoutpixel.core.Constants.colorFirstIntervalInt
+import ch.karimattia.workoutpixel.core.Constants.colorInitialInt
+import ch.karimattia.workoutpixel.core.Constants.colorSecondIntervalInt
+import ch.karimattia.workoutpixel.core.Constants.dateCountry
+import ch.karimattia.workoutpixel.core.Constants.dateLanguage
+import ch.karimattia.workoutpixel.core.Constants.timeCountry
+import ch.karimattia.workoutpixel.core.Constants.timeLanguage
 import ch.karimattia.workoutpixel.data.*
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -64,7 +72,7 @@ class WidgetActions @AssistedInject constructor(
         goal.lastWorkout = System.currentTimeMillis()
 
         // Instruct the widget manager to update the widget with the latest widget data
-        runUpdate(false)
+        runUpdate()
 
         // TODO: Handle as transaction: 3. here: https://medium.com/androiddevelopers/7-pro-tips-for-room-fbadea4bfbd1
         // Add the workout to the database. Technicalities are taken care of in PastWorkoutsViewModel.
@@ -85,36 +93,40 @@ class WidgetActions @AssistedInject constructor(
     }
 
     // Can also be called on widget with invalid AppWidgetId
-    suspend fun runUpdate(setOnClickListener: Boolean) {
+    suspend fun runUpdate() {
         if (goal.appWidgetId != AppWidgetManager.INVALID_APPWIDGET_ID) {
-            // Old widget logic
-/*
-			// Make sure to always set both the text and the background of the widget because otherwise it gets updated to some random old version.
-			val appWidgetManager = AppWidgetManager.getInstance(context)
-			appWidgetManager.updateAppWidget(
-				goal.appWidgetId,
-				widgetView(setOnClickListener, appWidgetManager)
-			)
-*/
             // Try block because getGlanceIdBy throws IllegalArgumentException if no GlanceId is found for this appWidgetId.
             try {
                 val glanceAppWidgetManager = GlanceAppWidgetManager(context)
                 val glanceId: GlanceId = glanceAppWidgetManager.getGlanceIdBy(goal.appWidgetId)
 
                 // TODO: Create updatePrefs(goal: Goal)
-                updateAppWidgetState(context = context, glanceId = glanceId) {
-                    it[intPreferencesKey("uid")] = goal.uid
-                    it[intPreferencesKey("appWidgetId")] = goal.appWidgetId
-                    it[stringPreferencesKey("title")] = goal.title
-                    it[longPreferencesKey("lastWorkout")] = goal.lastWorkout
-                    it[intPreferencesKey("intervalBlue")] = goal.intervalBlue
-                    it[intPreferencesKey("intervalRed")] = goal.intervalRed
-                    it[booleanPreferencesKey("showDate")] = goal.showDate
-                    it[booleanPreferencesKey("showTime")] = goal.showTime
-                }
-                val glanceAppWidget: GlanceAppWidget = GlanceWidget()
+                updateAppWidgetState(context = context, glanceId = glanceId) {prefs ->
+                    prefs[intPreferencesKey("uid")] = goal.uid
+                    prefs[intPreferencesKey("appWidgetId")] = goal.appWidgetId
+                    prefs[stringPreferencesKey("title")] = goal.title
+                    prefs[longPreferencesKey("lastWorkout")] = goal.lastWorkout
+                    prefs[intPreferencesKey("intervalBlue")] = goal.intervalBlue
+                    prefs[intPreferencesKey("intervalRed")] = goal.intervalRed
+                    prefs[booleanPreferencesKey("showDate")] = goal.showDate
+                    prefs[booleanPreferencesKey("showTime")] = goal.showTime
 
+                    val settingsData: SettingsData = settingsRepository.getSettingsOnce()
+                    prefs[intPreferencesKey(colorDoneInt)] = settingsData.colorDoneInt
+                    prefs[intPreferencesKey(colorFirstIntervalInt)] = settingsData.colorFirstIntervalInt
+                    prefs[intPreferencesKey(colorSecondIntervalInt)] = settingsData.colorSecondIntervalInt
+                    prefs[intPreferencesKey(colorInitialInt)] = settingsData.colorInitialInt
+
+                    prefs[stringPreferencesKey(dateLanguage)] = settingsData.dateLanguage as String
+                    prefs[stringPreferencesKey(dateCountry)] = settingsData.dateCountry as String
+                    prefs[stringPreferencesKey(timeLanguage)] = settingsData.timeLanguage as String
+                    prefs[stringPreferencesKey(timeCountry)] = settingsData.timeCountry as String
+                    Log.d(TAG, "settingsData: $settingsData")
+                }
+
+                val glanceAppWidget: GlanceAppWidget = GlanceWidget()
                 glanceAppWidget.update(context, glanceId)
+
             } catch (e: IllegalArgumentException) {
                 Log.d(TAG, "No GlanceId found for this appWidgetId.")
             }
@@ -166,7 +178,7 @@ class WidgetActions @AssistedInject constructor(
 
     // Create an Intent to set the action DONE_EXERCISE. This will be received in onReceive.
     private fun widgetPendingIntent(): PendingIntent? {
-        val intent = Intent(context, WorkoutPixelAppWidgetProvider::class.java)
+        val intent = Intent(context, GlanceWidgetReceiver::class.java)
         intent.action = Constants.ACTION_DONE_EXERCISE
         // put the appWidgetId as an extra to the update intent
         if (goal.appWidgetId == AppWidgetManager.INVALID_APPWIDGET_ID) {
@@ -186,14 +198,11 @@ class WidgetActions @AssistedInject constructor(
     // https://developer.android.com/reference/android/appwidget/AppWidgetManager#requestPinAppWidget(android.content.ComponentName,%20android.os.Bundle,%20android.app.PendingIntent)
     suspend fun pinAppWidget() {
         val appWidgetManager = AppWidgetManager.getInstance(context)
-        val myProvider = ComponentName(context, WorkoutPixelAppWidgetProvider::class.java)
+        val myProvider = ComponentName(context, GlanceWidgetReceiver::class.java)
         Log.d(TAG, "pinAppWidget ${goal.debugString()}")
         if (appWidgetManager.isRequestPinAppWidgetSupported) {
-            // Create the PendingIntent object only if your app needs to be notified
-            // that the user allowed the widget to be pinned. Note that, if the pinning
-            // operation fails, your app isn't notified. This callback receives the ID
-            // of the newly-pinned widget (EXTRA_APPWIDGET_ID).
-            val pinIntent = Intent(context, WorkoutPixelAppWidgetProvider::class.java)
+            // Create the PendingIntent object only if your app needs to be notified that the user allowed the widget to be pinned. Note that, if the pinning operation fails, your app isn't notified. This callback receives the ID of the newly-pinned widget (EXTRA_APPWIDGET_ID).
+            val pinIntent = Intent(context, GlanceWidgetReceiver::class.java)
             pinIntent.action = Constants.ACTION_SETUP_WIDGET
             pinIntent.putExtra(Constants.GOAL_UID, goal.uid)
 
@@ -201,7 +210,7 @@ class WidgetActions @AssistedInject constructor(
                 /* context = */ context,
                 /* requestCode = */ 0,
                 /* intent = */ pinIntent,
-                /* flags = */ PendingIntent.FLAG_UPDATE_CURRENT
+                /* flags = */ PendingIntent.FLAG_MUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
             )
 
             // Looks weird.

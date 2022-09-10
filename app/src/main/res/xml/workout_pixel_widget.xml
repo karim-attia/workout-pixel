@@ -3,6 +3,7 @@
 https://developer.android.com/guide/topics/appwidgets
 -->
 <appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
+	android:configure="ch.karimattia.workoutpixel.activities.ConfigureActivity"
 	android:initialKeyguardLayout="@layout/widget_layout"
 	android:initialLayout="@layout/widget_layout"
 	android:minHeight="40dp"
@@ -18,7 +19,5 @@ https://developer.android.com/guide/topics/appwidgets
 	<!--
         android:description="Add a widget with your goal"
 	android:minWidth="40dp"
-
-        	android:configure="ch.karimattia.workoutpixel.activities.ConfigureActivity"
 
     -->

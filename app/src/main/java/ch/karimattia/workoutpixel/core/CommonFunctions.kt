@@ -26,6 +26,15 @@ object Constants {
 	const val GOAL_UID = "goalUid"
 	const val INVALID_GOAL_UID = 0
 	const val GOAL = "goal"
+
+	const val colorDoneInt = "colorDoneInt"
+	const val colorFirstIntervalInt = "colorFirstIntervalInt"
+	const val colorSecondIntervalInt = "colorSecondIntervalInt"
+	const val colorInitialInt = "colorInitialInt"
+	const val dateLanguage = "dateLanguage"
+	const val dateCountry = "dateCountry"
+	const val timeLanguage = "timeLanguage"
+	const val timeCountry = "timeCountry"
 }
 
 enum class Status {

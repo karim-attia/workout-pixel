@@ -36,6 +36,10 @@ interface GoalDao {
 	@Query("UPDATE goals SET appWidgetId =:invalidAppWidgetId WHERE appWidgetId=:appWidgetId")
 	suspend fun setAppWidgetIdToNullByAppwidgetId(appWidgetId: Int, invalidAppWidgetId: Int = AppWidgetManager.INVALID_APPWIDGET_ID)
 
+	// Get all goals
+	@Query("SELECT * FROM goals")
+	suspend fun loadAllGoals(): List<Goal>
+
 	// Get all goals without AppWidgetId
 	@Query("SELECT * FROM goals WHERE appWidgetId =:invalidAppWidgetId")
 	fun loadGoalsWithoutValidAppWidgetId(invalidAppWidgetId: Int = AppWidgetManager.INVALID_APPWIDGET_ID): Flow<List<Goal>>

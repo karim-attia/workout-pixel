@@ -1,12 +1,12 @@
 {
   "formatVersion": 1,
   "database": {
-    "version": 5,
-    "identityHash": "388e9f73ea52c4db6ed1548fad642a37",
+    "version": 7,
+    "identityHash": "2b678486a8cb89068c1bce405a823e6f",
     "entities": [
       {
         "tableName": "goals",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uid` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `appWidgetId` INTEGER NOT NULL, `title` TEXT NOT NULL, `lastWorkout` INTEGER NOT NULL, `intervalBlue` INTEGER NOT NULL, `intervalRed` INTEGER NOT NULL, `showDate` INTEGER NOT NULL, `showTime` INTEGER NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uid` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `appWidgetId` INTEGER NOT NULL, `glanceId` TEXT NOT NULL DEFAULT '', `title` TEXT NOT NULL, `lastWorkout` INTEGER NOT NULL, `intervalBlue` INTEGER NOT NULL, `intervalRed` INTEGER NOT NULL, `showDate` INTEGER NOT NULL, `showTime` INTEGER NOT NULL)",
         "fields": [
           {
             "fieldPath": "uid",
@@ -19,6 +19,13 @@
             "columnName": "appWidgetId",
             "affinity": "INTEGER",
             "notNull": true
+          },
+          {
+            "fieldPath": "glanceId",
+            "columnName": "glanceId",
+            "affinity": "TEXT",
+            "notNull": true,
+            "defaultValue": "''"
           },
           {
             "fieldPath": "title",
@@ -108,6 +115,7 @@
             "columnNames": [
               "widgetUid"
             ],
+            "orders": [],
             "createSql": "CREATE INDEX IF NOT EXISTS `index_pastWorkouts_widgetUid` ON `${TABLE_NAME}` (`widgetUid`)"
           }
         ],
@@ -129,7 +137,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '388e9f73ea52c4db6ed1548fad642a37')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '2b678486a8cb89068c1bce405a823e6f')"
     ]
   }
 }
