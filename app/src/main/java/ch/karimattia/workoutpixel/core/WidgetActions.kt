@@ -10,6 +10,14 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.RemoteViews
 import android.widget.Toast
+import androidx.datastore.preferences.core.booleanPreferencesKey
+import androidx.datastore.preferences.core.intPreferencesKey
+import androidx.datastore.preferences.core.longPreferencesKey
+import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.glance.GlanceId
+import androidx.glance.appwidget.GlanceAppWidget
+import androidx.glance.appwidget.GlanceAppWidgetManager
+import androidx.glance.appwidget.state.updateAppWidgetState
 import ch.karimattia.workoutpixel.R
 import ch.karimattia.workoutpixel.data.*
 import dagger.assisted.Assisted
@@ -26,119 +34,180 @@ private const val TAG: String = "GoalActions"
  * Class that manages everything related to the widget on the homescreen.
  */
 class WidgetActions @AssistedInject constructor(
-	@ApplicationContext val context: Context,
-	private val goalRepository: GoalRepository,
-	private val pastClickRepository: PastClickRepository,
-	private val settingsRepository: SettingsRepository,
-	@Assisted var goal: Goal,
+    @ApplicationContext val context: Context,
+    private val goalRepository: GoalRepository,
+    private val pastClickRepository: PastClickRepository,
+    private val settingsRepository: SettingsRepository,
+    @Assisted var goal: Goal,
 ) {
 
-	@AssistedFactory
-	interface Factory {
-		fun create(goal: Goal): WidgetActions
-	}
+    @AssistedFactory
+    interface Factory {
+        fun create(goal: Goal): WidgetActions
+    }
 
-	suspend fun updateAfterClick() {
-		Log.d(TAG, "ACTION_DONE_EXERCISE " + goal.debugString() + "start")
-		val numberOfPastWorkouts = pastClickRepository.getCountOfActivePastWorkouts(goal.uid) + 1
-		Toast.makeText(
-			context, "Oh yeah! Already done this $numberOfPastWorkouts ${plural(numberOfPastWorkouts, "time")} :)", Toast.LENGTH_SHORT
-		).show()
+    suspend fun updateAfterClick() {
+        Log.d(TAG, "ACTION_DONE_EXERCISE " + goal.debugString() + "start")
+        val numberOfPastWorkouts = pastClickRepository.getCountOfActivePastWorkouts(goal.uid) + 1
+        Toast.makeText(
+            context,
+            "Oh yeah! Already done this $numberOfPastWorkouts ${
+                plural(
+                    numberOfPastWorkouts,
+                    "time"
+                )
+            } :)",
+            Toast.LENGTH_SHORT
+        ).show()
 
-		// Update the widget data with the latest click
-		goal.lastWorkout = System.currentTimeMillis()
+        // Update the widget data with the latest click
+        goal.lastWorkout = System.currentTimeMillis()
 
-		// Instruct the widget manager to update the widget with the latest widget data
-		runUpdate(false)
+        // Instruct the widget manager to update the widget with the latest widget data
+        runUpdate(false)
 
-		// TODO: Handle as transaction: 3. here: https://medium.com/androiddevelopers/7-pro-tips-for-room-fbadea4bfbd1
-		// Add the workout to the database. Technicalities are taken care of in PastWorkoutsViewModel.
-		pastClickRepository.insertPastClick(PastClick(widgetUid = goal.uid, workoutTime = goal.lastWorkout))
+        // TODO: Handle as transaction: 3. here: https://medium.com/androiddevelopers/7-pro-tips-for-room-fbadea4bfbd1
+        // Add the workout to the database. Technicalities are taken care of in PastWorkoutsViewModel.
+        pastClickRepository.insertPastClick(
+            PastClick(
+                widgetUid = goal.uid,
+                workoutTime = goal.lastWorkout
+            )
+        )
 
-		// Update the widget data in the db
-		goalRepository.updateGoal(goal)
+        // Update the widget data in the db
+        goalRepository.updateGoal(goal)
 
-		Log.d(TAG, "ACTION_DONE_EXERCISE ${goal.debugString()}complete    --------------------------------------------")
-	}
+        Log.d(
+            TAG,
+            "ACTION_DONE_EXERCISE ${goal.debugString()}complete    --------------------------------------------"
+        )
+    }
 
-	// Can also be called on widget with invalid AppWidgetId
-	suspend fun runUpdate(setOnClickListener: Boolean) {
-		if (goal.appWidgetId != AppWidgetManager.INVALID_APPWIDGET_ID) {
+    // Can also be called on widget with invalid AppWidgetId
+    suspend fun runUpdate(setOnClickListener: Boolean) {
+        if (goal.appWidgetId != AppWidgetManager.INVALID_APPWIDGET_ID) {
+            // Old widget logic
+/*
 			// Make sure to always set both the text and the background of the widget because otherwise it gets updated to some random old version.
 			val appWidgetManager = AppWidgetManager.getInstance(context)
 			appWidgetManager.updateAppWidget(
 				goal.appWidgetId,
 				widgetView(setOnClickListener, appWidgetManager)
 			)
-		} else Log.d(TAG, "runUpdate: appWidgetId == null " + goal.debugString())
-	}
+*/
+            // Try block because getGlanceIdBy throws IllegalArgumentException if no GlanceId is found for this appWidgetId.
+            try {
+                val glanceAppWidgetManager = GlanceAppWidgetManager(context)
+                val glanceId: GlanceId = glanceAppWidgetManager.getGlanceIdBy(goal.appWidgetId)
+                updateAppWidgetState(context = context, glanceId = glanceId) {
+                    it[intPreferencesKey("uid")] = goal.uid
+                    it[intPreferencesKey("appWidgetId")] = goal.appWidgetId
+                    it[stringPreferencesKey("title")] = goal.title
+                    it[longPreferencesKey("lastWorkout")] = goal.lastWorkout
+                    it[intPreferencesKey("intervalBlue")] = goal.intervalBlue
+                    it[intPreferencesKey("intervalRed")] = goal.intervalRed
+                    it[booleanPreferencesKey("showDate")] = goal.showDate
+                    it[booleanPreferencesKey("showTime")] = goal.showTime
+                }
+                val glanceAppWidget: GlanceAppWidget = GlanceWidget()
 
-	@SuppressLint("ResourceType")
-	private suspend fun widgetView(setOnClickListener: Boolean, appWidgetManager: AppWidgetManager = AppWidgetManager.getInstance(context)): RemoteViews {
-		val widgetView = RemoteViews(context.packageName, R.layout.widget_layout)
-		val settingsData: SettingsData = settingsRepository.getSettingsOnce()
-		// Set an onClickListener for every widget: https://stackoverflow.com/questions/30174386/multiple-instances-of-widget-with-separated-working-clickable-imageview
-		if (setOnClickListener) widgetView.setOnClickPendingIntent(R.id.appwidget_text, widgetPendingIntent())
+                glanceAppWidget.update(context, glanceId)
+            } catch (e: IllegalArgumentException) {
+                Log.d(TAG, "No GlanceId found for this appWidgetId.")
+            }
 
-		// Before updating a widget, the text and background of the view need to be set. Otherwise, the existing not updated properties of the widgetView will be passed.
-		widgetView.setTextViewText(R.id.appwidget_text, goal.widgetText(settingsData = settingsData))
+        } else Log.d(TAG, "runUpdate: appWidgetId = null " + goal.debugString())
+    }
 
-		// widgetView.setInt(R.id.appwidget_text, "setBackgroundResource", R.drawable.rounded_corner_green)
-		widgetView.setInt(R.id.appwidget_text, "setBackgroundColor", getColorIntFromStatus(status = goal.status(), settingsData = settingsData))
+    @SuppressLint("ResourceType")
+    private suspend fun widgetView(
+        setOnClickListener: Boolean,
+        appWidgetManager: AppWidgetManager = AppWidgetManager.getInstance(
+            context
+        )
+    ): RemoteViews {
+        val widgetView = RemoteViews(context.packageName, R.layout.widget_layout)
+        val settingsData: SettingsData = settingsRepository.getSettingsOnce()
+        // Set an onClickListener for every widget: https://stackoverflow.com/questions/30174386/multiple-instances-of-widget-with-separated-working-clickable-imageview
+        if (setOnClickListener) widgetView.setOnClickPendingIntent(
+            R.id.appwidget_text,
+            widgetPendingIntent()
+        )
 
-		// Set size if available
-		// https://stackoverflow.com/questions/25153604/get-the-size-of-my-homescreen-widget
-		val heightInDp: Int = appWidgetManager.getAppWidgetOptions(goal.appWidgetId).getInt(AppWidgetManager.OPTION_APPWIDGET_MAX_HEIGHT, 44)
-		val paddingInDp: Int = max(heightInDp - 50, 0)
-		val density: Float = context.resources.displayMetrics.density
-		val paddingInPx: Int = (paddingInDp * density).toInt()
-		val paddingTopInPx: Int = ceil(paddingInPx / 4.0).toInt()
-		val paddingBottomInPx: Int = floor(paddingInPx / 4.0 * 3.0).toInt()
-		widgetView.setViewPadding(R.id.widget_container, 0, paddingTopInPx, 0, paddingBottomInPx)
+        // Before updating a widget, the text and background of the view need to be set. Otherwise, the existing not updated properties of the widgetView will be passed.
+        widgetView.setTextViewText(
+            R.id.appwidget_text,
+            goal.widgetText(settingsData = settingsData)
+        )
 
-		return widgetView
-	}
+        // widgetView.setInt(R.id.appwidget_text, "setBackgroundResource", R.drawable.rounded_corner_green)
+        widgetView.setInt(
+            R.id.appwidget_text,
+            "setBackgroundColor",
+            getColorIntFromStatus(status = goal.status(), settingsData = settingsData)
+        )
 
-	// Create an Intent to set the action DONE_EXERCISE. This will be received in onReceive.
-	private fun widgetPendingIntent(): PendingIntent? {
-		val intent = Intent(context, WorkoutPixelAppWidgetProvider::class.java)
-		intent.action = Constants.ACTION_DONE_EXERCISE
-		// put the appWidgetId as an extra to the update intent
-		if (goal.appWidgetId == AppWidgetManager.INVALID_APPWIDGET_ID) {
-			Log.d(TAG, "widgetPendingIntent: appWidgetId is null where it shouldn't be.")
-			return null
-		}
-		intent.putExtra(Constants.GOAL_UID, goal.uid)
-		return PendingIntent.getBroadcast(context, goal.appWidgetId, intent, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
-	}
+        // Set size if available
+        // https://stackoverflow.com/questions/25153604/get-the-size-of-my-homescreen-widget
+        val heightInDp: Int = appWidgetManager.getAppWidgetOptions(goal.appWidgetId)
+            .getInt(AppWidgetManager.OPTION_APPWIDGET_MAX_HEIGHT, 44)
+        val paddingInDp: Int = max(heightInDp - 50, 0)
+        val density: Float = context.resources.displayMetrics.density
+        val paddingInPx: Int = (paddingInDp * density).toInt()
+        val paddingTopInPx: Int = ceil(paddingInPx / 4.0).toInt()
+        val paddingBottomInPx: Int = floor(paddingInPx / 4.0 * 3.0).toInt()
+        widgetView.setViewPadding(R.id.widget_container, 0, paddingTopInPx, 0, paddingBottomInPx)
 
-	// https://developer.android.com/guide/topics/appwidgets/configuration#pin
-	// https://developer.android.com/reference/android/appwidget/AppWidgetManager#requestPinAppWidget(android.content.ComponentName,%20android.os.Bundle,%20android.app.PendingIntent)
-	suspend fun pinAppWidget() {
-		val appWidgetManager = AppWidgetManager.getInstance(context)
-		val myProvider = ComponentName(context, WorkoutPixelAppWidgetProvider::class.java)
-		Log.d(TAG, "pinAppWidget ${goal.debugString()}")
-		if (appWidgetManager.isRequestPinAppWidgetSupported) {
-			// Create the PendingIntent object only if your app needs to be notified
-			// that the user allowed the widget to be pinned. Note that, if the pinning
-			// operation fails, your app isn't notified. This callback receives the ID
-			// of the newly-pinned widget (EXTRA_APPWIDGET_ID).
-			val pinIntent = Intent(context, WorkoutPixelAppWidgetProvider::class.java)
-			pinIntent.action = Constants.ACTION_SETUP_WIDGET
-			pinIntent.putExtra(Constants.GOAL_UID, goal.uid)
+        return widgetView
+    }
 
-			val successCallback: PendingIntent = PendingIntent.getBroadcast(
-				/* context = */ context,
-				/* requestCode = */ 0,
-				/* intent = */ pinIntent,
-				/* flags = */ PendingIntent.FLAG_UPDATE_CURRENT)
+    // Create an Intent to set the action DONE_EXERCISE. This will be received in onReceive.
+    private fun widgetPendingIntent(): PendingIntent? {
+        val intent = Intent(context, WorkoutPixelAppWidgetProvider::class.java)
+        intent.action = Constants.ACTION_DONE_EXERCISE
+        // put the appWidgetId as an extra to the update intent
+        if (goal.appWidgetId == AppWidgetManager.INVALID_APPWIDGET_ID) {
+            Log.d(TAG, "widgetPendingIntent: appWidgetId is null where it shouldn't be.")
+            return null
+        }
+        intent.putExtra(Constants.GOAL_UID, goal.uid)
+        return PendingIntent.getBroadcast(
+            context,
+            goal.appWidgetId,
+            intent,
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+        )
+    }
 
-			// Looks weird.
-			val bundle = Bundle()
-			bundle.putParcelable(AppWidgetManager.EXTRA_APPWIDGET_PREVIEW, widgetView(false))
+    // https://developer.android.com/guide/topics/appwidgets/configuration#pin
+    // https://developer.android.com/reference/android/appwidget/AppWidgetManager#requestPinAppWidget(android.content.ComponentName,%20android.os.Bundle,%20android.app.PendingIntent)
+    suspend fun pinAppWidget() {
+        val appWidgetManager = AppWidgetManager.getInstance(context)
+        val myProvider = ComponentName(context, WorkoutPixelAppWidgetProvider::class.java)
+        Log.d(TAG, "pinAppWidget ${goal.debugString()}")
+        if (appWidgetManager.isRequestPinAppWidgetSupported) {
+            // Create the PendingIntent object only if your app needs to be notified
+            // that the user allowed the widget to be pinned. Note that, if the pinning
+            // operation fails, your app isn't notified. This callback receives the ID
+            // of the newly-pinned widget (EXTRA_APPWIDGET_ID).
+            val pinIntent = Intent(context, WorkoutPixelAppWidgetProvider::class.java)
+            pinIntent.action = Constants.ACTION_SETUP_WIDGET
+            pinIntent.putExtra(Constants.GOAL_UID, goal.uid)
 
-			appWidgetManager.requestPinAppWidget(myProvider, null, successCallback)
-		}
-	}
+            val successCallback: PendingIntent = PendingIntent.getBroadcast(
+                /* context = */ context,
+                /* requestCode = */ 0,
+                /* intent = */ pinIntent,
+                /* flags = */ PendingIntent.FLAG_UPDATE_CURRENT
+            )
+
+            // Looks weird.
+            val bundle = Bundle()
+            bundle.putParcelable(AppWidgetManager.EXTRA_APPWIDGET_PREVIEW, widgetView(false))
+
+            appWidgetManager.requestPinAppWidget(myProvider, null, successCallback)
+        }
+    }
 }
 

@@ -1,6 +1,7 @@
 package ch.karimattia.workoutpixel.data
 
 import android.appwidget.AppWidgetManager
+import androidx.compose.ui.graphics.Color
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Ignore
@@ -27,11 +28,24 @@ data class Goal
 		val timeRed = timeBlue + intervalInMilliseconds(2)
 
 		return when {
+			// If there is a statusOverride, return the statusOverride.
 			statusOverride != null -> statusOverride!!
 			lastWorkout == 0L -> Status.NONE
 			timeRed < last3Am() -> Status.RED
 			timeBlue < last3Am() -> Status.BLUE
 			else -> Status.GREEN
+		}
+	}
+
+	fun color(settingsData: SettingsData): Color =
+		Color(colorInt(settingsData = settingsData))
+
+	fun colorInt(settingsData: SettingsData): Int {
+		return when (status()) {
+			Status.GREEN -> settingsData.colorDoneInt
+			Status.BLUE -> settingsData.colorFirstIntervalInt
+			Status.RED -> settingsData.colorSecondIntervalInt
+			Status.NONE -> settingsData.colorInitialInt
 		}
 	}
 

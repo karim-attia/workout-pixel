@@ -28,6 +28,20 @@
                 android:resource="@xml/workout_pixel_info" />
         </receiver>
 
+        <receiver
+            android:name=".core.GlanceWidgetReceiver"
+            android:exported="false">
+
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/glance_widget_info" />
+
+        </receiver>
+
         <!-- https://stackoverflow.com/questions/64050392/software-keyboard-overlaps-content-of-jetpack-compose-view -->
         <activity
             android:name=".activities.MainActivity"
