@@ -92,7 +92,6 @@ class MainActivity : ComponentActivity() {
 
 		setContent {
 			val settingsData = settingsViewModel.settingsData.observeAsState().value
-			val appWidgetManager = AppWidgetManager.getInstance(this)
 			val mainActivityLambdas = Lambdas(
 				updateAfterClick = {
 					// contains updateGoal
@@ -125,7 +124,7 @@ class MainActivity : ComponentActivity() {
 						otherActions.updateAllWidgets()
 					}
 				},
-				widgetPinningPossible = appWidgetManager.isRequestPinAppWidgetSupported,
+				widgetPinningPossible = AppWidgetManager.getInstance(this).isRequestPinAppWidgetSupported,
 			)
 
 			WorkoutPixelApp(
