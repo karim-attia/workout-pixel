@@ -97,6 +97,7 @@ class OtherActions @Inject constructor(
         )
     }.filterNotNull()
 
+    @Suppress("UNCHECKED_CAST")
     suspend fun goalsWithoutGlanceId(): List<Goal> {
         val list: MutableList<Goal?> = goalRepository.allGoals() as MutableList<Goal?>
         list.removeAll(goalsWithGlanceId())

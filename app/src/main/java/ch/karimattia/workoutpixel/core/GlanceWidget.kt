@@ -60,7 +60,6 @@ class GlanceWidget : GlanceAppWidget() {
         settingsData.dateCountry = prefs[stringPreferencesKey("dateCountry")] ?: settingsData.dateCountry
         settingsData.timeLanguage = prefs[stringPreferencesKey("timeLanguage")] ?: settingsData.timeLanguage
         settingsData.timeCountry = prefs[stringPreferencesKey("timeCountry")] ?: settingsData.timeCountry
-        Log.d(TAG, "settingsData: $settingsData")
 
         // TODO: Create Goal(prefs: Preferences)
         val goal = Goal()

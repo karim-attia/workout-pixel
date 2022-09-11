@@ -37,7 +37,7 @@ import java.lang.Integer.max
 import kotlin.math.ceil
 import kotlin.math.floor
 
-private const val TAG: String = "GoalActions"
+private const val TAG: String = "WidgetActions"
 
 /**
  * Class that manages everything related to the widget on the homescreen.
@@ -130,7 +130,6 @@ class WidgetActions @AssistedInject constructor(
                     prefs[stringPreferencesKey(dateCountry)] = settingsData.dateCountry as String
                     prefs[stringPreferencesKey(timeLanguage)] = settingsData.timeLanguage as String
                     prefs[stringPreferencesKey(timeCountry)] = settingsData.timeCountry as String
-                    Log.d(TAG, "settingsData: $settingsData")
                 }
 
                 val glanceAppWidget: GlanceAppWidget = GlanceWidget()
