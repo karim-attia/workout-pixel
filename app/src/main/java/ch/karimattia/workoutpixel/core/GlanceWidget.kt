@@ -72,13 +72,16 @@ class GlanceWidget : GlanceAppWidget() {
         goal.intervalRed = prefs[intPreferencesKey("intervalRed")] ?: goal.intervalRed
         goal.showDate = prefs[booleanPreferencesKey("showDate")] ?: goal.showDate
         goal.showTime = prefs[booleanPreferencesKey("showTime")] ?: goal.showTime
-        WidgetContent(goal = goal, settingsData = settingsData)
+
+        val smiley = prefs[booleanPreferencesKey("smiley")] ?: false
+        WidgetContent(goal = goal, settingsData = settingsData, smiley = smiley)
     }
 }
 
 @Composable
 fun WidgetContent(
     goal: Goal,
+    smiley: Boolean,
     settingsData: SettingsData
 ) {
     Log.d(TAG, "WidgetContent $goal")
@@ -98,7 +101,7 @@ fun WidgetContent(
         verticalAlignment = CenterVertically
     ) {
         Text(
-            text = goal.widgetText(settingsData),
+            text = if (!smiley) goal.widgetText(settingsData) else ":)",
             // .wrapContentSize(Alignment.Center)
             modifier = GlanceModifier
                 .fillMaxWidth()
@@ -107,7 +110,7 @@ fun WidgetContent(
 
             style = TextStyle(
                 fontWeight = FontWeight.Medium,
-                fontSize = 12.sp,
+                fontSize = if (!smiley) 12.sp else 16.sp,
                 textAlign = TextAlign.Center,
                 color = ColorProvider(
                     day = Color.White,

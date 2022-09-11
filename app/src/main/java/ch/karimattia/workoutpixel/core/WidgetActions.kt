@@ -32,6 +32,7 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.*
 import java.lang.Integer.max
 import kotlin.math.ceil
 import kotlin.math.floor
@@ -54,6 +55,7 @@ class WidgetActions @AssistedInject constructor(
         fun create(goal: Goal): WidgetActions
     }
 
+    @OptIn(DelicateCoroutinesApi::class)
     suspend fun updateAfterClick() {
         Log.d(TAG, "ACTION_DONE_EXERCISE " + goal.debugString() + "start")
         val numberOfPastWorkouts = pastClickRepository.getCountOfActivePastWorkouts(goal.uid) + 1
@@ -72,7 +74,13 @@ class WidgetActions @AssistedInject constructor(
         goal.lastWorkout = System.currentTimeMillis()
 
         // Instruct the widget manager to update the widget with the latest widget data
-        runUpdate()
+        runUpdate(smiley = true)
+
+        GlobalScope.launch(Dispatchers.Default) {
+            delay(1000)
+            runUpdate(smiley = false)
+        }
+
 
         // TODO: Handle as transaction: 3. here: https://medium.com/androiddevelopers/7-pro-tips-for-room-fbadea4bfbd1
         // Add the workout to the database. Technicalities are taken care of in PastWorkoutsViewModel.
@@ -87,13 +95,12 @@ class WidgetActions @AssistedInject constructor(
         goalRepository.updateGoal(goal)
 
         Log.d(
-            TAG,
-            "ACTION_DONE_EXERCISE ${goal.debugString()}complete    --------------------------------------------"
+            TAG, "ACTION_DONE_EXERCISE ${goal.debugString()}complete    --------------------------------------------"
         )
     }
 
     // Can also be called on widget with invalid AppWidgetId
-    suspend fun runUpdate() {
+    suspend fun runUpdate(smiley: Boolean = false) {
         if (goal.appWidgetId != AppWidgetManager.INVALID_APPWIDGET_ID) {
             // Try block because getGlanceIdBy throws IllegalArgumentException if no GlanceId is found for this appWidgetId.
             try {
@@ -101,7 +108,7 @@ class WidgetActions @AssistedInject constructor(
                 val glanceId: GlanceId = glanceAppWidgetManager.getGlanceIdBy(goal.appWidgetId)
 
                 // TODO: Create updatePrefs(goal: Goal)
-                updateAppWidgetState(context = context, glanceId = glanceId) {prefs ->
+                updateAppWidgetState(context = context, glanceId = glanceId) { prefs ->
                     prefs[intPreferencesKey("uid")] = goal.uid
                     prefs[intPreferencesKey("appWidgetId")] = goal.appWidgetId
                     prefs[stringPreferencesKey("title")] = goal.title
@@ -110,6 +117,8 @@ class WidgetActions @AssistedInject constructor(
                     prefs[intPreferencesKey("intervalRed")] = goal.intervalRed
                     prefs[booleanPreferencesKey("showDate")] = goal.showDate
                     prefs[booleanPreferencesKey("showTime")] = goal.showTime
+
+                    prefs[booleanPreferencesKey("smiley")] = smiley
 
                     val settingsData: SettingsData = settingsRepository.getSettingsOnce()
                     prefs[intPreferencesKey(colorDoneInt)] = settingsData.colorDoneInt
@@ -136,15 +145,12 @@ class WidgetActions @AssistedInject constructor(
 
     @SuppressLint("ResourceType")
     private suspend fun widgetView(
-        setOnClickListener: Boolean,
-        appWidgetManager: AppWidgetManager = AppWidgetManager.getInstance(
-            context
-        )
+        appWidgetManager: AppWidgetManager = AppWidgetManager.getInstance(context)
     ): RemoteViews {
         val widgetView = RemoteViews(context.packageName, R.layout.widget_layout)
         val settingsData: SettingsData = settingsRepository.getSettingsOnce()
         // Set an onClickListener for every widget: https://stackoverflow.com/questions/30174386/multiple-instances-of-widget-with-separated-working-clickable-imageview
-        if (setOnClickListener) widgetView.setOnClickPendingIntent(
+        widgetView.setOnClickPendingIntent(
             R.id.appwidget_text,
             widgetPendingIntent()
         )
@@ -215,7 +221,7 @@ class WidgetActions @AssistedInject constructor(
 
             // Looks weird.
             val bundle = Bundle()
-            bundle.putParcelable(AppWidgetManager.EXTRA_APPWIDGET_PREVIEW, widgetView(false))
+            bundle.putParcelable(AppWidgetManager.EXTRA_APPWIDGET_PREVIEW, widgetView())
 
             appWidgetManager.requestPinAppWidget(myProvider, null, successCallback)
         }
