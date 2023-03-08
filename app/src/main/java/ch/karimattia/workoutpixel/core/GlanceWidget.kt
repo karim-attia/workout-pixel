@@ -96,7 +96,8 @@ fun WidgetContent(
             .clickable(onClick = actionRunCallback<ClickAction>(parameters = actionParametersOf(actionGoal to goal.uid)))
             .background(backgroundColor, backgroundColor)
             // actionParametersOf: https://proandroiddev.com/building-app-widgets-with-glance-8278cb455afa
-            .cornerRadius(8.dp),
+            //.cornerRadius(8.dp)
+        ,
         verticalAlignment = CenterVertically
     ) {
         Text(
@@ -188,6 +189,7 @@ class GlanceWidgetReceiver : GlanceAppWidgetReceiver() {
     }
 
     override fun onUpdate(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray) {
+        super.onUpdate(context, appWidgetManager, appWidgetIds)
         runBlocking {
             Log.d(TAG, "ON_UPDATE\n------------------------------------------------------------------------")
             // Start alarm
@@ -198,6 +200,7 @@ class GlanceWidgetReceiver : GlanceAppWidgetReceiver() {
     }
 
     override fun onDeleted(context: Context, appWidgetIds: IntArray) {
+        super.onDeleted(context, appWidgetIds)
         runBlocking {
             // When the user deletes the widget, delete the preference associated with it.
             Log.d(TAG, "ON_DELETED")
@@ -242,6 +245,7 @@ class GlanceWidgetReceiver : GlanceAppWidgetReceiver() {
     }
 
     override fun onAppWidgetOptionsChanged(context: Context, appWidgetManager: AppWidgetManager, appWidgetId: Int, newOptions: Bundle) {
+        super.onAppWidgetOptionsChanged(context, appWidgetManager, appWidgetId, newOptions)
         runBlocking {
             val goal: Goal? = repository.loadGoalByAppWidgetId(appWidgetId = appWidgetId)
             // There may be no goal with this appWidgetId, e.g. if the app data was deleted.
