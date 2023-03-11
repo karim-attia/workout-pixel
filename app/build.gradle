@@ -85,6 +85,7 @@ android {
     composeOptions {
         kotlinCompilerExtensionVersion '1.4.3'
     }
+    namespace 'ch.karimattia.workoutpixel'
 }
 
 //noinspection SpellCheckingInspection
