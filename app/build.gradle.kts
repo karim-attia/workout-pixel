@@ -2,13 +2,14 @@ import java.util.Properties
 import java.io.FileInputStream
 
 plugins {
+    id("com.google.devtools.ksp")
+
     id("com.android.application")
     id ("androidx.navigation.safeargs")
     id("org.jetbrains.kotlin.android")
     id("kotlin-android")
-    id("kotlin-kapt")
     id("dagger.hilt.android.plugin")
-    id("org.jetbrains.kotlin.plugin.serialization") version "1.6.0"
+    id("org.jetbrains.kotlin.plugin.serialization") version "1.9.20"
 }
 
 
@@ -68,16 +69,12 @@ android {
         jvmTarget = "17"
     }
 
-    kapt {
-        correctErrorTypes = true
-        arguments {
-            arg("room.schemaLocation", "$projectDir/schemas".toString())
-        }
+    ksp {
+        arg("room.schemaLocation", "$projectDir/schemas")
     }
 
-
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.4.3"
+        kotlinCompilerExtensionVersion = "1.5.4-dev-k1.9.20-50f08dfa4b4"
     }
 
     defaultConfig {
@@ -112,8 +109,10 @@ dependencies {
 
     // Room components
     val room_version = "2.6.0"
+    ksp ("androidx.room:room-compiler:$room_version")
     implementation ("androidx.room:room-ktx:$room_version")
-    kapt ("androidx.room:room-compiler:$room_version")
+    implementation("com.google.devtools.ksp:symbol-processing-api:1.9.20-1.0.14")
+
     // implementation "androidx.room:room-runtime:$room_version"
     // annotationProcessor "androidx.room:room-compiler:$room_version"
     // ksp "androidx.room:room-compiler:$room_version"
@@ -171,11 +170,11 @@ dependencies {
     implementation("androidx.datastore:datastore-preferences:1.0.0")
 
     // https://dagger.dev/hilt/gradle-setup
-    implementation ("com.google.dagger:hilt-android:2.48")
-    kapt ("com.google.dagger:hilt-compiler:2.43.2")
+    ksp ("com.google.dagger:hilt-android:2.48")
+    ksp ("com.google.dagger:hilt-compiler:2.48")
 
     // https://github.com/Kotlin/kotlinx.serialization
-    implementation ("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.0")
+    implementation ("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
 
     // https://console.firebase.google.com/project/workout-pixel/overview
     // Import the Firebase BoM
@@ -196,7 +195,6 @@ dependencies {
     implementation "com.google.firebase:firebase-analytics:19.0.2"
 */
 
-    // Updating leads to several errors
     implementation ("androidx.glance:glance-appwidget:1.0.0")
 
     implementation ("com.github.karim-attia:ChatbotComposeFramework:1.0.2")

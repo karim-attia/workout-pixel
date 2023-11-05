@@ -5,22 +5,29 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath("com.android.tools.build:gradle:8.1.2")
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.8.10")
-
-        // Updating this leads to only "Hilt" error
-        classpath("androidx.navigation:navigation-safe-args-gradle-plugin:2.5.3")
-
-        // https://dagger.dev/hilt/gradle-setup
-        classpath("com.google.dagger:hilt-android-gradle-plugin:2.43.2")
-
-        // https://console.firebase.google.com/project/workout-pixel/overview
-        classpath("com.google.gms:google-services:4.4.0")
-
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
+
+        classpath("com.android.tools.build:gradle:8.1.2")
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.20")
+
+        // Updating this leads to only "Hilt" error
+        classpath("androidx.navigation:navigation-safe-args-gradle-plugin:2.7.5")
+
+        // https://dagger.dev/hilt/gradle-setup
+        classpath("com.google.dagger:hilt-android-gradle-plugin:2.48")
+
+        // https://console.firebase.google.com/project/workout-pixel/overview
+        // classpath("com.google.gms:google-services:4.4.0")
+
+
     }
 }
+
+plugins {
+    id("com.google.devtools.ksp") version "1.9.20-1.0.14" apply false
+}
+
 
 allprojects {
     repositories {
@@ -28,6 +35,7 @@ allprojects {
         mavenCentral()
         maven { setUrl("https://jitpack.io") }
         maven { setUrl("https://maven.google.com") }
+        maven { setUrl ("https://androidx.dev/storage/compose-compiler/repository/") }
     }
 }
 
