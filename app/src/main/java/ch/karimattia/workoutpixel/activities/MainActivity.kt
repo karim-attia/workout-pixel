@@ -42,7 +42,7 @@ import ch.karimattia.workoutpixel.screens.settings.SettingsViewModel
 import ch.karimattia.workoutpixel.ui.theme.WorkoutPixelTheme
 import coil.annotation.ExperimentalCoilApi
 import com.google.accompanist.pager.ExperimentalPagerApi
-import com.google.firebase.analytics.FirebaseAnalytics
+// import com.google.firebase.analytics.FirebaseAnalytics
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -74,20 +74,20 @@ class MainActivity : ComponentActivity() {
 	lateinit var pastClickViewModelAssistedFactory: PastClickViewModelAssistedFactory
 
 
-	private lateinit var firebaseAnalytics: FirebaseAnalytics
+	// private lateinit var firebaseAnalytics: FirebaseAnalytics
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 		val goalViewModel: GoalViewModel by viewModels()
 		val settingsViewModel: SettingsViewModel by viewModels()
 
-		firebaseAnalytics = FirebaseAnalytics.getInstance(this)
+		// firebaseAnalytics = FirebaseAnalytics.getInstance(this)
 		// https://firebase.google.com/docs/analytics/get-started?platform=android#kotlin+ktx
 		// firebaseAnalytics = Firebase.analytics
-		val bundle = Bundle()
-		bundle.putString(FirebaseAnalytics.Param.ITEM_ID, "my_item_id")
+		// val bundle = Bundle()
+		// bundle.putString(FirebaseAnalytics.Param.ITEM_ID, "my_item_id")
 
-		firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle)
+		// firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle)
 
 
 		setContent {

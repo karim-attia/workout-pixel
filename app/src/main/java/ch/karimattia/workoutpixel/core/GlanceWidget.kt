@@ -120,7 +120,7 @@ fun WidgetContent(
             // .wrapContentSize(Alignment.Center)
             modifier = GlanceModifier
                 .fillMaxWidth()
-                // Do I really need this in the row and the text? Seems like it from testing. ð¤·ð
+                // Do I really need this in the row and the text? Seems like it from testing.
                 .clickable(
                     onClick = actionRunCallback<ClickAction>(
                         parameters = actionParametersOf(
@@ -133,12 +133,6 @@ fun WidgetContent(
                 fontWeight = FontWeight.Medium,
                 fontSize = if (!smiley) 12.sp else 16.sp,
                 textAlign = TextAlign.Center,
-                /*
-                                color = ColorProvider(
-                                    day = Color.White,
-                                    night = Color.White,
-                                )
-                */
             ),
         )
     }
