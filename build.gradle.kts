@@ -10,8 +10,6 @@ buildscript {
 
         classpath("com.android.tools.build:gradle:8.1.2")
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.20")
-
-        // Updating this leads to only "Hilt" error
         classpath("androidx.navigation:navigation-safe-args-gradle-plugin:2.7.5")
 
         // https://dagger.dev/hilt/gradle-setup

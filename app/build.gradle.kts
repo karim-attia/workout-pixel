@@ -2,9 +2,8 @@ import java.util.Properties
 import java.io.FileInputStream
 
 plugins {
-    id("com.google.devtools.ksp")
-
     id("com.android.application")
+    id("com.google.devtools.ksp")
     id ("androidx.navigation.safeargs")
     id("org.jetbrains.kotlin.android")
     id("kotlin-android")
@@ -78,7 +77,6 @@ android {
     }
 
     defaultConfig {
-        resConfigs("en")
         namespace = "ch.karimattia.workoutpixel"
     }
 }
@@ -113,14 +111,8 @@ dependencies {
     implementation ("androidx.room:room-ktx:$room_version")
     implementation("com.google.devtools.ksp:symbol-processing-api:1.9.20-1.0.14")
 
-    // implementation "androidx.room:room-runtime:$room_version"
-    // annotationProcessor "androidx.room:room-compiler:$room_version"
-    // ksp "androidx.room:room-compiler:$room_version"
-
-    // androidTestImplementation "androidx.room:room-testing:$room_version"
-
     // Navigation
-    // implementation "androidx.navigation:navigation-ui-ktx:2.4.0-alpha10"
+    // implementation "androidx.navigation:navigation-ui-ktx:2.4.0-alxpha10"
     // Replaced by https://google.github.io/accompanist/navigation-animation
     // Jetpack Compose Integration
     implementation ("androidx.navigation:navigation-compose:2.7.5")
