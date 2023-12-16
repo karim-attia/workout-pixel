@@ -85,7 +85,7 @@ android {
 dependencies {
     implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
     implementation ("androidx.lifecycle:lifecycle-extensions:2.2.0")
-    implementation ("androidx.activity:activity-ktx:1.8.0")
+    implementation ("androidx.activity:activity-ktx:1.8.2")
     testImplementation ("junit:junit:4.13.2")
     testImplementation ("org.testng:testng:7.4.0")
 
@@ -106,7 +106,7 @@ dependencies {
     androidTestImplementation ("androidx.compose.ui:ui-test-junit4:1.5.4")
 
     // Room components
-    val room_version = "2.6.0"
+    val room_version = "2.6.1"
     ksp ("androidx.room:room-compiler:$room_version")
     implementation ("androidx.room:room-ktx:$room_version")
     implementation("com.google.devtools.ksp:symbol-processing-api:1.9.20-1.0.14")
@@ -115,7 +115,7 @@ dependencies {
     // implementation "androidx.navigation:navigation-ui-ktx:2.4.0-alxpha10"
     // Replaced by https://google.github.io/accompanist/navigation-animation
     // Jetpack Compose Integration
-    implementation ("androidx.navigation:navigation-compose:2.7.5")
+    implementation ("androidx.navigation:navigation-compose:2.7.6")
     // https://google.github.io/accompanist/navigation-animation/
     // implementation "com.google.accompanist:accompanist-navigation-animation:0.20.0"
     implementation ("androidx.hilt:hilt-navigation-compose:1.1.0")
@@ -132,7 +132,7 @@ dependencies {
     implementation ("androidx.compose.material:material-icons-core:1.5.4")
     implementation ("androidx.compose.material:material-icons-extended:1.5.4")
     // Integration with activities
-    implementation ("androidx.activity:activity-compose:1.8.0")
+    implementation ("androidx.activity:activity-compose:1.8.2")
     // Integration with ViewModels
     implementation ("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.2")
     // Integration with observables
