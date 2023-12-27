@@ -131,8 +131,10 @@ fun LastDoneIconAndText(goal: Goal, settingsData: SettingsData) {
 fun IconAndText(icon: ImageVector, size: Int, iconPaddingLeft: Int, text: String) {
 	Row(verticalAlignment = Alignment.CenterVertically) {
 		Icon(
-			imageVector = icon, contentDescription = null,
-			Modifier
+			imageVector = icon,
+			contentDescription = null,
+			tint = Color.Gray,
+			modifier = Modifier
 				.padding(end = iconPaddingLeft.dp)
 				.height(size.dp)
 				.width(size.dp)
@@ -140,6 +142,8 @@ fun IconAndText(icon: ImageVector, size: Int, iconPaddingLeft: Int, text: String
 		Text(
 			text = text,
 			fontSize = 14.sp,
+			// fontWeight = FontWeight.Bold,
+			color = Color.Gray,
 			modifier = Modifier
 				.defaultMinSize(100.dp)
 				.padding(start = 5.dp)
