@@ -107,9 +107,15 @@ fun colorToInt(color: Color): Int = android.graphics.Color.argb(color.alpha, col
  * Time and date formatting stuff
  */
 fun dateBeautiful(date: Long, locale: Locale): String {
+	// If today or yesterday, show "today" or "yesterday" instead of the date.
 	return if (date == 0L) {
 		"Never"
-	} else {
+	} else if (date > today3Am()) {
+		"Today"
+	} else if (date > today3Am() - intervalInMilliseconds(1)) {
+		"Yesterday"
+	}
+	else {
 		val lastWorkout: LocalDateTime = Instant.ofEpochMilli(date).atZone(ZoneId.systemDefault()).toLocalDateTime()
 		val dateFormatter: DateTimeFormatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT).withLocale(locale)
 		lastWorkout.format(dateFormatter)

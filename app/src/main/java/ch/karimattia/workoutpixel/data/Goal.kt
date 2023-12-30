@@ -70,4 +70,22 @@ data class Goal(
 		}
 		return widgetText
 	}
+
+	fun widgetTextDateAndTime(settingsData: SettingsData): String {
+		var widgetTextDateAndTime = ""
+		if ((status() != Status.NONE)) {
+			// If statusOverride override is active, use currentTimeMillis to show how the widget will look in the preview.
+			val displayTime: Long = if (statusOverride == Status.GREEN) System.currentTimeMillis() else {
+				lastWorkout
+			}
+			if (showDate) widgetTextDateAndTime += "\n${dateBeautiful(displayTime, settingsData.dateLocale())}"
+			if (showTime) widgetTextDateAndTime += "\n${timeBeautiful(displayTime, settingsData.timeLocale())}"
+		}
+//		if (widgetTextDateAndTime != null) {
+//			if (widgetTextDateAndTime.isEmpty()) {
+//				widgetTextDateAndTime = null
+//			}
+//		}
+		return widgetTextDateAndTime
+	}
 }

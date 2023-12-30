@@ -120,6 +120,8 @@ fun IntervalIconAndText(goal: Goal) {
 
 @Composable
 fun LastDoneIconAndText(goal: Goal, settingsData: SettingsData) {
+	// If today or yesterday, show "today" or "yesterday" instead of the date.
+
 	IconAndText(
 		Icons.Filled.Done,
 		22, 0,

@@ -16,6 +16,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import ch.karimattia.workoutpixel.core.colorToInt
 import ch.karimattia.workoutpixel.core.dateBeautiful
+import ch.karimattia.workoutpixel.core.intervalInMilliseconds
 import ch.karimattia.workoutpixel.core.timeBeautiful
 import ch.karimattia.workoutpixel.data.Goal
 import ch.karimattia.workoutpixel.data.SettingsData
@@ -40,7 +41,7 @@ fun Settings(
 	settingsData: SettingsData = lambdas.settingsData,
 	settingChange: (SettingsData) -> Unit = lambdas.settingChange,
 ) {
-	val goal = Goal(title = "Select\ncolor")
+	val goal = Goal(title = "Select\ncolor", lastWorkout = 1663506300000L, intervalBlue=10000)
 	Log.d(TAG, "dateLanguage: ${settingsData.dateLanguage} / dateCountry: ${settingsData.dateCountry}")
 	Log.d(TAG, "timeLanguage: ${settingsData.timeLanguage} / timeCountry: ${settingsData.timeCountry}")
 	Column {
@@ -152,7 +153,7 @@ class Formats(
 		label = "date",
 		locale = settingsData.dateLocale(),
 		isLocaleDefault = settingsData.isDateLocaleDefault(),
-		transformDateTimeFormatToString = { dateBeautiful(2010651132000L, it) },
+		transformDateTimeFormatToString = { dateBeautiful(1663506300000L, it) },
 		maxStringSizeFilter = 10,
 		showDate = true,
 	),
@@ -160,7 +161,7 @@ class Formats(
 		label = "time",
 		locale = settingsData.timeLocale(),
 		isLocaleDefault = settingsData.isTimeLocaleDefault(),
-		transformDateTimeFormatToString = { timeBeautiful(7520000L, it) + " / " + timeBeautiful(date = 7520000L + 12 * 60 * 60 * 1000, it) },
+		transformDateTimeFormatToString = { timeBeautiful(1663506300000L, it) + " / " + timeBeautiful(date = 1663506300000L + 12 * 60 * 60 * 1000, it) },
 		maxStringSizeFilter = 23,
 		showTime = true,
 	),
@@ -189,7 +190,7 @@ fun LocaleSelectionDateTime(
 	}) {
 		/**
 		 * Map of all nice strings to their locales
-		 * map: Make sure, we only include Locales that are recreatable by language and country.
+		 * map: Make sure, we only include Locales that are re-creatable by language and country.
 		 * associateBy: Map unique nice example string to their locales.
 		 * filterKeys: remove entries with strings that are too long.
 		 */
@@ -228,7 +229,8 @@ fun LocaleSelectionDateTime(
 			goal = goal.copy(title = "Your goal",
 				showDate = format.showDate,
 				showTime = format.showTime,
-				lastWorkout = remember { System.currentTimeMillis() }),
+				// lastWorkout = remember { System.currentTimeMillis()- intervalInMilliseconds(2) }
+			),
 			settingsData = settingsData,
 			onClick = { dialogState.show() },
 		)

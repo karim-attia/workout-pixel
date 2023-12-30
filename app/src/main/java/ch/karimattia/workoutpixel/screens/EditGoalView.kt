@@ -195,7 +195,7 @@ fun ConnectExistingGoal(
 				modifier = modifier,
 			)
 			// Row {
-			var selectedIndex: Int by remember { mutableStateOf(0) }
+			var selectedIndex: Int by remember { mutableIntStateOf(0) }
 			ConnectDropdown(
 				goalsWithoutWidget = goalsWithoutWidget,
 				selectedIndex = selectedIndex,

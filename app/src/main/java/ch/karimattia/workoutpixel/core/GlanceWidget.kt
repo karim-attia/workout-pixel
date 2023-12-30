@@ -22,6 +22,7 @@ import androidx.glance.appwidget.background
 import androidx.glance.appwidget.provideContent
 import androidx.glance.currentState
 import androidx.glance.layout.Alignment.Companion.CenterVertically
+import androidx.glance.layout.Column
 import androidx.glance.layout.Row
 import androidx.glance.layout.fillMaxWidth
 import androidx.glance.layout.height
@@ -95,9 +96,10 @@ fun WidgetContent(
     Log.d(TAG, "WidgetContent $goal")
     // TODO: Get settingsData
     val backgroundColor = goal.color(settingsData)
+    val timeAndDateString = goal.widgetTextDateAndTime(settingsData)
 
-    // TODO: Styling seems unelegant
-    Row(
+    // TODO: Styling seems inelegant
+    Column(
         modifier = GlanceModifier
             //.width(66.dp)
             .height(44.dp)
@@ -135,6 +137,29 @@ fun WidgetContent(
                 textAlign = TextAlign.Center,
             ),
         )
+/*        if (timeAndDateString.isNotEmpty()) {
+            Text(
+                text = timeAndDateString,
+                // .wrapContentSize(Alignment.Center)
+                modifier = GlanceModifier
+                    .fillMaxWidth()
+                    // Do I really need this in the row and the text? Seems like it from testing.
+                    .clickable(
+                        onClick = actionRunCallback<ClickAction>(
+                            parameters = actionParametersOf(
+                                actionGoal to goal.uid
+                            )
+                        )
+                    ),
+
+                style = TextStyle(
+                    fontWeight = FontWeight.Normal,
+                    fontSize = if (!smiley) 12.sp else 16.sp,
+                    textAlign = TextAlign.Center,
+                ),
+            )
+        }*/
+
     }
 }
 
