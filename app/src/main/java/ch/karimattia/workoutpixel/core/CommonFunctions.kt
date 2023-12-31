@@ -110,9 +110,9 @@ fun dateBeautiful(date: Long, locale: Locale): String {
 	// If today or yesterday, show "today" or "yesterday" instead of the date.
 	return if (date == 0L) {
 		"Never"
-	} else if (date > today3Am()) {
+	} else if (date > last3Am()) {
 		"Today"
-	} else if (date > today3Am() - intervalInMilliseconds(1)) {
+	} else if (date > last3Am() - intervalInMilliseconds(1)) {
 		"Yesterday"
 	}
 	else {
