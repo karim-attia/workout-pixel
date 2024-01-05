@@ -45,20 +45,37 @@ fun GoalPreview(
     backgroundColor: Color = goal.color(settingsData = settingsData),
     onClick: () -> Unit = {},
 ) {
-    Text(
-        text = goal.widgetText(settingsData),
-        textAlign = TextAlign.Center,
-        fontSize = 12.sp,
-        fontWeight = FontWeight(500),
-        color = Color.White,
+    Column(
+
         modifier = modifier
-			.clickable { onClick() }
-			.width(66.dp)
-			.height(44.dp)
-			.clip(shape = RoundedCornerShape(4.dp))
-			.background(backgroundColor)
-			.wrapContentSize(Alignment.Center)
-    )
+            .clickable { onClick() }
+            .width(66.dp)
+            .height(44.dp)
+            .clip(shape = RoundedCornerShape(4.dp))
+            .background(backgroundColor)
+            .wrapContentSize(Alignment.Center),
+        horizontalAlignment = Alignment.CenterHorizontally,
+
+    ) {
+
+        Text(
+            text = goal.title,
+            textAlign = TextAlign.Center,
+            fontSize = 12.sp,
+            fontWeight = FontWeight(500),
+            color = Color.White,
+
+        )
+        if (goal.showDate || goal.showTime) {
+            Text(
+                text = goal.widgetTextDateAndTime(settingsData),
+                textAlign = TextAlign.Center,
+                fontSize = 10.sp,
+                fontWeight = FontWeight(500),
+                color = settingsData.colorLighter(goal.status()),
+            )
+        }
+    }
 }
 
 @Composable

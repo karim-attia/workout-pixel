@@ -97,7 +97,6 @@ fun WidgetContent(
     Log.d(TAG, "WidgetContent $goal")
     // TODO: Get settingsData
     val backgroundColor = goal.color(settingsData)
-    val timeAndDateString = goal.widgetTextDateAndTime(settingsData)
 
     // TODO: Styling seems inelegant
     Column(
@@ -142,9 +141,9 @@ fun WidgetContent(
                 color = ColorProvider(Color.White)
             ),
         )
-        if (timeAndDateString != "" && !smiley) {
+        if (goal.showDate || goal.showTime) {
             Text(
-                text = timeAndDateString,
+                text = goal.widgetTextDateAndTime(settingsData),
                 // .wrapContentSize(Alignment.Center)
                 modifier = GlanceModifier
                     .fillMaxWidth()
