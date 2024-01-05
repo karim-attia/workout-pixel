@@ -87,7 +87,7 @@ dependencies {
     implementation ("androidx.lifecycle:lifecycle-extensions:2.2.0")
     implementation ("androidx.activity:activity-ktx:1.8.2")
     testImplementation ("junit:junit:4.13.2")
-    testImplementation ("org.testng:testng:7.4.0")
+    testImplementation ("org.testng:testng:7.9.0")
 
     // Lifecycle components
     val lifecycleVersion = "2.6.2"
@@ -96,8 +96,8 @@ dependencies {
     implementation ("androidx.lifecycle:lifecycle-common-java8:$lifecycleVersion")
 
     // Kotlin components
-    api ("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.1")
-    api ("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.1")
+    api ("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
+    api ("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
 
     androidTestImplementation ("androidx.test.ext:junit:1.1.5")
     androidTestImplementation ("androidx.test.espresso:espresso-core:3.5.1")
@@ -109,10 +109,10 @@ dependencies {
     val room_version = "2.6.1"
     ksp ("androidx.room:room-compiler:$room_version")
     implementation ("androidx.room:room-ktx:$room_version")
-    implementation("com.google.devtools.ksp:symbol-processing-api:1.9.20-1.0.14")
+    implementation("com.google.devtools.ksp:symbol-processing-api:1.9.22-1.0.16")
 
     // Navigation
-    // implementation "androidx.navigation:navigation-ui-ktx:2.4.0-alxpha10"
+    // implementation "androidx.navigation:navigation-ui-ktx:2.4.0-alpha10"
     // Replaced by https://google.github.io/accompanist/navigation-animation
     // Jetpack Compose Integration
     implementation ("androidx.navigation:navigation-compose:2.7.6")
@@ -143,30 +143,41 @@ dependencies {
     androidTestImplementation ("androidx.compose.ui:ui-test-junit4:1.5.4")
 
     // Pager: https://google.github.io/accompanist/pager/
+    // Can't be bothered to update since it looks like a pain and it's only shown to phones that can't pin widgets.
+    //noinspection GradleDependency
     implementation ("com.google.accompanist:accompanist-pager:0.19.0")
+    //noinspection GradleDependency
     implementation ("com.google.accompanist:accompanist-pager-indicators:0.19.0")
 
     // https://stackoverflow.com/questions/68672046/how-to-use-animated-vector-drawable-in-compose
     implementation("androidx.compose.animation:animation-graphics:1.5.4")
 
     // Coil for instruction gifs
+    // Can't be bothered to update since it looks like a pain and it's only shown to phones that can't pin widgets.
+    //noinspection GradleDependency
     implementation("io.coil-kt:coil-compose:1.3.2")
+    //noinspection GradleDependency
     implementation("io.coil-kt:coil-gif:1.3.2")
 
     // https://github.com/vanpra/compose-material-dialogs
-    implementation ("io.github.vanpra.compose-material-dialogs:color:0.6.2")
-    implementation ("io.github.vanpra.compose-material-dialogs:core:0.6.2")
+    implementation ("io.github.vanpra.compose-material-dialogs:color:0.9.0")
+    implementation ("io.github.vanpra.compose-material-dialogs:core:0.9.0")
 
     // https://developer.android.com/topic/libraries/architecture/datastore#kts
     implementation("androidx.datastore:datastore:1.0.0")
     implementation("androidx.datastore:datastore-preferences:1.0.0")
 
     // https://dagger.dev/hilt/gradle-setup
+    // Seems like a pain to upgrade to 2.50
+    // 05.01.2024
+    // [ksp] [Hilt] No property named assistedFactory was found in annotation HiltViewModel: java.lang.IllegalStateException: No property named assistedFactory was found in annotation HiltViewModel
+    //noinspection GradleDependency
     ksp ("com.google.dagger:hilt-android:2.48")
+    //noinspection GradleDependency
     ksp ("com.google.dagger:hilt-compiler:2.48")
 
     // https://github.com/Kotlin/kotlinx.serialization
-    implementation ("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
+    implementation ("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.2")
 
     // https://console.firebase.google.com/project/workout-pixel/overview
     // Import the Firebase BoM
