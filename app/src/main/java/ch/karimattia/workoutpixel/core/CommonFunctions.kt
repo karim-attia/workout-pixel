@@ -25,7 +25,6 @@ object Constants {
 	const val PREFERENCE_NAME = "SharedPreferences"
 	const val GOAL_UID = "goalUid"
 	const val INVALID_GOAL_UID = 0
-	const val GOAL = "goal"
 
 	const val colorDoneInt = "colorDoneInt"
 	const val colorFirstIntervalInt = "colorFirstIntervalInt"
@@ -114,6 +113,60 @@ fun dateBeautiful(date: Long, locale: Locale): String {
 		"Today"
 	} else if (date > last3Am() - intervalInMilliseconds(1)) {
 		"Yesterday"
+	} else if (date > last3Am() - intervalInMilliseconds(2)) {
+		"2d ago"
+	} else if (date > last3Am() - intervalInMilliseconds(3)) {
+		"3d ago"
+	} else if (date > last3Am() - intervalInMilliseconds(4)) {
+		"4d ago"
+	} else if (date > last3Am() - intervalInMilliseconds(5)) {
+		"5d ago"
+	} else if (date > last3Am() - intervalInMilliseconds(6)) {
+		"6d ago"
+	} else if (date > last3Am() - intervalInMilliseconds(7)) {
+		"1w ago"
+	} else if (date > last3Am() - intervalInMilliseconds(14)) {
+		"2w ago"
+	} else if (date > last3Am() - intervalInMilliseconds(21)) {
+		"3w ago"
+	} else if (date > last3Am() - intervalInMilliseconds(28)) {
+		"4w ago"
+	} else if (date > last3Am() - intervalInMilliseconds(35)) {
+		"5w ago"
+	} else if (date > last3Am() - intervalInMilliseconds(42)) {
+		"6w ago"
+	} else if (date > last3Am() - intervalInMilliseconds(49)) {
+		"7w ago"
+	} else if (date > last3Am() - intervalInMilliseconds(56)) {
+		"8w ago"
+	} else if (date > last3Am() - intervalInMilliseconds(63)) {
+		"9w ago"
+	} else if (date > last3Am() - intervalInMilliseconds(70)) {
+		"10w ago"
+	} else if (date > last3Am() - intervalInMilliseconds(77)) {
+		"11w ago"
+	} else if (date > last3Am() - intervalInMilliseconds(84)) {
+		"12w ago"
+	} else if (date > last3Am() - intervalInMilliseconds(91)) {
+		"13w ago"
+	} else if (date > last3Am() - intervalInMilliseconds(98)) {
+		"14w ago"
+	} else if (date > last3Am() - intervalInMilliseconds(105)) {
+		"15w ago"
+	} else if (date > last3Am() - intervalInMilliseconds(112)) {
+		"16w ago"
+	} else if (date > last3Am() - intervalInMilliseconds(119)) {
+		"17w ago"
+	} else if (date > last3Am() - intervalInMilliseconds(126)) {
+		"18w ago"
+	} else if (date > last3Am() - intervalInMilliseconds(133)) {
+		"19w ago"
+	} else if (date > last3Am() - intervalInMilliseconds(140)) {
+		"20w ago"
+	} else if (date > last3Am() - intervalInMilliseconds(147)) {
+		"21w ago"
+	} else if (date > last3Am() - intervalInMilliseconds(154)) {
+		"22w ago"
 	}
 	else {
 		val lastWorkout: LocalDateTime = Instant.ofEpochMilli(date).atZone(ZoneId.systemDefault()).toLocalDateTime()

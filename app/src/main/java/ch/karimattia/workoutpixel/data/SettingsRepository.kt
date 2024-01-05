@@ -2,9 +2,11 @@ package ch.karimattia.workoutpixel.data
 
 import android.content.Context
 import androidx.compose.ui.graphics.Color
+import androidx.core.graphics.ColorUtils
 import androidx.datastore.core.CorruptionException
 import androidx.datastore.core.Serializer
 import androidx.datastore.dataStore
+import ch.karimattia.workoutpixel.core.Status
 import ch.karimattia.workoutpixel.ui.theme.Blue
 import ch.karimattia.workoutpixel.ui.theme.Green
 import ch.karimattia.workoutpixel.ui.theme.Grey
@@ -56,6 +58,41 @@ data class SettingsData(
     fun isTimeLocaleDefault(): Boolean = (timeLanguage == null || timeCountry == null)
     fun dateLocale(): Locale = if (isDateLocaleDefault()) Locale.getDefault() else Locale(dateLanguage!!, dateCountry!!)
     fun timeLocale(): Locale = if (isTimeLocaleDefault()) Locale.getDefault() else Locale(timeLanguage!!, timeCountry!!)
+
+    private fun colorSameHueLowerSaturation(originalColor: Int): Int {
+        val hsl = FloatArray(3)
+        ColorUtils.colorToHSL(originalColor, hsl)
+        // hue
+        // hsl[0] *= 1f
+        // saturation
+        hsl[1] = 0.8f
+        // hsl[1] *= 0.7f
+        // lightness
+        hsl[2] = 0.92f
+        // hsl[2] *= 0.84f
+        return ColorUtils.HSLToColor(hsl)
+    }
+
+    fun colorDoneLighter(): Int = colorSameHueLowerSaturation(colorDoneInt)
+    fun colorFirstIntervalLighter(): Int = colorSameHueLowerSaturation(colorFirstIntervalInt)
+    fun colorSecondIntervalLighter(): Int = colorSameHueLowerSaturation(colorSecondIntervalInt)
+    fun colorInitialLighter(): Int = colorSameHueLowerSaturation(colorInitialInt)
+
+    fun color(status: Status): Color = when (status) {
+        Status.GREEN -> colorDone()
+        Status.BLUE -> colorFirstInterval()
+        Status.RED -> colorSecondInterval()
+        Status.NONE -> colorInitial()
+    }
+
+    fun colorLighter(status: Status): Color = when (status) {
+        Status.GREEN -> Color(colorDoneLighter())
+        Status.BLUE -> Color(colorFirstIntervalLighter())
+        Status.RED -> Color(colorSecondIntervalLighter())
+        Status.NONE -> Color(colorInitialLighter())
+    }
+
+
     override fun toString(): String = "dateLocale(): " + dateLocale() + " | timeLocale(): " + timeLocale()
 }
 

@@ -2,7 +2,6 @@ package ch.karimattia.workoutpixel.data
 
 import android.appwidget.AppWidgetManager
 import androidx.compose.ui.graphics.Color
-import androidx.glance.GlanceId
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Ignore
@@ -60,14 +59,8 @@ data class Goal(
 	// widgetText returns the text of the whole widget based on a goal.
 	fun widgetText(settingsData: SettingsData): String {
 		var widgetText: String = title
-		if ((status() != Status.NONE)) {
-			// If statusOverride override is active, use currentTimeMillis to show how the widget will look in the preview.
-			val displayTime: Long = if (statusOverride == Status.GREEN) System.currentTimeMillis() else {
-				lastWorkout
-			}
-			if (showDate) widgetText += "\n${dateBeautiful(displayTime, settingsData.dateLocale())}"
-			if (showTime) widgetText += "\n${timeBeautiful(displayTime, settingsData.timeLocale())}"
-		}
+		if (widgetTextDateAndTime(settingsData).isNotEmpty()) widgetText += "\n"
+		widgetText += widgetTextDateAndTime(settingsData)
 		return widgetText
 	}
 
@@ -78,14 +71,10 @@ data class Goal(
 			val displayTime: Long = if (statusOverride == Status.GREEN) System.currentTimeMillis() else {
 				lastWorkout
 			}
-			if (showDate) widgetTextDateAndTime += "\n${dateBeautiful(displayTime, settingsData.dateLocale())}"
-			if (showTime) widgetTextDateAndTime += "\n${timeBeautiful(displayTime, settingsData.timeLocale())}"
+			if (showDate) widgetTextDateAndTime += dateBeautiful(displayTime, settingsData.dateLocale())
+			if (showDate && showTime) widgetTextDateAndTime += "\n"
+			if (showTime) widgetTextDateAndTime += timeBeautiful(displayTime, settingsData.timeLocale())
 		}
-//		if (widgetTextDateAndTime != null) {
-//			if (widgetTextDateAndTime.isEmpty()) {
-//				widgetTextDateAndTime = null
-//			}
-//		}
 		return widgetTextDateAndTime
 	}
 }

@@ -6,6 +6,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.datastore.preferences.core.*
@@ -23,13 +24,13 @@ import androidx.glance.appwidget.provideContent
 import androidx.glance.currentState
 import androidx.glance.layout.Alignment.Companion.CenterVertically
 import androidx.glance.layout.Column
-import androidx.glance.layout.Row
 import androidx.glance.layout.fillMaxWidth
 import androidx.glance.layout.height
 import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
 import androidx.glance.text.TextAlign
 import androidx.glance.text.TextStyle
+import androidx.glance.unit.ColorProvider
 import ch.karimattia.workoutpixel.core.Constants.GOAL_UID
 import ch.karimattia.workoutpixel.data.Goal
 import ch.karimattia.workoutpixel.data.GoalRepository
@@ -118,11 +119,13 @@ fun WidgetContent(
         verticalAlignment = CenterVertically
     ) {
         Text(
-            text = if (!smiley) goal.widgetText(settingsData) else ":)",
+            text = if (!smiley) goal.title else ":)",
             // .wrapContentSize(Alignment.Center)
+
             modifier = GlanceModifier
                 .fillMaxWidth()
-                // Do I really need this in the row and the text? Seems like it from testing.
+                // Do I really need this in the row and the text? Seems like it from testing... Or not anymore?
+/*
                 .clickable(
                     onClick = actionRunCallback<ClickAction>(
                         parameters = actionParametersOf(
@@ -130,20 +133,23 @@ fun WidgetContent(
                         )
                     )
                 ),
+*/,
 
             style = TextStyle(
                 fontWeight = FontWeight.Medium,
                 fontSize = if (!smiley) 12.sp else 16.sp,
                 textAlign = TextAlign.Center,
+                color = ColorProvider(Color.White)
             ),
         )
-/*        if (timeAndDateString.isNotEmpty()) {
+        if (timeAndDateString != "" && !smiley) {
             Text(
                 text = timeAndDateString,
                 // .wrapContentSize(Alignment.Center)
                 modifier = GlanceModifier
                     .fillMaxWidth()
-                    // Do I really need this in the row and the text? Seems like it from testing.
+                    // Do I really need this in the row and the text? Seems like it from testing... Or not anymore?
+/*
                     .clickable(
                         onClick = actionRunCallback<ClickAction>(
                             parameters = actionParametersOf(
@@ -151,14 +157,16 @@ fun WidgetContent(
                             )
                         )
                     ),
-
+*/,
                 style = TextStyle(
-                    fontWeight = FontWeight.Normal,
-                    fontSize = if (!smiley) 12.sp else 16.sp,
+                    fontWeight = FontWeight.Medium,
+                    fontSize = 10.sp,
                     textAlign = TextAlign.Center,
+                    // color = ColorProvider(Color.White),
+                    color = ColorProvider(settingsData.colorLighter(goal.status()))
                 ),
             )
-        }*/
+        }
 
     }
 }
