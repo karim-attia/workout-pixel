@@ -9,7 +9,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.MaterialTheme
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.Checkbox
@@ -56,10 +56,11 @@ fun GoalPreview(
             .clickable { onClick() }
             .width(66.dp)
             .height(44.dp)
-            .clip(shape = RoundedCornerShape(4.dp))
+            .clip(shape = RoundedCornerShape(8.dp))
             .background(backgroundColor)
             .wrapContentSize(Alignment.Center),
         horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
 
     ) {
 
@@ -69,6 +70,8 @@ fun GoalPreview(
             fontSize = 12.sp,
             fontWeight = FontWeight(500),
             color = Color.White,
+            // Very hacky!! Should set a body style somewhere.
+            style = LocalTextStyle.current.copy(lineHeight = 14.sp)
 
         )
         if (goal.showDate || goal.showTime) {
@@ -78,6 +81,9 @@ fun GoalPreview(
                 fontSize = 10.sp,
                 fontWeight = FontWeight(500),
                 color = settingsData.colorLighter(goal.status()),
+                // Very hacky!! Should set a supporting style somewhere.
+                // style = LocalTextStyle.current.copy(lineHeight = 12.sp)
+                style = MaterialTheme.typography.labelSmall.copy(lineHeight = 12.sp)
             )
         }
     }
@@ -221,7 +227,7 @@ fun GoalTitleTextField(
                 ) { innerTextField() }
                 Divider(
                     thickness = 1.5.dp,
-                    color = if (isFocused) MaterialTheme.colors.primary else Color.Gray
+                    color = if (isFocused) MaterialTheme.colorScheme.primary else Color.Gray
                 )
             }
         },

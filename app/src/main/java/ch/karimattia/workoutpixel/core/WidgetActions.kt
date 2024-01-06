@@ -1,6 +1,5 @@
 package ch.karimattia.workoutpixel.core
 
-import android.annotation.SuppressLint
 import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
 import android.content.ComponentName
@@ -8,7 +7,6 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.widget.RemoteViews
 import android.widget.Toast
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.intPreferencesKey
@@ -18,7 +16,6 @@ import androidx.glance.GlanceId
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.glance.appwidget.state.updateAppWidgetState
-import ch.karimattia.workoutpixel.R
 import ch.karimattia.workoutpixel.core.Constants.colorDoneInt
 import ch.karimattia.workoutpixel.core.Constants.colorFirstIntervalInt
 import ch.karimattia.workoutpixel.core.Constants.colorInitialInt
@@ -33,9 +30,6 @@ import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.*
-import java.lang.Integer.max
-import kotlin.math.ceil
-import kotlin.math.floor
 
 private const val TAG: String = "WidgetActions"
 
@@ -142,7 +136,8 @@ class WidgetActions @AssistedInject constructor(
         } else Log.d(TAG, "runUpdate: appWidgetId = null " + goal.debugString())
     }
 
-    @SuppressLint("ResourceType")
+    /* Is this all for the pinning preview? The pinning preview doesn't even work... */
+/*    @SuppressLint("ResourceType")
     private suspend fun widgetView(
         appWidgetManager: AppWidgetManager = AppWidgetManager.getInstance(context)
     ): RemoteViews {
@@ -179,7 +174,7 @@ class WidgetActions @AssistedInject constructor(
         widgetView.setViewPadding(R.id.widget_container, 0, paddingTopInPx, 0, paddingBottomInPx)
 
         return widgetView
-    }
+    }*/
 
     // Create an Intent to set the action DONE_EXERCISE. This will be received in onReceive.
     private fun widgetPendingIntent(): PendingIntent? {
@@ -202,6 +197,7 @@ class WidgetActions @AssistedInject constructor(
     // https://developer.android.com/guide/topics/appwidgets/configuration#pin
     // https://developer.android.com/reference/android/appwidget/AppWidgetManager#requestPinAppWidget(android.content.ComponentName,%20android.os.Bundle,%20android.app.PendingIntent)
     suspend fun pinAppWidget() {
+        // TODO with https://medium.com/@avengers14.blogger/requestappwidget-jetpack-glance-2e21f7db1adf
         val appWidgetManager = AppWidgetManager.getInstance(context)
         val myProvider = ComponentName(context, GlanceWidgetReceiver::class.java)
         Log.d(TAG, "pinAppWidget ${goal.debugString()}")
@@ -219,8 +215,8 @@ class WidgetActions @AssistedInject constructor(
             )
 
             // Looks weird.
-            val bundle = Bundle()
-            bundle.putParcelable(AppWidgetManager.EXTRA_APPWIDGET_PREVIEW, widgetView())
+            // val bundle = Bundle()
+            // bundle.putParcelable(AppWidgetManager.EXTRA_APPWIDGET_PREVIEW, widgetView())
 
             appWidgetManager.requestPinAppWidget(myProvider, null, successCallback)
         }

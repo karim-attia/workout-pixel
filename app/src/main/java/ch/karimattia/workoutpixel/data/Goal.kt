@@ -1,13 +1,17 @@
 package ch.karimattia.workoutpixel.data
 
 import android.appwidget.AppWidgetManager
+import android.util.Log
 import androidx.compose.ui.graphics.Color
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Ignore
 import androidx.room.PrimaryKey
 import ch.karimattia.workoutpixel.core.*
+import kotlin.math.log
 
+@Suppress("unused")
+private const val TAG: String = "Goal.kt"
 @Entity(tableName = "goals")
 data class Goal(
 	@PrimaryKey(autoGenerate = true) var uid: Int = 0,
@@ -57,12 +61,12 @@ data class Goal(
 	fun debugString(): String = "widgetUid: $uid, appWidgetId: $appWidgetId, Title: $title: "
 
 	// widgetText returns the text of the whole widget based on a goal.
-	fun widgetText(settingsData: SettingsData): String {
+/*	fun widgetText(settingsData: SettingsData): String {
 		var widgetText: String = title
-		if (widgetTextDateAndTime(settingsData).isNotEmpty()) widgetText += "\n"
+		if (showDate || showTime) widgetText += "\n"
 		widgetText += widgetTextDateAndTime(settingsData)
 		return widgetText
-	}
+	}*/
 
 	fun widgetTextDateAndTime(settingsData: SettingsData): String {
 		var widgetTextDateAndTime = ""
@@ -74,6 +78,7 @@ data class Goal(
 			if (showDate) widgetTextDateAndTime += dateBeautiful(displayTime, settingsData.dateLocale())
 			if (showDate && showTime) widgetTextDateAndTime += "\n"
 			if (showTime) widgetTextDateAndTime += timeBeautiful(displayTime, settingsData.timeLocale())
+			Log.d(TAG,"widgetTextDateAndTime: $widgetTextDateAndTime")
 		}
 		return widgetTextDateAndTime
 	}
