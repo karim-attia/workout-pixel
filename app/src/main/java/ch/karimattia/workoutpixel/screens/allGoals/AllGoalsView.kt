@@ -4,12 +4,12 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Card
-import androidx.compose.material.Icon
-import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Done
+import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -64,9 +64,9 @@ fun GoalCard(
 	goal: Goal,
 	lambdas: Lambdas,
 ) {
-	Card(
-		backgroundColor = Color.White,
-		elevation = 4.dp,
+	ElevatedCard(
+		// backgroundColor = Color.White,
+		// elevation = CardDefaults.cardElevation(defaultElevation = 4.dp, pressedElevation = 8.dp),
 		modifier = Modifier
 			.padding(vertical = 4.dp, horizontal = 8.dp)
 			.fillMaxWidth()

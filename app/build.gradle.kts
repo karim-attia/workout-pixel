@@ -32,7 +32,7 @@ android {
 
     defaultConfig {
         applicationId = "ch.karimattia.workoutpixel"
-        minSdk = 28
+        minSdk = 31
         targetSdk = 34
         versionCode = 7
         versionName = "1.2"
@@ -127,7 +127,8 @@ dependencies {
     // Foundation (Border, Background, Box, Image, Scroll, shapes, animations, etc.)
     implementation ("androidx.compose.foundation:foundation:1.5.4")
     // Material Design
-    implementation ("androidx.compose.material:material:1.5.4")
+    implementation("androidx.compose.material3:material3:1.1.2")
+    // implementation ("androidx.compose.material:material:1.5.4")
     // Material design icons
     implementation ("androidx.compose.material:material-icons-core:1.5.4")
     implementation ("androidx.compose.material:material-icons-extended:1.5.4")

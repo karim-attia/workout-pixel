@@ -6,12 +6,12 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.DeleteForever
 import androidx.compose.material.icons.filled.Undo
 import androidx.compose.material.icons.filled.Widgets
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.key
 import androidx.compose.runtime.rememberCoroutineScope
@@ -34,7 +34,6 @@ import ch.karimattia.workoutpixel.data.*
 import ch.karimattia.workoutpixel.screens.*
 import ch.karimattia.workoutpixel.screens.allGoals.IntervalIconAndText
 import ch.karimattia.workoutpixel.screens.allGoals.LastDoneIconAndText
-import ch.karimattia.workoutpixel.ui.theme.GreenTest
 import ch.karimattia.workoutpixel.ui.theme.TextBlack
 import com.vanpra.composematerialdialogs.MaterialDialog
 import com.vanpra.composematerialdialogs.message
@@ -133,12 +132,11 @@ fun GoalDetailNoWidgetCard(
 	) {
 		val dialogState = rememberMaterialDialogState()
 		Infobox(text = "There is no widget for this goal on your homescreen. Add a new widget and connect it to this goal to keep the data.")
-		Button(
+		OutlinedButton(
 			onClick = { dialogState.show() },
 			modifier = Modifier
 				.padding(top = 8.dp)
 				.fillMaxWidth(),
-			colors = ButtonDefaults.buttonColors(backgroundColor = Color.Red, contentColor = Color.White)
 		) {
 			Icon(imageVector = Icons.Filled.DeleteForever, contentDescription = null)
 			Spacer(modifier = Modifier.padding(end = 8.dp))
@@ -164,7 +162,7 @@ fun GoalDetailNoWidgetCard(
 				modifier = Modifier
 					.padding(top = 4.dp)
 					.fillMaxWidth(),
-				colors = ButtonDefaults.buttonColors(backgroundColor = GreenTest, contentColor = Color.White)
+				// colors = ButtonDefaults.buttonColors(backgroundColor = GreenTest, contentColor = Color.White)
 			) {
 				Icon(imageVector = Icons.Filled.Widgets, contentDescription = null)
 				Spacer(modifier = Modifier.padding(end = 8.dp))

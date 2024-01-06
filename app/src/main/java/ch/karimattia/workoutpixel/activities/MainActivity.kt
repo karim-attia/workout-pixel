@@ -10,9 +10,19 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.graphics.ExperimentalAnimationGraphicsApi
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.livedata.observeAsState
@@ -42,7 +52,6 @@ import ch.karimattia.workoutpixel.screens.settings.SettingsViewModel
 import ch.karimattia.workoutpixel.ui.theme.WorkoutPixelTheme
 import coil.annotation.ExperimentalCoilApi
 import com.google.accompanist.pager.ExperimentalPagerApi
-// import com.google.firebase.analytics.FirebaseAnalytics
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -146,6 +155,7 @@ class MainActivity : ComponentActivity() {
 	}
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @ExperimentalAnimationApi
 @ExperimentalComposeUiApi
 @ExperimentalCoilApi
@@ -161,9 +171,9 @@ fun WorkoutPixelApp(
 	lambdas: Lambdas,
 ) {
 	WorkoutPixelTheme(
-		darkTheme = false,
+		// darkTheme = false,
 	) {
-		val allScreens = Screens.values().toList()
+		val allScreens = Screens.entries
 		val navController: NavHostController = rememberNavController()
 		val backstackEntry: State<NavBackStackEntry?> = navController.currentBackStackEntryAsState()
 		val currentScreen: Screens = Screens.fromRoute(backstackEntry.value?.destination?.route)
@@ -176,16 +186,18 @@ fun WorkoutPixelApp(
 					TopAppBar(
 						title = { Text(text = currentScreen.topAppBarName ?: (currentGoal?.title ?: "")) },
 						navigationIcon =
-						if (currentScreen.showBackNavigation) {
-							{
-								IconButton(onClick = {
-									// TODO: Set current goal to null if back to main screen
-									navController.navigateUp()
-								}) {
-									Icon(Icons.Filled.ArrowBack, "Back")
-								}
+						{
+							if (currentScreen.showBackNavigation) {
+
+									IconButton(onClick = {
+										// TODO: Set current goal to null if back to main screen
+										navController.navigateUp()
+									}) {
+										Icon(Icons.Filled.ArrowBack, "Back")
+									}
+
 							}
-						} else null,
+						},
 						actions = {
 							if (currentScreen.showEditIcon) {
 								IconButton(onClick = { navController.navigate(Screens.EditGoalView.name) }) {
@@ -197,16 +209,22 @@ fun WorkoutPixelApp(
 									Icon(Icons.Filled.Settings, contentDescription = "Settings")
 								}
 							}
-						}
-					)
+						},
+						colors = TopAppBarDefaults.topAppBarColors(
+							containerColor = MaterialTheme.colorScheme.primary,
+							titleContentColor = MaterialTheme.colorScheme.onPrimary,
+							navigationIconContentColor = MaterialTheme.colorScheme.onPrimary,
+							actionIconContentColor = MaterialTheme.colorScheme.onSecondary
+						),
+						)
 				}
 			},
 			bottomBar = {
 				if (!currentScreen.fullScreen && goals.isNotEmpty()) {
-					BottomNavigation {
+					NavigationBar {
 						// Only show entries that have bottomNavigation == true.
 						allScreens.filter { it.bottomNavigation && (it.showWhenPinningPossible || !lambdas.widgetPinningPossible) }.forEach { screen ->
-							BottomNavigationItem(
+							NavigationBarItem(
 								icon = { screen.icon?.let { Icon(it, contentDescription = null, modifier = Modifier.size(24.dp)) } },
 								label = { Text(text = screen.displayName ?: "") },
 								selected = currentScreen == screen,

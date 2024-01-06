@@ -10,9 +10,14 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.Icon
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -43,8 +48,9 @@ private const val TAG: String = "EditGoalView"
 fun EditGoalView(
 	initialGoal: Goal,
 	isFirstConfigure: Boolean,
-	goalsWithoutWidget: List<Goal> = emptyList(),
 	lambdas: Lambdas,
+	modifier: Modifier = Modifier,
+	goalsWithoutWidget: List<Goal> = emptyList(),
 ) {
 	Log.d(TAG, "START")
 	Log.d(TAG, "isFirstConfigure: $isFirstConfigure")
@@ -72,15 +78,15 @@ fun EditGoalView(
 	}
 
 	Column(
-		modifier = Modifier
+		modifier = modifier
 			.fillMaxHeight()
 			.verticalScroll(rememberScrollState())
 			.padding(start = 8.dp, end = 8.dp, bottom = 12.dp)
 	) {
-		val modifier = Modifier.padding(top = 8.dp)
+		val modifierWithPadding = Modifier.padding(top = 8.dp)
 
 		Hints(
-			modifier = modifier,
+			modifier = modifierWithPadding,
 		)
 		var connectExistingGoal by remember { mutableStateOf(false) }
 		if (isFirstConfigure && goalsWithoutWidget.isNotEmpty()) {
@@ -91,7 +97,7 @@ fun EditGoalView(
 					lambdas.updateGoal(updatedConnectedGoal)
 					lambdas.navigateUp(false)
 				},
-				modifier = modifier,
+				modifier = modifierWithPadding,
 			)
 			connectExistingGoal = true
 		} else {
@@ -107,13 +113,13 @@ fun EditGoalView(
 			},
 			isFirstConfigure = isFirstConfigure,
 			connectExistingGoal = connectExistingGoal,
-			modifier = modifier,
+			modifier = modifierWithPadding,
 		)
 		WidgetConfigurationPreview(
 			editGoalViewGoal = editGoalViewGoal,
 			isFirstConfigure = isFirstConfigure,
 			settingsData = lambdas.settingsData,
-			modifier = modifier,
+			modifier = modifierWithPadding,
 		)
 		Spacer(
 			modifier = Modifier
@@ -275,12 +281,12 @@ fun ConnectDropdown(
 					.padding(horizontal = 0.dp)
 			) {
 				goalsWithoutWidget.forEachIndexed { index, goalWithoutWidget ->
-					DropdownMenuItem(onClick = {
+					DropdownMenuItem(
+						text = { Text(text = goalWithoutWidget.toString()) },
+						onClick = {
 						changeSelectedIndex(index)
 						expanded = false
-					}) {
-						Text(text = goalWithoutWidget.toString())
-					}
+					})
 				}
 			}
 		}

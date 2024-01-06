@@ -3,11 +3,9 @@ package ch.karimattia.workoutpixel.screens.settings
 import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Divider
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material3.Divider
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
@@ -16,7 +14,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import ch.karimattia.workoutpixel.core.colorToInt
 import ch.karimattia.workoutpixel.core.dateBeautiful
-import ch.karimattia.workoutpixel.core.intervalInMilliseconds
 import ch.karimattia.workoutpixel.core.timeBeautiful
 import ch.karimattia.workoutpixel.data.Goal
 import ch.karimattia.workoutpixel.data.SettingsData
@@ -41,7 +38,7 @@ fun Settings(
 	settingsData: SettingsData = lambdas.settingsData,
 	settingChange: (SettingsData) -> Unit = lambdas.settingChange,
 ) {
-	val goal = Goal(title = "Select\ncolor", lastWorkout = 1663506300000L, intervalBlue=10000)
+	val goal = Goal(title = "Select color", lastWorkout = 1663506300000L, intervalBlue=10000)
 	Log.d(TAG, "dateLanguage: ${settingsData.dateLanguage} / dateCountry: ${settingsData.dateCountry}")
 	Log.d(TAG, "timeLanguage: ${settingsData.timeLanguage} / timeCountry: ${settingsData.timeCountry}")
 	Column {
@@ -268,7 +265,7 @@ fun SettingsTitle(
 ) {
 	Text(text = text,
 		fontWeight = FontWeight.Medium,
-		color = MaterialTheme.colors.primary,
+		// color = MaterialTheme.colors.primary,
 		modifier = Modifier.padding(vertical = 8.dp, horizontal = 8.dp))
 }
 

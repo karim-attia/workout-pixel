@@ -141,7 +141,7 @@ fun WidgetContent(
                 color = ColorProvider(Color.White)
             ),
         )
-        if (goal.showDate || goal.showTime) {
+        if (!smiley && (goal.showDate || goal.showTime)) {
             Text(
                 text = goal.widgetTextDateAndTime(settingsData),
                 // .wrapContentSize(Alignment.Center)

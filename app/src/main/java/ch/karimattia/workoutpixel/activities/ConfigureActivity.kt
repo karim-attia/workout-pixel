@@ -1,5 +1,6 @@
 package ch.karimattia.workoutpixel.activities
 
+import android.annotation.SuppressLint
 import android.appwidget.AppWidgetManager
 import android.content.Context
 import android.content.Intent
@@ -9,13 +10,18 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
-import androidx.compose.material.TopAppBar
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.ExperimentalComposeUiApi
+import androidx.compose.ui.Modifier
 import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.lifecycle.lifecycleScope
 import ch.karimattia.workoutpixel.screens.EditGoalView
@@ -129,6 +135,8 @@ class ConfigureActivity : ComponentActivity() {
 	}
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @ExperimentalComposeUiApi
 @Composable
 fun ConfigureActivityCompose(
@@ -140,17 +148,29 @@ fun ConfigureActivityCompose(
 	Log.d(TAG, "initialGoal.toString() $initialGoal")
 	Log.d(TAG, "initialGoal isFirstConfigure $isFirstConfigure")
 	WorkoutPixelTheme(
-		darkTheme = false,
+		// darkTheme = false,
 	) {
 		Scaffold(
-			topBar = { TopAppBar(title = { Text(text = if (isFirstConfigure) "Add a widget for your goal" else initialGoal.title) }) },
-		) {
-			EditGoalView(
+			topBar = {
+				TopAppBar(
+					title = { Text(text = if (isFirstConfigure) "Add a widget for your goal" else initialGoal.title) },
+					colors = TopAppBarDefaults.topAppBarColors(
+						containerColor = MaterialTheme.colorScheme.primary,
+						titleContentColor = MaterialTheme.colorScheme.onPrimary,
+						navigationIconContentColor = MaterialTheme.colorScheme.onPrimary,
+						actionIconContentColor = MaterialTheme.colorScheme.onSecondary
+					),
+
+					)
+					 },
+		) {innerPadding ->
+
+		EditGoalView(
 				initialGoal = initialGoal,
 				isFirstConfigure = isFirstConfigure,
 				goalsWithoutWidget = goalsWithoutWidget,
-				lambdas = lambdas
-				// modifier = Modifier.padding(innerPadding),
+				lambdas = lambdas,
+				modifier = Modifier.padding(innerPadding),
 			)
 		}
 	}
