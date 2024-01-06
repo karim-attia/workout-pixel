@@ -17,12 +17,9 @@ import androidx.compose.runtime.key
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -34,7 +31,6 @@ import ch.karimattia.workoutpixel.data.*
 import ch.karimattia.workoutpixel.screens.*
 import ch.karimattia.workoutpixel.screens.allGoals.IntervalIconAndText
 import ch.karimattia.workoutpixel.screens.allGoals.LastDoneIconAndText
-import ch.karimattia.workoutpixel.ui.theme.TextBlack
 import com.vanpra.composematerialdialogs.MaterialDialog
 import com.vanpra.composematerialdialogs.message
 import com.vanpra.composematerialdialogs.rememberMaterialDialogState
@@ -128,7 +124,7 @@ fun GoalDetailNoWidgetCard(
 	lambdas: Lambdas,
 ) {
 	CardWithTitle(
-		title = "No widget for this goal"
+		title = "Add widget to homescreen"
 	) {
 		val dialogState = rememberMaterialDialogState()
 		Infobox(text = "There is no widget for this goal on your homescreen. Add a new widget and connect it to this goal to keep the data.")
@@ -201,8 +197,8 @@ fun PastClickList(
 	val numberOfPastClicks = pastClicks.size
 	if (numberOfPastClicks > 0) {
 		Column {
-			PastClickEntry(date = "Date", time = "Time", bold = true)
-			Divider(color = Color(TextBlack), thickness = 1.dp)
+			PastClickEntry(date = "Date", time = "Time", header = true)
+			Divider(color = MaterialTheme.colorScheme.primary, thickness = 1.dp)
 
 			// TODO: Limit number of numberOfPastClicks, declare it. Or implement some paging.
 			// https://developer.android.com/topic/libraries/architecture/paging.html
@@ -229,7 +225,8 @@ fun PastClickList(
 						},
 						lambdas = lambdas,
 					)
-					Divider(color = Color(TextBlack), thickness = 0.5.dp)
+					// TODO: Should do lighter with same hue.
+					Divider(color = MaterialTheme.colorScheme.primary, thickness = 0.5.dp)
 				}
 			}
 		}
@@ -263,31 +260,43 @@ fun PastClickEntry(
 	)
 }
 
+// TODO: Table component
 @Composable
 fun PastClickEntry(
 	date: String,
 	time: String,
 	icon: ImageVector? = null,
-	bold: Boolean = false,
+	header: Boolean = false,
 	active: Boolean = true,
 	togglePastClick: () -> Unit = { },
 ) {
-	Row {
-		val fontWeight = if (bold) {
-			FontWeight.Bold
+	Row (
+		modifier = Modifier
+			.fillMaxWidth()
+			.padding(vertical = 4.dp)
+	){
+		val style = if (header) {
+			MaterialTheme.typography.labelSmall
 		} else {
-			null
+			if (!active) {
+				MaterialTheme.typography.bodyMedium.copy(textDecoration=TextDecoration.LineThrough)
+			} else {
+				MaterialTheme.typography.bodyMedium
+			}
 		}
+/*
 		val textDecoration = if (!active) {
 			TextDecoration.LineThrough
 		} else {
 			null
 		}
+*/
+		/* Table achieved with fixed width */
 		Text(
 			text = date,
 			fontSize = 14.sp,
-			fontWeight = fontWeight,
-			style = TextStyle(textDecoration = textDecoration),
+			style = style,
+			// style = TextStyle(textDecoration = textDecoration),
 			modifier = Modifier
 				.width(90.dp)
 				.padding(start = 4.dp, end = 12.dp)
@@ -296,8 +305,9 @@ fun PastClickEntry(
 		Text(
 			text = time,
 			fontSize = 14.sp,
-			fontWeight = fontWeight,
-			style = TextStyle(textDecoration = textDecoration),
+			style = style,
+			// fontWeight = fontWeight,
+			// style = TextStyle(textDecoration = textDecoration),
 			modifier = Modifier
 				.width(90.dp)
 				.padding(end = 12.dp)
@@ -308,6 +318,7 @@ fun PastClickEntry(
 			Icon(
 				imageVector = icon,
 				contentDescription = null,
+				tint = MaterialTheme.colorScheme.primary,
 				modifier = Modifier
 					.padding(horizontal = 16.dp)
 					.align(alignment = Alignment.CenterVertically)

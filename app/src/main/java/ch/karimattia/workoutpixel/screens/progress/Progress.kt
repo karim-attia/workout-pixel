@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Divider
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.key
@@ -26,7 +27,6 @@ import ch.karimattia.workoutpixel.data.Goal
 import ch.karimattia.workoutpixel.data.PastClickAndGoal
 import ch.karimattia.workoutpixel.screens.CardWithTitle
 import ch.karimattia.workoutpixel.screens.Lambdas
-import ch.karimattia.workoutpixel.ui.theme.TextBlack
 
 @Suppress("unused")
 private const val TAG: String = "Progress"
@@ -128,8 +128,8 @@ fun ProgressPastClickList(
 	val numberOfPastClicks = pastClicksAndGoal.size
 	if (numberOfPastClicks > 0) {
 		Column {
-			ProgressPastClickEntry(goal = "Goal", date = "Date", time = "Time", isTitle = true)
-			Divider(color = Color(TextBlack), thickness = 1.dp)
+			ProgressPastClickEntry(goal = "Goal", date = "Date", time = "Time", isHeader = true)
+			Divider(color = MaterialTheme.colorScheme.primary, thickness = 1.dp)
 
 			for (pastClickAndGoal in pastClicksAndGoal) {
 				key(pastClickAndGoal.pastClick.uid) {
@@ -137,7 +137,7 @@ fun ProgressPastClickList(
 						pastClickAndGoal = pastClickAndGoal,
 						lambdas = lambdas,
 					)
-					Divider(color = Color(TextBlack), thickness = 0.5.dp)
+					Divider(color = MaterialTheme.colorScheme.primary, thickness = 0.5.dp)
 				}
 			}
 		}
@@ -169,35 +169,41 @@ fun ProgressPastClickEntry(
 	goal: String,
 	date: String,
 	time: String,
-	isTitle: Boolean = false,
+	isHeader: Boolean = false,
 ) {
-	Row(modifier = Modifier.fillMaxWidth()) {
-		val fontWeight = if (isTitle) FontWeight.Bold else null
-		//val textAlign = TextAlign.Right
+	Row(
+		modifier = Modifier
+			.fillMaxWidth()
+			.padding(vertical = 4.dp)
+	) {
+		val style = if (isHeader) MaterialTheme.typography.labelSmall
+		else MaterialTheme.typography.bodyMedium
+
+		/* Goal title */
 		Text(
 			text = goal,
 			fontSize = 14.sp,
-			fontWeight = fontWeight,
+			style = style,
 			modifier = Modifier
 				.padding(start = 4.dp, end = 12.dp)
 				.align(Alignment.CenterVertically)
 				.weight(weight = 1f)
 		)
+		/* Date */
 		Text(
 			text = date,
 			fontSize = 14.sp,
-			fontWeight = fontWeight,
-			//textAlign = textAlign,
+			style = style,
 			modifier = Modifier
 				.width(90.dp)
 				.padding(start = 4.dp, end = 12.dp)
 				.align(Alignment.CenterVertically)
 		)
+		/* Time */
 		Text(
 			text = time,
 			fontSize = 14.sp,
-			fontWeight = fontWeight,
-			//textAlign = textAlign,
+			style = style,
 			modifier = Modifier
 				.width(50.dp)
 				.padding(end = 12.dp)

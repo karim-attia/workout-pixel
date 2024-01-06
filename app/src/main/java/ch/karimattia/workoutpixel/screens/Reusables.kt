@@ -96,7 +96,7 @@ fun CardWithTitle(
     content: @Composable () -> Unit,
 ) {
     FormattedCard(
-        paddingOutsideOfCard = PaddingValues(vertical = 4.dp, horizontal = 8.dp),
+        // paddingOutsideOfCard = PaddingValues(vertical = 4.dp, horizontal = 8.dp),
         onClick = onClick,
     ) {
         CardTitle(
@@ -108,7 +108,7 @@ fun CardWithTitle(
 
 @Composable
 fun FormattedCard(
-    paddingBetweenCardAndContent: PaddingValues = PaddingValues(all = 8.dp),
+    paddingBetweenCardAndContent: PaddingValues = PaddingValues(all = 12.dp),
     paddingOutsideOfCard: PaddingValues = PaddingValues(vertical = 4.dp, horizontal = 8.dp),
     onClick: () -> Unit = {},
     content: @Composable () -> Unit,
@@ -117,9 +117,9 @@ fun FormattedCard(
         // backgroundColor = Color.White,
         // elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
         modifier = Modifier
-			.fillMaxWidth()
-			.padding(paddingOutsideOfCard)
-			.clickable { onClick() }
+            .fillMaxWidth()
+            .padding(paddingOutsideOfCard)
+            .clickable { onClick() }
     ) {
         Column(
             modifier = Modifier
@@ -136,11 +136,18 @@ fun CardTitle(
 ) {
     Text(
         text = text,
-        fontSize = 20.sp,
+        // fontSize = 20.sp,
         fontWeight = FontWeight.Bold,
-        modifier = Modifier.padding(bottom = 8.dp)
+        style = MaterialTheme.typography.titleMedium,
+        modifier = Modifier.padding(bottom = 12.dp)
     )
-
+    Divider(
+        thickness = 3.dp,
+        color = MaterialTheme.colorScheme.primary,
+        modifier = Modifier
+            .padding(bottom = 24.dp)
+            .width(44.dp)
+    )
 }
 
 @Composable
@@ -151,9 +158,9 @@ fun Infobox(
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
-			.clip(shape = RoundedCornerShape(4.dp))
-			.background(Color(InfoColor))
-			.padding(4.dp)
+            .clip(shape = RoundedCornerShape(4.dp))
+            .background(Color(InfoColor))
+            .padding(4.dp)
     ) {
         Icon(
             imageVector = Icons.Filled.Info,
@@ -180,9 +187,9 @@ fun CheckboxWithText(
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
-			.fillMaxWidth()
-			.clickable { onCheckedChange(!checked) }
-			.padding(vertical = 4.dp)
+            .fillMaxWidth()
+            .clickable { onCheckedChange(!checked) }
+            .padding(vertical = 4.dp)
     ) {
         Checkbox(
             checked = checked,
@@ -241,8 +248,8 @@ fun GoalTitleTextField(
             keyboardController?.hide()
         }),
         modifier = modifier
-			.fillMaxWidth()
-			.padding(bottom = 10.dp)
+            .fillMaxWidth()
+            .padding(bottom = 10.dp)
     )
 }
 
@@ -250,9 +257,9 @@ fun GoalTitleTextField(
 fun GoalPreviewsWithBackground() {
     Row(
         modifier = Modifier
-			.padding(start = 0.dp, top = 8.dp, bottom = 0.dp)
-			.background(GrayBackgroundColor)
-			.padding(all = 6.dp)
+            .padding(start = 0.dp, top = 8.dp, bottom = 0.dp)
+            .background(GrayBackgroundColor)
+            .padding(all = 6.dp)
     )
     {
         GoalPreview(goal = testGoals[0])
@@ -265,9 +272,9 @@ fun GoalPreviewsWithBackground() {
 fun GoalPreviewWithBackground(goal: Goal) {
     Row(
         modifier = Modifier
-			.padding(start = 0.dp, top = 8.dp, bottom = 0.dp)
-			.background(GrayBackgroundColor)
-			.padding(all = 6.dp)
+            .padding(start = 0.dp, top = 8.dp, bottom = 0.dp)
+            .background(GrayBackgroundColor)
+            .padding(all = 6.dp)
     )
     {
         GoalPreview(goal = goal)
