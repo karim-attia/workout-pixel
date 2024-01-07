@@ -6,6 +6,8 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Done
+import androidx.compose.material.icons.filled.TrendingUp
+import androidx.compose.material.icons.outlined.DateRange
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -13,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.buildAnnotatedString
@@ -110,30 +113,9 @@ fun GoalCard(
 }
 
 @Composable
-fun StatisticsInterval(goal: Goal) {
-    Statistics(
-        label = "Every",
-        info = goal.intervalBlue.toString(),
-        unit = if (goal.intervalBlue == 1) "day" else "days"
-    )
-}
-
-@Composable
-fun StatisticsLastDone(goal: Goal) {
-    Statistics(
-        label = "Last done",
-        info = dateBeautiful(
-            date = goal.lastWorkout,
-            agoWording = false,
-            locale = Locale.getDefault()
-        ),
-        unit = if (goal.lastWorkout < last3Am()) "ago" else "",
-    )
-}
-
-@Composable
 fun StatisticsCount(goal: Goal) {
     Statistics(
+        icon = Icons.Default.TrendingUp,
         label = "Done",
         info = "43",
         unit = "times"
@@ -141,7 +123,33 @@ fun StatisticsCount(goal: Goal) {
 }
 
 @Composable
+fun StatisticsLastDone(goal: Goal) {
+    val info = dateBeautiful(
+        date = goal.lastWorkout,
+        agoWording = false,
+        locale = Locale.getDefault()
+    )
+    Statistics(
+        icon = Icons.Default.Done,
+        label = "Last done",
+        info = info,
+        unit = if (goal.lastWorkout < last3Am() && info!="Never") "ago" else "",
+    )
+}
+
+@Composable
+fun StatisticsInterval(goal: Goal) {
+    Statistics(
+        icon = Icons.Outlined.DateRange,
+        label = "Every",
+        info = goal.intervalBlue.toString(),
+        unit = if (goal.intervalBlue == 1) "day" else "days"
+    )
+}
+
+@Composable
 fun Statistics(
+    icon: ImageVector,
     label: String,
     info: String,
     unit: String,
@@ -151,23 +159,43 @@ fun Statistics(
         withStyle(MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium).toSpanStyle()) { append(" $unit") }
     }
 
-    Column()
-    {
-        Text(
-            text = label.uppercase(Locale.getDefault()),
-            style = MaterialTheme.typography.labelSmall,
-			color = Color.Gray,
+        Column(
+            // space between
+            // verticalArrangement = Arrangement.SpaceBetween,
 
-            modifier = Modifier
-            //.padding(top = 2.dp, start = 2.dp, end = 2.dp)
         )
+        {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .height(22.dp)
+                    //.padding(top = 2.dp, start = 2.dp, end = 2.dp)
+            ) {
+                Icon(
+                    imageVector = icon,
+                    contentDescription = null,
+                    tint = Color.Gray,
+                    modifier = Modifier
+                        .size(if (icon == Icons.Outlined.DateRange) 18.dp else 22.dp)
+                        .padding(end = 4.dp)
+                )
 
-        Text(
-            text = infoAndUnit,
-            fontWeight = FontWeight.Bold,
+                Text(
+                    text = label.uppercase(Locale.getDefault()),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = Color.Gray,
+
+                    modifier = Modifier
+                    //.padding(top = 2.dp, start = 2.dp, end = 2.dp)
+                )
+            }
+            Text(
+                text = infoAndUnit,
+                fontWeight = FontWeight.Bold,
             )
 
-    }
+        }
+
 }
 
 
