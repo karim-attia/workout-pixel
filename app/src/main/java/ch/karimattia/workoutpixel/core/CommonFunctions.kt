@@ -174,7 +174,7 @@ fun dateBeautiful(date: Long, locale: Locale, agoWording: Boolean=true): String 
 		lastWorkout.format(dateFormatter)
 	}
 
-	if (agoWording && date < last3Am() - intervalInMilliseconds(1)) dateBeautiful += " ago"
+	if (agoWording && date < last3Am() - intervalInMilliseconds(1) && date > last3Am() - intervalInMilliseconds(154)) dateBeautiful += " ago"
 	return dateBeautiful
 }
 

@@ -3,20 +3,21 @@ package ch.karimattia.workoutpixel.screens
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Info
-import androidx.compose.material3.Checkbox
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalTextStyle
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -151,35 +152,9 @@ fun CardTitle(
     )
 }
 
+// Colors: https://developer.android.com/jetpack/compose/components/switch
 @Composable
-fun Infobox(
-    text: String,
-    modifier: Modifier = Modifier,
-) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = modifier
-            .clip(shape = RoundedCornerShape(4.dp))
-            .background(Color(InfoColor))
-            .padding(4.dp)
-    ) {
-        Icon(
-            imageVector = Icons.Filled.Info,
-            contentDescription = "Info icon",
-            modifier = Modifier
-                .size(32.dp)
-        )
-        Text(
-            text = text,
-            fontSize = 14.sp,
-            modifier = Modifier.padding(start = 4.dp)
-        )
-    }
-}
-
-
-@Composable
-fun CheckboxWithText(
+fun SwitchWithText(
     description: String,
     checked: Boolean,
     onCheckedChange: (Boolean) -> Unit,
@@ -187,19 +162,43 @@ fun CheckboxWithText(
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
+        // space between
+        horizontalArrangement = Arrangement.SpaceBetween,
         modifier = modifier
             .fillMaxWidth()
             .clickable { onCheckedChange(!checked) }
             .padding(vertical = 4.dp)
     ) {
-        Checkbox(
-            checked = checked,
-            onCheckedChange = null // {onCheckedChange(it) }
-        )
         Text(
             text = description,
+            style = MaterialTheme.typography.bodyMedium,
             modifier = Modifier.padding(start = 6.dp),
         )
+        Switch(
+            checked = checked,
+            onCheckedChange = null, // {onCheckedChange(it) }
+            thumbContent = if (checked) {
+                {
+                    Icon(
+                        imageVector = Icons.Filled.Check,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onPrimary,
+                        modifier = Modifier.size(SwitchDefaults.IconSize),
+                    )
+                }
+            } else {
+                null
+            },
+            colors = SwitchDefaults.colors(
+                checkedThumbColor = MaterialTheme.colorScheme.primary,
+                checkedTrackColor = MaterialTheme.colorScheme.primaryContainer,
+                //uncheckedThumbColor = MaterialTheme.colorScheme.secondary,
+                //uncheckedTrackColor = MaterialTheme.colorScheme.secondaryContainer,
+            )
+
+
+        )
+
     }
 }
 
@@ -212,7 +211,7 @@ fun GoalTitleTextField(
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
     val interactionSource = remember { MutableInteractionSource() }
-    BasicTextField(
+    OutlinedTextField(
         value = title,
         onValueChange = { onValueChange(it) },
         textStyle = LocalTextStyle.current.copy(
@@ -220,26 +219,9 @@ fun GoalTitleTextField(
             fontSize = 20.sp
         ),
         interactionSource = interactionSource,
-        decorationBox = { innerTextField ->
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-            ) {
-                val isFocused = interactionSource.collectIsFocusedAsState().value
-                Box(
-                    modifier = Modifier.padding(
-                        start = 4.dp,
-                        end = 4.dp,
-                        bottom = 4.dp
-                    )
-                ) { innerTextField() }
-                Divider(
-                    thickness = 1.5.dp,
-                    color = if (isFocused) MaterialTheme.colorScheme.primary else Color.Gray
-                )
-            }
-        },
-        // cursorBrush = SolidColor(MaterialTheme.colors.primary),
+        label = { Text(text = "Goal title") },
+        // Text looks weird
+        // placeholder = { Text(text = "Goal title") },
         singleLine = true,
         keyboardOptions = KeyboardOptions(
             capitalization = KeyboardCapitalization.Sentences,
@@ -250,7 +232,6 @@ fun GoalTitleTextField(
         }),
         modifier = modifier
             .fillMaxWidth()
-            .padding(bottom = 10.dp)
     )
 }
 

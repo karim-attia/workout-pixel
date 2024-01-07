@@ -24,7 +24,7 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.lifecycle.lifecycleScope
-import ch.karimattia.workoutpixel.screens.EditGoalView
+import ch.karimattia.workoutpixel.screens.editGoal.EditGoalView
 import ch.karimattia.workoutpixel.screens.Lambdas
 import ch.karimattia.workoutpixel.core.WidgetActions
 import ch.karimattia.workoutpixel.data.*

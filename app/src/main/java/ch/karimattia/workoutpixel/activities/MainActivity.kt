@@ -42,9 +42,11 @@ import ch.karimattia.workoutpixel.data.*
 import ch.karimattia.workoutpixel.screens.*
 import ch.karimattia.workoutpixel.screens.allGoals.GoalList
 import ch.karimattia.workoutpixel.screens.allGoals.GoalViewModel
+import ch.karimattia.workoutpixel.screens.editGoal.EditGoalView
 import ch.karimattia.workoutpixel.screens.goalDetail.GoalDetailView
 import ch.karimattia.workoutpixel.screens.goalDetail.PastClickViewModelAssistedFactory
-import ch.karimattia.workoutpixel.screens.onboarding.Chatvariant
+import ch.karimattia.workoutpixel.screens.onboarding.ChatVariant
+import ch.karimattia.workoutpixel.screens.onboarding.Instructions
 import ch.karimattia.workoutpixel.screens.onboarding.Onboarding
 import ch.karimattia.workoutpixel.screens.progress.Progress
 import ch.karimattia.workoutpixel.screens.settings.Settings
@@ -335,7 +337,7 @@ fun WorkoutPixelNavHost(
 			if (lambdas.widgetPinningPossible) {
 				Onboarding(
 					currentGoal = currentGoal ?: Goal(),
-					chatvariant = if (goals.isEmpty()) Chatvariant.Onboarding else Chatvariant.NewGoalOnly,
+					chatVariant = if (goals.isEmpty()) ChatVariant.Onboarding else ChatVariant.NewGoalOnly,
 					lambdas = lambdas,
 				)
 			} else {

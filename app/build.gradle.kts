@@ -106,9 +106,9 @@ dependencies {
     androidTestImplementation ("androidx.compose.ui:ui-test-junit4:1.5.4")
 
     // Room components
-    val room_version = "2.6.1"
-    ksp ("androidx.room:room-compiler:$room_version")
-    implementation ("androidx.room:room-ktx:$room_version")
+    val roomVersion = "2.6.1"
+    ksp ("androidx.room:room-compiler:$roomVersion")
+    implementation ("androidx.room:room-ktx:$roomVersion")
     implementation("com.google.devtools.ksp:symbol-processing-api:1.9.22-1.0.16")
 
     // Navigation

@@ -8,18 +8,21 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.DeleteForever
 import androidx.compose.material.icons.filled.Undo
 import androidx.compose.material.icons.filled.Widgets
+import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.key
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -30,10 +33,6 @@ import ch.karimattia.workoutpixel.core.timeBeautiful
 import ch.karimattia.workoutpixel.data.*
 import ch.karimattia.workoutpixel.screens.*
 import ch.karimattia.workoutpixel.screens.allGoals.GoalCard
-import com.vanpra.composematerialdialogs.MaterialDialog
-import com.vanpra.composematerialdialogs.message
-import com.vanpra.composematerialdialogs.rememberMaterialDialogState
-import com.vanpra.composematerialdialogs.title
 import kotlinx.coroutines.launch
 
 @Suppress("unused")
@@ -73,6 +72,7 @@ fun GoalDetailView(
 		GoalCard(
 			goal = currentGoal,
 			lambdas = lambdas,
+			withLink = false,
 		)
 		AnimatedVisibility(!currentGoal.hasValidAppWidgetId()) {
 			GoalDetailNoWidgetCard(
@@ -99,29 +99,14 @@ fun GoalDetailNoWidgetCard(
 	CardWithTitle(
 		title = "Add widget to homescreen"
 	) {
-		val dialogState = rememberMaterialDialogState()
-		Infobox(text = "There is no widget for this goal on your homescreen. Add a new widget and connect it to this goal to keep the data.")
-		OutlinedButton(
-			onClick = { dialogState.show() },
-			modifier = Modifier
-				.padding(top = 8.dp)
-				.fillMaxWidth(),
-		) {
-			Icon(imageVector = Icons.Filled.DeleteForever, contentDescription = null)
-			Spacer(modifier = Modifier.padding(end = 8.dp))
-			Text(text = "Delete goal".uppercase(), modifier = Modifier.padding(end = 16.dp))
-		}
-		MaterialDialog(dialogState = dialogState, buttons = {
-			positiveButton(text = "Confirm") {
-				lambdas.deleteGoal(currentGoal)
-				lambdas.navigateUp(true)
-			}
-			negativeButton(text = "Cancel")
-		}) {
-			title(text = "Do you really want to delete this goal?")
-			message(text = "This will irreversibly remove the goal including all its data like past clicks.")
-		}
+		Text(
+			style = MaterialTheme.typography.bodyMedium,
+			text = "There is no widget for this goal on your homescreen. Add a new widget and connect it to this goal to keep the data.")
+		/* Infobox */
+		// Infobox(text = "There is no widget for this goal on your homescreen. Add a new widget and connect it to this goal to keep the data.")
+		Spacer(modifier = Modifier.height(16.dp))
 
+		/* Add to homescreen button */
 		val appWidgetManager = AppWidgetManager.getInstance(LocalContext.current)
 		val scope = rememberCoroutineScope()
 
@@ -129,15 +114,41 @@ fun GoalDetailNoWidgetCard(
 			Button(
 				onClick = { scope.launch { lambdas.addWidgetToHomeScreen(currentGoal, false) } },
 				modifier = Modifier
-					.padding(top = 4.dp)
+					//.padding(top = 4.dp)
 					.fillMaxWidth(),
 				// colors = ButtonDefaults.buttonColors(backgroundColor = GreenTest, contentColor = Color.White)
 			) {
 				Icon(imageVector = Icons.Filled.Widgets, contentDescription = null)
-				Spacer(modifier = Modifier.padding(end = 8.dp))
-				Text(text = "Add to homescreen".uppercase(), modifier = Modifier.padding(end = 16.dp))
+				Spacer(modifier = Modifier.width(8.dp))
+				Text(
+					text = "Add to homescreen".uppercase(),
+					// modifier = Modifier.padding(end = 16.dp)
+				)
 			}
+			Spacer(modifier = Modifier.height(4.dp))
 		}
+
+		/* Delete button */
+		val openAlertDialog = remember { mutableStateOf(false) }
+
+		TextButton(
+			onClick = { 				openAlertDialog.value = true			},
+			modifier = Modifier
+				//.padding(top = 8.dp)
+				.fillMaxWidth(),
+		) {
+			Icon(imageVector = Icons.Outlined.Delete, contentDescription = "Delete Icon")
+			Spacer(modifier = Modifier.padding(end = 8.dp))
+			Text(text = "Delete goal".uppercase(), modifier = Modifier.padding(end = 16.dp))
+		}
+		DeleteGoalDialog(
+			openAlertDialog = openAlertDialog.value,
+			setOpenAlertDialog = { openAlertDialog.value = it },
+			onConfirm = {
+				lambdas.deleteGoal(currentGoal)
+				lambdas.navigateUp(true)
+						},
+		)
 	}
 }
 
@@ -298,5 +309,69 @@ fun PastClickEntry(
 					.clickable { togglePastClick() }
 			)
 		}
+	}
+}
+
+
+@Composable
+fun DeleteGoalDialog(
+	openAlertDialog: Boolean,
+	setOpenAlertDialog: (Boolean) -> Unit,
+	onConfirm: () -> Unit,
+) {
+	if (openAlertDialog) {
+		AlertDialog(
+			icon = {
+				Icon(Icons.Filled.Delete, contentDescription = "Delete Icon")
+			},
+			title = {
+				Text(
+					text = "Do you really want to delete this goal?",
+					fontWeight = FontWeight.Bold,
+					style = MaterialTheme.typography.titleMedium,
+
+				)
+			},
+			text = {
+				Text(
+					text = "This will irreversibly remove the goal including all its data like past clicks.",
+					style = MaterialTheme.typography.bodyMedium,
+				)
+			},
+			dismissButton = {
+				TextButton(
+					onClick = {
+						setOpenAlertDialog(false)
+					}
+				) {
+					Text(
+						text= "Cancel",
+						color = MaterialTheme.colorScheme.onSurface
+						// fontWeight = FontWeight.Medium,
+						// style = MaterialTheme.typography.bodyLarge,
+
+
+					)
+				}
+			},
+			onDismissRequest = { 						setOpenAlertDialog(false) },
+			confirmButton = {
+				Button(
+					onClick = {
+						onConfirm()
+					},
+					colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error,)
+
+				) {
+					Text(
+						text = "Delete",
+						color = MaterialTheme.colorScheme.onError,
+						// style = MaterialTheme.typography.bodyMedium,
+						// fontWeight = FontWeight.SemiBold,
+					)
+				}
+			},
+			// containerColor = MaterialTheme.colorScheme.surface,
+		)
 	}
 }

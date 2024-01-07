@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.TrendingUp
 import androidx.compose.material.icons.outlined.DateRange
@@ -72,11 +71,12 @@ fun GoalList(
 fun GoalCard(
     goal: Goal,
     lambdas: Lambdas,
+    withLink: Boolean = true,
 ) {
 
     CardWithTitle(
         title = goal.title,
-        onClick = { lambdas.navigateTo(Screens.GoalDetailView.name, goal, false) })
+        onClick = { if (withLink) lambdas.navigateTo(Screens.GoalDetailView.name, goal, false) })
     {
         // Preview and rest
         Row(
@@ -169,7 +169,7 @@ fun Statistics(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
                     .height(22.dp)
-                    //.padding(top = 2.dp, start = 2.dp, end = 2.dp)
+                    // .padding(start = 4.dp)
             ) {
                 Icon(
                     imageVector = icon,
@@ -192,6 +192,8 @@ fun Statistics(
             Text(
                 text = infoAndUnit,
                 fontWeight = FontWeight.Bold,
+                modifier = Modifier
+                    .padding(start = 2.dp)
             )
 
         }

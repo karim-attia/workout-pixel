@@ -150,7 +150,7 @@ class Formats(
 		label = "date",
 		locale = settingsData.dateLocale(),
 		isLocaleDefault = settingsData.isDateLocaleDefault(),
-		transformDateTimeFormatToString = { dateBeautiful(1663506300000L, it) },
+		transformDateTimeFormatToString = { dateBeautiful(1663506300000L, it, agoWording = false) },
 		maxStringSizeFilter = 10,
 		showDate = true,
 	),

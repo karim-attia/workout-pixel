@@ -18,9 +18,9 @@ private const val TAG: String = "Onboarding"
 fun Onboarding(
 	// First with uid, then with appwidgetid
 	currentGoal: Goal,
-	chatvariant: Chatvariant,
+	chatVariant: ChatVariant,
 	lambdas: Lambdas,
-	onboardingViewModel: OnboardingViewModel = viewModel(factory = OnboardingViewModelFactory(chatvariant, rememberCoroutineScope(), lambdas = lambdas)),
+	onboardingViewModel: OnboardingViewModel = viewModel(factory = OnboardingViewModelFactory(chatVariant, rememberCoroutineScope(), lambdas = lambdas)),
 ) {
 
 	// If the caller sends a new currentGoal, update the viewModel with it. If it's the same one (e.g. through a recomposition), do not update.

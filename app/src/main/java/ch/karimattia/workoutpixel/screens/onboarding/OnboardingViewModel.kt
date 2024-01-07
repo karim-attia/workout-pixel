@@ -22,20 +22,20 @@ private const val TAG: String = "OnboardingViewModel"
 @OptIn(ExperimentalComposeUiApi::class)
 typealias MessageBuilder = () -> ChatMessage
 
-enum class Chatvariant {
+enum class ChatVariant {
     Onboarding, NewGoalOnly
 }
 
 @ExperimentalComposeUiApi
-class OnboardingViewModelFactory(private val chatvariant: Chatvariant, private val scope: CoroutineScope, private var lambdas: Lambdas) :
+class OnboardingViewModelFactory(private val chatVariant: ChatVariant, private val scope: CoroutineScope, private var lambdas: Lambdas) :
     ViewModelProvider.NewInstanceFactory() {
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T =
-        OnboardingViewModel(chatvariant = chatvariant, scope = scope, receivedLambdas = lambdas) as T
+        OnboardingViewModel(chatVariant = chatVariant, scope = scope, receivedLambdas = lambdas) as T
 }
 
 @ExperimentalComposeUiApi
-class OnboardingViewModel(chatvariant: Chatvariant, scope: CoroutineScope, private var receivedLambdas: Lambdas) : ChatViewModel() {
+class OnboardingViewModel(chatVariant: ChatVariant, scope: CoroutineScope, private var receivedLambdas: Lambdas) : ChatViewModel() {
 
     private val editableGoal: MutableLiveData<Goal> = MutableLiveData(Goal())
     private var isGoalSaved: Boolean = false
@@ -48,9 +48,9 @@ class OnboardingViewModel(chatvariant: Chatvariant, scope: CoroutineScope, priva
          * Initialize the ChatViewModel: Process the first message.
          * */
         initialize(
-            firstMessage = when (chatvariant) {
-                Chatvariant.Onboarding -> ::introMessage
-                Chatvariant.NewGoalOnly -> ::setTitle
+            firstMessage = when (chatVariant) {
+                ChatVariant.Onboarding -> ::introMessage
+                ChatVariant.NewGoalOnly -> ::setTitle
             },
             scope = scope
         )
