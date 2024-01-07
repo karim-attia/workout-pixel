@@ -147,9 +147,7 @@ fun ConfigureActivityCompose(
 ) {
 	Log.d(TAG, "initialGoal.toString() $initialGoal")
 	Log.d(TAG, "initialGoal isFirstConfigure $isFirstConfigure")
-	WorkoutPixelTheme(
-		// darkTheme = false,
-	) {
+	WorkoutPixelTheme {
 		Scaffold(
 			topBar = {
 				TopAppBar(

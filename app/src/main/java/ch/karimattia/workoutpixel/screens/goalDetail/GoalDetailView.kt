@@ -29,8 +29,7 @@ import ch.karimattia.workoutpixel.core.dateBeautiful
 import ch.karimattia.workoutpixel.core.timeBeautiful
 import ch.karimattia.workoutpixel.data.*
 import ch.karimattia.workoutpixel.screens.*
-import ch.karimattia.workoutpixel.screens.allGoals.IntervalIconAndText
-import ch.karimattia.workoutpixel.screens.allGoals.LastDoneIconAndText
+import ch.karimattia.workoutpixel.screens.allGoals.GoalCard
 import com.vanpra.composematerialdialogs.MaterialDialog
 import com.vanpra.composematerialdialogs.message
 import com.vanpra.composematerialdialogs.rememberMaterialDialogState
@@ -71,8 +70,8 @@ fun GoalDetailView(
 			.verticalScroll(rememberScrollState())
 	) {
 		Spacer(modifier = Modifier.height(6.dp))
-		GoalOverview(
-			currentGoal = currentGoal,
+		GoalCard(
+			goal = currentGoal,
 			lambdas = lambdas,
 		)
 		AnimatedVisibility(!currentGoal.hasValidAppWidgetId()) {
@@ -89,32 +88,6 @@ fun GoalDetailView(
 		)
 
 		Spacer(modifier = Modifier.height(40.dp))
-	}
-}
-
-@Composable
-fun GoalOverview(
-	currentGoal: Goal,
-	lambdas: Lambdas,
-) {
-	CardWithTitle(
-		title = "Goal overview",
-	)
-	{
-		// Preview and rest
-		Row(verticalAlignment = Alignment.CenterVertically) {
-			GoalPreview(
-				goal = currentGoal, settingsData = lambdas.settingsData, onClick = { lambdas.updateAfterClick(currentGoal) }
-			)
-			// Rest
-			Column(
-				modifier = Modifier.padding(start = 6.dp, top = 3.dp)
-			)
-			{
-				IntervalIconAndText(goal = currentGoal)
-				LastDoneIconAndText(goal = currentGoal, settingsData = lambdas.settingsData)
-			}
-		}
 	}
 }
 

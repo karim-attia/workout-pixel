@@ -170,9 +170,7 @@ fun WorkoutPixelApp(
 	goals: List<Goal>,
 	lambdas: Lambdas,
 ) {
-	WorkoutPixelTheme(
-		// darkTheme = false,
-	) {
+	WorkoutPixelTheme {
 		val allScreens = Screens.entries
 		val navController: NavHostController = rememberNavController()
 		val backstackEntry: State<NavBackStackEntry?> = navController.currentBackStackEntryAsState()

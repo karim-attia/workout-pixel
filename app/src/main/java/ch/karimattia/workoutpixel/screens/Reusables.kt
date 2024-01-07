@@ -108,15 +108,16 @@ fun CardWithTitle(
 
 @Composable
 fun FormattedCard(
+    modifier: Modifier = Modifier,
     paddingBetweenCardAndContent: PaddingValues = PaddingValues(all = 12.dp),
     paddingOutsideOfCard: PaddingValues = PaddingValues(vertical = 4.dp, horizontal = 8.dp),
     onClick: () -> Unit = {},
     content: @Composable () -> Unit,
-) {
+    ) {
     ElevatedCard(
         // backgroundColor = Color.White,
         // elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .padding(paddingOutsideOfCard)
             .clickable { onClick() }

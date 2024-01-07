@@ -105,74 +105,77 @@ fun colorToInt(color: Color): Int = android.graphics.Color.argb(color.alpha, col
 /**
  * Time and date formatting stuff
  */
-fun dateBeautiful(date: Long, locale: Locale): String {
+fun dateBeautiful(date: Long, locale: Locale, agoWording: Boolean=true): String {
 	// If today or yesterday, show "today" or "yesterday" instead of the date.
-	return if (date == 0L) {
+	var dateBeautiful = if (date == 0L) {
 		"Never"
 	} else if (date > last3Am()) {
 		"Today"
 	} else if (date > last3Am() - intervalInMilliseconds(1)) {
-		"Yesterday"
+		if (agoWording) "Yesterday" else "1d"
 	} else if (date > last3Am() - intervalInMilliseconds(2)) {
-		"2d ago"
+		"2d"
 	} else if (date > last3Am() - intervalInMilliseconds(3)) {
-		"3d ago"
+		"3d"
 	} else if (date > last3Am() - intervalInMilliseconds(4)) {
-		"4d ago"
+		"4d"
 	} else if (date > last3Am() - intervalInMilliseconds(5)) {
-		"5d ago"
+		"5d"
 	} else if (date > last3Am() - intervalInMilliseconds(6)) {
-		"6d ago"
+		"6d"
 	} else if (date > last3Am() - intervalInMilliseconds(7)) {
-		"1w ago"
+		"1w"
 	} else if (date > last3Am() - intervalInMilliseconds(14)) {
-		"2w ago"
+		"2w"
 	} else if (date > last3Am() - intervalInMilliseconds(21)) {
-		"3w ago"
+		"3w"
 	} else if (date > last3Am() - intervalInMilliseconds(28)) {
-		"4w ago"
+		"4w"
 	} else if (date > last3Am() - intervalInMilliseconds(35)) {
-		"5w ago"
+		"5w"
 	} else if (date > last3Am() - intervalInMilliseconds(42)) {
-		"6w ago"
+		"6w"
 	} else if (date > last3Am() - intervalInMilliseconds(49)) {
-		"7w ago"
+		"7w"
 	} else if (date > last3Am() - intervalInMilliseconds(56)) {
-		"8w ago"
+		"8w"
 	} else if (date > last3Am() - intervalInMilliseconds(63)) {
-		"9w ago"
+		"9w"
 	} else if (date > last3Am() - intervalInMilliseconds(70)) {
-		"10w ago"
+		"10w"
 	} else if (date > last3Am() - intervalInMilliseconds(77)) {
-		"11w ago"
+		"11w"
 	} else if (date > last3Am() - intervalInMilliseconds(84)) {
-		"12w ago"
+		"12w"
 	} else if (date > last3Am() - intervalInMilliseconds(91)) {
-		"13w ago"
+		"13w"
 	} else if (date > last3Am() - intervalInMilliseconds(98)) {
-		"14w ago"
+		"14w"
 	} else if (date > last3Am() - intervalInMilliseconds(105)) {
-		"15w ago"
+		"15w"
 	} else if (date > last3Am() - intervalInMilliseconds(112)) {
-		"16w ago"
+		"16w"
 	} else if (date > last3Am() - intervalInMilliseconds(119)) {
-		"17w ago"
+		"17w"
 	} else if (date > last3Am() - intervalInMilliseconds(126)) {
-		"18w ago"
+		"18w"
 	} else if (date > last3Am() - intervalInMilliseconds(133)) {
-		"19w ago"
+		"19w"
 	} else if (date > last3Am() - intervalInMilliseconds(140)) {
-		"20w ago"
+		"20w"
 	} else if (date > last3Am() - intervalInMilliseconds(147)) {
-		"21w ago"
+		"21w"
 	} else if (date > last3Am() - intervalInMilliseconds(154)) {
-		"22w ago"
+		"22w"
 	}
 	else {
 		val lastWorkout: LocalDateTime = Instant.ofEpochMilli(date).atZone(ZoneId.systemDefault()).toLocalDateTime()
 		val dateFormatter: DateTimeFormatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT).withLocale(locale)
 		lastWorkout.format(dateFormatter)
 	}
+
+	if (agoWording && date < last3Am() - intervalInMilliseconds(1)) dateBeautiful += " ago"
+	return dateBeautiful
 }
 
 fun timeBeautiful(date: Long, locale: Locale): String {
