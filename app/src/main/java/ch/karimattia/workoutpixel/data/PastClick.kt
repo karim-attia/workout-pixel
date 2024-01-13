@@ -5,7 +5,7 @@ import androidx.room.*
 @Entity(
 	tableName = "pastWorkouts",
 	foreignKeys = [ForeignKey(
-		entity = Goal::class,
+		entity = GoalWithoutCount::class,
 		parentColumns = arrayOf("uid"),
 		childColumns = arrayOf("widgetUid"),
 		onDelete = ForeignKey.CASCADE
@@ -22,7 +22,7 @@ data class PastClick(
 	var isActive: Boolean = true,
 )
 
-data class GoalAndPastClicks (
+/*data class GoalAndPastClicks (
 	@Embedded
 	var goal: Goal? = null,
 
@@ -31,7 +31,7 @@ data class GoalAndPastClicks (
 		entityColumn = "widgetUid",
 	)
 	var pastClicks: List<PastClick> = ArrayList()
-)
+)*/
 
 data class PastClickAndGoal (
 	@Embedded

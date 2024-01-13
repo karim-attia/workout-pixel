@@ -9,26 +9,26 @@ import kotlinx.coroutines.flow.Flow
 interface GoalDao {
 	// Goals
 	// Get goal by appWidgetId
-	@Query("SELECT * FROM goals WHERE appWidgetId=:appWidgetId")
+	@Query("SELECT * FROM Goal WHERE appWidgetId=:appWidgetId")
 	suspend fun loadGoalByAppWidgetId(appWidgetId: Int): Goal?
 
 	// Get goal by uid
-	@Query("SELECT * FROM goals WHERE uid=:uid")
+	@Query("SELECT * FROM Goal WHERE uid=:uid")
 	suspend fun loadGoalByUid(uid: Int): Goal?
 
 	// Get goal by uid
-	@Query("SELECT * FROM goals WHERE appWidgetId=:appWidgetId")
+	@Query("SELECT * FROM Goal WHERE appWidgetId=:appWidgetId")
 	fun loadGoalByAppWidgetIdFlow(appWidgetId: Int): Flow<Goal>
 
 	// Get all goals
-	@Query("SELECT * FROM goals")
+	@Query("SELECT * FROM Goal")
 	fun loadAllGoalsFlow(): Flow<List<Goal>>
 
-	@Insert(onConflict = OnConflictStrategy.REPLACE, entity = Goal::class)
-	suspend fun insertGoal(goal: Goal): Long
+	@Insert(onConflict = OnConflictStrategy.REPLACE, entity = GoalWithoutCount::class)
+	suspend fun insertGoal(goal: GoalWithoutCount): Long
 
-	@Update(onConflict = OnConflictStrategy.REPLACE, entity = Goal::class)
-	suspend fun updateGoal(goal: Goal)
+	@Update(onConflict = OnConflictStrategy.REPLACE, entity = GoalWithoutCount::class)
+	suspend fun updateGoal(goal: GoalWithoutCount)
 
 	@Query("UPDATE goals SET appWidgetId =:invalidAppWidgetId WHERE uid=:uid")
 	suspend fun setAppWidgetIdToNullByUid(uid: Int, invalidAppWidgetId: Int = AppWidgetManager.INVALID_APPWIDGET_ID)
@@ -37,19 +37,19 @@ interface GoalDao {
 	suspend fun setAppWidgetIdToNullByAppwidgetId(appWidgetId: Int, invalidAppWidgetId: Int = AppWidgetManager.INVALID_APPWIDGET_ID)
 
 	// Get all goals
-	@Query("SELECT * FROM goals")
+	@Query("SELECT * FROM Goal")
 	suspend fun loadAllGoals(): List<Goal>
 
 	// Get all goals without AppWidgetId
-	@Query("SELECT * FROM goals WHERE appWidgetId =:invalidAppWidgetId")
+	@Query("SELECT * FROM Goal WHERE appWidgetId =:invalidAppWidgetId")
 	fun loadGoalsWithoutValidAppWidgetId(invalidAppWidgetId: Int = AppWidgetManager.INVALID_APPWIDGET_ID): Flow<List<Goal>>
 
 	// Get all goals with AppWidgetId
-	@Query("SELECT * FROM goals WHERE appWidgetId !=:invalidAppWidgetId")
+	@Query("SELECT * FROM Goal WHERE appWidgetId !=:invalidAppWidgetId")
 	suspend fun loadGoalsWithValidAppWidgetId(invalidAppWidgetId: Int = AppWidgetManager.INVALID_APPWIDGET_ID): List<Goal>
 
 	@Delete
-	suspend fun deleteGoal(goal: Goal)
+	suspend fun deleteGoal(goal: GoalWithoutCount)
 
 
 	// Past Workouts

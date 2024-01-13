@@ -1,18 +1,32 @@
 package ch.karimattia.workoutpixel.data
 
 import android.appwidget.AppWidgetManager
-import android.util.Log
 import androidx.compose.ui.graphics.Color
 import androidx.room.ColumnInfo
+import androidx.room.DatabaseView
 import androidx.room.Entity
 import androidx.room.Ignore
 import androidx.room.PrimaryKey
 import ch.karimattia.workoutpixel.core.*
-import kotlin.math.log
 
 @Suppress("unused")
 private const val TAG: String = "Goal.kt"
+
 @Entity(tableName = "goals")
+data class GoalWithoutCount(
+	@PrimaryKey(autoGenerate = true) var uid: Int = 0,
+	@ColumnInfo(name = "appWidgetId") var appWidgetId: Int = AppWidgetManager.INVALID_APPWIDGET_ID,
+	@ColumnInfo(name = "glanceId", defaultValue = "") var glanceId: String = "",
+	@ColumnInfo(name = "title") var title: String = "",
+	@ColumnInfo(name = "lastWorkout") var lastWorkout: Long = 0,
+	@ColumnInfo(name = "intervalBlue") var intervalBlue: Int = 2,
+	@ColumnInfo(name = "intervalRed") var intervalRed: Int = 2,
+	@ColumnInfo(name = "showDate") var showDate: Boolean = false,
+	@ColumnInfo(name = "showTime") var showTime: Boolean = false
+	// Note: 'count' and 'statusOverride' are not included here
+)
+
+@DatabaseView("SELECT goals.*, (SELECT COUNT(*) FROM pastWorkouts WHERE widgetUid = goals.uid AND active = '1') AS count FROM goals")
 data class Goal(
 	@PrimaryKey(autoGenerate = true) var uid: Int = 0,
 	@ColumnInfo(name = "appWidgetId") var appWidgetId: Int = AppWidgetManager.INVALID_APPWIDGET_ID,
@@ -23,6 +37,9 @@ data class Goal(
 	@ColumnInfo(name = "intervalRed") var intervalRed: Int = 2,
 	@ColumnInfo(name = "showDate") var showDate: Boolean = false,
 	@ColumnInfo(name = "showTime") var showTime: Boolean = false,
+	// Count is fetched from the pastClicks and not saved with Goal.
+	@ColumnInfo(name = "count")
+	@Transient var count: Int = 1,
 	// Is just needed for preview and thus not needed to save to database.
 	@Ignore var statusOverride: Status? = null,
 ) {
@@ -41,32 +58,12 @@ data class Goal(
 		}
 	}
 
-	fun color(settingsData: SettingsData): Color =
-		Color(colorInt(settingsData = settingsData))
-
-	fun colorInt(settingsData: SettingsData): Int = getColorIntFromStatus(status(), settingsData)
-
-/*	fun setNewLastWorkout(lastWorkout: Long): Boolean {
-		return if (this.lastWorkout == lastWorkout) {
-			false
-		} else {
-			this.lastWorkout = lastWorkout
-			true
-		}
-	}*/
+	fun color(settingsData: SettingsData): Color = getColorFromStatus(status(), settingsData)
 
 	fun hasValidAppWidgetId(): Boolean = appWidgetId != AppWidgetManager.INVALID_APPWIDGET_ID
 	override fun toString(): String = title + ": " + everyWording()
-	fun everyWording(): String = "Every ${if (intervalBlue == 1) "day" else "$intervalBlue days"}"
+	private fun everyWording(): String = "Every ${if (intervalBlue == 1) "day" else "$intervalBlue days"}"
 	fun debugString(): String = "widgetUid: $uid, appWidgetId: $appWidgetId, Title: $title: "
-
-	// widgetText returns the text of the whole widget based on a goal.
-/*	fun widgetText(settingsData: SettingsData): String {
-		var widgetText: String = title
-		if (showDate || showTime) widgetText += "\n"
-		widgetText += widgetTextDateAndTime(settingsData)
-		return widgetText
-	}*/
 
 	fun widgetTextDateAndTime(settingsData: SettingsData): String {
 		var widgetTextDateAndTime = ""
@@ -78,8 +75,20 @@ data class Goal(
 			if (showDate) widgetTextDateAndTime += dateBeautiful(displayTime, settingsData.dateLocale())
 			if (showDate && showTime) widgetTextDateAndTime += "\n"
 			if (showTime) widgetTextDateAndTime += timeBeautiful(displayTime, settingsData.timeLocale())
-			Log.d(TAG,"widgetTextDateAndTime: $widgetTextDateAndTime")
+			// Log.d(TAG,"widgetTextDateAndTime: $widgetTextDateAndTime")
 		}
 		return widgetTextDateAndTime
 	}
+
+	fun goalWithoutCount(): GoalWithoutCount = GoalWithoutCount(
+		uid = uid,
+		appWidgetId = appWidgetId,
+		glanceId = glanceId,
+		title = title,
+		lastWorkout = lastWorkout,
+		intervalBlue = intervalBlue,
+		intervalRed = intervalRed,
+		showDate = showDate,
+		showTime = showTime
+	)
 }

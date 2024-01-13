@@ -14,9 +14,9 @@ class GoalRepository @Inject constructor(
 
 	val allGoals: Flow<List<Goal>> = goalDao.loadAllGoalsFlow()
 
-	suspend fun deleteGoal(goal: Goal) = goalDao.deleteGoal(goal = goal)
-	suspend fun insertGoal(goal: Goal): Int = goalDao.insertGoal(goal = goal).toInt()
-	suspend fun updateGoal(goal: Goal) = goalDao.updateGoal(goal = goal)
+	suspend fun deleteGoal(goal: Goal) = goalDao.deleteGoal(goal = goal.goalWithoutCount())
+	suspend fun insertGoal(goal: Goal): Int = goalDao.insertGoal(goal = goal.goalWithoutCount()).toInt()
+	suspend fun updateGoal(goal: Goal) = goalDao.updateGoal(goal = goal.goalWithoutCount())
 	suspend fun loadGoalByUid(uid: Int): Goal? = goalDao.loadGoalByUid(uid = uid)
 	fun loadGoalByAppWidgetIdFlow(appWidgetId: Int): Flow<Goal> = goalDao.loadGoalByAppWidgetIdFlow(appWidgetId)
 	fun loadGoalsWithoutValidAppWidgetId(): Flow<List<Goal>> = goalDao.loadGoalsWithoutValidAppWidgetId()

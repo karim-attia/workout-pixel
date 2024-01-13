@@ -94,8 +94,7 @@ fun WidgetContent(
     smiley: Boolean,
     settingsData: SettingsData
 ) {
-    Log.d(TAG, "WidgetContent $goal")
-    // TODO: Get settingsData
+    // Log.d(TAG, "WidgetContent $goal")
     val backgroundColor = goal.color(settingsData)
 
     // TODO: Styling seems inelegant

@@ -26,6 +26,7 @@ import ch.karimattia.workoutpixel.R
 import ch.karimattia.workoutpixel.core.Screens
 import ch.karimattia.workoutpixel.core.dateBeautiful
 import ch.karimattia.workoutpixel.core.last3Am
+import ch.karimattia.workoutpixel.core.plural
 import ch.karimattia.workoutpixel.core.testGoals
 import ch.karimattia.workoutpixel.data.Goal
 import ch.karimattia.workoutpixel.screens.CardWithTitle
@@ -117,8 +118,8 @@ fun StatisticsCount(goal: Goal) {
     Statistics(
         icon = Icons.Default.TrendingUp,
         label = "Done",
-        info = "43",
-        unit = "times"
+        info = goal.count.toString(),
+        unit = plural(goal.count, "time")
     )
 }
 

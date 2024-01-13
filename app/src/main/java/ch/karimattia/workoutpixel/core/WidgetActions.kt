@@ -5,7 +5,6 @@ import android.appwidget.AppWidgetManager
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
-import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.datastore.preferences.core.booleanPreferencesKey
@@ -52,7 +51,7 @@ class WidgetActions @AssistedInject constructor(
     @OptIn(DelicateCoroutinesApi::class)
     suspend fun updateAfterClick() {
         Log.d(TAG, "ACTION_DONE_EXERCISE " + goal.debugString() + "start")
-        val numberOfPastWorkouts = pastClickRepository.getCountOfActivePastWorkouts(goal.uid) + 1
+        val numberOfPastWorkouts = goal.count + 1
         Toast.makeText(
             context,
             "Oh yeah! Already done this $numberOfPastWorkouts ${
@@ -177,7 +176,7 @@ class WidgetActions @AssistedInject constructor(
     }*/
 
     // Create an Intent to set the action DONE_EXERCISE. This will be received in onReceive.
-    private fun widgetPendingIntent(): PendingIntent? {
+    /*private fun widgetPendingIntent(): PendingIntent? {
         val intent = Intent(context, GlanceWidgetReceiver::class.java)
         intent.action = Constants.ACTION_DONE_EXERCISE
         // put the appWidgetId as an extra to the update intent
@@ -192,11 +191,11 @@ class WidgetActions @AssistedInject constructor(
             intent,
             PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
         )
-    }
+    }*/
 
     // https://developer.android.com/guide/topics/appwidgets/configuration#pin
     // https://developer.android.com/reference/android/appwidget/AppWidgetManager#requestPinAppWidget(android.content.ComponentName,%20android.os.Bundle,%20android.app.PendingIntent)
-    suspend fun pinAppWidget() {
+    fun pinAppWidget() {
         // TODO with https://medium.com/@avengers14.blogger/requestappwidget-jetpack-glance-2e21f7db1adf
         val appWidgetManager = AppWidgetManager.getInstance(context)
         val myProvider = ComponentName(context, GlanceWidgetReceiver::class.java)

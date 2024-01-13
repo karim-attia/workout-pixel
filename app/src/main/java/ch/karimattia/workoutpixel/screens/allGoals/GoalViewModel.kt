@@ -14,6 +14,9 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+@Suppress("unused")
+private const val TAG: String = "GoalViewModel"
+
 @HiltViewModel
 class GoalViewModel @Inject constructor(
 	private val goalRepository: GoalRepository,
