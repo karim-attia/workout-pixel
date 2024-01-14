@@ -4,10 +4,10 @@ import android.appwidget.AppWidgetManager
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.lifecycle.*
-import ch.karimattia.composechatbotframework.ChatInputField
-import ch.karimattia.composechatbotframework.ChatMessage
-import ch.karimattia.composechatbotframework.ChatViewModel
-import ch.karimattia.composechatbotframework.MessageProposal
+import ch.karimattia.compose_chatbot_framework.ChatInputField
+import ch.karimattia.compose_chatbot_framework.ChatMessage
+import ch.karimattia.compose_chatbot_framework.ChatViewModel
+import ch.karimattia.compose_chatbot_framework.MessageProposal
 import ch.karimattia.workoutpixel.core.Screens
 import ch.karimattia.workoutpixel.core.Status
 import ch.karimattia.workoutpixel.data.Goal

@@ -4,7 +4,7 @@ import java.io.FileInputStream
 plugins {
     id("com.android.application")
     id("com.google.devtools.ksp")
-    id ("androidx.navigation.safeargs")
+    id("androidx.navigation.safeargs")
     id("org.jetbrains.kotlin.android")
     id("kotlin-android")
     id("dagger.hilt.android.plugin")
@@ -73,7 +73,7 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.4-dev-k1.9.20-50f08dfa4b4"
+        kotlinCompilerExtensionVersion = "1.5.4"
     }
 
     defaultConfig {
@@ -201,7 +201,7 @@ dependencies {
 
     implementation ("androidx.glance:glance-appwidget:1.0.0")
 
-    implementation ("com.github.karim-attia:ChatbotComposeFramework:1.0.2")
+    implementation ("com.github.karim-attia:compose-chatbot-framework:1.0.21")
 
 }
 

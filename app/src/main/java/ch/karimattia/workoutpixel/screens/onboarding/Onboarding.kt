@@ -6,7 +6,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.lifecycle.viewmodel.compose.viewModel
-import ch.karimattia.composechatbotframework.ChatMainScreen
+import ch.karimattia.compose_chatbot_framework.ChatMainScreen
 import ch.karimattia.workoutpixel.screens.Lambdas
 import ch.karimattia.workoutpixel.data.Goal
 
