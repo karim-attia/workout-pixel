@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Divider
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -11,7 +12,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import ch.karimattia.workoutpixel.core.colorToInt
 import ch.karimattia.workoutpixel.core.dateBeautiful
 import ch.karimattia.workoutpixel.core.timeBeautiful
@@ -252,8 +252,15 @@ fun SettingsEntry(
 		Column(modifier = Modifier
 			.weight(1f)
 			.padding(end = 4.dp)) {
-			Text(text = titleText, fontWeight = FontWeight.Medium, fontSize = 16.sp)
-			Text(text = subtitleText, fontSize = 14.sp)
+			Text(
+				text = titleText,
+				//fontWeight = FontWeight.Medium,
+				style = MaterialTheme.typography.labelLarge,
+			)
+			Text(
+				text = subtitleText,
+				style = MaterialTheme.typography.bodyMedium,
+			)
 		}
 		onTheRight()
 	}
@@ -265,6 +272,7 @@ fun SettingsTitle(
 ) {
 	Text(text = text,
 		fontWeight = FontWeight.Medium,
+		style = MaterialTheme.typography.titleMedium,
 		// color = MaterialTheme.colors.primary,
 		modifier = Modifier.padding(vertical = 8.dp, horizontal = 8.dp))
 }
