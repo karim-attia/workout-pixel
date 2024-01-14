@@ -75,6 +75,7 @@ fun Settings(
 		// DATE format
 		Divider(color = Color(TextBlack), thickness = 0.5.dp)
 		SettingsTitle(text = "Date and time format")
+		/*
 		LocaleSelectionDateTime(
 			goal = goal,
 			settingsData = settingsData,
@@ -83,6 +84,7 @@ fun Settings(
 			},
 			format = Formats(settingsData = settingsData).DATE
 		)
+		*/
 		// TIME format
 		LocaleSelectionDateTime(
 			goal = goal,
@@ -109,6 +111,7 @@ data class Format(
 
 class Formats(
 	val settingsData: SettingsData,
+/*
 	val DATE: Format = Format(
 		label = "date",
 		locale = settingsData.dateLocale(),
@@ -117,6 +120,7 @@ class Formats(
 		maxStringSizeFilter = 10,
 		showDate = true,
 	),
+*/
 	val TIME: Format = Format(
 		label = "time",
 		locale = settingsData.timeLocale(),

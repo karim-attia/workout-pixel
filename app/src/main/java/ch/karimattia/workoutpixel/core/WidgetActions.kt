@@ -119,8 +119,8 @@ class WidgetActions @AssistedInject constructor(
                     prefs[intPreferencesKey(colorSecondIntervalInt)] = settingsData.colorSecondIntervalInt
                     prefs[intPreferencesKey(colorInitialInt)] = settingsData.colorInitialInt
 
-                    prefs[stringPreferencesKey(dateLanguage)] = settingsData.dateLanguage as String
-                    prefs[stringPreferencesKey(dateCountry)] = settingsData.dateCountry as String
+                    // prefs[stringPreferencesKey(dateLanguage)] = settingsData.dateLanguage as String
+                    // prefs[stringPreferencesKey(dateCountry)] = settingsData.dateCountry as String
                     prefs[stringPreferencesKey(timeLanguage)] = settingsData.timeLanguage as String
                     prefs[stringPreferencesKey(timeCountry)] = settingsData.timeCountry as String
                 }

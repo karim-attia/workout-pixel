@@ -1,5 +1,6 @@
 package ch.karimattia.workoutpixel.screens.settings
 
+import android.annotation.SuppressLint
 import androidx.compose.runtime.Composable
 import ch.karimattia.workoutpixel.data.Goal
 import ch.karimattia.workoutpixel.data.SettingsData
@@ -13,6 +14,7 @@ import java.util.Locale
 @Suppress("unused")
 private const val TAG: String = "LocaleSelectionDateTime"
 
+@SuppressLint("SuspiciousIndentation")
 @Composable
 fun LocaleSelectionDateTime(
     goal: Goal,
@@ -29,6 +31,7 @@ fun LocaleSelectionDateTime(
 	}
 
 	val dialogState = rememberMaterialDialogState()
+
     MaterialDialog(dialogState = dialogState, buttons = {
         positiveButton("Ok")
         negativeButton("Cancel")
