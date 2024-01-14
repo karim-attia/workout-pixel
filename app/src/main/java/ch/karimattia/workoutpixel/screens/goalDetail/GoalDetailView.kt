@@ -19,6 +19,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -263,7 +264,7 @@ fun PastClickEntry(
 			MaterialTheme.typography.labelSmall
 		} else {
 			if (!active) {
-				MaterialTheme.typography.bodyMedium.copy(textDecoration=TextDecoration.LineThrough)
+				MaterialTheme.typography.bodyMedium.copy(textDecoration=TextDecoration.LineThrough, color = Color.Gray)
 			} else {
 				MaterialTheme.typography.bodyMedium
 			}

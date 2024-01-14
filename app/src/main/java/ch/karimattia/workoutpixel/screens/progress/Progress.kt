@@ -128,7 +128,7 @@ fun ProgressPastClickList(
 	val numberOfPastClicks = pastClicksAndGoal.size
 	if (numberOfPastClicks > 0) {
 		Column {
-			ProgressPastClickEntry(goal = "Goal", date = "Date", time = "Time", isHeader = true)
+			ProgressPastClickEntry(goal = "Goal", date = "When", time = "", isHeader = true)
 			Divider(color = MaterialTheme.colorScheme.primary, thickness = 1.dp)
 
 			for (pastClickAndGoal in pastClicksAndGoal) {
@@ -191,16 +191,16 @@ fun ProgressPastClickEntry(
 		)
 		/* Date */
 		Text(
-			text = date,
+			text = date + if (time != "") ", " + time else "",
 			fontSize = 14.sp,
 			style = style,
 			modifier = Modifier
-				.width(90.dp)
+				.width(140.dp)
 				.padding(start = 4.dp, end = 12.dp)
 				.align(Alignment.CenterVertically)
 		)
 		/* Time */
-		Text(
+		/*Text(
 			text = time,
 			fontSize = 14.sp,
 			style = style,
@@ -208,7 +208,7 @@ fun ProgressPastClickEntry(
 				.width(50.dp)
 				.padding(end = 12.dp)
 				.align(Alignment.CenterVertically)
-		)
+		)*/
 	}
 }
 
