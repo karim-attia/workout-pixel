@@ -90,7 +90,7 @@ dependencies {
     testImplementation ("org.testng:testng:7.9.0")
 
     // Lifecycle components
-    val lifecycleVersion = "2.6.2"
+    val lifecycleVersion = "2.7.0"
     implementation ("androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycleVersion")
     implementation ("androidx.lifecycle:lifecycle-livedata-ktx:$lifecycleVersion")
     implementation ("androidx.lifecycle:lifecycle-common-java8:$lifecycleVersion")
@@ -120,7 +120,7 @@ dependencies {
     // implementation "com.google.accompanist:accompanist-navigation-animation:0.20.0"
     implementation ("androidx.hilt:hilt-navigation-compose:1.1.0")
 
-    //Jetpack Compose UI
+    // Jetpack Compose UI
     implementation ("androidx.compose.ui:ui:1.5.4")
     // Tooling support (Previews, etc.)
     implementation ("androidx.compose.ui:ui-tooling:1.5.4")
@@ -135,7 +135,7 @@ dependencies {
     // Integration with activities
     implementation ("androidx.activity:activity-compose:1.8.2")
     // Integration with ViewModels
-    implementation ("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.2")
+    implementation ("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")
     // Integration with observables
     implementation ("androidx.compose.runtime:runtime-livedata:1.5.4")
     // implementation "androidx.compose.runtime:runtime-rxjava2:1.1.0-alpha06"
