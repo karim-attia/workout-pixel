@@ -7,6 +7,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.TrendingUp
 import androidx.compose.material.icons.outlined.DateRange
+import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -95,15 +96,40 @@ fun GoalCard(
             Row(
                 // horizontalArrangement = Arrangement.SpaceBetween,
                 modifier = Modifier
-					.fillMaxWidth()
+                    .height(IntrinsicSize.Min)
+                    .fillMaxWidth()
 					.padding(top = 1.dp)
             ) {
                 Box(modifier = Modifier.weight(1f)) {
                     StatisticsCount(goal = goal)
                 }
+
+/*
+                Box(modifier = Modifier.weight(0.15f)) {
+                    Divider(
+                        color = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier
+                            .fillMaxHeight()
+                            .width(0.5.dp)
+                    )
+                }
+*/
+
                 Box(modifier = Modifier.weight(1f)) {
                     StatisticsLastDone(goal = goal)
                 }
+
+/*
+                Box(modifier = Modifier.weight(0.15f)) {
+                    Divider(
+                        color = MaterialTheme.colorScheme.outline,
+                        modifier = Modifier
+                            .fillMaxHeight()
+                            .width(0.5.dp)
+                    )
+                }
+*/
+
                 Box(modifier = Modifier.weight(1f)) {
                     StatisticsInterval(goal = goal)
                 }
