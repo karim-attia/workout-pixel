@@ -67,7 +67,6 @@ fun Progress(
 
 		ProgressPastClicks(
 			pastClicksAndGoal = pastClicksAndGoal,
-			lambdas = lambdas,
 		)
 
 		Spacer(modifier = Modifier.height(40.dp))
@@ -108,14 +107,12 @@ fun ProgressBar(
 @Composable
 fun ProgressPastClicks(
 	pastClicksAndGoal: List<PastClickAndGoal>,
-	lambdas: Lambdas,
 ) {
 	CardWithTitle(
 		title = "Activities this week",
 	) {
 		ProgressPastClickList(
 			pastClicksAndGoal = pastClicksAndGoal,
-			lambdas = lambdas,
 		)
 	}
 }
@@ -123,7 +120,6 @@ fun ProgressPastClicks(
 @Composable
 fun ProgressPastClickList(
 	pastClicksAndGoal: List<PastClickAndGoal>,
-	lambdas: Lambdas,
 ) {
 	val numberOfPastClicks = pastClicksAndGoal.size
 	if (numberOfPastClicks > 0) {
@@ -135,7 +131,6 @@ fun ProgressPastClickList(
 				key(pastClickAndGoal.pastClick.uid) {
 					ProgressPastClickEntry(
 						pastClickAndGoal = pastClickAndGoal,
-						lambdas = lambdas,
 					)
 					Divider(color = MaterialTheme.colorScheme.primary, thickness = 0.5.dp)
 				}
@@ -155,12 +150,11 @@ fun ProgressPastClickList(
 @Composable
 fun ProgressPastClickEntry(
 	pastClickAndGoal: PastClickAndGoal,
-	lambdas: Lambdas,
 ) {
 	ProgressPastClickEntry(
 		goal = pastClickAndGoal.goal.title,
-		date = dateBeautiful(pastClickAndGoal.pastClick.workoutTime, lambdas.settingsData.dateLocale()),
-		time = timeBeautiful(pastClickAndGoal.pastClick.workoutTime, lambdas.settingsData.timeLocale()),
+		date = dateBeautiful(pastClickAndGoal.pastClick.workoutTime),
+		time = timeBeautiful(pastClickAndGoal.pastClick.workoutTime),
 	)
 }
 

@@ -65,16 +65,16 @@ data class Goal(
 	private fun everyWording(): String = "Every ${if (intervalBlue == 1) "day" else "$intervalBlue days"}"
 	fun debugString(): String = "widgetUid: $uid, appWidgetId: $appWidgetId, Title: $title: "
 
-	fun widgetTextDateAndTime(settingsData: SettingsData): String {
+	fun widgetTextDateAndTime(): String {
 		var widgetTextDateAndTime = ""
 		if ((status() != Status.NONE)) {
 			// If statusOverride override is active, use currentTimeMillis to show how the widget will look in the preview.
 			val displayTime: Long = if (statusOverride == Status.GREEN) System.currentTimeMillis() else {
 				lastWorkout
 			}
-			if (showDate) widgetTextDateAndTime += dateBeautiful(displayTime, settingsData.dateLocale())
+			if (showDate) widgetTextDateAndTime += dateBeautiful(displayTime)
 			if (showDate && showTime) widgetTextDateAndTime += "\n"
-			if (showTime) widgetTextDateAndTime += timeBeautiful(displayTime, settingsData.timeLocale())
+			if (showTime) widgetTextDateAndTime += timeBeautiful(displayTime)
 			// Log.d(TAG,"widgetTextDateAndTime: $widgetTextDateAndTime")
 		}
 		return widgetTextDateAndTime

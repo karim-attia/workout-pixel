@@ -1,6 +1,5 @@
 package ch.karimattia.workoutpixel.screens.settings
 
-import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Divider
@@ -13,13 +12,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import ch.karimattia.workoutpixel.core.colorToInt
-import ch.karimattia.workoutpixel.core.dateBeautiful
-import ch.karimattia.workoutpixel.core.timeBeautiful
 import ch.karimattia.workoutpixel.data.Goal
 import ch.karimattia.workoutpixel.data.SettingsData
 import ch.karimattia.workoutpixel.screens.Lambdas
 import ch.karimattia.workoutpixel.ui.theme.*
-import java.util.*
 
 @Suppress("unused")
 private const val TAG: String = "Settings"
@@ -31,8 +27,8 @@ fun Settings(
 	settingChange: (SettingsData) -> Unit = lambdas.settingChange,
 ) {
 	val goal = Goal(title = "Select color", lastWorkout = 1663506300000L, intervalBlue=10000)
-	Log.d(TAG, "dateLanguage: ${settingsData.dateLanguage} / dateCountry: ${settingsData.dateCountry}")
-	Log.d(TAG, "timeLanguage: ${settingsData.timeLanguage} / timeCountry: ${settingsData.timeCountry}")
+	// Log.d(TAG, "dateLanguage: ${settingsData.dateLanguage} / dateCountry: ${settingsData.dateCountry}")
+	// Log.d(TAG, "timeLanguage: ${settingsData.timeLanguage} / timeCountry: ${settingsData.timeCountry}")
 	Column {
 		Divider(color = Color(TextBlack), thickness = 0.5.dp)
 		SettingsTitle(text = "Colors")
@@ -74,7 +70,7 @@ fun Settings(
 		)
 		// DATE format
 		Divider(color = Color(TextBlack), thickness = 0.5.dp)
-		SettingsTitle(text = "Date and time format")
+		// SettingsTitle(text = "Date and time format")
 		/*
 		LocaleSelectionDateTime(
 			goal = goal,
@@ -86,7 +82,7 @@ fun Settings(
 		)
 		*/
 		// TIME format
-		LocaleSelectionDateTime(
+		/*LocaleSelectionDateTime(
 			goal = goal,
 			settingsData = settingsData,
 			onChoiceChange = { language: String?, country: String? ->
@@ -95,9 +91,11 @@ fun Settings(
 			format = Formats(settingsData = settingsData).TIME
 		)
 		Divider(color = Color(TextBlack), thickness = 0.5.dp)
+		*/
 	}
 }
 
+/*
 data class Format(
 	val label: String,
 	val locale: Locale,
@@ -108,10 +106,12 @@ data class Format(
 	val showDate: Boolean = false,
 	val showTime: Boolean = false,
 )
+*/
+
+/*
 
 class Formats(
 	val settingsData: SettingsData,
-/*
 	val DATE: Format = Format(
 		label = "date",
 		locale = settingsData.dateLocale(),
@@ -120,7 +120,6 @@ class Formats(
 		maxStringSizeFilter = 10,
 		showDate = true,
 	),
-*/
 	val TIME: Format = Format(
 		label = "time",
 		locale = settingsData.timeLocale(),
@@ -130,6 +129,8 @@ class Formats(
 		showTime = true,
 	),
 )
+*/
+
 
 @Composable
 fun SettingsEntry(

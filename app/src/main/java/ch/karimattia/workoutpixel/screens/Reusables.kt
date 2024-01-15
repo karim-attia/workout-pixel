@@ -75,7 +75,7 @@ fun GoalPreview(
         )
         if (goal.showDate || goal.showTime) {
             Text(
-                text = goal.widgetTextDateAndTime(settingsData),
+                text = goal.widgetTextDateAndTime(),
                 textAlign = TextAlign.Center,
                 fontSize = 10.sp,
                 fontWeight = FontWeight(500),

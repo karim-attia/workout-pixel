@@ -30,10 +30,6 @@ object Constants {
 	const val colorFirstIntervalInt = "colorFirstIntervalInt"
 	const val colorSecondIntervalInt = "colorSecondIntervalInt"
 	const val colorInitialInt = "colorInitialInt"
-	const val dateLanguage = "dateLanguage"
-	const val dateCountry = "dateCountry"
-	const val timeLanguage = "timeLanguage"
-	const val timeCountry = "timeCountry"
 }
 
 enum class Status {
@@ -105,7 +101,7 @@ fun colorToInt(color: Color): Int = android.graphics.Color.argb(color.alpha, col
 /**
  * Time and date formatting stuff
  */
-fun dateBeautiful(date: Long, locale: Locale, agoWording: Boolean=true): String {
+fun dateBeautiful(date: Long, agoWording: Boolean=true): String {
 
 	fun daysAgo(date: Long): Int {
 		val now = System.currentTimeMillis()
@@ -127,18 +123,18 @@ fun dateBeautiful(date: Long, locale: Locale, agoWording: Boolean=true): String 
 	return dateBeautiful
 }
 
-fun timeBeautiful(date: Long, locale: Locale): String {
+fun timeBeautiful(date: Long): String {
 	return if (date == 0L) "" else {
 		val lastWorkout: LocalDateTime = Instant.ofEpochMilli(date).atZone(ZoneId.systemDefault()).toLocalDateTime()
-		val dateFormatter: DateTimeFormatter = DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT).withLocale(locale)
+		val dateFormatter: DateTimeFormatter = DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT) //.withLocale(locale)
 		lastWorkout.format(dateFormatter)
 	}
 }
 
-fun dateTimeBeautiful(date: Long, locale: Locale = Locale("de", "CH")): String {
+fun dateTimeBeautiful(date: Long): String {
 	return if (date == 0L) "Never" else {
 		val lastWorkout: LocalDateTime = Instant.ofEpochMilli(date).atZone(ZoneId.systemDefault()).toLocalDateTime()
-		val dateFormatter: DateTimeFormatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT).withLocale(locale)
+		val dateFormatter: DateTimeFormatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT) //.withLocale(locale)
 		lastWorkout.format(dateFormatter)
 	}
 }
@@ -224,7 +220,7 @@ val testGoals: List<Goal> = listOf(
 	)
 )
 
-val testPastClicks: List<PastClick> = listOf(
+/*val testPastClicks: List<PastClick> = listOf(
 	PastClick(
 		uid = 1,
 		widgetUid = 1,
@@ -235,5 +231,5 @@ val testPastClicks: List<PastClick> = listOf(
 		widgetUid = 1,
 		workoutTime = today3Am() - intervalInMilliseconds(2) - (intervalInMilliseconds(1) * 0.259).roundToInt(),
 	),
-)
+)*/
 

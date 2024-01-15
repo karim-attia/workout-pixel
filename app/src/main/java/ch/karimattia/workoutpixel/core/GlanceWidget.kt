@@ -61,6 +61,7 @@ class GlanceWidget : GlanceAppWidget() {
                 ?: settingsData.colorSecondIntervalInt
             settingsData.colorInitialInt =
                 prefs[intPreferencesKey("colorInitialInt")] ?: settingsData.colorInitialInt
+/*
             settingsData.dateLanguage =
                 prefs[stringPreferencesKey("dateLanguage")] ?: settingsData.dateLanguage
             settingsData.dateCountry =
@@ -69,6 +70,7 @@ class GlanceWidget : GlanceAppWidget() {
                 prefs[stringPreferencesKey("timeLanguage")] ?: settingsData.timeLanguage
             settingsData.timeCountry =
                 prefs[stringPreferencesKey("timeCountry")] ?: settingsData.timeCountry
+*/
 
             // TODO: Create Goal(prefs: Preferences)
             val goal = Goal()
@@ -142,7 +144,7 @@ fun WidgetContent(
         )
         if (!smiley && (goal.showDate || goal.showTime)) {
             Text(
-                text = goal.widgetTextDateAndTime(settingsData),
+                text = goal.widgetTextDateAndTime(),
                 // .wrapContentSize(Alignment.Center)
                 modifier = GlanceModifier
                     .fillMaxWidth()

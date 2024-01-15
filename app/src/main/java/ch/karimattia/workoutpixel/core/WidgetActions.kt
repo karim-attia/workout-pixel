@@ -19,10 +19,6 @@ import ch.karimattia.workoutpixel.core.Constants.colorDoneInt
 import ch.karimattia.workoutpixel.core.Constants.colorFirstIntervalInt
 import ch.karimattia.workoutpixel.core.Constants.colorInitialInt
 import ch.karimattia.workoutpixel.core.Constants.colorSecondIntervalInt
-import ch.karimattia.workoutpixel.core.Constants.dateCountry
-import ch.karimattia.workoutpixel.core.Constants.dateLanguage
-import ch.karimattia.workoutpixel.core.Constants.timeCountry
-import ch.karimattia.workoutpixel.core.Constants.timeLanguage
 import ch.karimattia.workoutpixel.data.*
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -121,8 +117,8 @@ class WidgetActions @AssistedInject constructor(
 
                     // prefs[stringPreferencesKey(dateLanguage)] = settingsData.dateLanguage as String
                     // prefs[stringPreferencesKey(dateCountry)] = settingsData.dateCountry as String
-                    prefs[stringPreferencesKey(timeLanguage)] = settingsData.timeLanguage as String
-                    prefs[stringPreferencesKey(timeCountry)] = settingsData.timeCountry as String
+                    // prefs[stringPreferencesKey(timeLanguage)] = settingsData.timeLanguage as String
+                    // prefs[stringPreferencesKey(timeCountry)] = settingsData.timeCountry as String
                 }
 
                 val glanceAppWidget: GlanceAppWidget = GlanceWidget()

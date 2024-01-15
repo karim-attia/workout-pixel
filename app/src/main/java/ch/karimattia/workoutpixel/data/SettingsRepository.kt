@@ -45,6 +45,7 @@ data class SettingsData(
     var colorFirstIntervalInt: Int = Blue,
     var colorSecondIntervalInt: Int = Red,
     var colorInitialInt: Int = Grey,
+    // Crashes if removed
     var dateLanguage: String? = Locale.getDefault().language,
     var dateCountry: String? = Locale.getDefault().country,
     var timeLanguage: String? = Locale.getDefault().language,
@@ -54,10 +55,12 @@ data class SettingsData(
     fun colorFirstInterval(): Color = Color(colorFirstIntervalInt)
     fun colorSecondInterval(): Color = Color(colorSecondIntervalInt)
     fun colorInitial(): Color = Color(colorInitialInt)
+/*
     fun isDateLocaleDefault(): Boolean = (dateLanguage == null || dateCountry == null)
     fun isTimeLocaleDefault(): Boolean = (timeLanguage == null || timeCountry == null)
     fun dateLocale(): Locale = if (isDateLocaleDefault()) Locale.getDefault() else Locale(dateLanguage!!, dateCountry!!)
     fun timeLocale(): Locale = if (isTimeLocaleDefault()) Locale.getDefault() else Locale(timeLanguage!!, timeCountry!!)
+*/
 
     private fun colorSameHueLowerSaturation(originalColor: Int): Int {
         val hsl = FloatArray(3)
@@ -73,10 +76,10 @@ data class SettingsData(
         return ColorUtils.HSLToColor(hsl)
     }
 
-    fun colorDoneLighter(): Int = colorSameHueLowerSaturation(colorDoneInt)
-    fun colorFirstIntervalLighter(): Int = colorSameHueLowerSaturation(colorFirstIntervalInt)
-    fun colorSecondIntervalLighter(): Int = colorSameHueLowerSaturation(colorSecondIntervalInt)
-    fun colorInitialLighter(): Int = colorSameHueLowerSaturation(colorInitialInt)
+    private fun colorDoneLighter(): Int = colorSameHueLowerSaturation(colorDoneInt)
+    private fun colorFirstIntervalLighter(): Int = colorSameHueLowerSaturation(colorFirstIntervalInt)
+    private fun colorSecondIntervalLighter(): Int = colorSameHueLowerSaturation(colorSecondIntervalInt)
+    private fun colorInitialLighter(): Int = colorSameHueLowerSaturation(colorInitialInt)
 
     fun color(status: Status): Color = when (status) {
         Status.GREEN -> colorDone()
@@ -85,6 +88,7 @@ data class SettingsData(
         Status.NONE -> colorInitial()
     }
 
+    // Could be more elegant ;)
     fun colorLighter(status: Status): Color = when (status) {
         Status.GREEN -> Color(colorDoneLighter())
         Status.BLUE -> Color(colorFirstIntervalLighter())
@@ -93,7 +97,7 @@ data class SettingsData(
     }
 
 
-    override fun toString(): String = "dateLocale(): " + dateLocale() + " | timeLocale(): " + timeLocale()
+    // override fun toString(): String = "dateLocale(): " + dateLocale() + " | timeLocale(): " + timeLocale()
 }
 
 object SettingsDataSerializer : Serializer<SettingsData> {

@@ -208,7 +208,6 @@ fun PastClickList(
 								lambdas.updateGoal(currentGoal.copy(lastWorkout = lastWorkout))
 							}
 						},
-						lambdas = lambdas,
 					)
 					// TODO: Should do lighter with same hue.
 					Divider(color = MaterialTheme.colorScheme.primary, thickness = 0.5.dp)
@@ -230,11 +229,10 @@ fun PastClickList(
 fun PastClickEntry(
 	pastClick: PastClick,
 	togglePastClick: () -> Unit,
-	lambdas: Lambdas,
 ) {
 	PastClickEntry(
-		date = dateBeautiful(pastClick.workoutTime, lambdas.settingsData.dateLocale()),
-		time = timeBeautiful(pastClick.workoutTime, lambdas.settingsData.timeLocale()),
+		date = dateBeautiful(pastClick.workoutTime),
+		time = timeBeautiful(pastClick.workoutTime),
 		icon = if (pastClick.isActive) {
 			Icons.Filled.Delete
 		} else {

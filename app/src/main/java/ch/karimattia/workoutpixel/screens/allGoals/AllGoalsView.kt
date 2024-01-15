@@ -128,7 +128,7 @@ fun StatisticsLastDone(goal: Goal) {
     val info = dateBeautiful(
         date = goal.lastWorkout,
         agoWording = false,
-        locale = Locale.getDefault()
+        // locale = Locale.getDefault()
     )
     Statistics(
         icon = Icons.Default.Done,
