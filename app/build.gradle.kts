@@ -19,6 +19,7 @@ android {
     keystoreProperties.load(FileInputStream(keystorePropertiesFile))
 
 
+/*
     signingConfigs {
         create("release") {
             keyAlias = keystoreProperties["keyAlias"] as String
@@ -27,15 +28,16 @@ android {
             storePassword = keystoreProperties["storePassword"] as String
         }
     }
+*/
 
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "ch.karimattia.workoutpixel"
+        applicationId = "ch.karimattia.workoutpixels"
         minSdk = 31
         targetSdk = 34
-        versionCode = 7
-        versionName = "1.2"
+        versionCode = 9
+        versionName = "1.3"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
@@ -44,6 +46,7 @@ android {
 
     buildFeatures.compose = true
 
+/*
     buildTypes {
         getByName("release") {
             isMinifyEnabled = true
@@ -51,6 +54,7 @@ android {
             signingConfig = signingConfigs.getByName("release")
         }
     }
+*/
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
