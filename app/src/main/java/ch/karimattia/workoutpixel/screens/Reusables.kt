@@ -3,17 +3,27 @@ package ch.karimattia.workoutpixel.screens
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalTextStyle
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
@@ -32,6 +42,8 @@ import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.graphics.ColorUtils
+import ch.karimattia.workoutpixel.core.colorToInt
 import ch.karimattia.workoutpixel.core.testGoals
 import ch.karimattia.workoutpixel.data.Goal
 import ch.karimattia.workoutpixel.data.SettingsData
@@ -273,3 +285,32 @@ data class Lambdas(
     val navigateTo: (destination: String, goal: Goal?, popBackStack: Boolean) -> Unit = { _, _, _ -> },
     val navigateUp: (setGoalToNull: Boolean) -> Unit = { },
 )
+
+fun sameHueLowerSaturationInt(originalColor: Int): Int {
+    val hsl = FloatArray(3)
+    ColorUtils.colorToHSL(originalColor, hsl)
+    // hue
+    // hsl[0] *= 1f
+    // saturation
+    hsl[1] = 0.8f
+    // hsl[1] *= 0.7f
+    // lightness
+    hsl[2] = 0.92f
+    // hsl[2] *= 0.84f
+    return ColorUtils.HSLToColor(hsl)
+}
+
+fun sameHueLowerSaturation(originalColor: Color): Color {
+    val colorInt = colorToInt(originalColor)
+    val hsl = FloatArray(3)
+    ColorUtils.colorToHSL(colorInt, hsl)
+    // hue
+    // hsl[0] *= 1f
+    // saturation
+    hsl[1] = 0.8f
+    // hsl[1] *= 0.7f
+    // lightness
+    hsl[2] = 0.92f
+    // hsl[2] *= 0.84f
+    return Color(ColorUtils.HSLToColor(hsl))
+}
