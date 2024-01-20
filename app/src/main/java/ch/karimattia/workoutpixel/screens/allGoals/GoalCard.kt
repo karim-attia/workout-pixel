@@ -16,6 +16,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.TrendingUp
 import androidx.compose.material.icons.outlined.DateRange
+import androidx.compose.material.icons.outlined.Repeat
+import androidx.compose.material.icons.outlined.Replay
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -152,7 +154,7 @@ fun StatisticsLastDone(goal: Goal) {
 @Composable
 fun StatisticsInterval(goal: Goal) {
     Statistics(
-        icon = Icons.Outlined.DateRange,
+        icon = Icons.Outlined.Replay,
         label = "Every",
         info = goal.intervalBlue.toString(),
         unit = if (goal.intervalBlue == 1) "day" else "days"
@@ -186,17 +188,33 @@ fun Statistics(
         // horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
             .clip(RoundedCornerShape(4.dp))
+            .fillMaxWidth()
+            .background(MaterialTheme.colorScheme.background)
+
+/*
+            .drawBehind {
+                drawRoundRect(
+                    color = Color.Gray,
+                    cornerRadius = CornerRadius(4.dp.toPx()),
+                    style = Stroke(
+                        width = 2f,
+                        pathEffect = PathEffect.dashPathEffect(floatArrayOf(10f, 10f), 0f)
+                    )
+                )
+            }
+*/
+
             .border(
-                width = 0.5.dp,
+                width = 0.25.dp,
                 color = Color.LightGray,
                 shape = RoundedCornerShape(4.dp)
+
             )
-            .background(MaterialTheme.colorScheme.background)
-            .fillMaxWidth()
+
             .padding(start = 8.dp)
 
-    )
-    {
+
+    ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
@@ -210,7 +228,13 @@ fun Statistics(
                 // tint = MaterialTheme.colorScheme.primary,
                 tint = Color.Gray,
                 modifier = Modifier
-                    .size(if (icon == Icons.Outlined.DateRange) 18.dp else 22.dp)
+                    .size(
+                        when (icon) {
+                            Icons.Outlined.DateRange, Icons.Outlined.Repeat -> 18.dp
+                            Icons.Outlined.Replay -> 19.dp
+                            else -> 22.dp
+                        }
+                    )
                     .padding(end = 4.dp)
             )
 
