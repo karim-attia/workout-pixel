@@ -64,6 +64,7 @@ import ch.karimattia.workoutpixel.ui.theme.WorkoutPixelTheme
 import coil.annotation.ExperimentalCoilApi
 import com.google.accompanist.pager.ExperimentalPagerApi
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -112,23 +113,33 @@ class MainActivity : ComponentActivity() {
 
 		setContent {
 			val settingsData = settingsViewModel.settingsData.observeAsState().value
+			val currentGoalUid =
+				goalViewModel.currentGoalUid.observeAsState(initial = Constants.INVALID_GOAL_UID).value
+			val goals = goalViewModel.allGoals
+			// Depends on settingsData, but not on currentGoalUid and goals.
 			val mainActivityLambdas = Lambdas(
 				updateAfterClick = {
 					// contains updateGoal
-					lifecycleScope.launch {
+					lifecycleScope.launch(Dispatchers.IO) {
 						widgetActions(it).updateAfterClick()
 					}
 				},
 				updateGoal = { goal ->
-					lifecycleScope.launch {
-						Log.d(TAG, "updateGoal top main")
+					lifecycleScope.launch(Dispatchers.IO) {
+						// Log.d(TAG, "updateGoal top main")
 						goalViewModel.updateGoal(goal)
 						widgetActions(goal).runUpdate()
 					}
 				},
-				deleteGoal = { lifecycleScope.launch { goalViewModel.deleteGoal(it) } },
+				deleteGoal = {
+					lifecycleScope.launch(Dispatchers.IO) {
+						goalViewModel.deleteGoal(
+							it
+						)
+					}
+				},
 				addWidgetToHomeScreen = { goal: Goal, insertNewGoal: Boolean ->
-					Log.d(TAG, "addWidgetToHomeScreen")
+					// Log.d(TAG, "addWidgetToHomeScreen")
 					if (insertNewGoal) goal.uid = goalViewModel.insertGoal(goal)
 					widgetActions(goal).pinAppWidget()
 					return@Lambdas goal.uid
@@ -136,8 +147,8 @@ class MainActivity : ComponentActivity() {
 				// Don't use this in highest level. Otherwise colors flicker.
 				settingsData = settingsData ?: SettingsData(),
 				settingChange = { updatedSettingsData: SettingsData ->
-					lifecycleScope.launch {
-						Log.d(TAG, "settingChange")
+					lifecycleScope.launch(Dispatchers.IO) {
+						// Log.d(TAG, "settingChange")
 						settingsViewModel.updateSettings(updatedSettingsData)
 						// TODO: Could move to ViewModel
 						delay(200)
@@ -147,17 +158,19 @@ class MainActivity : ComponentActivity() {
 				widgetPinningPossible = AppWidgetManager.getInstance(this).isRequestPinAppWidgetSupported,
 			)
 
+
 			WorkoutPixelApp(
 				goalViewModel = goalViewModel,
 				pastClickViewModelAssistedFactory = pastClickViewModelAssistedFactory,
-				goals = goalViewModel.allGoals, // emptyList(), to test
-				settingsData = settingsViewModel.settingsData.observeAsState().value,
+				currentGoalUid = currentGoalUid,
+				goals = goals, // emptyList(), to test
+				settingsData = settingsData,
 				lambdas = mainActivityLambdas,
 			)
 		}
 
 		// Run oneTimeSetup once after the goals are loaded.
-		lifecycleScope.launch {
+		lifecycleScope.launch(Dispatchers.IO) {
 			delay(500)
 			otherActions.oneTimeSetup()
 			// Every time the app starts, set the alarm to update everything at 3:00. In case something breaks.
@@ -198,8 +211,7 @@ fun WorkoutPixelApp(
 								text = currentScreen.topAppBarName ?: (currentGoal?.title ?: "")
 							)
 						},
-						navigationIcon =
-						{
+						navigationIcon = {
 							if (currentScreen.showBackNavigation) {
 
 								IconButton(onClick = {
@@ -251,21 +263,31 @@ fun WorkoutPixelApp(
 									label = { Text(text = screen.displayName ?: "") },
 									selected = currentScreen == screen,
 									onClick = {
+										Log.d(TAG, "onClick $screen")
 										navController.navigate(screen.name) {
 											if (screen == Screens.GoalsList) {
 												// TODO: set current goal to null?
-												popUpTo(Screens.GoalsList.name) { inclusive = true }
+												Log.d(TAG, "popUpTo GoalsList")
+												// Pop up to the start destination of the graph to avoid building up a large stack of destinations on the back stack as users select items
+												popUpTo(Screens.GoalsList.name) {
+													// saveState = true
+													inclusive = true
+												}
 											} else {
+												Log.d(TAG, "elseBlock $screen")
 												popUpTo(Screens.GoalsList.name)
 											}
+											// Avoid multiple copies of the same destination when reselecting the same item
+											launchSingleTop = true
+											// Restore state when reselecting a previously selected item
+											// restoreState = true
+
 										}
-									}
-								)
+									})
 							}
 					}
 				}
-			},
-			floatingActionButton = {
+			}, floatingActionButton = {
 				if (lambdas.widgetPinningPossible && currentScreen.showFloatingActionButton) {
 					FloatingActionButton(onClick = {
 						navController.navigate(Screens.Onboarding.name)
@@ -280,7 +302,7 @@ fun WorkoutPixelApp(
 			}
 
 		) { innerPadding ->
-
+			Log.d(TAG, "settingsData $settingsData")
 			if (settingsData != null) {
 				WorkoutPixelNavHost(
 					navController = navController,
@@ -296,6 +318,7 @@ fun WorkoutPixelApp(
 							}
 						},
 						navigateUp = { setGoalToNull: Boolean ->
+							Log.d(TAG, "navigateUp")
 							if (setGoalToNull) goalViewModel.changeCurrentGoalUid(Constants.INVALID_GOAL_UID)
 							navController.navigateUp()
 						},
@@ -305,9 +328,8 @@ fun WorkoutPixelApp(
 							val goalUid: Int = lambdas.addWidgetToHomeScreen(goal, insertNewGoal)
 							goalViewModel.changeCurrentGoalUid(goalUid)
 							goalUid
-						}
-					),
-					modifier = Modifier.padding(innerPadding),
+						}), modifier = Modifier.padding(innerPadding)
+
 				)
 			}
 		}
@@ -328,25 +350,28 @@ fun WorkoutPixelNavHost(
 	modifier: Modifier = Modifier,
 	lambdas: Lambdas,
 ) {
+	// remember, because otherwise adding the first goal causes a recomposition and exits the Onboarding screen.
+	val startDestination = remember {
+		when {
+			goals.isNotEmpty() -> {
+				// .d(TAG, "goals.isNotEmpty()")
+				Screens.GoalsList.name
+			}
+
+			lambdas.widgetPinningPossible -> {
+				Screens.Onboarding.name
+			}
+
+			else -> {
+				Screens.Instructions.name
+			}
+		}
+	}
+	Log.d(TAG, "startDestination $startDestination")
+
 	NavHost(
 		navController = navController,
-		// remember, because otherwise adding the first goal causes a recomposition and exits the Onboarding screen.
-		startDestination = remember {
-			when {
-				goals.isNotEmpty() -> {
-					Log.d(TAG, "goals.isNotEmpty() -> {n")
-					Screens.GoalsList.name
-				}
-
-				lambdas.widgetPinningPossible -> {
-					Screens.Onboarding.name
-				}
-
-				else -> {
-					Screens.Instructions.name
-				}
-			}
-		},
+		startDestination = startDestination,
 		modifier = modifier,
 	) {
 		composable(route = Screens.GoalsList.name) {
@@ -357,7 +382,7 @@ fun WorkoutPixelNavHost(
 			)
 		}
 		composable(route = Screens.Onboarding.name) {
-			Log.d(TAG, "------------Onboarding------------")
+			// Log.d(TAG, "------------Onboarding------------")
 			if (lambdas.widgetPinningPossible) {
 				Onboarding(
 					currentGoal = currentGoal ?: Goal(),
@@ -369,7 +394,7 @@ fun WorkoutPixelNavHost(
 			}
 		}
 		composable(route = Screens.Instructions.name) {
-			Log.d(TAG, "------------Instructions------------")
+			// Log.d(TAG, "------------Instructions------------")
 			Instructions()
 		}
 		// GoalDetailView
@@ -384,6 +409,7 @@ fun WorkoutPixelNavHost(
 		}
 		// Your Progress
 		composable(route = Screens.Progress.name) {
+			Log.d(TAG, "------------Progress------------")
 			Progress(
 				goals = goals,
 				lambdas = lambdas,
@@ -393,22 +419,20 @@ fun WorkoutPixelNavHost(
 		composable(
 			route = Screens.EditGoalView.name,
 		) {
-			Log.d(TAG, "------------EditGoal $currentGoal------------")
+			// Log.d(TAG, "------------EditGoal $currentGoal------------")
 			if (currentGoal != null) {
 				EditGoalView(
 					initialGoal = currentGoal,
 					isFirstConfigure = false,
 					lambdas = lambdas,
 				)
-			} else (
-					Text("currentGoal = null")
-					)
+			} else (Text("currentGoal = null"))
 		}
 		// Settings
 		composable(
 			route = Screens.Settings.name,
 		) {
-			Log.d(TAG, "------------Settings------------")
+			// Log.d(TAG, "------------Settings------------")
 			Settings(
 				lambdas = lambdas,
 			)

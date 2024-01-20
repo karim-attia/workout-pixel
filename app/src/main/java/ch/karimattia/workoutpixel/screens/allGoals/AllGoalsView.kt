@@ -1,9 +1,10 @@
 package ch.karimattia.workoutpixel.screens.allGoals
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -28,10 +29,32 @@ fun GoalList(
 ) {
 	Column(
 		modifier = Modifier
-            .verticalScroll(rememberScrollState())
-            .padding(top = 6.dp, bottom = 90.dp)
+			//.verticalScroll(rememberScrollState())
+			//.padding(top = 6.dp, bottom = 90.dp)
+			.padding(top = 6.dp)
 	) {
+		// Log.d(TAG, "GoalList: goals: ${goals.toList()}")
 		if (goals.isNotEmpty()) {
+			LazyColumn {
+				items(
+					count = goals.size,
+					key = { index -> goals[index].uid },
+
+					) { index ->
+					GoalCard(
+						goal = goals[index],
+						lambdas = lambdas
+					)
+				}
+				items(1) {
+					Spacer(modifier = Modifier.height(90.dp))
+				}
+			}
+
+
+			// GoalCard(goal = goals[0], lambdas = lambdas)
+
+			/*
 			for (goal in goals) {
 				// contentPadding = PaddingValues(top = 6.dp, bottom = 40.dp),
 				GoalCard(
@@ -39,14 +62,17 @@ fun GoalList(
 					lambdas = lambdas
 				)
 			}
+			*/
+
 		} else {
-			InstructionsCard(navigateTo = {
-				lambdas.navigateTo(
-					Screens.Instructions.name,
-					null,
-					true
-				)
-			})
+			InstructionsCard(
+				navigateTo = {
+					lambdas.navigateTo(
+						Screens.Instructions.name,
+						null,
+						true
+					)
+				})
 		}
 
 	}

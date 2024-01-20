@@ -1,6 +1,5 @@
 package ch.karimattia.workoutpixel.screens
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -129,8 +128,6 @@ fun FormattedCard(
 	onClick: () -> Unit = {},
 	content: @Composable () -> Unit,
 ) {
-	Log.d(TAG, "onClick: $onClick")
-
 	ElevatedCard(
 		// backgroundColor = Color.White,
 		// elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
