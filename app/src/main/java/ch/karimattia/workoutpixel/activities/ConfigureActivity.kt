@@ -24,11 +24,11 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.lifecycle.lifecycleScope
-import ch.karimattia.workoutpixel.screens.editGoal.EditGoalView
-import ch.karimattia.workoutpixel.screens.Lambdas
 import ch.karimattia.workoutpixel.core.WidgetActions
 import ch.karimattia.workoutpixel.data.*
+import ch.karimattia.workoutpixel.screens.Lambdas
 import ch.karimattia.workoutpixel.screens.allGoals.GoalViewModel
+import ch.karimattia.workoutpixel.screens.editGoal.EditGoalView
 import ch.karimattia.workoutpixel.screens.settings.SettingsViewModel
 import ch.karimattia.workoutpixel.ui.theme.WorkoutPixelTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -62,7 +62,10 @@ class ConfigureActivity : ComponentActivity() {
 		// Set the result to CANCELED. This will cause the widget host to cancel out of the widget placement if the user presses the back button.
 		setResult(RESULT_CANCELED)
 		if (extras != null) {
-			goal.appWidgetId = extras.getInt(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID)
+			goal.appWidgetId = extras.getInt(
+				AppWidgetManager.EXTRA_APPWIDGET_ID,
+				AppWidgetManager.INVALID_APPWIDGET_ID
+			)
 			try {
 				val glanceAppWidgetManager = GlanceAppWidgetManager(this)
 				goal.glanceId = glanceAppWidgetManager.getGlanceIdBy(goal.appWidgetId).toString()
@@ -83,7 +86,8 @@ class ConfigureActivity : ComponentActivity() {
 
 		setContent {
 			// collectedGoal can return null despite of what lint says.
-			val collectedGoal: Goal = goalRepository.loadGoalByAppWidgetIdFlow(goal.appWidgetId).collectAsState(initial = goal).value ?: goal
+			val collectedGoal: Goal = goalRepository.loadGoalByAppWidgetIdFlow(goal.appWidgetId)
+				.collectAsState(initial = goal).value ?: goal
 			val isFirstConfigure = collectedGoal == goal
 			Log.d(TAG, "isFirstConfigure: $isFirstConfigure")
 
@@ -114,7 +118,8 @@ class ConfigureActivity : ComponentActivity() {
 			ConfigureActivityCompose(
 				initialGoal = if (isFirstConfigure) goal else collectedGoal,
 				isFirstConfigure = isFirstConfigure,
-				goalsWithoutWidget = goalRepository.loadGoalsWithoutValidAppWidgetId().collectAsState(initial = emptyList()).value,
+				goalsWithoutWidget = goalRepository.loadGoalsWithoutValidAppWidgetId()
+					.collectAsState(initial = emptyList()).value,
 				lambdas = configureActivityLambdas,
 			)
 		}
@@ -122,16 +127,16 @@ class ConfigureActivity : ComponentActivity() {
 
 	private fun setWidgetResult(goal: Goal, context: Context = this) {
 		// Make sure we pass back the original appWidgetId.
-			val resultValue = Intent()
-			resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, goal.appWidgetId)
-			setResult(RESULT_OK, resultValue)
+		val resultValue = Intent()
+		resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, goal.appWidgetId)
+		setResult(RESULT_OK, resultValue)
 
-			Toast
-				.makeText(
-					context,
-					"Widget created. Click on it to register a workout.",
-					Toast.LENGTH_LONG
-				).show()
+		Toast
+			.makeText(
+				context,
+				"Widget created. Click on it to register a workout.",
+				Toast.LENGTH_LONG
+			).show()
 	}
 }
 
@@ -160,10 +165,10 @@ fun ConfigureActivityCompose(
 					),
 
 					)
-					 },
-		) {innerPadding ->
+			},
+		) { innerPadding ->
 
-		EditGoalView(
+			EditGoalView(
 				initialGoal = initialGoal,
 				isFirstConfigure = isFirstConfigure,
 				goalsWithoutWidget = goalsWithoutWidget,

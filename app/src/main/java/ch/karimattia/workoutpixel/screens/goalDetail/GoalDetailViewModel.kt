@@ -22,7 +22,8 @@ class GoalDetailViewModel @AssistedInject constructor(
 	private val repository: PastClickRepository,
 	@Assisted var goalUid: Int,
 ) : ViewModel() {
-	private val pastClicksFlow: Flow<List<PastClick>> = repository.pastClicksByGoalUid(goalUid = goalUid)
+	private val pastClicksFlow: Flow<List<PastClick>> =
+		repository.pastClicksByGoalUid(goalUid = goalUid)
 
 	fun updatePastClick(pastClick: PastClick) = viewModelScope.launch {
 		repository.updatePastClick(pastClick)

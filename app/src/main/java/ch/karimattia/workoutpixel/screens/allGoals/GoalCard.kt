@@ -43,20 +43,21 @@ import java.util.Locale
 
 @Composable
 fun GoalCard(
-    goal: Goal,
-    lambdas: Lambdas,
-    withLink: Boolean = true,
+	goal: Goal,
+	lambdas: Lambdas,
+	withLink: Boolean = true,
 ) {
 
-    CardWithTitle(
-        title = goal.title,
-        onClick = { if (withLink) lambdas.navigateTo(Screens.GoalDetailView.name, goal, false) })
-    {
-        // Preview and rest
-        Row(
-            verticalAlignment = Alignment.Top,
-            // modifier = Modifier.padding(all = 1.dp),
-        ) {
+	CardWithTitle(
+		title = goal.title,
+		isClickable = true,
+		onClick = { if (withLink) lambdas.navigateTo(Screens.GoalDetailView.name, goal, false) })
+	{
+		// Preview and rest
+		Row(
+			verticalAlignment = Alignment.Top,
+			// modifier = Modifier.padding(all = 1.dp),
+		) {
 /*
 			GoalPreview(
 				goal = goal,
@@ -65,15 +66,15 @@ fun GoalCard(
 				modifier = Modifier.padding(all = 4.dp)
 			)
 */
-            Row(
-                // horizontalArrangement = Arrangement.SpaceBetween,
-                horizontalArrangement = Arrangement.spacedBy(10.dp),
-                modifier = Modifier
+			Row(
+				// horizontalArrangement = Arrangement.SpaceBetween,
+				horizontalArrangement = Arrangement.spacedBy(10.dp),
+				modifier = Modifier
                     .height(IntrinsicSize.Min)
                     .fillMaxWidth()
                     .padding(top = 1.dp)
-                //.background(MaterialTheme.colorScheme.primary)
-            ) {
+				//.background(MaterialTheme.colorScheme.primary)
+			) {
 /*
                 Box(modifier = Modifier.weight(0.15f)) {
                     Divider(
@@ -85,124 +86,124 @@ fun GoalCard(
                 }
 */
 
-                Box(modifier = Modifier.weight(1f)) {
-                    StatisticsCount(goal = goal)
-                }
+				Box(modifier = Modifier.weight(1f)) {
+					StatisticsCount(goal = goal)
+				}
 
-                /*
-                                                Box(modifier = Modifier.weight(0.15f)) {
-                                                    Divider(
-                                                        color = sameHueLowerSaturation(MaterialTheme.colorScheme.primary),
-                                                        modifier = Modifier
-                                                            .fillMaxHeight()
-                                                            .width(2.dp)
-                                                    )
-                                                }
-                                */
-
-
-                Box(modifier = Modifier.weight(1f)) {
-                    StatisticsLastDone(goal = goal)
-                }
-
-                /*
-                                                Box(modifier = Modifier.weight(0.15f)) {
-                                                    Divider(
-                                                        color = sameHueLowerSaturation(MaterialTheme.colorScheme.primary),
-                                                        modifier = Modifier
-                                                            .fillMaxHeight()
-                                                            .width(2.dp)
-                                                    )
-                                                }
-                                */
+				/*
+												Box(modifier = Modifier.weight(0.15f)) {
+													Divider(
+														color = sameHueLowerSaturation(MaterialTheme.colorScheme.primary),
+														modifier = Modifier
+															.fillMaxHeight()
+															.width(2.dp)
+													)
+												}
+								*/
 
 
-                Box(modifier = Modifier.weight(1f)) {
-                    StatisticsInterval(goal = goal)
-                }
-            }
-        }
+				Box(modifier = Modifier.weight(1f)) {
+					StatisticsLastDone(goal = goal)
+				}
 
-    }
+				/*
+												Box(modifier = Modifier.weight(0.15f)) {
+													Divider(
+														color = sameHueLowerSaturation(MaterialTheme.colorScheme.primary),
+														modifier = Modifier
+															.fillMaxHeight()
+															.width(2.dp)
+													)
+												}
+								*/
+
+
+				Box(modifier = Modifier.weight(1f)) {
+					StatisticsInterval(goal = goal)
+				}
+			}
+		}
+
+	}
 }
 
 @Composable
 fun StatisticsCount(goal: Goal) {
-    Statistics(
-        icon = Icons.Default.TrendingUp,
-        label = "Done",
-        info = goal.count.toString(),
-        unit = plural(goal.count, "time")
-    )
+	Statistics(
+		icon = Icons.Default.TrendingUp,
+		label = "Done",
+		info = goal.count.toString(),
+		unit = plural(goal.count, "time")
+	)
 }
 
 @Composable
 fun StatisticsLastDone(goal: Goal) {
-    val info = dateBeautiful(
-        date = goal.lastWorkout,
-        agoWording = false,
-        // locale = Locale.getDefault()
-    )
-    Statistics(
-        icon = Icons.Default.Done,
-        label = "Last done",
-        info = info,
-        unit = if (goal.lastWorkout < last3Am() && info != "Never") "ago" else "",
-    )
+	val info = dateBeautiful(
+		date = goal.lastWorkout,
+		agoWording = false,
+		// locale = Locale.getDefault()
+	)
+	Statistics(
+		icon = Icons.Default.Done,
+		label = "Last done",
+		info = info,
+		unit = if (goal.lastWorkout < last3Am() && info != "Never") "ago" else "",
+	)
 }
 
 @Composable
 fun StatisticsInterval(goal: Goal) {
-    Statistics(
-        icon = Icons.Outlined.Replay,
-        label = "Every",
-        info = goal.intervalBlue.toString(),
-        unit = if (goal.intervalBlue == 1) "day" else "days"
-    )
+	Statistics(
+		icon = Icons.Outlined.Replay,
+		label = "Every",
+		info = goal.intervalBlue.toString(),
+		unit = if (goal.intervalBlue == 1) "day" else "days"
+	)
 }
 
 @Composable
 fun Statistics(
-    icon: ImageVector,
-    label: String,
-    info: String,
-    unit: String,
+	icon: ImageVector,
+	label: String,
+	info: String,
+	unit: String,
 ) {
-    val infoAndUnit: AnnotatedString = buildAnnotatedString {
-        withStyle(
-            MaterialTheme.typography.headlineLarge.copy(
-                fontWeight = FontWeight.Medium
-            ).toSpanStyle()
-        ) { append(info) }
-        withStyle(
-            MaterialTheme.typography.bodyMedium.copy(
-                fontWeight = FontWeight.Medium,
-                // color = Color.Gray
-            ).toSpanStyle()
-        ) { append(" $unit") }
-    }
+	val infoAndUnit: AnnotatedString = buildAnnotatedString {
+		withStyle(
+			MaterialTheme.typography.headlineLarge.copy(
+				fontWeight = FontWeight.Medium
+			).toSpanStyle()
+		) { append(info) }
+		withStyle(
+			MaterialTheme.typography.bodyMedium.copy(
+				fontWeight = FontWeight.Medium,
+				// color = Color.Gray
+			).toSpanStyle()
+		) { append(" $unit") }
+	}
 
-    Column(
-        // space between
-        // verticalArrangement = Arrangement.SpaceBetween,
-        // horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier
+	Column(
+		// space between
+		// verticalArrangement = Arrangement.SpaceBetween,
+		// horizontalAlignment = Alignment.CenterHorizontally,
+		modifier = Modifier
             .clip(RoundedCornerShape(4.dp))
             .fillMaxWidth()
             .background(MaterialTheme.colorScheme.background)
 
-/*
-            .drawBehind {
-                drawRoundRect(
-                    color = Color.Gray,
-                    cornerRadius = CornerRadius(4.dp.toPx()),
-                    style = Stroke(
-                        width = 2f,
-                        pathEffect = PathEffect.dashPathEffect(floatArrayOf(10f, 10f), 0f)
-                    )
-                )
-            }
-*/
+            /*
+						.drawBehind {
+							drawRoundRect(
+								color = Color.Gray,
+								cornerRadius = CornerRadius(4.dp.toPx()),
+								style = Stroke(
+									width = 2f,
+									pathEffect = PathEffect.dashPathEffect(floatArrayOf(10f, 10f), 0f)
+								)
+							)
+						}
+			*/
 
             .border(
                 width = 0.25.dp,
@@ -214,20 +215,20 @@ fun Statistics(
             .padding(start = 8.dp)
 
 
-    ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .height(22.dp)
-            // .padding(start = 4.dp)
-        ) {
-            Icon(
-                imageVector = icon,
-                contentDescription = null,
-                // tint = sameHueLowerSaturation(MaterialTheme.colorScheme.primary),
-                // tint = MaterialTheme.colorScheme.primary,
-                tint = Color.Gray,
-                modifier = Modifier
+	) {
+		Row(
+			verticalAlignment = Alignment.CenterVertically,
+			modifier = Modifier
+				.height(22.dp)
+			// .padding(start = 4.dp)
+		) {
+			Icon(
+				imageVector = icon,
+				contentDescription = null,
+				// tint = sameHueLowerSaturation(MaterialTheme.colorScheme.primary),
+				// tint = MaterialTheme.colorScheme.primary,
+				tint = Color.Gray,
+				modifier = Modifier
                     .size(
                         when (icon) {
                             Icons.Outlined.DateRange, Icons.Outlined.Repeat -> 18.dp
@@ -236,28 +237,28 @@ fun Statistics(
                         }
                     )
                     .padding(end = 4.dp)
-            )
+			)
 
-            Text(
-                text = label.uppercase(Locale.getDefault()),
-                style = MaterialTheme.typography.labelSmall,
-                // color = sameHueLowerSaturation(MaterialTheme.colorScheme.primary),
-                color = Color.Gray,
+			Text(
+				text = label.uppercase(Locale.getDefault()),
+				style = MaterialTheme.typography.labelSmall,
+				// color = sameHueLowerSaturation(MaterialTheme.colorScheme.primary),
+				color = Color.Gray,
 
-                modifier = Modifier
-                //.padding(top = 2.dp, start = 2.dp, end = 2.dp)
-            )
-        }
-        Text(
-            text = infoAndUnit,
-            fontWeight = FontWeight.Bold,
-            // color = MaterialTheme.colorScheme.onPrimary,
-            // color = MaterialTheme.colorScheme.primary,
-            // color = Color.Gray,
-            modifier = Modifier
-                .padding(start = 2.dp)
-        )
+				modifier = Modifier
+				//.padding(top = 2.dp, start = 2.dp, end = 2.dp)
+			)
+		}
+		Text(
+			text = infoAndUnit,
+			fontWeight = FontWeight.Bold,
+			// color = MaterialTheme.colorScheme.onPrimary,
+			// color = MaterialTheme.colorScheme.primary,
+			// color = Color.Gray,
+			modifier = Modifier
+				.padding(start = 2.dp)
+		)
 
-    }
+	}
 
 }

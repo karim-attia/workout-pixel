@@ -7,7 +7,12 @@ import androidx.room.DatabaseView
 import androidx.room.Entity
 import androidx.room.Ignore
 import androidx.room.PrimaryKey
-import ch.karimattia.workoutpixel.core.*
+import ch.karimattia.workoutpixel.core.Status
+import ch.karimattia.workoutpixel.core.dateBeautiful
+import ch.karimattia.workoutpixel.core.getColorFromStatus
+import ch.karimattia.workoutpixel.core.intervalInMilliseconds
+import ch.karimattia.workoutpixel.core.last3Am
+import ch.karimattia.workoutpixel.core.timeBeautiful
 
 @Suppress("unused")
 private const val TAG: String = "Goal.kt"
@@ -62,16 +67,19 @@ data class Goal(
 
 	fun hasValidAppWidgetId(): Boolean = appWidgetId != AppWidgetManager.INVALID_APPWIDGET_ID
 	override fun toString(): String = title + ": " + everyWording()
-	private fun everyWording(): String = "Every ${if (intervalBlue == 1) "day" else "$intervalBlue days"}"
+	private fun everyWording(): String =
+		"Every ${if (intervalBlue == 1) "day" else "$intervalBlue days"}"
+
 	fun debugString(): String = "widgetUid: $uid, appWidgetId: $appWidgetId, Title: $title: "
 
 	fun widgetTextDateAndTime(): String {
 		var widgetTextDateAndTime = ""
 		if ((status() != Status.NONE)) {
 			// If statusOverride override is active, use currentTimeMillis to show how the widget will look in the preview.
-			val displayTime: Long = if (statusOverride == Status.GREEN) System.currentTimeMillis() else {
-				lastWorkout
-			}
+			val displayTime: Long =
+				if (statusOverride == Status.GREEN) System.currentTimeMillis() else {
+					lastWorkout
+				}
 			if (showDate) widgetTextDateAndTime += dateBeautiful(displayTime)
 			if (showDate && showTime) widgetTextDateAndTime += "\n"
 			if (showTime) widgetTextDateAndTime += timeBeautiful(displayTime)

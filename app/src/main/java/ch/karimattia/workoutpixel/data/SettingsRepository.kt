@@ -31,87 +31,90 @@ import javax.inject.Singleton
 private const val TAG = "SettingsRepository"
 
 class SettingsRepository @Inject constructor(
-    @ApplicationContext val context: Context,
+	@ApplicationContext val context: Context,
 ) {
-    private val Context.dataStore by dataStore("settings.json", serializer = SettingsDataSerializer)
-    val getSettings: Flow<SettingsData> = context.dataStore.data
-    suspend fun getSettingsOnce(): SettingsData = getSettings.first()
-    suspend fun updateSettings(settingsData: SettingsData) = context.dataStore.updateData { settingsData }
+	private val Context.dataStore by dataStore("settings.json", serializer = SettingsDataSerializer)
+	val getSettings: Flow<SettingsData> = context.dataStore.data
+	suspend fun getSettingsOnce(): SettingsData = getSettings.first()
+	suspend fun updateSettings(settingsData: SettingsData) =
+		context.dataStore.updateData { settingsData }
 }
 
 @Serializable
 data class SettingsData(
-    var colorDoneInt: Int = Green,
-    var colorFirstIntervalInt: Int = Blue,
-    var colorSecondIntervalInt: Int = Red,
-    var colorInitialInt: Int = Grey,
-    // Crashes if removed
-    var dateLanguage: String? = Locale.getDefault().language,
-    var dateCountry: String? = Locale.getDefault().country,
-    var timeLanguage: String? = Locale.getDefault().language,
-    var timeCountry: String? = Locale.getDefault().country,
+	var colorDoneInt: Int = Green,
+	var colorFirstIntervalInt: Int = Blue,
+	var colorSecondIntervalInt: Int = Red,
+	var colorInitialInt: Int = Grey,
+	// Crashes if removed
+	var dateLanguage: String? = Locale.getDefault().language,
+	var dateCountry: String? = Locale.getDefault().country,
+	var timeLanguage: String? = Locale.getDefault().language,
+	var timeCountry: String? = Locale.getDefault().country,
 ) {
-    fun colorDone(): Color = Color(colorDoneInt)
-    fun colorFirstInterval(): Color = Color(colorFirstIntervalInt)
-    fun colorSecondInterval(): Color = Color(colorSecondIntervalInt)
-    fun colorInitial(): Color = Color(colorInitialInt)
-/*
-    fun isDateLocaleDefault(): Boolean = (dateLanguage == null || dateCountry == null)
-    fun isTimeLocaleDefault(): Boolean = (timeLanguage == null || timeCountry == null)
-    fun dateLocale(): Locale = if (isDateLocaleDefault()) Locale.getDefault() else Locale(dateLanguage!!, dateCountry!!)
-    fun timeLocale(): Locale = if (isTimeLocaleDefault()) Locale.getDefault() else Locale(timeLanguage!!, timeCountry!!)
-*/
+	fun colorDone(): Color = Color(colorDoneInt)
+	fun colorFirstInterval(): Color = Color(colorFirstIntervalInt)
+	fun colorSecondInterval(): Color = Color(colorSecondIntervalInt)
+	fun colorInitial(): Color = Color(colorInitialInt)
+	/*
+		fun isDateLocaleDefault(): Boolean = (dateLanguage == null || dateCountry == null)
+		fun isTimeLocaleDefault(): Boolean = (timeLanguage == null || timeCountry == null)
+		fun dateLocale(): Locale = if (isDateLocaleDefault()) Locale.getDefault() else Locale(dateLanguage!!, dateCountry!!)
+		fun timeLocale(): Locale = if (isTimeLocaleDefault()) Locale.getDefault() else Locale(timeLanguage!!, timeCountry!!)
+	*/
 
-    private fun colorDoneLighter(): Int = sameHueLowerSaturationInt(colorDoneInt)
-    private fun colorFirstIntervalLighter(): Int = sameHueLowerSaturationInt(colorFirstIntervalInt)
-    private fun colorSecondIntervalLighter(): Int = sameHueLowerSaturationInt(colorSecondIntervalInt)
-    private fun colorInitialLighter(): Int = sameHueLowerSaturationInt(colorInitialInt)
+	private fun colorDoneLighter(): Int = sameHueLowerSaturationInt(colorDoneInt)
+	private fun colorFirstIntervalLighter(): Int = sameHueLowerSaturationInt(colorFirstIntervalInt)
+	private fun colorSecondIntervalLighter(): Int =
+		sameHueLowerSaturationInt(colorSecondIntervalInt)
 
-    fun color(status: Status): Color = when (status) {
-        Status.GREEN -> colorDone()
-        Status.BLUE -> colorFirstInterval()
-        Status.RED -> colorSecondInterval()
-        Status.NONE -> colorInitial()
-    }
+	private fun colorInitialLighter(): Int = sameHueLowerSaturationInt(colorInitialInt)
 
-    // Could be more elegant ;)
-    fun colorLighter(status: Status): Color = when (status) {
-        Status.GREEN -> Color(colorDoneLighter())
-        Status.BLUE -> Color(colorFirstIntervalLighter())
-        Status.RED -> Color(colorSecondIntervalLighter())
-        Status.NONE -> Color(colorInitialLighter())
-    }
+	fun color(status: Status): Color = when (status) {
+		Status.GREEN -> colorDone()
+		Status.BLUE -> colorFirstInterval()
+		Status.RED -> colorSecondInterval()
+		Status.NONE -> colorInitial()
+	}
+
+	// Could be more elegant ;)
+	fun colorLighter(status: Status): Color = when (status) {
+		Status.GREEN -> Color(colorDoneLighter())
+		Status.BLUE -> Color(colorFirstIntervalLighter())
+		Status.RED -> Color(colorSecondIntervalLighter())
+		Status.NONE -> Color(colorInitialLighter())
+	}
 
 
-    // override fun toString(): String = "dateLocale(): " + dateLocale() + " | timeLocale(): " + timeLocale()
+	// override fun toString(): String = "dateLocale(): " + dateLocale() + " | timeLocale(): " + timeLocale()
 }
 
 object SettingsDataSerializer : Serializer<SettingsData> {
-    override val defaultValue = SettingsData()
+	override val defaultValue = SettingsData()
 
-    override suspend fun readFrom(input: InputStream): SettingsData {
-        try {
-            return Json.decodeFromString(
-                SettingsData.serializer(), input.readBytes().decodeToString()
-            )
-        } catch (serialization: SerializationException) {
-            throw CorruptionException("Unable to read SettingsData", serialization)
-        }
-    }
+	override suspend fun readFrom(input: InputStream): SettingsData {
+		try {
+			return Json.decodeFromString(
+				SettingsData.serializer(), input.readBytes().decodeToString()
+			)
+		} catch (serialization: SerializationException) {
+			throw CorruptionException("Unable to read SettingsData", serialization)
+		}
+	}
 
-    override suspend fun writeTo(t: SettingsData, output: OutputStream) {
-        @Suppress("BlockingMethodInNonBlockingContext")
-        output.write(Json.encodeToString(SettingsData.serializer(), t).encodeToByteArray())
-    }
+	override suspend fun writeTo(t: SettingsData, output: OutputStream) {
+		@Suppress("BlockingMethodInNonBlockingContext")
+		output.write(Json.encodeToString(SettingsData.serializer(), t).encodeToByteArray())
+	}
 }
 
 @Module
 @InstallIn(SingletonComponent::class)
 object SettingsModule {
-    @Singleton
-    @Provides
-    fun providesDataStore(
-        @ApplicationContext context: Context,
-    ) = SettingsRepository(context = context)
+	@Singleton
+	@Provides
+	fun providesDataStore(
+		@ApplicationContext context: Context,
+	) = SettingsRepository(context = context)
 }
 

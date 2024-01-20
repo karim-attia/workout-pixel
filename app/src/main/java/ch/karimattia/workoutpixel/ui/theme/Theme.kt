@@ -34,8 +34,7 @@ onBackground = Color.Black,
 onSurface = Color.Black,
 */
 )
-*/
-/*
+*//*
 @Composable
 fun WorkoutPixelTheme(
 	darkTheme: Boolean = isSystemInDarkTheme(),
@@ -58,8 +57,7 @@ fun WorkoutPixelTheme(
 @Composable
 fun WorkoutPixelTheme(
 	content: @Composable () -> Unit
-) {
-	/*MaterialTheme(
+) {    /*MaterialTheme(
 		colorScheme = lightColorScheme(
 			primary = Primary,
 			onPrimary = Color.White,
@@ -76,8 +74,7 @@ fun WorkoutPixelTheme(
 		content = content
 	)*/
 	MaterialTheme(
-		colorScheme = dynamicLightColorScheme(LocalContext.current),
-		content = content
+		colorScheme = dynamicLightColorScheme(LocalContext.current), content = content
 	)
 }
 

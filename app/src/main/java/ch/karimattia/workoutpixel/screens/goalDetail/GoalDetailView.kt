@@ -3,7 +3,13 @@ package ch.karimattia.workoutpixel.screens.goalDetail
 import android.appwidget.AppWidgetManager
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -11,7 +17,14 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Undo
 import androidx.compose.material.icons.filled.Widgets
 import androidx.compose.material.icons.outlined.Delete
-import androidx.compose.material3.*
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Divider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
@@ -31,9 +44,12 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import ch.karimattia.workoutpixel.R
 import ch.karimattia.workoutpixel.core.dateBeautiful
 import ch.karimattia.workoutpixel.core.timeBeautiful
-import ch.karimattia.workoutpixel.data.*
-import ch.karimattia.workoutpixel.screens.*
+import ch.karimattia.workoutpixel.data.Goal
+import ch.karimattia.workoutpixel.data.PastClick
+import ch.karimattia.workoutpixel.screens.CardWithTitle
+import ch.karimattia.workoutpixel.screens.Lambdas
 import ch.karimattia.workoutpixel.screens.allGoals.GoalCard
+import ch.karimattia.workoutpixel.screens.lastClickBasedOnActiveClicks
 import kotlinx.coroutines.launch
 
 @Suppress("unused")
@@ -44,7 +60,12 @@ fun GoalDetailView(
 	currentGoal: Goal,
 	// Move into lambdas?
 	pastClickViewModelAssistedFactory: PastClickViewModelAssistedFactory,
-	goalDetailViewModel: GoalDetailViewModel = viewModel(factory = provideFactory(pastClickViewModelAssistedFactory, currentGoal.uid)),
+	goalDetailViewModel: GoalDetailViewModel = viewModel(
+		factory = provideFactory(
+			pastClickViewModelAssistedFactory,
+			currentGoal.uid
+		)
+	),
 	pastClicks: List<PastClick> = goalDetailViewModel.pastClicks,
 	lambdas: Lambdas,
 ) {
@@ -77,7 +98,8 @@ fun GoalDetailView(
 		)
 		AnimatedVisibility(!currentGoal.hasValidAppWidgetId()) {
 			GoalDetailNoWidgetCard(
-				currentGoal = currentGoal, lambdas = lambdas,/*addWidgetToHomeScreen = addWidgetToHomeScreen*/
+				currentGoal = currentGoal,
+				lambdas = lambdas,/*addWidgetToHomeScreen = addWidgetToHomeScreen*/
 			)
 		}
 
@@ -102,7 +124,8 @@ fun GoalDetailNoWidgetCard(
 	) {
 		Text(
 			style = MaterialTheme.typography.bodyMedium,
-			text = "There is no widget for this goal on your homescreen. Add a new widget and connect it to this goal to keep the data.")
+			text = "There is no widget for this goal on your homescreen. Add a new widget and connect it to this goal to keep the data."
+		)
 		/* Infobox */
 		// Infobox(text = "There is no widget for this goal on your homescreen. Add a new widget and connect it to this goal to keep the data.")
 		Spacer(modifier = Modifier.height(16.dp))
@@ -133,7 +156,7 @@ fun GoalDetailNoWidgetCard(
 		val openAlertDialog = remember { mutableStateOf(false) }
 
 		TextButton(
-			onClick = { 				openAlertDialog.value = true			},
+			onClick = { openAlertDialog.value = true },
 			modifier = Modifier
 				//.padding(top = 8.dp)
 				.fillMaxWidth(),
@@ -148,7 +171,7 @@ fun GoalDetailNoWidgetCard(
 			onConfirm = {
 				lambdas.deleteGoal(currentGoal)
 				lambdas.navigateUp(true)
-						},
+			},
 		)
 	}
 }
@@ -197,7 +220,8 @@ fun PastClickList(
 							// Copying to prevent changes on screen that are not driven by the viewmodel.
 							// This is all super explicit and unelegant, but there were some bugs here in the past.
 							val updatedPastClicks = pastClicks.toMutableList()
-							updatedPastClicks[updatedPastClicks.indexOfFirst { click -> click.uid == updatedPastClick.uid }] = updatedPastClick
+							updatedPastClicks[updatedPastClicks.indexOfFirst { click -> click.uid == updatedPastClick.uid }] =
+								updatedPastClick
 							// updatedPastClicks.replaceAll{click -> if (click.uid == updatedPastClick.uid) updatedPastClick else click }
 							// If this change causes a new last workout time, do all the necessary updates.
 							// TODO: Move setNewLastWorkout to GoalSaveActions and directly save the updated goal there?
@@ -253,27 +277,30 @@ fun PastClickEntry(
 	active: Boolean = true,
 	togglePastClick: () -> Unit = { },
 ) {
-	Row (
+	Row(
 		modifier = Modifier
 			.fillMaxWidth()
 			.padding(vertical = 4.dp)
-	){
+	) {
 		val style = if (header) {
 			MaterialTheme.typography.labelSmall
 		} else {
 			if (!active) {
-				MaterialTheme.typography.bodyMedium.copy(textDecoration=TextDecoration.LineThrough, color = Color.Gray)
+				MaterialTheme.typography.bodyMedium.copy(
+					textDecoration = TextDecoration.LineThrough,
+					color = Color.Gray
+				)
 			} else {
 				MaterialTheme.typography.bodyMedium
 			}
 		}
-/*
-		val textDecoration = if (!active) {
-			TextDecoration.LineThrough
-		} else {
-			null
-		}
-*/
+		/*
+				val textDecoration = if (!active) {
+					TextDecoration.LineThrough
+				} else {
+					null
+				}
+		*/
 		/* Table achieved with fixed width */
 		Text(
 			text = date,
@@ -329,7 +356,7 @@ fun DeleteGoalDialog(
 					fontWeight = FontWeight.Bold,
 					style = MaterialTheme.typography.titleMedium,
 
-				)
+					)
 			},
 			text = {
 				Text(
@@ -344,7 +371,7 @@ fun DeleteGoalDialog(
 					}
 				) {
 					Text(
-						text= "Cancel",
+						text = "Cancel",
 						color = MaterialTheme.colorScheme.onSurface
 						// fontWeight = FontWeight.Medium,
 						// style = MaterialTheme.typography.bodyLarge,
@@ -353,13 +380,13 @@ fun DeleteGoalDialog(
 					)
 				}
 			},
-			onDismissRequest = { 						setOpenAlertDialog(false) },
+			onDismissRequest = { setOpenAlertDialog(false) },
 			confirmButton = {
 				Button(
 					onClick = {
 						onConfirm()
 					},
-					colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error,)
+					colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
 
 				) {
 					Text(

@@ -14,28 +14,28 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun AddUpdateWidgetButton(
-    isFirstConfigure: Boolean,
-    insertUpdateWidget: () -> Unit,
-    modifier: Modifier = Modifier,
+	isFirstConfigure: Boolean,
+	insertUpdateWidget: () -> Unit,
+	modifier: Modifier = Modifier,
 ) {
-    Button(
-        onClick = {
-            insertUpdateWidget()
-        },
-        modifier = modifier
-            .fillMaxWidth(),
-    ) {
-        Icon(
-            imageVector = Icons.Filled.Save,
-            contentDescription = null
-        )
-        Spacer(modifier = Modifier.width(8.dp))
-        Text(
-            text = if (isFirstConfigure) {
-                "Add widget".uppercase()
-            } else {
-                "Update goal".uppercase()
-            },
-        )
-    }
+	Button(
+		onClick = {
+			insertUpdateWidget()
+		},
+		modifier = modifier
+			.fillMaxWidth(),
+	) {
+		Icon(
+			imageVector = Icons.Filled.Save,
+			contentDescription = null
+		)
+		Spacer(modifier = Modifier.width(8.dp))
+		Text(
+			text = if (isFirstConfigure) {
+				"Add widget".uppercase()
+			} else {
+				"Update goal".uppercase()
+			},
+		)
+	}
 }

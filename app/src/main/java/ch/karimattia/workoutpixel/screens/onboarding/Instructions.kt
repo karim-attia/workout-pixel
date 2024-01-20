@@ -6,7 +6,12 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
@@ -33,7 +38,7 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.HorizontalPagerIndicator
 import com.google.accompanist.pager.rememberPagerState
-import java.util.*
+import java.util.Locale
 
 @Suppress("unused")
 private const val TAG: String = "Instructions"
@@ -80,7 +85,11 @@ fun Instructions() {
 			.padding(16.dp)
 	) {
 		val pagerState = rememberPagerState()
-		HorizontalPager(count = instructions.size, state = pagerState, modifier = Modifier.weight(1f)) { page ->
+		HorizontalPager(
+			count = instructions.size,
+			state = pagerState,
+			modifier = Modifier.weight(1f)
+		) { page ->
 
 			Column {
 				// https://stackoverflow.com/questions/60229555/adding-gif-into-jetpack-compose

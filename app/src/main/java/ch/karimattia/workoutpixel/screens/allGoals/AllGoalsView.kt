@@ -23,56 +23,57 @@ private const val TAG: String = "AllGoals"
 
 @Composable
 fun GoalList(
-    goals: List<Goal>,
-    lambdas: Lambdas,
+	goals: List<Goal>,
+	lambdas: Lambdas,
 ) {
-    Column(
-        modifier = Modifier
-			.verticalScroll(rememberScrollState())
-			.padding(top = 6.dp, bottom = 90.dp)
-    ) {
-        if (goals.isNotEmpty()) {
-            for (goal in goals) {
-                // contentPadding = PaddingValues(top = 6.dp, bottom = 40.dp),
-                GoalCard(
-                    goal = goal,
-                    lambdas = lambdas
-                )
-            }
-        } else {
-            InstructionsCard(navigateTo = {
-                lambdas.navigateTo(
-                    Screens.Instructions.name,
-                    null,
-                    true
-                )
-            })
-        }
+	Column(
+		modifier = Modifier
+            .verticalScroll(rememberScrollState())
+            .padding(top = 6.dp, bottom = 90.dp)
+	) {
+		if (goals.isNotEmpty()) {
+			for (goal in goals) {
+				// contentPadding = PaddingValues(top = 6.dp, bottom = 40.dp),
+				GoalCard(
+					goal = goal,
+					lambdas = lambdas
+				)
+			}
+		} else {
+			InstructionsCard(navigateTo = {
+				lambdas.navigateTo(
+					Screens.Instructions.name,
+					null,
+					true
+				)
+			})
+		}
 
-    }
+	}
 }
 
 
 @Composable
 fun InstructionsCard(
-    navigateTo: () -> Unit,
+	navigateTo: () -> Unit,
 ) {
-    CardWithTitle(
-        title = stringResource(id = R.string.no_goals_defined_yet),
-        onClick = navigateTo,
-    ) {
-        Text(
-            text = stringResource(id = R.string.go_to_instructions_tab),
-            style = MaterialTheme.typography.bodyMedium,
-        )
-    }
+	CardWithTitle(
+		title = stringResource(id = R.string.no_goals_defined_yet),
+		isClickable = true,
+		onClick = navigateTo,
+	) {
+		Text(
+			text = stringResource(id = R.string.go_to_instructions_tab),
+			style = MaterialTheme.typography.bodyMedium,
+		)
+	}
 }
 
 @Preview(name = "MyScreen preview")
 @Composable
 fun AllGoalsPreview() {
-    GoalList(
-        goals = testGoals,
-        lambdas = Lambdas()
-    )
+	GoalList(
+		goals = testGoals,
+		lambdas = Lambdas()
+	)
 }

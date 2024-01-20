@@ -43,96 +43,96 @@ import ch.karimattia.workoutpixel.data.Goal
 @ExperimentalComposeUiApi
 @Composable
 fun ConnectExistingGoal(
-    goalsWithoutWidget: List<Goal>,
-    connectGoal: (Goal) -> Unit,
-    modifier: Modifier = Modifier,
+	goalsWithoutWidget: List<Goal>,
+	connectGoal: (Goal) -> Unit,
+	modifier: Modifier = Modifier,
 ) {
-    var expando: Boolean by remember { mutableStateOf(false) }
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
+	var expando: Boolean by remember { mutableStateOf(false) }
+	Row(
+		verticalAlignment = Alignment.CenterVertically,
+		modifier = Modifier
             .fillMaxWidth()
             .clickable { expando = !expando }
-    ) {
-        FreeStandingTitle(text = "Connect an existing goal", Modifier.weight(1f))
-        Icon(
-            imageVector = if (!expando) Icons.Filled.ExpandMore else Icons.Filled.ExpandLess,
-            contentDescription = null,
-            modifier = Modifier.padding(top = 16.dp)
-        )
-    }
+	) {
+		FreeStandingTitle(text = "Connect an existing goal", Modifier.weight(1f))
+		Icon(
+			imageVector = if (!expando) Icons.Filled.ExpandMore else Icons.Filled.ExpandLess,
+			contentDescription = null,
+			modifier = Modifier.padding(top = 16.dp)
+		)
+	}
 
-    AnimatedVisibility(visible = expando, enter = fadeIn(), exit = shrinkOut()) {
-        Column {
+	AnimatedVisibility(visible = expando, enter = fadeIn(), exit = shrinkOut()) {
+		Column {
 
-            Text(
-                text = "You have defined goals that currently don\'t have a widget. You can connect the widget to one of those goals. This takes over all its data including the history.",
-                style = MaterialTheme.typography.bodyMedium,
-                modifier = modifier,
-            )
+			Text(
+				text = "You have defined goals that currently don\'t have a widget. You can connect the widget to one of those goals. This takes over all its data including the history.",
+				style = MaterialTheme.typography.bodyMedium,
+				modifier = modifier,
+			)
 
-            Spacer(modifier = Modifier.height(24.dp))
+			Spacer(modifier = Modifier.height(24.dp))
 
-            // Row {
-            var selectedIndex: Int by remember { mutableIntStateOf(0) }
-            ConnectDropdown(
-                goalsWithoutWidget = goalsWithoutWidget,
-                selectedIndex = selectedIndex,
-                changeSelectedIndex = { selectedIndex = it },
-                modifier = modifier,
-            )
-            Spacer(modifier = Modifier.height(24.dp))
-            ConnectButton(
-                connectWidget = {
-                    // Need to check if it is null and if it is, make the selection red?
-                    // connectSpinner.setBackgroundColor(Color.RED)
-                    connectGoal(goalsWithoutWidget[selectedIndex])
-                },
-                modifier = modifier,
-            )
-        }
-    }
+			// Row {
+			var selectedIndex: Int by remember { mutableIntStateOf(0) }
+			ConnectDropdown(
+				goalsWithoutWidget = goalsWithoutWidget,
+				selectedIndex = selectedIndex,
+				changeSelectedIndex = { selectedIndex = it },
+				modifier = modifier,
+			)
+			Spacer(modifier = Modifier.height(24.dp))
+			ConnectButton(
+				connectWidget = {
+					// Need to check if it is null and if it is, make the selection red?
+					// connectSpinner.setBackgroundColor(Color.RED)
+					connectGoal(goalsWithoutWidget[selectedIndex])
+				},
+				modifier = modifier,
+			)
+		}
+	}
 
 
-    // }
+	// }
 
 }
 
 @Composable
 fun ConnectDropdown(
-    goalsWithoutWidget: List<Goal>,
-    selectedIndex: Int,
-    changeSelectedIndex: (Int) -> Unit,
-    modifier: Modifier = Modifier,
+	goalsWithoutWidget: List<Goal>,
+	selectedIndex: Int,
+	changeSelectedIndex: (Int) -> Unit,
+	modifier: Modifier = Modifier,
 ) {
-    var expanded: Boolean by remember { mutableStateOf(false) }
-    val icon = if (expanded) Icons.Filled.ArrowDropUp else Icons.Filled.ArrowDropDown
+	var expanded: Boolean by remember { mutableStateOf(false) }
+	val icon = if (expanded) Icons.Filled.ArrowDropUp else Icons.Filled.ArrowDropDown
 
-    Box {
-        val interactionSource = remember { MutableInteractionSource() }
+	Box {
+		val interactionSource = remember { MutableInteractionSource() }
 
-        OutlinedTextField(
-            value = goalsWithoutWidget[selectedIndex].toString(),
-            trailingIcon = {
-                Icon(
-                    imageVector = icon,
-                    "contentDescription",
-                    modifier = Modifier
-                    //	.clickable { expanded = !expanded }
-                )
-            },
-            label = { Text("Choose goal") },
-            onValueChange = { },
-            readOnly = true,
-            // enabled = false,
-            singleLine = true,
-            modifier = modifier
-                .fillMaxWidth()
-            // .background(Color.Gray)
-        )
-        if (!expanded) {
-            Box(
-                modifier = Modifier
+		OutlinedTextField(
+			value = goalsWithoutWidget[selectedIndex].toString(),
+			trailingIcon = {
+				Icon(
+					imageVector = icon,
+					"contentDescription",
+					modifier = Modifier
+					//	.clickable { expanded = !expanded }
+				)
+			},
+			label = { Text("Choose goal") },
+			onValueChange = { },
+			readOnly = true,
+			// enabled = false,
+			singleLine = true,
+			modifier = modifier
+				.fillMaxWidth()
+			// .background(Color.Gray)
+		)
+		if (!expanded) {
+			Box(
+				modifier = Modifier
                     .padding(horizontal = 8.dp)
                     .matchParentSize()
                     .clickable(
@@ -142,47 +142,47 @@ fun ConnectDropdown(
                         interactionSource = interactionSource,
                         indication = null //to avoid the ripple on the Box
                     )
-            )
-        }
-        if (expanded) {
-            DropdownMenu(
-                expanded = expanded,
-                onDismissRequest = { expanded = false },
-                modifier = Modifier
+			)
+		}
+		if (expanded) {
+			DropdownMenu(
+				expanded = expanded,
+				onDismissRequest = { expanded = false },
+				modifier = Modifier
                     .padding(horizontal = 8.dp)
                     .background(Color.LightGray)
                     .fillMaxWidth()
                     .padding(horizontal = 0.dp)
-            ) {
-                goalsWithoutWidget.forEachIndexed { index, goalWithoutWidget ->
-                    DropdownMenuItem(
-                        text = { Text(text = goalWithoutWidget.toString()) },
-                        onClick = {
-                            changeSelectedIndex(index)
-                            expanded = false
-                        })
-                }
-            }
-        }
-    }
+			) {
+				goalsWithoutWidget.forEachIndexed { index, goalWithoutWidget ->
+					DropdownMenuItem(
+						text = { Text(text = goalWithoutWidget.toString()) },
+						onClick = {
+							changeSelectedIndex(index)
+							expanded = false
+						})
+				}
+			}
+		}
+	}
 }
 
 @Composable
 fun ConnectButton(
-    connectWidget: () -> Unit,
-    modifier: Modifier = Modifier,
+	connectWidget: () -> Unit,
+	modifier: Modifier = Modifier,
 ) {
-    Button(
-        onClick = {
-            connectWidget()
-        },
-        modifier = modifier.fillMaxWidth(),
-    ) {
-        Icon(
-            imageVector = Icons.Filled.Cable,
-            contentDescription = null
-        )
-        Spacer(modifier = Modifier.width(8.dp))
-        Text(text = "Connect widget".uppercase())
-    }
+	Button(
+		onClick = {
+			connectWidget()
+		},
+		modifier = modifier.fillMaxWidth(),
+	) {
+		Icon(
+			imageVector = Icons.Filled.Cable,
+			contentDescription = null
+		)
+		Spacer(modifier = Modifier.width(8.dp))
+		Text(text = "Connect widget".uppercase())
+	}
 }

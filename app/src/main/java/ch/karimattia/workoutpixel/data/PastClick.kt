@@ -1,6 +1,11 @@
 package ch.karimattia.workoutpixel.data
 
-import androidx.room.*
+import androidx.room.ColumnInfo
+import androidx.room.Embedded
+import androidx.room.Entity
+import androidx.room.ForeignKey
+import androidx.room.PrimaryKey
+import androidx.room.Relation
 
 @Entity(
 	tableName = "pastWorkouts",
@@ -33,7 +38,7 @@ data class PastClick(
 	var pastClicks: List<PastClick> = ArrayList()
 )*/
 
-data class PastClickAndGoal (
+data class PastClickAndGoal(
 	@Embedded
 	var pastClick: PastClick,
 

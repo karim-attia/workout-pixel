@@ -4,14 +4,13 @@ import android.content.Context
 import androidx.compose.ui.graphics.Color
 import ch.karimattia.workoutpixel.core.Constants.PREFERENCE_NAME
 import ch.karimattia.workoutpixel.data.Goal
-import ch.karimattia.workoutpixel.data.PastClick
 import ch.karimattia.workoutpixel.data.SettingsData
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
-import java.util.*
+import java.util.Calendar
 import kotlin.math.roundToInt
 
 @Suppress("unused")
@@ -96,12 +95,13 @@ fun getColorIntFromStatus(status: Status, settingsData: SettingsData): Int {
 	}
 }
 
-fun colorToInt(color: Color): Int = android.graphics.Color.argb(color.alpha, color.red, color.green, color.blue)
+fun colorToInt(color: Color): Int =
+	android.graphics.Color.argb(color.alpha, color.red, color.green, color.blue)
 
 /**
  * Time and date formatting stuff
  */
-fun dateBeautiful(date: Long, agoWording: Boolean=true): String {
+fun dateBeautiful(date: Long, agoWording: Boolean = true): String {
 
 	fun daysAgo(date: Long): Int {
 		val now = System.currentTimeMillis()
@@ -125,16 +125,20 @@ fun dateBeautiful(date: Long, agoWording: Boolean=true): String {
 
 fun timeBeautiful(date: Long): String {
 	return if (date == 0L) "" else {
-		val lastWorkout: LocalDateTime = Instant.ofEpochMilli(date).atZone(ZoneId.systemDefault()).toLocalDateTime()
-		val dateFormatter: DateTimeFormatter = DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT) //.withLocale(locale)
+		val lastWorkout: LocalDateTime =
+			Instant.ofEpochMilli(date).atZone(ZoneId.systemDefault()).toLocalDateTime()
+		val dateFormatter: DateTimeFormatter =
+			DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT) //.withLocale(locale)
 		lastWorkout.format(dateFormatter)
 	}
 }
 
 fun dateTimeBeautiful(date: Long): String {
 	return if (date == 0L) "Never" else {
-		val lastWorkout: LocalDateTime = Instant.ofEpochMilli(date).atZone(ZoneId.systemDefault()).toLocalDateTime()
-		val dateFormatter: DateTimeFormatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT) //.withLocale(locale)
+		val lastWorkout: LocalDateTime =
+			Instant.ofEpochMilli(date).atZone(ZoneId.systemDefault()).toLocalDateTime()
+		val dateFormatter: DateTimeFormatter =
+			DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT) //.withLocale(locale)
 		lastWorkout.format(dateFormatter)
 	}
 }
@@ -164,7 +168,8 @@ fun plural(times: Int, word: String): String {
 /**
  * goalFromGoalsByUid
  */
-fun goalFromGoalsByUid(goalUid: Int, goals: List<Goal>): Goal? = goals.firstOrNull { it.uid == goalUid }
+fun goalFromGoalsByUid(goalUid: Int, goals: List<Goal>): Goal? =
+	goals.firstOrNull { it.uid == goalUid }
 
 /**
  * Test data

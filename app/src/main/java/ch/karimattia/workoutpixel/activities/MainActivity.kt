@@ -11,7 +11,10 @@ import androidx.compose.animation.graphics.ExperimentalAnimationGraphicsApi
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -37,9 +40,15 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import ch.karimattia.workoutpixel.core.*
-import ch.karimattia.workoutpixel.data.*
-import ch.karimattia.workoutpixel.screens.*
+import ch.karimattia.workoutpixel.core.Constants
+import ch.karimattia.workoutpixel.core.OtherActions
+import ch.karimattia.workoutpixel.core.Screens
+import ch.karimattia.workoutpixel.core.WidgetActions
+import ch.karimattia.workoutpixel.core.WidgetAlarm
+import ch.karimattia.workoutpixel.core.goalFromGoalsByUid
+import ch.karimattia.workoutpixel.data.Goal
+import ch.karimattia.workoutpixel.data.SettingsData
+import ch.karimattia.workoutpixel.screens.Lambdas
 import ch.karimattia.workoutpixel.screens.allGoals.GoalList
 import ch.karimattia.workoutpixel.screens.allGoals.GoalViewModel
 import ch.karimattia.workoutpixel.screens.editGoal.EditGoalView
@@ -184,17 +193,21 @@ fun WorkoutPixelApp(
 				// If goals is empty, there is a redirect to the Onboarding screen. Adding && goals.isNotEmpty() removed jank from this switch on first start.
 				if (!currentScreen.fullScreen && goals.isNotEmpty()) {
 					TopAppBar(
-						title = { Text(text = currentScreen.topAppBarName ?: (currentGoal?.title ?: "")) },
+						title = {
+							Text(
+								text = currentScreen.topAppBarName ?: (currentGoal?.title ?: "")
+							)
+						},
 						navigationIcon =
 						{
 							if (currentScreen.showBackNavigation) {
 
-									IconButton(onClick = {
-										// TODO: Set current goal to null if back to main screen
-										navController.navigateUp()
-									}) {
-										Icon(Icons.Filled.ArrowBack, "Back")
-									}
+								IconButton(onClick = {
+									// TODO: Set current goal to null if back to main screen
+									navController.navigateUp()
+								}) {
+									Icon(Icons.Filled.ArrowBack, "Back")
+								}
 
 							}
 						},
@@ -216,30 +229,39 @@ fun WorkoutPixelApp(
 							navigationIconContentColor = MaterialTheme.colorScheme.onPrimary,
 							actionIconContentColor = MaterialTheme.colorScheme.onSecondary
 						),
-						)
+					)
 				}
 			},
 			bottomBar = {
 				if (!currentScreen.fullScreen && goals.isNotEmpty()) {
 					NavigationBar {
 						// Only show entries that have bottomNavigation == true.
-						allScreens.filter { it.bottomNavigation && (it.showWhenPinningPossible || !lambdas.widgetPinningPossible) }.forEach { screen ->
-							NavigationBarItem(
-								icon = { screen.icon?.let { Icon(it, contentDescription = null, modifier = Modifier.size(24.dp)) } },
-								label = { Text(text = screen.displayName ?: "") },
-								selected = currentScreen == screen,
-								onClick = {
-									navController.navigate(screen.name) {
-										if (screen == Screens.GoalsList) {
-											// TODO: set current goal to null?
-											popUpTo(Screens.GoalsList.name) { inclusive = true }
-										} else {
-											popUpTo(Screens.GoalsList.name)
+						allScreens.filter { it.bottomNavigation && (it.showWhenPinningPossible || !lambdas.widgetPinningPossible) }
+							.forEach { screen ->
+								NavigationBarItem(
+									icon = {
+										screen.icon?.let {
+											Icon(
+												it,
+												contentDescription = null,
+												modifier = Modifier.size(24.dp)
+											)
+										}
+									},
+									label = { Text(text = screen.displayName ?: "") },
+									selected = currentScreen == screen,
+									onClick = {
+										navController.navigate(screen.name) {
+											if (screen == Screens.GoalsList) {
+												// TODO: set current goal to null?
+												popUpTo(Screens.GoalsList.name) { inclusive = true }
+											} else {
+												popUpTo(Screens.GoalsList.name)
+											}
 										}
 									}
-								}
-							)
-						}
+								)
+							}
 					}
 				}
 			},
@@ -315,9 +337,11 @@ fun WorkoutPixelNavHost(
 					Log.d(TAG, "goals.isNotEmpty() -> {n")
 					Screens.GoalsList.name
 				}
+
 				lambdas.widgetPinningPossible -> {
 					Screens.Onboarding.name
 				}
+
 				else -> {
 					Screens.Instructions.name
 				}

@@ -19,24 +19,25 @@ private const val TAG: String = "ProgressViewModel"
 class ProgressViewModel @Inject constructor(
 	pastClickRepository: PastClickRepository,
 ) : ViewModel() {
-	private val activePastClicksAndGoalLastWeekFlow: Flow<List<PastClickAndGoal>> = pastClickRepository.activePastClicksAndGoalLastWeek()
+	private val activePastClicksAndGoalLastWeekFlow: Flow<List<PastClickAndGoal>> =
+		pastClickRepository.activePastClicksAndGoalLastWeek()
 
-/*
-	fun updatePastClick(pastClick: PastClick) = viewModelScope.launch {
-		pastClickRepository.updatePastClick(pastClick)
-	}
-*/
+	/*
+		fun updatePastClick(pastClick: PastClick) = viewModelScope.launch {
+			pastClickRepository.updatePastClick(pastClick)
+		}
+	*/
 
 	val activePastClicksAndGoalLastWeek: SnapshotStateList<PastClickAndGoal> = mutableStateListOf()
 
-/*
-	fun pastClicksAndGoal(goals: List<Goal>): Flow<List<PastClickAndGoal>> = activePastClicksLastWeekFlow.map { activePastClicksLastWeek ->
-		activePastClicksLastWeek.map { pastClick ->
-			// Null assertion is safe since DB deletes pastClicks when goal is deleted.
-			PastClickAndGoal(pastClick, goalFromGoalsByUid(goalUid = pastClick.widgetUid, goals = goals)!!)
+	/*
+		fun pastClicksAndGoal(goals: List<Goal>): Flow<List<PastClickAndGoal>> = activePastClicksLastWeekFlow.map { activePastClicksLastWeek ->
+			activePastClicksLastWeek.map { pastClick ->
+				// Null assertion is safe since DB deletes pastClicks when goal is deleted.
+				PastClickAndGoal(pastClick, goalFromGoalsByUid(goalUid = pastClick.widgetUid, goals = goals)!!)
+			}
 		}
-	}
-*/
+	*/
 
 	// This is needed so the state of pastClicks and thus the UI updates.
 	init {

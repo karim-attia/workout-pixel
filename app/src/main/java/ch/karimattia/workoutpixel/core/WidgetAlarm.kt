@@ -28,7 +28,12 @@ class WidgetAlarm @Inject constructor(
 		)
 
 		// RTC does not wake the device up
-		alarmManager.setInexactRepeating(AlarmManager.RTC, next3Am(), AlarmManager.INTERVAL_DAY, pendingIntent(context, ACTION_ALARM_UPDATE))
+		alarmManager.setInexactRepeating(
+			AlarmManager.RTC,
+			next3Am(),
+			AlarmManager.INTERVAL_DAY,
+			pendingIntent(context, ACTION_ALARM_UPDATE)
+		)
 		Log.d(TAG, "ALARM STARTED " + dateTimeString(next3Am()))
 	}
 
@@ -42,13 +47,20 @@ class WidgetAlarm @Inject constructor(
 	}
 
 	// Just for log. For anything else, use the functions in CommonFunctions
-	private fun dateTimeString(timeInMillis: Long): String = DateFormat.getDateTimeInstance().format(timeInMillis)
+	private fun dateTimeString(timeInMillis: Long): String =
+		DateFormat.getDateTimeInstance().format(timeInMillis)
 
-	private val alarmManager: AlarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+	private val alarmManager: AlarmManager =
+		context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
 	private fun pendingIntent(context: Context, action: String): PendingIntent {
 		val alarmIntent = Intent(context, GlanceWidgetReceiver::class.java)
 		alarmIntent.action = action
-		return PendingIntent.getBroadcast(context, 0, alarmIntent, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
+		return PendingIntent.getBroadcast(
+			context,
+			0,
+			alarmIntent,
+			PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+		)
 	}
 }

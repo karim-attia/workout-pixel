@@ -1,7 +1,14 @@
 package ch.karimattia.workoutpixel.screens.progress
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Divider
@@ -81,9 +88,11 @@ fun ProgressBar(
 	CardWithTitle(
 		title = "Your progress today",
 	) {
-		val statusDistribution: Map<Status, Int> = enumValues<Status>().associateWith { goals.filter { goal -> goal.status() == it }.size }
-		Row(modifier = Modifier
-			.fillMaxWidth()
+		val statusDistribution: Map<Status, Int> =
+			enumValues<Status>().associateWith { goals.filter { goal -> goal.status() == it }.size }
+		Row(
+			modifier = Modifier
+				.fillMaxWidth()
 		) {
 			statusDistribution.forEach {
 				if (it.value > 0) Text(
@@ -92,7 +101,12 @@ fun ProgressBar(
 					fontWeight = FontWeight(500),
 					color = Color.White,
 					modifier = Modifier
-						.background(color = getColorFromStatus(it.key, settingsData = lambdas.settingsData))
+						.background(
+							color = getColorFromStatus(
+								it.key,
+								settingsData = lambdas.settingsData
+							)
+						)
 						.padding(vertical = 2.dp)
 						.fillMaxSize()
 						.weight(it.value.toFloat())//it.value.toFloat())

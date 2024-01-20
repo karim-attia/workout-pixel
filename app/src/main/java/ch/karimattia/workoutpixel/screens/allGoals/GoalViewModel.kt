@@ -41,7 +41,9 @@ class GoalViewModel @Inject constructor(
 		else changeCurrentGoalUid(Constants.INVALID_GOAL_UID)
 	}
 
-	fun changeCurrentGoalUid(goalUid: Int) { _currentGoalUid.value = goalUid }
+	fun changeCurrentGoalUid(goalUid: Int) {
+		_currentGoalUid.value = goalUid
+	}
 
 	suspend fun deleteGoal(goal: Goal) = goalRepository.deleteGoal(goal)
 	suspend fun insertGoal(goal: Goal): Int = goalRepository.insertGoal(goal)

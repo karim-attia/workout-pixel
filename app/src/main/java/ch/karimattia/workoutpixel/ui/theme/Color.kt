@@ -13,6 +13,7 @@ val Grey: Int = colorToInt(Color(0xffbdbdbd))
 // Colors for title and navigation background
 // App messages in chat
 val Primary = Color(64, 61, 57)
+
 // User messages in chat
 val Secondary = Color(0xff00c853)
 

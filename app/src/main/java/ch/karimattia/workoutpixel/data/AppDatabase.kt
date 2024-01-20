@@ -23,7 +23,8 @@ import javax.inject.Singleton
 		AutoMigration(from = 6, to = 7, spec = AppDatabase.AutoMigration::class),
 		AutoMigration(from = 7, to = 8, spec = AppDatabase.AutoMigration::class),
 		AutoMigration(from = 8, to = 9, spec = AppDatabase.AutoMigration::class),
-	])
+	]
+)
 abstract class AppDatabase : RoomDatabase() {
 	abstract fun goalDao(): GoalDao
 

@@ -7,8 +7,8 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.lifecycle.viewmodel.compose.viewModel
 import ch.karimattia.compose_chatbot_framework.ChatMainScreen
-import ch.karimattia.workoutpixel.screens.Lambdas
 import ch.karimattia.workoutpixel.data.Goal
+import ch.karimattia.workoutpixel.screens.Lambdas
 
 @Suppress("unused")
 private const val TAG: String = "Onboarding"
@@ -20,7 +20,13 @@ fun Onboarding(
 	currentGoal: Goal,
 	chatVariant: ChatVariant,
 	lambdas: Lambdas,
-	onboardingViewModel: OnboardingViewModel = viewModel(factory = OnboardingViewModelFactory(chatVariant, rememberCoroutineScope(), lambdas = lambdas)),
+	onboardingViewModel: OnboardingViewModel = viewModel(
+		factory = OnboardingViewModelFactory(
+			chatVariant,
+			rememberCoroutineScope(),
+			lambdas = lambdas
+		)
+	),
 ) {
 
 	// If the caller sends a new currentGoal, update the viewModel with it. If it's the same one (e.g. through a recomposition), do not update.

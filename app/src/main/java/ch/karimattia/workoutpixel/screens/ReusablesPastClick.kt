@@ -7,8 +7,8 @@ import java.util.stream.Collectors
 private const val TAG: String = "ReusablesPastClick"
 
 fun lastClickBasedOnActiveClicks(pastClicks: List<PastClick>): Long {
-	val activeWorkoutsOrderedByWorkoutTime = pastClicks.stream()
-		.filter { clickedClick: PastClick -> clickedClick.isActive }.collect(
+	val activeWorkoutsOrderedByWorkoutTime =
+		pastClicks.stream().filter { clickedClick: PastClick -> clickedClick.isActive }.collect(
 			Collectors.toList()
 		)
 

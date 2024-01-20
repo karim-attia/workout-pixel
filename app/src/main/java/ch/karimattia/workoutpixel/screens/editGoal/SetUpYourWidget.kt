@@ -27,125 +27,125 @@ import ch.karimattia.workoutpixel.screens.SwitchWithText
 @ExperimentalComposeUiApi
 @Composable
 fun SetUpYourWidget(
-    setUpYourWidgetGoal: Goal,
-    setUpYourWidgetGoalChange: (Goal) -> Unit,
-    isFirstConfigure: Boolean,
-    modifier: Modifier = Modifier,
-    connectExistingGoal: Boolean = false,
+	setUpYourWidgetGoal: Goal,
+	setUpYourWidgetGoalChange: (Goal) -> Unit,
+	isFirstConfigure: Boolean,
+	modifier: Modifier = Modifier,
+	connectExistingGoal: Boolean = false,
 ) {
-    FreeStandingTitle(
-        text = if (!isFirstConfigure) {
-            "Edit your goal"
-        } else if (!connectExistingGoal) {
-            "Set up your widget"
-        } else {
-            "Set up a new goal"
-        }
-    )
+	FreeStandingTitle(
+		text = if (!isFirstConfigure) {
+			"Edit your goal"
+		} else if (!connectExistingGoal) {
+			"Set up your widget"
+		} else {
+			"Set up a new goal"
+		}
+	)
 
-    Text(
-        text = "Describe your goal in 1–2 words:",
-        style = MaterialTheme.typography.labelLarge,
-        modifier = modifier
-    )
+	Text(
+		text = "Describe your goal in 1–2 words:",
+		style = MaterialTheme.typography.labelLarge,
+		modifier = modifier
+	)
 
-    GoalTitleTextField(
-        title = setUpYourWidgetGoal.title,
-        onValueChange = {
-            setUpYourWidgetGoal.title = it
-            setUpYourWidgetGoalChange(setUpYourWidgetGoal)
-        },
-        modifier = modifier
-    )
+	GoalTitleTextField(
+		title = setUpYourWidgetGoal.title,
+		onValueChange = {
+			setUpYourWidgetGoal.title = it
+			setUpYourWidgetGoalChange(setUpYourWidgetGoal)
+		},
+		modifier = modifier
+	)
 
-    Spacer(modifier = Modifier.height(24.dp))
-    /* Interval */
-    Text(
-        text = "How often do you want to reach your goal? Every",
-        style = MaterialTheme.typography.labelLarge,
-        modifier = modifier,
-    )
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = modifier,
-    ) {
-        val buttonModifier: Modifier = Modifier
+	Spacer(modifier = Modifier.height(24.dp))
+	/* Interval */
+	Text(
+		text = "How often do you want to reach your goal? Every",
+		style = MaterialTheme.typography.labelLarge,
+		modifier = modifier,
+	)
+	Row(
+		verticalAlignment = Alignment.CenterVertically,
+		modifier = modifier,
+	) {
+		val buttonModifier: Modifier = Modifier
             .padding(end = 12.dp)
             .width(28.dp)
             .height(28.dp)
-        val textModifier: Modifier = Modifier
-            .padding(end = 12.dp)
-        FilledTonalButton(
-            onClick = {
-                setUpYourWidgetGoal.intervalBlue--
-                setUpYourWidgetGoalChange(setUpYourWidgetGoal)
-            },
-            enabled = setUpYourWidgetGoal.intervalBlue >= 2,
-            contentPadding = PaddingValues(all = 0.dp),
-            colors = ButtonDefaults.filledTonalButtonColors(
-                containerColor = MaterialTheme.colorScheme.primaryContainer,
-                contentColor = MaterialTheme.colorScheme.primary,
-            ),
-            modifier = buttonModifier,
-        ) {
-            Icon(
-                imageVector = Icons.Filled.Remove,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.primary,
-            )
-        }
-        Text(
-            text = setUpYourWidgetGoal.intervalBlue.toString(),
-            style = MaterialTheme.typography.bodyMedium,
-            modifier = textModifier
-        )
-        FilledTonalButton(
-            onClick = {
-                setUpYourWidgetGoal.intervalBlue++
-                setUpYourWidgetGoalChange(setUpYourWidgetGoal)
-            },
-            contentPadding = PaddingValues(all = 0.dp),
-            colors = ButtonDefaults.filledTonalButtonColors(
-                containerColor = MaterialTheme.colorScheme.primaryContainer,
-                contentColor = MaterialTheme.colorScheme.primary,
-            ),
-            modifier = buttonModifier,
-        ) {
-            Icon(
-                imageVector = Icons.Filled.Add,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.primary,
-            )
-        }
-        Text(
-            text = plural(setUpYourWidgetGoal.intervalBlue, "day") + ".",
-            style = MaterialTheme.typography.bodyMedium,
-            modifier = textModifier,
-        )
-    }
+		val textModifier: Modifier = Modifier
+			.padding(end = 12.dp)
+		FilledTonalButton(
+			onClick = {
+				setUpYourWidgetGoal.intervalBlue--
+				setUpYourWidgetGoalChange(setUpYourWidgetGoal)
+			},
+			enabled = setUpYourWidgetGoal.intervalBlue >= 2,
+			contentPadding = PaddingValues(all = 0.dp),
+			colors = ButtonDefaults.filledTonalButtonColors(
+				containerColor = MaterialTheme.colorScheme.primaryContainer,
+				contentColor = MaterialTheme.colorScheme.primary,
+			),
+			modifier = buttonModifier,
+		) {
+			Icon(
+				imageVector = Icons.Filled.Remove,
+				contentDescription = null,
+				tint = MaterialTheme.colorScheme.primary,
+			)
+		}
+		Text(
+			text = setUpYourWidgetGoal.intervalBlue.toString(),
+			style = MaterialTheme.typography.bodyMedium,
+			modifier = textModifier
+		)
+		FilledTonalButton(
+			onClick = {
+				setUpYourWidgetGoal.intervalBlue++
+				setUpYourWidgetGoalChange(setUpYourWidgetGoal)
+			},
+			contentPadding = PaddingValues(all = 0.dp),
+			colors = ButtonDefaults.filledTonalButtonColors(
+				containerColor = MaterialTheme.colorScheme.primaryContainer,
+				contentColor = MaterialTheme.colorScheme.primary,
+			),
+			modifier = buttonModifier,
+		) {
+			Icon(
+				imageVector = Icons.Filled.Add,
+				contentDescription = null,
+				tint = MaterialTheme.colorScheme.primary,
+			)
+		}
+		Text(
+			text = plural(setUpYourWidgetGoal.intervalBlue, "day") + ".",
+			style = MaterialTheme.typography.bodyMedium,
+			modifier = textModifier,
+		)
+	}
 
 
-    /* Date & time */
-    Spacer(modifier = Modifier.height(24.dp))
-    Text(
-        text = "Should the widget show when you reached your goal the last time?",
-        style = MaterialTheme.typography.labelLarge,
-        modifier = modifier,
-    )
-    SwitchWithText(
-        description = "Show date",
-        checked = setUpYourWidgetGoal.showDate,
-        onCheckedChange = {
-            setUpYourWidgetGoal.showDate = it
-            setUpYourWidgetGoalChange(setUpYourWidgetGoal)
-        },
-    )
-    SwitchWithText(
-        description = "Show time",
-        checked = setUpYourWidgetGoal.showTime,
-        onCheckedChange = {
-            setUpYourWidgetGoal.showTime = it
-            setUpYourWidgetGoalChange(setUpYourWidgetGoal)
-        },
-    )
+	/* Date & time */
+	Spacer(modifier = Modifier.height(24.dp))
+	Text(
+		text = "Should the widget show when you reached your goal the last time?",
+		style = MaterialTheme.typography.labelLarge,
+		modifier = modifier,
+	)
+	SwitchWithText(
+		description = "Show date",
+		checked = setUpYourWidgetGoal.showDate,
+		onCheckedChange = {
+			setUpYourWidgetGoal.showDate = it
+			setUpYourWidgetGoalChange(setUpYourWidgetGoal)
+		},
+	)
+	SwitchWithText(
+		description = "Show time",
+		checked = setUpYourWidgetGoal.showTime,
+		onCheckedChange = {
+			setUpYourWidgetGoal.showTime = it
+			setUpYourWidgetGoalChange(setUpYourWidgetGoal)
+		},
+	)
 }
