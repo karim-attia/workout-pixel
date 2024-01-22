@@ -13,6 +13,7 @@ android {
 	compileSdk = 34
 
 	defaultConfig {
+		namespace = "ch.karimattia.workoutpixel"
 		applicationId = "ch.karimattia.workoutpixels"
 		minSdk = 31
 		targetSdk = 34
@@ -23,8 +24,6 @@ android {
 
 		vectorDrawables.useSupportLibrary = true
 	}
-
-	buildFeatures.compose = true
 
 	buildTypes {
 		getByName("debug") {
@@ -42,12 +41,22 @@ android {
 				getDefaultProguardFile("proguard-android-optimize.txt"),
 				"proguard-rules.pro"
 			)
+			signingConfig = signingConfigs.getByName("debug")
 		}
+	}
+
+	buildFeatures.compose = true
+	composeOptions {
+		kotlinCompilerExtensionVersion = "1.5.4"
 	}
 
 	compileOptions {
 		sourceCompatibility = JavaVersion.VERSION_17
 		targetCompatibility = JavaVersion.VERSION_17
+	}
+
+	kotlinOptions {
+		jvmTarget = "17"
 	}
 
 	sourceSets["main"].java.srcDirs("src/main/java", "src/main/java/2")
@@ -57,25 +66,8 @@ android {
 		includeInBundle = true
 	}
 
-	kotlinOptions {
-		jvmTarget = "17"
-	}
-
 	ksp {
 		arg("room.schemaLocation", "$projectDir/schemas")
-	}
-
-	composeOptions {
-		kotlinCompilerExtensionVersion = "1.5.4"
-	}
-	buildTypes {
-		getByName("release") {
-			signingConfig = signingConfigs.getByName("debug")
-		}
-	}
-
-	defaultConfig {
-		namespace = "ch.karimattia.workoutpixel"
 	}
 }
 
@@ -199,6 +191,8 @@ dependencies {
 
 	implementation("androidx.glance:glance-appwidget:1.0.0")
 
+	// The chat framework for the intro.
+	// https://github.com/karim-attia/compose-chatbot-framework
 	implementation("com.github.karim-attia:compose-chatbot-framework:1.0.21")
 
 }
