@@ -1,6 +1,3 @@
-import java.io.FileInputStream
-import java.util.Properties
-
 plugins {
 	id("com.android.application")
 	id("com.google.devtools.ksp")
@@ -13,23 +10,6 @@ plugins {
 
 
 android {
-	val keystorePropertiesFile = rootProject.file("keystore.properties")
-
-	val keystoreProperties = Properties()
-	keystoreProperties.load(FileInputStream(keystorePropertiesFile))
-
-
-	/*
-		signingConfigs {
-			create("release") {
-				keyAlias = keystoreProperties["keyAlias"] as String
-				keyPassword = keystoreProperties["keyPassword"] as String
-				storeFile = file(keystoreProperties["storeFile"] as String)
-				storePassword = keystoreProperties["storePassword"] as String
-			}
-		}
-	*/
-
 	compileSdk = 34
 
 	defaultConfig {
