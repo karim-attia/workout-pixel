@@ -127,7 +127,7 @@ dependencies {
 	val roomVersion = "2.6.1"
 	ksp("androidx.room:room-compiler:$roomVersion")
 	implementation("androidx.room:room-ktx:$roomVersion")
-	implementation("com.google.devtools.ksp:symbol-processing-api:1.9.22-1.0.16")
+	implementation("com.google.devtools.ksp:symbol-processing-api:1.9.22-1.0.17")
 
 	// Navigation
 	// implementation "androidx.navigation:navigation-ui-ktx:2.4.0-alpha10"
