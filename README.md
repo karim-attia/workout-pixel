@@ -27,20 +27,20 @@ You can download the app in the [Play Store](https://play.google.com/store/apps/
 * Goals are saved in a SQL database ([AppDatabase](/app/src/main/java/ch/karimattia/workoutpixel/data/AppDatabase.kt) and [GoalDao](/app/src/main/java/ch/karimattia/workoutpixel/data/GoalDao.kt)) and can be accessed through the [GoalRepository](/app/src/main/java/ch/karimattia/workoutpixel/data/GoalRepository.kt).
 
 ### Clicking on the widget
-* When a user clicks on a widget, the [WorkoutPixelAppWidgetProvider](/app/src/main/java/ch/karimattia/workoutpixel/core/WorkoutPixelAppWidgetProvider.kt) class receives a broadcast to update the goal.
+* When a user clicks on a widget, the [GlanceWidgetReceiver](/app/src/main/java/ch/karimattia/workoutpixel/core/GlanceWidget.kt) class receives a broadcast to update the goal.
 * This instructs the [GoalRepository](/app/src/main/java/ch/karimattia/workoutpixel/data/GoalRepository.kt) to update the goal with this latest click.
 * Then, the [WidgetActions](/app/src/main/java/ch/karimattia/workoutpixel/core/WidgetActions.kt) class updates the widget on the homescreen, e.g. turns it green.
 * This also saves a [PastClick](/app/src/main/java/ch/karimattia/workoutpixel/data/PastClick.kt) to the database.
 
 ### Updating the widget over night
 * The [WidgetAlarm](/app/src/main/java/ch/karimattia/workoutpixel/core/WidgetAlarm.kt) class triggers a broadcast at 3:00 every night.
-* Similarly as when a user clicks on a widget, the [WorkoutPixelAppWidgetProvider](/app/src/main/java/ch/karimattia/workoutpixel/core/WorkoutPixelAppWidgetProvider.kt) class receives this broadcast.
+* Similarly as when a user clicks on a widget, the [GlanceWidgetReceiver](/app/src/main/java/ch/karimattia/workoutpixel/core/GlanceWidget.kt) class receives this broadcast.
 * This instructs the [WidgetActions](/app/src/main/java/ch/karimattia/workoutpixel/core/WidgetActions.kt) class to update all widgets on the homescreen based on their new status.
 
 ### Main activity
 The [MainActivity](/app/src/main/java/ch/karimattia/workoutpixel/activities/MainActivity.kt) class contains the screens for when users open the app itself:
-* The [Instructions](/app/src/main/java/ch/karimattia/workoutpixel/screens/Instructions.kt) screen shows how to add a widget on the homescreen in a couple of gifs.
+* The [Onboarding](/app/src/main/java/ch/karimattia/workoutpixel/screens/onboarding/Onboarding.kt) screen helps the user to add a widget to the homescreen in a couple of steps.
 * The [AllGoalsView](/app/src/main/java/ch/karimattia/workoutpixel/screens/allGoals/AllGoalsView.kt) screen gives an overview over all goals.
 * Clicking on a goal leads to the [GoalDetailView](/app/src/main/java/ch/karimattia/workoutpixel/screens/goalDetail/GoalDetailView.kt) screen which shows some more information on this goal including a list of all past clicks on the widget.
-* Clicking on the edit icon leads to the [EditGoalView](/app/src/main/java/ch/karimattia/workoutpixel/screens/EditGoalView.kt) screen where users can edit their goal similarly as when they create it.
+* Clicking on the edit icon leads to the [EditGoalView](/app/src/main/java/ch/karimattia/workoutpixel/screens/editGoal/EditGoalView.kt) screen where users can edit their goal similarly as when they create it.
 * In the [Settings](/app/src/main/java/ch/karimattia/workoutpixel/screens/settings/Settings.kt) screen, users can configure the app. The preferences are stored in the [SettingsRepository](/app/src/main/java/ch/karimattia/workoutpixel/data/SettingsRepository.kt).
