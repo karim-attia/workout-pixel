@@ -9,7 +9,7 @@
 <img src="/workoutpixel/src/main/res/drawable-v24/instructions_pitch.png" alt="Features" width="200"/>
 
 ## Download
-You can download the app in the [Play Store](https://play.google.com/store/apps/details?id=ch.karimattia.workoutpixel).
+You can download the app in the [Play Store](https://play.google.com/store/apps/details?id=ch.karimattia.workoutpixels).
 
 ## About the code
 ### Adding a new goal
