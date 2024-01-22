@@ -39,9 +39,9 @@ You can download the app in the [Play Store](https://play.google.com/store/apps/
 
 ### Main activity
 The [MainActivity](/app/src/main/java/ch/karimattia/workoutpixel/activities/MainActivity.kt) class contains the screens for when users open the app itself:
-* The [Onboarding](/app/src/main/java/ch/karimattia/workoutpixel/screens/onboarding/Onboarding.kt) screen helps the user to add a widget to the homescreen in a couple of steps. The steps are configured in the [OnboardingViewModel](/app/src/main/java/ch/karimattia/workoutpixel/screens/onboarding/OnboardingViewModel.kt)
+* The [Onboarding](/app/src/main/java/ch/karimattia/workoutpixel/screens/onboarding/Onboarding.kt) screen helps the user to add a widget to the homescreen in a couple of steps. The steps are configured in the [OnboardingViewModel](/app/src/main/java/ch/karimattia/workoutpixel/screens/onboarding/OnboardingViewModel.kt).
 * The [AllGoalsView](/app/src/main/java/ch/karimattia/workoutpixel/screens/allGoals/AllGoalsView.kt) screen gives an overview over all goals.
 * Clicking on a goal leads to the [GoalDetailView](/app/src/main/java/ch/karimattia/workoutpixel/screens/goalDetail/GoalDetailView.kt) screen which shows some more information on this goal including a list of all past clicks on the widget.
 * Clicking on the edit icon leads to the [EditGoalView](/app/src/main/java/ch/karimattia/workoutpixel/screens/editGoal/EditGoalView.kt) screen where users can edit their goal similarly as when they create it.
-* The progress screen shows some statistics about your habits: [Progress](app/src/main/java/ch/karimattia/workoutpixel/screens/progress/Progress.kt)
+* The [Progress](app/src/main/java/ch/karimattia/workoutpixel/screens/progress/Progress.kt) screen shows some statistics about your habits.
 * In the [Settings](/app/src/main/java/ch/karimattia/workoutpixel/screens/settings/Settings.kt) screen, users can configure the app. The preferences are stored in the [SettingsRepository](/app/src/main/java/ch/karimattia/workoutpixel/data/SettingsRepository.kt).
