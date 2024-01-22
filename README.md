@@ -29,7 +29,7 @@ You can download the app in the [Play Store](https://play.google.com/store/apps/
 ### Clicking on the widget
 * When a user clicks on a widget, the [GlanceWidgetReceiver](/app/src/main/java/ch/karimattia/workoutpixel/core/GlanceWidget.kt) class receives a broadcast to update the goal.
 * This instructs the [GoalRepository](/app/src/main/java/ch/karimattia/workoutpixel/data/GoalRepository.kt) to update the goal with this latest click.
-* Then, the [WidgetActions](/app/src/main/java/ch/karimattia/workoutpixel/core/WidgetActions.kt) class updates the widget on the homescreen, e.g. turns it green.
+* Then, the [WidgetActions](/app/src/main/java/ch/karimattia/workoutpixel/core/WidgetActions.kt) class updates the widget on the homescreen, i.e. turns it green.
 * This also saves a [PastClick](/app/src/main/java/ch/karimattia/workoutpixel/data/PastClick.kt) to the database.
 
 ### Updating the widget over night
