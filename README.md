@@ -6,7 +6,7 @@
 3. [About the code](#About-the-code)
 
 ## Features
-<img src="/workoutpixel/src/main/res/drawable-v24/instructions_pitch.png" alt="Features" width="200"/>
+<img src="/features.png" alt="Features" width="200"/>
 
 ## Download
 You can download the app in the [Play Store](https://play.google.com/store/apps/details?id=ch.karimattia.workoutpixels).
