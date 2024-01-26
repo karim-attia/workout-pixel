@@ -376,6 +376,9 @@ fun WorkoutPixelNavHost(
 	) {
 		composable(route = Screens.GoalsList.name) {
 			Log.d(TAG, "------------GoalsList------------")
+			if (goals.isEmpty()) {
+				lambdas.navigateTo(Screens.Onboarding.name, null, true)
+			}
 			GoalList(
 				goals = goals,
 				lambdas = lambdas,
@@ -405,7 +408,9 @@ fun WorkoutPixelNavHost(
 					pastClickViewModelAssistedFactory = pastClickViewModelAssistedFactory,
 					lambdas = lambdas,
 				)
-			} else (Text("currentGoal = null"))
+			} else (
+					lambdas.navigateTo(Screens.GoalsList.name, null, true)
+					)
 		}
 		// Your Progress
 		composable(route = Screens.Progress.name) {
@@ -426,7 +431,9 @@ fun WorkoutPixelNavHost(
 					isFirstConfigure = false,
 					lambdas = lambdas,
 				)
-			} else (Text("currentGoal = null"))
+			} else (
+					lambdas.navigateTo(Screens.GoalsList.name, null, true)
+					)
 		}
 		// Settings
 		composable(
