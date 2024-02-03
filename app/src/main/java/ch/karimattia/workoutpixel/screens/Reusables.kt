@@ -31,7 +31,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -211,7 +210,6 @@ fun SwitchWithText(
 	}
 }
 
-@ExperimentalComposeUiApi
 @Composable
 fun GoalTitleTextField(
 	title: String,
@@ -295,6 +293,7 @@ fun sameHueLowerSaturationInt(originalColor: Int): Int {
 	return ColorUtils.HSLToColor(hsl)
 }
 
+@Suppress("unused")
 fun sameHueLowerSaturation(originalColor: Color): Color {
 	val colorInt = colorToInt(originalColor)
 	val hsl = FloatArray(3)

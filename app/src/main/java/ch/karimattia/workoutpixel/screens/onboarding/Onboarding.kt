@@ -4,7 +4,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.lifecycle.viewmodel.compose.viewModel
 import ch.karimattia.compose_chatbot_framework.ChatMainScreen
 import ch.karimattia.workoutpixel.data.Goal
@@ -13,7 +12,6 @@ import ch.karimattia.workoutpixel.screens.Lambdas
 @Suppress("unused")
 private const val TAG: String = "Onboarding"
 
-@ExperimentalComposeUiApi
 @Composable
 fun Onboarding(
 	// First with uid, then with appwidgetid

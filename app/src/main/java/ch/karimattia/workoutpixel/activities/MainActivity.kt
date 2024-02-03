@@ -11,8 +11,8 @@ import androidx.compose.animation.graphics.ExperimentalAnimationGraphicsApi
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -30,7 +30,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.remember
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.lifecycleScope
@@ -73,7 +72,6 @@ private const val TAG: String = "MainActivity"
 
 @ExperimentalAnimationApi
 @ExperimentalAnimationGraphicsApi
-@ExperimentalComposeUiApi
 @AndroidEntryPoint
 @ExperimentalCoilApi
 @ExperimentalPagerApi
@@ -181,7 +179,6 @@ class MainActivity : ComponentActivity() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @ExperimentalAnimationApi
-@ExperimentalComposeUiApi
 @ExperimentalCoilApi
 @ExperimentalAnimationGraphicsApi
 @ExperimentalPagerApi
@@ -218,7 +215,7 @@ fun WorkoutPixelApp(
 									// TODO: Set current goal to null if back to main screen
 									navController.navigateUp()
 								}) {
-									Icon(Icons.Filled.ArrowBack, "Back")
+									Icon(Icons.AutoMirrored.Filled.ArrowBack, "Back")
 								}
 
 							}
@@ -340,7 +337,6 @@ fun WorkoutPixelApp(
 @ExperimentalCoilApi
 @ExperimentalAnimationGraphicsApi
 @ExperimentalPagerApi
-@ExperimentalComposeUiApi
 @Composable
 fun WorkoutPixelNavHost(
 	navController: NavHostController,

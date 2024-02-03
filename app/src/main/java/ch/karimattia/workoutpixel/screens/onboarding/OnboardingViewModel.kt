@@ -2,7 +2,6 @@ package ch.karimattia.workoutpixel.screens.onboarding
 
 import android.appwidget.AppWidgetManager
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -29,14 +28,12 @@ import kotlinx.coroutines.launch
 
 @Suppress("unused")
 private const val TAG: String = "OnboardingViewModel"
-@OptIn(ExperimentalComposeUiApi::class)
 typealias MessageBuilder = () -> ChatMessage
 
 enum class ChatVariant {
 	Onboarding, NewGoalOnly
 }
 
-@ExperimentalComposeUiApi
 class OnboardingViewModelFactory(
 	private val chatVariant: ChatVariant,
 	private val scope: CoroutineScope,
@@ -52,7 +49,6 @@ class OnboardingViewModelFactory(
 		) as T
 }
 
-@ExperimentalComposeUiApi
 class OnboardingViewModel(
 	chatVariant: ChatVariant,
 	scope: CoroutineScope,

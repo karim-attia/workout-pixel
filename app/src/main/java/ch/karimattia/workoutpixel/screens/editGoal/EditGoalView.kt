@@ -18,7 +18,6 @@ import androidx.compose.runtime.neverEqualPolicy
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
@@ -32,7 +31,6 @@ import ch.karimattia.workoutpixel.screens.Lambdas
 @Suppress("unused")
 private const val TAG: String = "EditGoalView"
 
-@ExperimentalComposeUiApi
 @Composable
 fun EditGoalView(
 	initialGoal: Goal,
@@ -152,7 +150,6 @@ fun FreeStandingTitle(
 	)
 }
 
-@ExperimentalComposeUiApi
 @Preview(name = "EditGoalView preview", showBackground = true)
 @Composable
 fun EditGoalViewPreview() {

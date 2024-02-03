@@ -20,7 +20,6 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.lifecycle.lifecycleScope
@@ -38,7 +37,6 @@ import javax.inject.Inject
 private const val TAG: String = "ConfigureCompose"
 
 @AndroidEntryPoint
-@ExperimentalComposeUiApi
 class ConfigureActivity : ComponentActivity() {
 
 	@Inject
@@ -86,6 +84,7 @@ class ConfigureActivity : ComponentActivity() {
 
 		setContent {
 			// collectedGoal can return null despite of what lint says.
+			@Suppress("USELESS_ELVIS")
 			val collectedGoal: Goal = goalRepository.loadGoalByAppWidgetIdFlow(goal.appWidgetId)
 				.collectAsState(initial = goal).value ?: goal
 			val isFirstConfigure = collectedGoal == goal
@@ -142,7 +141,6 @@ class ConfigureActivity : ComponentActivity() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-@ExperimentalComposeUiApi
 @Composable
 fun ConfigureActivityCompose(
 	initialGoal: Goal,

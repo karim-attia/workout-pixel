@@ -93,7 +93,7 @@ dependencies {
 	androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
 	androidTestImplementation("androidx.test:rules:1.5.0")
 	androidTestImplementation("androidx.test:runner:1.5.2")
-	androidTestImplementation("androidx.compose.ui:ui-test-junit4:1.5.4")
+	androidTestImplementation("androidx.compose.ui:ui-test-junit4:1.6.0")
 
 	// Room components
 	val roomVersion = "2.6.1"
@@ -111,27 +111,27 @@ dependencies {
 	implementation("androidx.hilt:hilt-navigation-compose:1.1.0")
 
 	// Jetpack Compose UI
-	implementation("androidx.compose.ui:ui:1.5.4")
+	implementation("androidx.compose.ui:ui:1.6.0")
 	// Tooling support (Previews, etc.)
-	implementation("androidx.compose.ui:ui-tooling:1.5.4")
+	implementation("androidx.compose.ui:ui-tooling:1.6.0")
 	// Foundation (Border, Background, Box, Image, Scroll, shapes, animations, etc.)
-	implementation("androidx.compose.foundation:foundation:1.5.4")
+	implementation("androidx.compose.foundation:foundation:1.6.0")
 	// Material Design
 	implementation("androidx.compose.material3:material3:1.1.2")
 	// implementation ("androidx.compose.material:material:1.5.4")
 	// Material design icons
-	implementation("androidx.compose.material:material-icons-core:1.5.4")
-	implementation("androidx.compose.material:material-icons-extended:1.5.4")
+	implementation("androidx.compose.material:material-icons-core:1.6.0")
+	implementation("androidx.compose.material:material-icons-extended:1.6.0")
 	// Integration with activities
 	implementation("androidx.activity:activity-compose:1.8.2")
 	// Integration with ViewModels
 	implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")
 	// Integration with observables
-	implementation("androidx.compose.runtime:runtime-livedata:1.5.4")
+	implementation("androidx.compose.runtime:runtime-livedata:1.6.0")
 	// implementation "androidx.compose.runtime:runtime-rxjava2:1.1.0-alpha06"
 
 	// UI Tests
-	androidTestImplementation("androidx.compose.ui:ui-test-junit4:1.5.4")
+	androidTestImplementation("androidx.compose.ui:ui-test-junit4:1.6.0")
 
 	// Pager: https://google.github.io/accompanist/pager/
 	// Can't be bothered to update since it looks like a pain and it's only shown to phones that can't pin widgets.
@@ -141,7 +141,7 @@ dependencies {
 	implementation("com.google.accompanist:accompanist-pager-indicators:0.19.0")
 
 	// https://stackoverflow.com/questions/68672046/how-to-use-animated-vector-drawable-in-compose
-	implementation("androidx.compose.animation:animation-graphics:1.5.4")
+	implementation("androidx.compose.animation:animation-graphics:1.6.0")
 
 	// Coil for instruction gifs
 	// Can't be bothered to update since it looks like a pain and it's only shown to phones that can't pin widgets.
@@ -193,7 +193,7 @@ dependencies {
 
 	// The chat framework for the intro.
 	// https://github.com/karim-attia/compose-chatbot-framework
-	implementation("com.github.karim-attia:compose-chatbot-framework:1.0.21")
+	implementation("com.github.karim-attia:compose-chatbot-framework:1.0.22")
 
 }
 

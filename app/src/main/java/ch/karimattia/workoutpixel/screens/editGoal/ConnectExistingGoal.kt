@@ -34,13 +34,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import ch.karimattia.workoutpixel.data.Goal
 
-@ExperimentalComposeUiApi
 @Composable
 fun ConnectExistingGoal(
 	goalsWithoutWidget: List<Goal>,

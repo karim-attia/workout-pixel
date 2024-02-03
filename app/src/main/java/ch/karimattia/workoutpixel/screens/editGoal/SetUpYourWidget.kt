@@ -16,7 +16,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import ch.karimattia.workoutpixel.core.plural
@@ -24,7 +23,6 @@ import ch.karimattia.workoutpixel.data.Goal
 import ch.karimattia.workoutpixel.screens.GoalTitleTextField
 import ch.karimattia.workoutpixel.screens.SwitchWithText
 
-@ExperimentalComposeUiApi
 @Composable
 fun SetUpYourWidget(
 	setUpYourWidgetGoal: Goal,
