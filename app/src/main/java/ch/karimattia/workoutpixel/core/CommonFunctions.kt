@@ -3,6 +3,8 @@ package ch.karimattia.workoutpixel.core
 import android.content.Context
 import androidx.compose.ui.graphics.Color
 import ch.karimattia.workoutpixel.core.Constants.PREFERENCE_NAME
+import ch.karimattia.workoutpixel.core.Constants.hour
+import ch.karimattia.workoutpixel.core.Constants.minute
 import ch.karimattia.workoutpixel.data.Goal
 import ch.karimattia.workoutpixel.data.SettingsData
 import java.time.Instant
@@ -17,7 +19,9 @@ import kotlin.math.roundToInt
 private const val TAG = "WORKOUT_PIXEL COMMON FUNCTIONS"
 
 object Constants {
-	const val MILLISECONDS_IN_A_DAY = 24 * 60 * 60 * 1000
+	const val day = 24 * 60 * 60 * 1000
+	const val hour = 60 * 60 * 1000
+	const val minute = 60 * 1000
 	const val ACTION_ALARM_UPDATE = "ALARM_UPDATE"
 	const val ACTION_DONE_EXERCISE = "DONE_EXERCISE"
 	const val ACTION_SETUP_WIDGET = "SETUP_WIDGET"
@@ -43,7 +47,7 @@ fun last3Am(): Long {
 	// If it's before 3am, the last 3am way yesterday, thus subtract a day.
 	if (!after3Am()) {
 		// Can be commented to test alarm -> it will come up more or less instantly after restart.
-		last3Am -= intervalInMilliseconds(1)
+		last3Am -= daysToMilliseconds(1)
 	}
 	return last3Am
 }
@@ -53,7 +57,7 @@ fun next3Am(): Long {
 	// If it's already after 3am, the next 3am will be tomorrow, thus add a day.
 	if (after3Am()) {
 		// Can be commented to test alarm -> it will come up more or less instantly after restart.
-		next3Am += intervalInMilliseconds(1)
+		next3Am += daysToMilliseconds(1)
 	}
 	return next3Am
 }
@@ -72,8 +76,8 @@ fun after3Am(): Boolean {
 	return calendar[Calendar.HOUR_OF_DAY] >= 3
 }
 
-fun intervalInMilliseconds(intervalInDays: Int): Long {
-	return Constants.MILLISECONDS_IN_A_DAY.toLong() * intervalInDays
+fun daysToMilliseconds(intervalInDays: Int): Long {
+	return Constants.day.toLong() * intervalInDays
 }
 // --Commented out by Inspection START (23.06.21, 20:28):
 //    public static int intervalInDays(long intervalInMilliseconds) {
@@ -101,26 +105,126 @@ fun colorToInt(color: Color): Int =
 /**
  * Time and date formatting stuff
  */
-fun dateBeautiful(date: Long, agoWording: Boolean = true): String {
+
+// TODO: Replace function with the one below
+fun dateBeautiful(
+	date: Long,
+	agoWording: Boolean = true,
+	intradayHours: Boolean = false
+): String {
+	val now = System.currentTimeMillis()
 
 	fun daysAgo(date: Long): Int {
-		val now = System.currentTimeMillis()
-		return ((now - date) / (1000 * 60 * 60 * 24)).toInt()
+		return ((last3Am() - date) / (1000 * 60 * 60 * 24)).toInt()
+	}
+
+	fun minutesAgo(date: Long): Int {
+		return ((now - date) / minute).toInt()
+	}
+
+	fun hoursAgo(date: Long): Int {
+		return ((now - date) / hour).toInt()
 	}
 
 	// If today or yesterday, show "today" or "yesterday" instead of the date.
 	var dateBeautiful = when {
 		date == 0L -> "Never"
+		// Less than 10min ago
+		date > now - (10 * minute) && intradayHours -> "Now"
+		// Less than 1h ago -> in 10min steps
+		date > now - hour && intradayHours -> {
+			val minutesAgo = ((now - date) / minute).toInt()
+			// Divide by 10, round down, multiply by 10
+			"${(minutesAgo / 10) * 10}m"
+		}
+		// Today
+		date > last3Am() && intradayHours -> {
+			val hoursAgo = ((now - date) / hour).toInt()
+			"${hoursAgo}h"
+		}
+
 		date > last3Am() -> "Today"
-		date > last3Am() - intervalInMilliseconds(1) -> if (agoWording) "Yesterday" else "1d"
+		// Yesterday
+		date > last3Am() - daysToMilliseconds(1) -> if (agoWording) "Yesterday" else "1d"
+		// Before
+		else -> daysAgo(date).toString() + "d"
+
+	}
+
+	if (agoWording && date < last3Am() - daysToMilliseconds(1)) dateBeautiful += " ago"
+	return dateBeautiful
+}
+
+fun dateAndLabel(
+	date: Long,
+	agoWording: Boolean = true,
+	// intradayHours: Boolean = false
+): Pair<String, String> {
+	var main = ""
+	var label = ""
+	val now = System.currentTimeMillis()
+	fun daysAgo(): Int {
+		return ((last3Am() - date) / daysToMilliseconds(1)).toInt() + 1
+	}
+
+	/*
+		fun minutesAgo(): Int {
+			return ((now - date) / minute).toInt()
+		}
+
+		fun hoursAgo(): Int {
+			return ((now - date) / hour).toInt()
+		}
+	*/
+
+	// If today or yesterday, show "today" or "yesterday" instead of the date.
+	when {
+		date == 0L -> {
+			main = "Never"
+			// label = "ever"
+		}
+
+		/*
+				// If intradayHours
+				// Less than 10min ago
+				date > now - (10 * minute) && intradayHours && date > last3Am() -> main = "Now"
+				// Less than 1h ago -> in 10min steps
+				date > now - hour && intradayHours && date > last3Am() -> {
+					// Divide by 10, round down, multiply by 10
+					main = "${(minutesAgo() / 10) * 10}"
+					label = "min"
+				}
+				// Today
+				date > last3Am() && intradayHours && date > last3Am() -> {
+					main = hoursAgo().toString()
+					label = plural(hoursAgo(), "hour")
+				}
+		*/
+
+		// If no intradayHours
+		date > last3Am() -> main = "Today"
+
+		// Yesterday
+		date > last3Am() - daysToMilliseconds(1) && !agoWording -> {
+			main = "Yesterday"
+		}
+		// Before
 		else -> {
-			val daysAgo = daysAgo(date)
-			"${daysAgo}d"
+			main = daysAgo().toString()
+			label = plural(daysAgo(), "day")
 		}
 	}
 
-	if (agoWording && date < last3Am() - intervalInMilliseconds(1)) dateBeautiful += " ago"
-	return dateBeautiful
+	if (
+		agoWording
+		&& label.isNotBlank()
+		&& date != 0L
+	) {
+		label += " ago"
+	}
+
+
+	return Pair(main, label)
 }
 
 fun timeBeautiful(date: Long): String {
@@ -188,14 +292,14 @@ val testGoals: List<Goal> = listOf(
 	Goal(
 		uid = 3,
 		title = "Push ups",
-		lastWorkout = today3Am() - intervalInMilliseconds(1),
+		lastWorkout = today3Am() - daysToMilliseconds(1),
 		intervalBlue = 2,
 		//status = Status.GREEN
 	),
 	Goal(
 		uid = 4,
 		title = "Back exercises",
-		lastWorkout = today3Am() - intervalInMilliseconds(2),
+		lastWorkout = today3Am() - daysToMilliseconds(2),
 		intervalBlue = 7,
 		showDate = true,
 		//status = Status.GREEN
@@ -203,7 +307,7 @@ val testGoals: List<Goal> = listOf(
 	Goal(
 		uid = 5,
 		title = "Visualize your day",
-		lastWorkout = today3Am() + (intervalInMilliseconds(1) * 0.259).roundToInt(),
+		lastWorkout = today3Am() + (daysToMilliseconds(1) * 0.259).roundToInt(),
 		intervalBlue = 1,
 		showTime = true,
 		//status = Status.GREEN
@@ -218,7 +322,7 @@ val testGoals: List<Goal> = listOf(
 	Goal(
 		uid = 7,
 		title = "Water plants",
-		lastWorkout = today3Am() - intervalInMilliseconds(7),
+		lastWorkout = today3Am() - daysToMilliseconds(7),
 		intervalBlue = 7,
 		showDate = true,
 		//status = Status.BLUE

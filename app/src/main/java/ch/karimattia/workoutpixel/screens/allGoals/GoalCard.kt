@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -33,8 +34,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import ch.karimattia.workoutpixel.core.Screens
-import ch.karimattia.workoutpixel.core.dateBeautiful
-import ch.karimattia.workoutpixel.core.last3Am
+import ch.karimattia.workoutpixel.core.dateAndLabel
 import ch.karimattia.workoutpixel.core.plural
 import ch.karimattia.workoutpixel.data.Goal
 import ch.karimattia.workoutpixel.screens.CardWithTitle
@@ -70,9 +70,9 @@ fun GoalCard(
 				// horizontalArrangement = Arrangement.SpaceBetween,
 				horizontalArrangement = Arrangement.spacedBy(10.dp),
 				modifier = Modifier
-                    .height(IntrinsicSize.Min)
-                    .fillMaxWidth()
-                    .padding(top = 1.dp)
+					.height(IntrinsicSize.Min)
+					.fillMaxWidth()
+					.padding(top = 1.dp)
 				//.background(MaterialTheme.colorScheme.primary)
 			) {
 /*
@@ -130,7 +130,7 @@ fun GoalCard(
 @Composable
 fun StatisticsCount(goal: Goal) {
 	Statistics(
-		icon = Icons.Default.TrendingUp,
+		icon = Icons.Filled.TrendingUp,
 		label = "Done",
 		info = goal.count.toString(),
 		unit = plural(goal.count, "time")
@@ -139,16 +139,17 @@ fun StatisticsCount(goal: Goal) {
 
 @Composable
 fun StatisticsLastDone(goal: Goal) {
-	val info = dateBeautiful(
+	val (main, label) = dateAndLabel(
 		date = goal.lastWorkout,
-		agoWording = false,
+		agoWording = true,
+		// intradayHours = true
 		// locale = Locale.getDefault()
 	)
 	Statistics(
 		icon = Icons.Default.Done,
 		label = "Last done",
-		info = info,
-		unit = if (goal.lastWorkout < last3Am() && info != "Never") "ago" else "",
+		info = main,
+		unit = label,
 	)
 }
 
@@ -170,29 +171,34 @@ fun Statistics(
 	unit: String,
 ) {
 	val infoAndUnit: AnnotatedString = buildAnnotatedString {
-		withStyle(
+		if (info.length < 4) withStyle(
 			MaterialTheme.typography.headlineLarge.copy(
 				fontWeight = FontWeight.Medium
 			).toSpanStyle()
 		) { append(info) }
+		else withStyle(
+			MaterialTheme.typography.headlineSmall.copy(
+				fontWeight = FontWeight.Medium
+			).toSpanStyle()
+		) { append(info) }
 		withStyle(
-			MaterialTheme.typography.bodyMedium.copy(
-				fontWeight = FontWeight.Medium,
+			MaterialTheme.typography.labelSmall.copy(
+				//fontWeight = FontWeight.Medium,
 				// color = Color.Gray
 			).toSpanStyle()
-		) { append(" $unit") }
+		) { append(" ${unit}") }
 	}
 
 	Column(
 		// space between
-		// verticalArrangement = Arrangement.SpaceBetween,
+		verticalArrangement = Arrangement.SpaceBetween,
 		// horizontalAlignment = Alignment.CenterHorizontally,
 		modifier = Modifier
-            .clip(RoundedCornerShape(4.dp))
-            .fillMaxWidth()
-            .background(MaterialTheme.colorScheme.background)
-
-            /*
+			.clip(RoundedCornerShape(8.dp))
+			.fillMaxWidth()
+			.background(MaterialTheme.colorScheme.background)
+			.height(66.dp)
+			/*
 						.drawBehind {
 							drawRoundRect(
 								color = Color.Gray,
@@ -205,21 +211,25 @@ fun Statistics(
 						}
 			*/
 
-            .border(
-                width = 0.25.dp,
-                color = Color.LightGray,
-                shape = RoundedCornerShape(4.dp)
+			.border(
+				width = 0.25.dp,
+				color = Color.LightGray,
+				shape = RoundedCornerShape(4.dp)
 
-            )
+			)
 
-            .padding(start = 8.dp)
+			.padding(horizontal = 8.dp)
 
 
 	) {
 		Row(
-			verticalAlignment = Alignment.CenterVertically,
 			modifier = Modifier
 				.height(22.dp)
+				.fillMaxWidth(),
+
+			verticalAlignment = Alignment.CenterVertically,
+			horizontalArrangement = Arrangement.Center,
+
 			// .padding(start = 4.dp)
 		) {
 			Icon(
@@ -229,14 +239,14 @@ fun Statistics(
 				// tint = MaterialTheme.colorScheme.primary,
 				tint = Color.Gray,
 				modifier = Modifier
-                    .size(
-                        when (icon) {
-                            Icons.Outlined.DateRange, Icons.Outlined.Repeat -> 18.dp
-                            Icons.Outlined.Replay -> 19.dp
-                            else -> 22.dp
-                        }
-                    )
-                    .padding(end = 4.dp)
+					.size(
+						when (icon) {
+							Icons.Outlined.DateRange, Icons.Outlined.Repeat -> 18.dp
+							Icons.Outlined.Replay -> 19.dp
+							else -> 22.dp
+						}
+					)
+					.padding(end = 4.dp)
 			)
 
 			Text(
@@ -246,18 +256,26 @@ fun Statistics(
 				color = Color.Gray,
 
 				modifier = Modifier
+					.padding(end = 6.dp),
+
+
 				//.padding(top = 2.dp, start = 2.dp, end = 2.dp)
 			)
 		}
-		Text(
-			text = infoAndUnit,
-			fontWeight = FontWeight.Bold,
-			// color = MaterialTheme.colorScheme.onPrimary,
-			// color = MaterialTheme.colorScheme.primary,
-			// color = Color.Gray,
-			modifier = Modifier
-				.padding(start = 2.dp)
-		)
+		Spacer(modifier = Modifier.weight(1f))
+		Row {
+			Spacer(modifier = Modifier.weight(1f))
+			Text(
+				text = infoAndUnit,
+				fontWeight = FontWeight.Bold,
+				// color = MaterialTheme.colorScheme.onPrimary,
+				// color = MaterialTheme.colorScheme.primary,
+				// color = Color.Gray,
+				modifier = Modifier
+					.padding(horizontal = 2.dp)
+			)
+			Spacer(modifier = Modifier.weight(1.5f))
+		}
 
 	}
 

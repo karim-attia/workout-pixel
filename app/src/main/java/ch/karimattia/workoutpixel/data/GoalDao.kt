@@ -2,7 +2,7 @@ package ch.karimattia.workoutpixel.data
 
 import android.appwidget.AppWidgetManager
 import androidx.room.*
-import ch.karimattia.workoutpixel.core.intervalInMilliseconds
+import ch.karimattia.workoutpixel.core.daysToMilliseconds
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -57,10 +57,14 @@ interface GoalDao {
 	fun loadPastWorkoutsByGoalUid(goalUid: Int): Flow<List<PastClick>>
 
 	@Query("SELECT * FROM pastWorkouts WHERE workoutTime > :lastWeek AND active ORDER BY workoutTime DESC")
-	fun activePastClicksLastWeek(lastWeek: Long = System.currentTimeMillis() - intervalInMilliseconds(7)): Flow<List<PastClick>>
+	fun activePastClicksLastWeek(lastWeek: Long = System.currentTimeMillis() - daysToMilliseconds(7)): Flow<List<PastClick>>
 
 	@Query("SELECT * FROM pastWorkouts WHERE workoutTime > :lastWeek AND active ORDER BY workoutTime DESC")
-	fun activePastClicksAndGoalLastWeek(lastWeek: Long = System.currentTimeMillis() - intervalInMilliseconds(7)): Flow<List<PastClickAndGoal>>
+	fun activePastClicksAndGoalLastWeek(
+		lastWeek: Long = System.currentTimeMillis() - daysToMilliseconds(
+			7
+		)
+	): Flow<List<PastClickAndGoal>>
 
 	// Return number of active workouts by appWidgetId
 	@Query("SELECT COUNT() FROM pastWorkouts WHERE widgetUid=:goalUid AND active='1'")

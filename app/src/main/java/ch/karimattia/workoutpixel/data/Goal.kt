@@ -10,7 +10,7 @@ import androidx.room.PrimaryKey
 import ch.karimattia.workoutpixel.core.Status
 import ch.karimattia.workoutpixel.core.dateBeautiful
 import ch.karimattia.workoutpixel.core.getColorFromStatus
-import ch.karimattia.workoutpixel.core.intervalInMilliseconds
+import ch.karimattia.workoutpixel.core.daysToMilliseconds
 import ch.karimattia.workoutpixel.core.last3Am
 import ch.karimattia.workoutpixel.core.timeBeautiful
 
@@ -50,8 +50,8 @@ data class Goal(
 ) {
 	fun status(): Status {
 		// Point in time when the widget should change to blue/red as soon as it's night time the next time.
-		val timeBlue = lastWorkout + intervalInMilliseconds(intervalBlue - 1)
-		val timeRed = timeBlue + intervalInMilliseconds(2)
+		val timeBlue = lastWorkout + daysToMilliseconds(intervalBlue - 1)
+		val timeRed = timeBlue + daysToMilliseconds(2)
 
 		return when {
 			// If there is a statusOverride, return the statusOverride.

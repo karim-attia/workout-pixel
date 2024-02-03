@@ -1,7 +1,7 @@
 package ch.karimattia.workoutpixel
 
 import ch.karimattia.workoutpixel.core.Status
-import ch.karimattia.workoutpixel.core.intervalInMilliseconds
+import ch.karimattia.workoutpixel.core.daysToMilliseconds
 import ch.karimattia.workoutpixel.data.Goal
 import org.junit.Assert
 import org.junit.Test
@@ -20,7 +20,7 @@ class TestNewStatus {
 
 	@Test
 	fun testNewStatusGreenNormal() {
-		val lastWorkout = now - intervalInMilliseconds(1)
+		val lastWorkout = now - daysToMilliseconds(1)
 		val intervalBlue = 2
 		val expectedStatus: Status = Status.GREEN
 		testNewStatus(lastWorkout, intervalBlue, expectedStatus)
@@ -28,7 +28,7 @@ class TestNewStatus {
 
 	@Test
 	fun testNewStatusBlueNormal() {
-		val lastWorkout = now - intervalInMilliseconds(3)
+		val lastWorkout = now - daysToMilliseconds(3)
 		val intervalBlue = 2
 		val expectedStatus: Status = Status.BLUE
 		testNewStatus(lastWorkout, intervalBlue, expectedStatus)
@@ -37,7 +37,7 @@ class TestNewStatus {
 	// Corner case
 	@Test
 	fun testNewStatusBlueCornerCase() {
-		val lastWorkout = now - intervalInMilliseconds(2)
+		val lastWorkout = now - daysToMilliseconds(2)
 		val intervalBlue = 2
 		val expectedStatus: Status = Status.BLUE
 		testNewStatus(lastWorkout, intervalBlue, expectedStatus)
@@ -45,7 +45,7 @@ class TestNewStatus {
 
 	@Test
 	fun testNewStatusRedNormal() {
-		val lastWorkout = now - intervalInMilliseconds(5)
+		val lastWorkout = now - daysToMilliseconds(5)
 		val intervalBlue = 2
 		val expectedStatus: Status = Status.RED
 		testNewStatus(lastWorkout, intervalBlue, expectedStatus)
@@ -53,7 +53,7 @@ class TestNewStatus {
 
 	@Test
 	fun testNewStatusRedCornerCase() {
-		val lastWorkout = now - intervalInMilliseconds(4)
+		val lastWorkout = now - daysToMilliseconds(4)
 		val intervalBlue = 2
 		val expectedStatus: Status = Status.RED
 		testNewStatus(lastWorkout, intervalBlue, expectedStatus)
@@ -66,7 +66,7 @@ class TestNewStatus {
 		val hourOfDay = today3AmCalendar[Calendar.HOUR_OF_DAY]
 		today3AmCalendar[Calendar.HOUR_OF_DAY] = 2
 		val today2Am = today3AmCalendar.timeInMillis
-		val lastWorkout = today2Am - intervalInMilliseconds(0)
+		val lastWorkout = today2Am - daysToMilliseconds(0)
 		val intervalBlue = 1
 		val expectedStatus: Status
 		expectedStatus = if (hourOfDay > 3) {
