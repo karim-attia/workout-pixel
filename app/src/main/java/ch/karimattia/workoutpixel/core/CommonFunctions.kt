@@ -115,7 +115,7 @@ fun dateBeautiful(
 	val now = System.currentTimeMillis()
 
 	fun daysAgo(date: Long): Int {
-		return ((last3Am() - date) / (1000 * 60 * 60 * 24)).toInt()
+		return ((last3Am() - date) / (1000 * 60 * 60 * 24)).toInt() + 1
 	}
 
 	fun minutesAgo(date: Long): Int {

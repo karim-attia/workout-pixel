@@ -10,7 +10,7 @@ buildscript {
 
         classpath("com.android.tools.build:gradle:8.2.2")
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.20")
-        classpath("androidx.navigation:navigation-safe-args-gradle-plugin:2.7.6")
+        classpath("androidx.navigation:navigation-safe-args-gradle-plugin:2.7.7")
 
         // https://dagger.dev/hilt/gradle-setup
         classpath("com.google.dagger:hilt-android-gradle-plugin:2.48")
