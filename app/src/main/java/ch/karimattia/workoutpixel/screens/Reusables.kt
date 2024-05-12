@@ -19,8 +19,8 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
-import androidx.compose.material3.Divider
 import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
@@ -156,12 +156,12 @@ fun CardTitle(
 		style = MaterialTheme.typography.titleMedium,
 		modifier = Modifier.padding(bottom = 12.dp)
 	)
-	Divider(
-		thickness = 3.dp,
-		color = MaterialTheme.colorScheme.primary,
+	HorizontalDivider(
 		modifier = Modifier
 			.padding(bottom = 24.dp)
-			.width(44.dp)
+			.width(44.dp),
+		thickness = 3.dp,
+		color = MaterialTheme.colorScheme.primary
 	)
 }
 
