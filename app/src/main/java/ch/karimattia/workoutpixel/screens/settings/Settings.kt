@@ -2,7 +2,7 @@ package ch.karimattia.workoutpixel.screens.settings
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -30,48 +30,64 @@ fun Settings(
 	// Log.d(TAG, "dateLanguage: ${settingsData.dateLanguage} / dateCountry: ${settingsData.dateCountry}")
 	// Log.d(TAG, "timeLanguage: ${settingsData.timeLanguage} / timeCountry: ${settingsData.timeCountry}")
 	Column {
-		Divider(color = Color(TextBlack), thickness = 0.5.dp)
-		SettingsTitle(text = "Colors")
-		ColorSelection(
-			titleText = "Done goals",
-			subtitleText = "Color of goals that you recently reached",
-			goal = goal,
-			currentColor = settingsData.colorDone(),
-			resetColor = Color(Green),
-			onColorSelected = { settingChange(settingsData.copy(colorDoneInt = colorToInt(it))) },
-			settingsData = settingsData,
-		)
-		ColorSelection(
-			titleText = "Pending goals",
-			subtitleText = "Color to remind you to reach this goal",
-			goal = goal,
-			currentColor = settingsData.colorFirstInterval(),
-			resetColor = Color(Blue),
-			onColorSelected = { settingChange(settingsData.copy(colorFirstIntervalInt = colorToInt(it))) },
-			settingsData = settingsData,
-		)
-		ColorSelection(
-			titleText = "Due goals",
-			subtitleText = "Color of goals that are pending since 2+ days",
-			goal = goal,
-			currentColor = settingsData.colorSecondInterval(),
-			resetColor = Color(Red),
-			onColorSelected = { settingChange(settingsData.copy(colorSecondIntervalInt = colorToInt(it))) },
-			settingsData = settingsData,
-		)
-		ColorSelection(
-			titleText = "New goals",
-			subtitleText = "Color of goals that you never clicked",
-			goal = goal,
-			currentColor = settingsData.colorInitial(),
-			resetColor = Color(Grey),
-			onColorSelected = { settingChange(settingsData.copy(colorInitialInt = colorToInt(it))) },
-			settingsData = settingsData,
-		)
-		// DATE format
-		Divider(color = Color(TextBlack), thickness = 0.5.dp)
-		// SettingsTitle(text = "Date and time format")
-		/*
+        HorizontalDivider(thickness = 0.5.dp, color = Color(TextBlack))
+        SettingsTitle(text = "Colors")
+        ColorSelection(
+            titleText = "Done goals",
+            subtitleText = "Color of goals that you recently reached",
+            goal = goal,
+            currentColor = settingsData.colorDone(),
+            resetColor = Color(Green),
+            onColorSelected = { settingChange(settingsData.copy(colorDoneInt = colorToInt(it))) },
+            settingsData = settingsData,
+        )
+        ColorSelection(
+            titleText = "Pending goals",
+            subtitleText = "Color to remind you to reach this goal",
+            goal = goal,
+            currentColor = settingsData.colorFirstInterval(),
+            resetColor = Color(Blue),
+            onColorSelected = {
+                settingChange(
+                    settingsData.copy(
+                        colorFirstIntervalInt = colorToInt(
+                            it
+                        )
+                    )
+                )
+            },
+            settingsData = settingsData,
+        )
+        ColorSelection(
+            titleText = "Due goals",
+            subtitleText = "Color of goals that are pending since 2+ days",
+            goal = goal,
+            currentColor = settingsData.colorSecondInterval(),
+            resetColor = Color(Red),
+            onColorSelected = {
+                settingChange(
+                    settingsData.copy(
+                        colorSecondIntervalInt = colorToInt(
+                            it
+                        )
+                    )
+                )
+            },
+            settingsData = settingsData,
+        )
+        ColorSelection(
+            titleText = "New goals",
+            subtitleText = "Color of goals that you never clicked",
+            goal = goal,
+            currentColor = settingsData.colorInitial(),
+            resetColor = Color(Grey),
+            onColorSelected = { settingChange(settingsData.copy(colorInitialInt = colorToInt(it))) },
+            settingsData = settingsData,
+        )
+        // DATE format
+        HorizontalDivider(thickness = 0.5.dp, color = Color(TextBlack))
+        // SettingsTitle(text = "Date and time format")
+        /*
 		LocaleSelectionDateTime(
 			goal = goal,
 			settingsData = settingsData,
@@ -81,8 +97,8 @@ fun Settings(
 			format = Formats(settingsData = settingsData).DATE
 		)
 		*/
-		// TIME format
-		/*LocaleSelectionDateTime(
+        // TIME format
+        /*LocaleSelectionDateTime(
 			goal = goal,
 			settingsData = settingsData,
 			onChoiceChange = { language: String?, country: String? ->
@@ -92,7 +108,7 @@ fun Settings(
 		)
 		Divider(color = Color(TextBlack), thickness = 0.5.dp)
 		*/
-	}
+    }
 }
 
 /*

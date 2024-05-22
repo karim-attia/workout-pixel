@@ -13,14 +13,14 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Undo
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Undo
 import androidx.compose.material.icons.filled.Widgets
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -206,7 +206,7 @@ fun PastClickList(
 	if (numberOfPastClicks > 0) {
 		Column {
 			PastClickEntry(date = "Date", time = "Time", header = true)
-			Divider(color = MaterialTheme.colorScheme.primary, thickness = 1.dp)
+			HorizontalDivider(thickness = 1.dp, color = MaterialTheme.colorScheme.primary)
 
 			// TODO: Limit number of numberOfPastClicks, declare it. Or implement some paging.
 			// https://developer.android.com/topic/libraries/architecture/paging.html
@@ -234,7 +234,7 @@ fun PastClickList(
 						},
 					)
 					// TODO: Should do lighter with same hue.
-					Divider(color = MaterialTheme.colorScheme.primary, thickness = 0.5.dp)
+					HorizontalDivider(thickness = 0.5.dp, color = MaterialTheme.colorScheme.primary)
 				}
 			}
 		}
@@ -260,7 +260,7 @@ fun PastClickEntry(
 		icon = if (pastClick.isActive) {
 			Icons.Filled.Delete
 		} else {
-			Icons.Filled.Undo
+			Icons.AutoMirrored.Filled.Undo
 		},
 		active = pastClick.isActive,
 		togglePastClick = togglePastClick,

@@ -1,9 +1,9 @@
 package ch.karimattia.workoutpixel.core
 
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.TrendingUp
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.TrendingUp
 import androidx.compose.ui.graphics.vector.ImageVector
 
 /**
@@ -41,7 +41,7 @@ enum class Screens(
 		topAppBarName = "Workout Pixel",
 	),
 	Progress(
-		icon = Icons.Filled.TrendingUp,
+		icon = Icons.AutoMirrored.Filled.TrendingUp,
 		bottomNavigation = true,
 		displayName = "Progress",
 		showSettingsIcon = true,

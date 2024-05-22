@@ -14,8 +14,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.TrendingUp
 import androidx.compose.material.icons.filled.Done
-import androidx.compose.material.icons.filled.TrendingUp
 import androidx.compose.material.icons.outlined.DateRange
 import androidx.compose.material.icons.outlined.Repeat
 import androidx.compose.material.icons.outlined.Replay
@@ -130,7 +130,7 @@ fun GoalCard(
 @Composable
 fun StatisticsCount(goal: Goal) {
 	Statistics(
-		icon = Icons.Filled.TrendingUp,
+		icon = Icons.AutoMirrored.Filled.TrendingUp,
 		label = "Done",
 		info = goal.count.toString(),
 		unit = plural(goal.count, "time")

@@ -11,7 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -138,18 +138,18 @@ fun ProgressPastClickList(
 	val numberOfPastClicks = pastClicksAndGoal.size
 	if (numberOfPastClicks > 0) {
 		Column {
-			ProgressPastClickEntry(goal = "Goal", date = "When", time = "", isHeader = true)
-			Divider(color = MaterialTheme.colorScheme.primary, thickness = 1.dp)
+            ProgressPastClickEntry(goal = "Goal", date = "When", time = "", isHeader = true)
+            HorizontalDivider(thickness = 1.dp, color = MaterialTheme.colorScheme.primary)
 
-			for (pastClickAndGoal in pastClicksAndGoal) {
-				key(pastClickAndGoal.pastClick.uid) {
-					ProgressPastClickEntry(
-						pastClickAndGoal = pastClickAndGoal,
-					)
-					Divider(color = MaterialTheme.colorScheme.primary, thickness = 0.5.dp)
-				}
-			}
-		}
+            for (pastClickAndGoal in pastClicksAndGoal) {
+                key(pastClickAndGoal.pastClick.uid) {
+                    ProgressPastClickEntry(
+                        pastClickAndGoal = pastClickAndGoal,
+                    )
+                    HorizontalDivider(thickness = 0.5.dp, color = MaterialTheme.colorScheme.primary)
+                }
+            }
+        }
 	}
 	if (numberOfPastClicks == 0) {
 		Text(

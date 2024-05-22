@@ -6,6 +6,7 @@ plugins {
 	id("kotlin-android")
 	id("dagger.hilt.android.plugin")
 	id("org.jetbrains.kotlin.plugin.serialization") version "1.9.20"
+	id("org.jetbrains.kotlin.plugin.compose") version "2.0.0"
 }
 
 
@@ -46,9 +47,9 @@ android {
 	}
 
 	buildFeatures.compose = true
-	composeOptions {
-		kotlinCompilerExtensionVersion = "1.5.4"
-	}
+//	composeOptions {
+//		kotlinCompilerExtensionVersion = "1.5.4"
+//	}
 
 	compileOptions {
 		sourceCompatibility = JavaVersion.VERSION_17
@@ -77,17 +78,17 @@ dependencies {
 	implementation("androidx.lifecycle:lifecycle-extensions:2.2.0")
 	implementation("androidx.activity:activity-ktx:1.9.0")
 	testImplementation("junit:junit:4.13.2")
-	testImplementation("org.testng:testng:7.9.0")
+	testImplementation("org.testng:testng:7.10.2")
 
 	// Lifecycle components
-	val lifecycleVersion = "2.7.0"
+	val lifecycleVersion = "2.8.0"
 	implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycleVersion")
 	implementation("androidx.lifecycle:lifecycle-livedata-ktx:$lifecycleVersion")
 	implementation("androidx.lifecycle:lifecycle-common-java8:$lifecycleVersion")
 
 	// Kotlin components
-	api("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
-	api("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
+	api("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
+	api("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.1")
 
 	androidTestImplementation("androidx.test.ext:junit:1.1.5")
 	androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
@@ -99,7 +100,7 @@ dependencies {
 	val roomVersion = "2.6.1"
 	ksp("androidx.room:room-compiler:$roomVersion")
 	implementation("androidx.room:room-ktx:$roomVersion")
-	implementation("com.google.devtools.ksp:symbol-processing-api:1.9.22-1.0.17")
+	implementation("com.google.devtools.ksp:symbol-processing-api:2.0.0-1.0.21")
 
 	// Navigation
 	// implementation "androidx.navigation:navigation-ui-ktx:2.4.0-alpha10"
@@ -125,7 +126,7 @@ dependencies {
 	// Integration with activities
 	implementation("androidx.activity:activity-compose:1.9.0")
 	// Integration with ViewModels
-	implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")
+	implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.0")
 	// Integration with observables
 	implementation("androidx.compose.runtime:runtime-livedata:1.6.7")
 	// implementation "androidx.compose.runtime:runtime-rxjava2:1.1.0-alpha06"
@@ -145,9 +146,9 @@ dependencies {
 
 	// Coil for instruction gifs
 	// Can't be bothered to update since it looks like a pain and it's only shown to phones that can't pin widgets.
-	//noinspection GradleDependency
+	// noinspection GradleDependency
 	implementation("io.coil-kt:coil-compose:1.3.2")
-	//noinspection GradleDependency
+	// noinspection GradleDependency
 	implementation("io.coil-kt:coil-gif:1.3.2")
 
 	// https://github.com/vanpra/compose-material-dialogs
@@ -162,13 +163,13 @@ dependencies {
 	// Seems like a pain to upgrade to 2.50
 	// 05.01.2024
 	// [ksp] [Hilt] No property named assistedFactory was found in annotation HiltViewModel: java.lang.IllegalStateException: No property named assistedFactory was found in annotation HiltViewModel
-	//noinspection GradleDependency
+	// noinspection GradleDependency
 	ksp("com.google.dagger:hilt-android:2.48")
-	//noinspection GradleDependency
+	// noinspection GradleDependency
 	ksp("com.google.dagger:hilt-compiler:2.48")
 
 	// https://github.com/Kotlin/kotlinx.serialization
-	implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.2")
+	implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
 
 	// https://console.firebase.google.com/project/workout-pixel/overview
 	// Import the Firebase BoM
