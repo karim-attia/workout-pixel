@@ -5,7 +5,7 @@ plugins {
 	id("org.jetbrains.kotlin.android")
 	id("kotlin-android")
 	id("dagger.hilt.android.plugin")
-	id("org.jetbrains.kotlin.plugin.serialization") version "1.9.20"
+	id("org.jetbrains.kotlin.plugin.serialization") version "2.0.0"
 	id("org.jetbrains.kotlin.plugin.compose") version "2.0.0"
 }
 
