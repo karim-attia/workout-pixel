@@ -81,7 +81,7 @@ dependencies {
 	testImplementation("org.testng:testng:7.10.2")
 
 	// Lifecycle components
-	val lifecycleVersion = "2.8.0"
+	val lifecycleVersion = "2.8.2"
 	implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycleVersion")
 	implementation("androidx.lifecycle:lifecycle-livedata-ktx:$lifecycleVersion")
 	implementation("androidx.lifecycle:lifecycle-common-java8:$lifecycleVersion")
@@ -94,7 +94,7 @@ dependencies {
 	androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
 	androidTestImplementation("androidx.test:rules:1.5.0")
 	androidTestImplementation("androidx.test:runner:1.5.2")
-	androidTestImplementation("androidx.compose.ui:ui-test-junit4:1.6.7")
+	androidTestImplementation("androidx.compose.ui:ui-test-junit4:1.6.8")
 
 	// Room components
 	val roomVersion = "2.6.1"
@@ -112,27 +112,27 @@ dependencies {
 	implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
 
 	// Jetpack Compose UI
-	implementation("androidx.compose.ui:ui:1.6.7")
+	implementation("androidx.compose.ui:ui:1.6.8")
 	// Tooling support (Previews, etc.)
-	implementation("androidx.compose.ui:ui-tooling:1.6.7")
+	implementation("androidx.compose.ui:ui-tooling:1.6.8")
 	// Foundation (Border, Background, Box, Image, Scroll, shapes, animations, etc.)
-	implementation("androidx.compose.foundation:foundation:1.6.7")
+	implementation("androidx.compose.foundation:foundation:1.6.8")
 	// Material Design
 	implementation("androidx.compose.material3:material3:1.2.1")
 	// implementation ("androidx.compose.material:material:1.5.4")
 	// Material design icons
-	implementation("androidx.compose.material:material-icons-core:1.6.7")
-	implementation("androidx.compose.material:material-icons-extended:1.6.7")
+	implementation("androidx.compose.material:material-icons-core:1.6.8")
+	implementation("androidx.compose.material:material-icons-extended:1.6.8")
 	// Integration with activities
 	implementation("androidx.activity:activity-compose:1.9.0")
 	// Integration with ViewModels
-	implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.0")
+	implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.2")
 	// Integration with observables
-	implementation("androidx.compose.runtime:runtime-livedata:1.6.7")
+	implementation("androidx.compose.runtime:runtime-livedata:1.6.8")
 	// implementation "androidx.compose.runtime:runtime-rxjava2:1.1.0-alpha06"
 
 	// UI Tests
-	androidTestImplementation("androidx.compose.ui:ui-test-junit4:1.6.7")
+	androidTestImplementation("androidx.compose.ui:ui-test-junit4:1.6.8")
 
 	// Pager: https://google.github.io/accompanist/pager/
 	// Can't be bothered to update since it looks like a pain and it's only shown to phones that can't pin widgets.
@@ -142,7 +142,7 @@ dependencies {
 	implementation("com.google.accompanist:accompanist-pager-indicators:0.19.0")
 
 	// https://stackoverflow.com/questions/68672046/how-to-use-animated-vector-drawable-in-compose
-	implementation("androidx.compose.animation:animation-graphics:1.6.7")
+	implementation("androidx.compose.animation:animation-graphics:1.6.8")
 
 	// Coil for instruction gifs
 	// Can't be bothered to update since it looks like a pain and it's only shown to phones that can't pin widgets.
@@ -190,7 +190,7 @@ dependencies {
 		implementation "com.google.firebase:firebase-analytics:19.0.2"
 	*/
 
-	implementation("androidx.glance:glance-appwidget:1.0.0")
+	implementation("androidx.glance:glance-appwidget:1.1.0")
 
 	// The chat framework for the intro.
 	// https://github.com/karim-attia/compose-chatbot-framework
