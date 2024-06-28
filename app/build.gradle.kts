@@ -90,17 +90,17 @@ dependencies {
 	api("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
 	api("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.1")
 
-	androidTestImplementation("androidx.test.ext:junit:1.1.5")
-	androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
-	androidTestImplementation("androidx.test:rules:1.5.0")
-	androidTestImplementation("androidx.test:runner:1.5.2")
+	androidTestImplementation("androidx.test.ext:junit:1.2.1")
+	androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
+	androidTestImplementation("androidx.test:rules:1.6.1")
+	androidTestImplementation("androidx.test:runner:1.6.1")
 	androidTestImplementation("androidx.compose.ui:ui-test-junit4:1.6.8")
 
 	// Room components
 	val roomVersion = "2.6.1"
 	ksp("androidx.room:room-compiler:$roomVersion")
 	implementation("androidx.room:room-ktx:$roomVersion")
-	implementation("com.google.devtools.ksp:symbol-processing-api:2.0.0-1.0.21")
+	implementation("com.google.devtools.ksp:symbol-processing-api:2.0.0-1.0.22")
 
 	// Navigation
 	// implementation "androidx.navigation:navigation-ui-ktx:2.4.0-alpha10"
