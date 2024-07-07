@@ -81,7 +81,7 @@ dependencies {
 	testImplementation("org.testng:testng:7.10.2")
 
 	// Lifecycle components
-	val lifecycleVersion = "2.8.2"
+	val lifecycleVersion = "2.8.3"
 	implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycleVersion")
 	implementation("androidx.lifecycle:lifecycle-livedata-ktx:$lifecycleVersion")
 	implementation("androidx.lifecycle:lifecycle-common-java8:$lifecycleVersion")
@@ -126,7 +126,7 @@ dependencies {
 	// Integration with activities
 	implementation("androidx.activity:activity-compose:1.9.0")
 	// Integration with ViewModels
-	implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.2")
+	implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.3")
 	// Integration with observables
 	implementation("androidx.compose.runtime:runtime-livedata:1.6.8")
 	// implementation "androidx.compose.runtime:runtime-rxjava2:1.1.0-alpha06"
