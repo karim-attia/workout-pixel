@@ -8,12 +8,12 @@ buildscript {
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
 
-        classpath("com.android.tools.build:gradle:8.9.0")
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:2.0.0")
+        classpath("com.android.tools.build:gradle:8.10.0")
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:2.1.21")
         classpath("androidx.navigation:navigation-safe-args-gradle-plugin:2.8.9")
 
         // https://dagger.dev/hilt/gradle-setup
-        classpath("com.google.dagger:hilt-android-gradle-plugin:2.48")
+        classpath("com.google.dagger:hilt-android-gradle-plugin:2.56.2")
 
         // https://console.firebase.google.com/project/workout-pixel/overview
         // classpath("com.google.gms:google-services:4.4.0")
@@ -23,7 +23,7 @@ buildscript {
 }
 
 plugins {
-    id("com.google.devtools.ksp") version "2.0.0-1.0.22" apply false
+    id("com.google.devtools.ksp") version "2.1.21-2.0.1" apply false
 }
 
 
