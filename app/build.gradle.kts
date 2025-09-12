@@ -164,9 +164,9 @@ dependencies {
 	// 05.01.2024
 	// [ksp] [Hilt] No property named assistedFactory was found in annotation HiltViewModel: java.lang.IllegalStateException: No property named assistedFactory was found in annotation HiltViewModel
 	// noinspection GradleDependency
-	implementation("com.google.dagger:hilt-android:2.56.2")
+	implementation("com.google.dagger:hilt-android:2.57.1")
 	// noinspection GradleDependency
-	ksp("com.google.dagger:hilt-compiler:2.56.2")
+	ksp("com.google.dagger:hilt-compiler:2.57.1")
 
 	// https://github.com/Kotlin/kotlinx.serialization
 	implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0") // Updated

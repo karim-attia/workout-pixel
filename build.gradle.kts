@@ -10,10 +10,10 @@ buildscript {
 
         classpath("com.android.tools.build:gradle:8.10.0")
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:2.1.21")
-        classpath("androidx.navigation:navigation-safe-args-gradle-plugin:2.9.0")
+        classpath("androidx.navigation:navigation-safe-args-gradle-plugin:2.9.4")
 
         // https://dagger.dev/hilt/gradle-setup
-        classpath("com.google.dagger:hilt-android-gradle-plugin:2.56.2")
+        classpath("com.google.dagger:hilt-android-gradle-plugin:2.57.1")
 
         // https://console.firebase.google.com/project/workout-pixel/overview
         // classpath("com.google.gms:google-services:4.4.0")
