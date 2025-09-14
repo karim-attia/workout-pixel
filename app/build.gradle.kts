@@ -76,12 +76,12 @@ android {
 dependencies {
 	implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
 	// Removed deprecated lifecycle-extensions - using explicit lifecycle components instead
-	implementation("androidx.activity:activity-ktx:1.11.0") // Updated
+	implementation("androidx.activity:activity-ktx:1.11.0")
 	testImplementation("junit:junit:4.13.2")
 	testImplementation("org.testng:testng:7.11.0")
 
 	// Lifecycle components
-	val lifecycleVersion = "2.9.3" // Updated
+	val lifecycleVersion = "2.9.3"
 	implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycleVersion")
 	implementation("androidx.lifecycle:lifecycle-livedata-ktx:$lifecycleVersion")
 	implementation("androidx.lifecycle:lifecycle-common-java8:$lifecycleVersion")
@@ -90,14 +90,14 @@ dependencies {
 	api("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")
 	api("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.2")
 
-	androidTestImplementation("androidx.test.ext:junit:1.3.0") // Updated
-	androidTestImplementation("androidx.test.espresso:espresso-core:3.7.0") // Updated
-	androidTestImplementation("androidx.test:rules:1.7.0") // Updated
-	androidTestImplementation("androidx.test:runner:1.7.0") // Updated
-	androidTestImplementation("androidx.compose.ui:ui-test-junit4:1.9.1") // Updated
+	androidTestImplementation("androidx.test.ext:junit:1.3.0")
+	androidTestImplementation("androidx.test.espresso:espresso-core:3.7.0")
+	androidTestImplementation("androidx.test:rules:1.7.0")
+	androidTestImplementation("androidx.test:runner:1.7.0")
+	androidTestImplementation("androidx.compose.ui:ui-test-junit4:1.9.1")
 
 	// Room components
-	val roomVersion = "2.8.0" // Updated
+	val roomVersion = "2.8.0"
 	ksp("androidx.room:room-compiler:$roomVersion")
 	implementation("androidx.room:room-ktx:$roomVersion")
 	// implementation("com.google.devtools.ksp:symbol-processing-api:2.1.21-2.0.1")
@@ -106,17 +106,17 @@ dependencies {
 	// implementation "androidx.navigation:navigation-ui-ktx:2.4.0-alpha10"
 	// Replaced by https://google.github.io/accompanist/navigation-animation
 	// Jetpack Compose Integration
-	implementation("androidx.navigation:navigation-compose:2.9.4") // Updated
+	implementation("androidx.navigation:navigation-compose:2.9.4")
 	// https://google.github.io/accompanist/navigation-animation/
 	// implementation "com.google.accompanist:accompanist-navigation-animation:0.20.0"
-	implementation("androidx.hilt:hilt-navigation-compose:1.3.0") // Updated
+	implementation("androidx.hilt:hilt-navigation-compose:1.3.0")
 
 	// Jetpack Compose UI
-	implementation("androidx.compose.ui:ui:1.9.1") // Updated
+	implementation("androidx.compose.ui:ui:1.9.1")
 	// Tooling support (Previews, etc.)
-	implementation("androidx.compose.ui:ui-tooling:1.9.1") // Updated
+	implementation("androidx.compose.ui:ui-tooling:1.9.1")
 	// Foundation (Border, Background, Box, Image, Scroll, shapes, animations, etc.)
-	implementation("androidx.compose.foundation:foundation:1.9.1") // Updated
+	implementation("androidx.compose.foundation:foundation:1.9.1")
 	// Material Design
 	implementation("androidx.compose.material3:material3:1.3.2")
 	// implementation ("androidx.compose.material:material:1.5.4")
@@ -124,15 +124,15 @@ dependencies {
 	implementation("androidx.compose.material:material-icons-core:1.7.8")
 	implementation("androidx.compose.material:material-icons-extended:1.7.8")
 	// Integration with activities
-	implementation("androidx.activity:activity-compose:1.11.0") // Updated
+	implementation("androidx.activity:activity-compose:1.11.0")
 	// Integration with ViewModels
-	implementation("androidx.lifecycle:lifecycle-viewmodel-compose:$lifecycleVersion") // Updated
+	implementation("androidx.lifecycle:lifecycle-viewmodel-compose:$lifecycleVersion")
 	// Integration with observables
-	implementation("androidx.compose.runtime:runtime-livedata:1.9.1") // Updated
+	implementation("androidx.compose.runtime:runtime-livedata:1.9.1")
 	// implementation "androidx.compose.runtime:runtime-rxjava2:1.1.0-alpha06"
 
 	// UI Tests
-	androidTestImplementation("androidx.compose.ui:ui-test-junit4:1.9.1") // Updated
+	androidTestImplementation("androidx.compose.ui:ui-test-junit4:1.9.1")
 
 	// Pager: https://google.github.io/accompanist/pager/
 	// Can't be bothered to update since it looks like a pain and it's only shown to phones that can't pin widgets.
@@ -142,7 +142,7 @@ dependencies {
 	implementation("com.google.accompanist:accompanist-pager-indicators:0.36.0")
 
 	// https://stackoverflow.com/questions/68672046/how-to-use-animated-vector-drawable-in-compose
-	implementation("androidx.compose.animation:animation-graphics:1.9.1") // Updated
+	implementation("androidx.compose.animation:animation-graphics:1.9.1")
 
 	// Coil for instruction gifs
 	// Can't be bothered to update since it looks like a pain and it's only shown to phones that can't pin widgets.
@@ -169,7 +169,7 @@ dependencies {
 	ksp("com.google.dagger:hilt-compiler:2.57.1")
 
 	// https://github.com/Kotlin/kotlinx.serialization
-	implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0") // Updated
+	implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0")
 
 	// https://console.firebase.google.com/project/workout-pixel/overview
 	// Import the Firebase BoM
