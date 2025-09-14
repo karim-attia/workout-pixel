@@ -1,0 +1,68 @@
+# Cursor Rules for Iterative Android Development
+
+## Core Philosophy
+**Always investigate first, implement incrementally, and validate on device.**
+
+## Mandatory Workflow for Every Change
+
+### 1. Investigate & Document
+- Create new `docs/INVESTIGATION_<descriptive-name>.md` file with:
+  - Current problem/requirement
+  - Web search findings (@Web for up-to-date info)
+  - Codebase research findings
+  - Proposed approach
+  - Potential risks
+- Use @Web search for latest implementation guides, best practices, or version compatibility
+- Use search tools to understand codebase impact
+- Document all findings in the investigation file
+
+Examples:
+- `docs/INVESTIGATION_DEPENDENCY_UPGRADES.md`
+- `docs/INVESTIGATION_CHAT_BUG_FIX.md` 
+- `docs/INVESTIGATION_NEW_WORKOUT_FEATURE.md`
+
+### 2. Plan Incrementally
+- Break change into smallest possible steps
+- Use `todo_write` to track each step
+- ONE change at a time, never batch
+
+### 3. Implement & Validate
+After each micro-change:
+```bash
+./gradlew clean :app:assembleDebug
+./gradlew :app:installDebug
+adb shell am start -n ch.karimattia.workoutpixels/ch.karimattia.workoutpixel.activities.MainActivity
+adb logcat -d | grep -i "workoutpixel\|crash\|error" | tail -5
+```
+
+### 4. Document Results
+Update the specific investigation file with:
+- What was changed
+- Test results
+- Any issues encountered (include @Web research for solutions)
+- Next steps
+
+## Rules
+
+### Always Do
+- ✅ Use @Web search for up-to-date information when relevant
+- ✅ Investigate thoroughly before changing anything
+- ✅ Document all findings (web research + codebase) in markdown files
+- ✅ Test on connected device after every change
+- ✅ Update TODO list with progress
+- ✅ Commit small, tested increments
+
+### Never Do
+- ❌ Make multiple unrelated changes
+- ❌ Skip investigation phase
+- ❌ Skip device testing
+- ❌ Commit without documentation
+
+## Error Handling
+1. Stop immediately on failure
+2. Use @Web search to research the error and solutions
+3. Document the error and research findings in the specific investigation file
+4. Revert if not fixable quickly
+5. Research root cause before retry
+
+**Principle: "Investigate → Document → Implement → Validate → Document"**

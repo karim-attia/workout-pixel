@@ -83,12 +83,11 @@ class ConfigureActivity : ComponentActivity() {
 		}
 
 		setContent {
-			// collectedGoal can return null despite of what lint says.
-			@Suppress("USELESS_ELVIS")
-			val collectedGoal: Goal = goalRepository.loadGoalByAppWidgetIdFlow(goal.appWidgetId)
-				.collectAsState(initial = goal).value ?: goal
+			// Use ViewModel to safely access goals data
+			val allGoals = goalViewModel.allGoals
+			val collectedGoal: Goal = allGoals.find { it.appWidgetId == goal.appWidgetId } ?: goal
 			val isFirstConfigure = collectedGoal == goal
-			Log.d(TAG, "isFirstConfigure: $isFirstConfigure")
+			Log.d(TAG, "isFirstConfigure: $isFirstConfigure, appWidgetId: ${goal.appWidgetId}")
 
 			val configureActivityLambdas = Lambdas(
 				// Case reconfigure or connect existing goal
@@ -117,8 +116,7 @@ class ConfigureActivity : ComponentActivity() {
 			ConfigureActivityCompose(
 				initialGoal = if (isFirstConfigure) goal else collectedGoal,
 				isFirstConfigure = isFirstConfigure,
-				goalsWithoutWidget = goalRepository.loadGoalsWithoutValidAppWidgetId()
-					.collectAsState(initial = emptyList()).value,
+				goalsWithoutWidget = allGoals.filter { it.appWidgetId == AppWidgetManager.INVALID_APPWIDGET_ID },
 				lambdas = configureActivityLambdas,
 			)
 		}

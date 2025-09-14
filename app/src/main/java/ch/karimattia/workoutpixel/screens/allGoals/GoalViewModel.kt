@@ -27,6 +27,12 @@ class GoalViewModel @Inject constructor(
 	// This is needed so the state of allGoals and thus the UI updates.
 	init {
 		viewModelScope.launch {
+			// Load initial goals synchronously for immediate navigation decisions
+			val initialGoals = goalRepository.allGoals()
+			allGoals.clear()
+			allGoals.addAll(initialGoals)
+			
+			// Then start collecting the flow for real-time updates
 			allGoalsFlow.collect { newGoals ->
 				allGoals.clear()
 				allGoals.addAll(newGoals)
