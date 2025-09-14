@@ -9,7 +9,7 @@ buildscript {
         // in the individual module build.gradle files
 
         classpath("com.android.tools.build:gradle:8.12.2")
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:2.1.21")
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:2.2.0")
         classpath("androidx.navigation:navigation-safe-args-gradle-plugin:2.9.4")
 
         // https://dagger.dev/hilt/gradle-setup
@@ -23,7 +23,7 @@ buildscript {
 }
 
 plugins {
-    id("com.google.devtools.ksp") version "2.1.21-2.0.1" apply false
+    id("com.google.devtools.ksp") version "2.2.0-2.0.2" apply false
 }
 
 

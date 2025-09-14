@@ -5,8 +5,8 @@ plugins {
 	id("org.jetbrains.kotlin.android")
 	id("kotlin-android")
 	id("dagger.hilt.android.plugin")
-	id("org.jetbrains.kotlin.plugin.serialization") version "2.1.21"
-	id("org.jetbrains.kotlin.plugin.compose") version "2.1.21"
+	id("org.jetbrains.kotlin.plugin.serialization") version "2.2.0"
+	id("org.jetbrains.kotlin.plugin.compose") version "2.2.0"
 }
 
 
@@ -75,7 +75,7 @@ android {
 //noinspection SpellCheckingInspection
 dependencies {
 	implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
-	implementation("androidx.lifecycle:lifecycle-extensions:2.2.0")
+	// Removed deprecated lifecycle-extensions - using explicit lifecycle components instead
 	implementation("androidx.activity:activity-ktx:1.11.0") // Updated
 	testImplementation("junit:junit:4.13.2")
 	testImplementation("org.testng:testng:7.11.0")
